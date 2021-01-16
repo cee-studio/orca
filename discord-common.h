@@ -22,20 +22,23 @@ enum http_method {
 };
 
 /* ENDPOINTS */
-#define CHANNEL               "/channels/%s"
-#define CHANNEL_MESSAGES      CHANNEL"/messages/%s"
+#define MESSAGES              "/messages"
+#define MESSAGE               MESSAGES"/%s"
 
-#define REACTION_EMOJI        CHANNEL_MESSAGE"/reactions/%s"
-#define REACTION_EMOJI_USER   CHANNEL_MESSAGE"/reactions/%s/%s"
+#define CHANNELS              "/channels"
+#define CHANNEL               CHANNELS"/%s"
 
-#define PINNED_MESSAGES         CHANNEL"/pins"
-#define PINNED_MESSAGE          PINNED_MESSAGES"/%s"
+#define REACTION_EMOJI        CHANNEL MESSAGE "/reactions/%s"
+#define REACTION_EMOJI_USER   CHANNEL MESSAGE "/reactions/%s/%s"
 
-#define GUILD                 "/guilds/%s"
-#define GUILD_CHANNELS        GUILD"/channels"
+#define PINNED_MESSAGES       CHANNEL"/pins"
+#define PINNED_MESSAGE        PINNED_MESSAGES"/%s"
 
-#define USER                  "/users/%s"
-#define USER_GUILDS           USER"/guilds"
+#define GUILDS                "/guilds"
+#define GUILD                 GUILDS"/%s"
+
+#define USERS                 "/users"
+#define USER                  USERS"/%s"
 
 /* HTTP RESPONSE CODES
 https://discord.com/developers/docs/topics/opcodes-and-status-codes#http-http-response-codes */
@@ -100,22 +103,23 @@ enum ws_close_opcodes {
 
 /* GATEWAY INTENTS
 https://discord.com/developers/docs/topics/gateway#identify-identify-structure */
+//@todo shorter naming
 enum ws_intents {
-  GUILDS                        = 1 << 0,
-  GUILD_MEMBERS                 = 1 << 1,
-  GUILD_BANS                    = 1 << 2,
-  GUILD_EMOJIS                  = 1 << 3,
-  GUILD_INTEGRATIONS            = 1 << 4,
-  GUILD_WEBHOOKS                = 1 << 5,
-  GUILD_INVITES                 = 1 << 6,
-  GUILD_VOICE_STATES            = 1 << 7,
-  GUILD_PRESENCES               = 1 << 8,
-  GUILD_MESSAGES                = 1 << 9,
-  GUILD_MESSAGE_REACTIONS       = 1 << 10,
-  GUILD_MESSAGE_TYPING          = 1 << 11,
-  DIRECT_MESSAGES               = 1 << 12,
-  DIRECT_MESSAGE_REACTIONS      = 1 << 13,
-  DIRECT_MESSAGE_TYPING         = 1 << 14,
+  WS_INTENT_GUILDS                        = 1 << 0,
+  WS_INTENT_GUILD_MEMBERS                 = 1 << 1,
+  WS_INTENT_GUILD_BANS                    = 1 << 2,
+  WS_INTENT_GUILD_EMOJIS                  = 1 << 3,
+  WS_INTENT_GUILD_INTEGRATIONS            = 1 << 4,
+  WS_INTENT_GUILD_WEBHOOKS                = 1 << 5,
+  WS_INTENT_GUILD_INVITES                 = 1 << 6,
+  WS_INTENT_GUILD_VOICE_STATES            = 1 << 7,
+  WS_INTENT_GUILD_PRESENCES               = 1 << 8,
+  WS_INTENT_GUILD_MESSAGES                = 1 << 9,
+  WS_INTENT_GUILD_MESSAGE_REACTIONS       = 1 << 10,
+  WS_INTENT_GUILD_MESSAGE_TYPING          = 1 << 11,
+  WS_INTENT_DIRECT_MESSAGES               = 1 << 12,
+  WS_INTENT_DIRECT_MESSAGE_REACTIONS      = 1 << 13,
+  WS_INTENT_DIRECT_MESSAGE_TYPING         = 1 << 14,
 };
 
 /* GATEWAY OPCODES
@@ -207,20 +211,22 @@ int Discord_utils_debug_cb(
     size_t size,
     void *p_userdata);
 
+/* discord-public*.c */
+
+void Discord_guild_load(void *p_guild, char *str, size_t len);
+void Discord_user_load(void *p_user, char *str, size_t len);
+void Discord_message_load(void *p_message, char *str, size_t len);
+
 /* discord-api.c */
 
 void Discord_api_init(struct discord_api_s *api, char token[]);
 void Discord_api_cleanup(struct discord_api_s *api);
 
-void Discord_api_load_message(void *p_message, char *str, size_t len);
-void Discord_api_load_guild(void *p_guild, char *str, size_t len);
-void Discord_api_load_user(void *p_user, char *str, size_t len);
-
 void Discord_api_request(
   struct discord_api_s *api, 
   void *p_object, 
   discord_load_obj_cb *load_cb,
-  char send_payload[], //only for POST/PUT methods
+  char postfields[], //only for POST/PUT methods
   enum http_method http_method,
   char endpoint[],
   ...);

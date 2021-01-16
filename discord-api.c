@@ -165,7 +165,7 @@ Discord_api_cleanup(struct discord_api_s *api)
 
 /* set specific http method used for the request */
 static void
-set_method(struct discord_api_s *api, enum http_method method, char send_payload[])
+set_method(struct discord_api_s *api, enum http_method method, char postfields[])
 {
   CURLcode ecode;
   switch (method) {
@@ -181,7 +181,7 @@ set_method(struct discord_api_s *api, enum http_method method, char send_payload
       ecode = curl_easy_setopt(api->ehandle, CURLOPT_POST, 1L);
       ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
       //set ptr to payload that will be sent via POST/PUT
-      ecode = curl_easy_setopt(api->ehandle, CURLOPT_POSTFIELDS, send_payload);
+      ecode = curl_easy_setopt(api->ehandle, CURLOPT_POSTFIELDS, postfields);
       ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
       break;
   case PATCH:
@@ -191,7 +191,7 @@ set_method(struct discord_api_s *api, enum http_method method, char send_payload
   case PUT:
       ecode = curl_easy_setopt(api->ehandle, CURLOPT_UPLOAD, 1L);
       ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
-      ecode = curl_easy_setopt(api->ehandle, CURLOPT_POSTFIELDS, send_payload);
+      ecode = curl_easy_setopt(api->ehandle, CURLOPT_POSTFIELDS, postfields);
       ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
       break;
   default:
@@ -239,7 +239,7 @@ perform_request(
 
     switch (http_code) {
     case HTTP_OK:
-        if (load_cb) {
+        if (p_object && load_cb) {
           (*load_cb)(p_object, api->body.str, api->body.size);
         }
     /* fall through */
@@ -275,119 +275,13 @@ perform_request(
   } while (http_code > 204);
 }
 
-void
-Discord_api_load_message(void *p_message, char *str, size_t len)
-{
-  discord_message_t *message = p_message;
-
-  char str_author[512];
-  char str_mentions[512];
-  char str_referenced_message[4096];
-
-  json_scanf(str, len,
-     "[id]%s"
-     "[channel_id]%s"
-     "[guild_id]%s"
-     "[author]%S"
-     "[content]%s"
-     "[timestamp]%s"
-     "[edited_timestamp]%s"
-     "[tts]%b"
-     "[mention_everyone]%b"
-     "[mentions]%S"
-     "[nonce]%s"
-     "[pinned]%b"
-     "[webhook_id]%s"
-     "[type]%d"
-     "[flags]%d"
-     "[referenced_message]%S",
-      message->id,
-      message->channel_id,
-      message->guild_id,
-      str_author,
-      message->content,
-      message->timestamp,
-      message->edited_timestamp,
-      &message->tts,
-      &message->mention_everyone,
-      str_mentions,
-      message->nonce,
-      &message->pinned,
-      message->webhook_id,
-      &message->type,
-      &message->flags,
-      str_referenced_message);
-
-  Discord_api_load_user(message->author, str_author, sizeof(str_author)-1);
-
-  D_PUTS("Message loaded with API response"); 
-}
-
-void
-Discord_api_load_guild(void *p_guild, char *str, size_t len)
-{
-  discord_guild_t *guild = p_guild;
-
-  json_scanf(str, len,
-     "[id]%s"
-     "[name]%s"
-     "[icon]%s"
-     "[owner]%b"
-     "[permissions]%d"
-     "[permissions_new]%s",
-      guild->id,
-      guild->name,
-      guild->icon,
-      &guild->owner,
-      &guild->permissions,
-      guild->permissions_new);
-
-  D_PUTS("Guild loaded with API response"); 
-}
-
-void
-Discord_api_load_user(void *p_user, char *str, size_t len)
-{
-  discord_user_t *user = p_user;
-
-  json_scanf(str, len,
-     "[id]%s"
-     "[username]%s"
-     "[discriminator]%s"
-     "[avatar]%s"
-     "[bot]%b"
-     "[system]%b"
-     "[mfa_enabled]%b"
-     "[locale]%s"
-     "[verified]%b"
-     "[email]%s"
-     "[flags]%d"
-     "[premium_type]%d"
-     "[public_flags]%d",
-      user->id,
-      user->username,
-      user->discriminator,
-      user->avatar,
-      &user->bot,
-      &user->sys,
-      &user->mfa_enabled,
-      user->locale,
-      &user->verified,
-      user->email,
-      &user->flags,
-      &user->premium_type,
-      &user->public_flags);
-
-  D_PUTS("User loaded with API response"); 
-}
-
 /* template function for performing requests */
 void
 Discord_api_request(
   struct discord_api_s *api, 
   void *p_object, 
   discord_load_obj_cb *load_cb,
-  char send_payload[],
+  char postfields[],
   enum http_method http_method,
   char endpoint[],
   ...)
@@ -397,12 +291,13 @@ Discord_api_request(
   va_start (args, endpoint);
 
   char url_route[MAX_URL_LEN];
-  vsprintf(url_route, endpoint, args);
+  int ret = vsnprintf(url_route, MAX_URL_LEN, endpoint, args);
+  ASSERT_S(ret < MAX_URL_LEN, "Out of bounds write of 'url_route'");
 
   va_end(args);
 
   //set the request method
-  set_method(api, http_method, send_payload);
+  set_method(api, http_method, postfields);
   //set the request URL
   set_url(api, url_route);
   //perform the request

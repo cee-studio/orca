@@ -99,8 +99,9 @@ ws_send_resume(struct discord_ws_s *ws)
   char fmt_payload[] = \
     "{\"op\":6,\"d\":{\"token\":\"%s\",\"session_id\":\"%s\",\"seq\":%d}}";
   char payload[MAX_PAYLOAD_LEN];
-  snprintf(payload, sizeof(payload)-1, fmt_payload,
+  int ret = snprintf(payload, MAX_PAYLOAD_LEN, fmt_payload,
       ws->p_client->settings.token, ws->session_id, ws->payload.seq_number);
+  ASSERT_S(ret < MAX_PAYLOAD_LEN, "Out of bounds write attempt");
 
   D_NOTOP_PRINT("RESUME PAYLOAD:\n\t%s", payload);
   ws_send_payload(ws, payload);
@@ -119,7 +120,7 @@ on_hello(struct discord_ws_s *ws)
   ws->hbeat.interval_ms = 0;
   ws->hbeat.start_ms = timestamp_ms();
 
-  json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data)-1,
+  json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data),
              "[heartbeat_interval]%ld", &ws->hbeat.interval_ms);
   ASSERT_S(ws->hbeat.interval_ms > 0, "Invalid heartbeat_ms");
 
@@ -132,14 +133,16 @@ on_hello(struct discord_ws_s *ws)
 static void
 on_dispatch(struct discord_ws_s *ws)
 {
-  Discord_api_load_user(ws->self, ws->payload.event_data, sizeof(ws->payload.event_data)-1);
+  Discord_user_load(ws->self,
+      ws->payload.event_data, sizeof(ws->payload.event_data));
 
   if (STREQ("READY", ws->payload.event_name))
   {
     ws->status = WS_CONNECTED;
     ws->reconnect_attempts = 0;
+    D_PRINT("Succesfully connected to Discord!");
 
-    json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data)-1,
+    json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data),
                "[session_id]%s", ws->session_id);
     ASSERT_S(ws->session_id, "Couldn't fetch session_id from READY event");
 
@@ -154,8 +157,8 @@ on_dispatch(struct discord_ws_s *ws)
   {
     ws->status = WS_CONNECTED;
     ws->reconnect_attempts = 0;
-
     D_PRINT("Succesfully resumed connection to Discord!");
+
     return;
   }
 
@@ -166,7 +169,8 @@ on_dispatch(struct discord_ws_s *ws)
     discord_message_t *message = discord_message_init();
     ASSERT_S(NULL != message, "Out of memory");
 
-    Discord_api_load_message((void*)message, ws->payload.event_data, sizeof(ws->payload.event_data)-1);
+    Discord_message_load((void*)message,
+        ws->payload.event_data, sizeof(ws->payload.event_data));
 
     (*ws->cbs.on_message.create)(ws->p_client, ws->self, message);
 
@@ -182,7 +186,8 @@ on_dispatch(struct discord_ws_s *ws)
     discord_message_t *message = discord_message_init();
     ASSERT_S(NULL != message, "Out of memory");
 
-    Discord_api_load_message((void*)message, ws->payload.event_data, sizeof(ws->payload.event_data)-1);
+    Discord_message_load((void*)message,
+        ws->payload.event_data, sizeof(ws->payload.event_data));
 
     (*ws->cbs.on_message.update)(ws->p_client, ws->self, message);
 
@@ -198,7 +203,8 @@ on_dispatch(struct discord_ws_s *ws)
     discord_message_t *message = discord_message_init();
     ASSERT_S(NULL != message, "Out of memory");
 
-    Discord_api_load_message((void*)message, ws->payload.event_data, sizeof(ws->payload.event_data)-1);
+    Discord_message_load((void*)message,
+        ws->payload.event_data, sizeof(ws->payload.event_data));
 
     (*ws->cbs.on_message.delete)(ws->p_client, ws->self, message);
 
@@ -215,9 +221,9 @@ on_reconnect(struct discord_ws_s *ws)
 {
   ws->status = WS_RECONNECTING;
 
-  char reason[] = "Attempting to reconnect to Discord WebSockets ...";
+  char reason[] = "Attempting to reconnect to WebSockets";
   D_PUTS(reason);
-  cws_close(ws->ehandle, CWS_CLOSE_REASON_NORMAL, reason, sizeof(reason)-1);
+  cws_close(ws->ehandle, CWS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
 static void
@@ -376,29 +382,37 @@ identify_init(char token[])
   const char fmt_identify[] = \
     "{\"op\":2,\"d\":%s}"; //op:2 means GATEWAY_IDENTIFY
 
+  int ret; //check snprintf return value
+
   //https://discord.com/developers/docs/topics/gateway#identify-identify-connection-properties
   /* @todo $os detection */
   char properties[512];
-  snprintf(properties, sizeof(properties)-1, fmt_properties, "Linux");
+  ret = snprintf(properties, sizeof(properties), fmt_properties, "Linux");
+  ASSERT_S(ret < (int)sizeof(properties), "Out of bounds write attempt");
 
   //https://discord.com/developers/docs/topics/gateway#sharding
   /* @todo */
 
   //https://discord.com/developers/docs/topics/gateway#update-status-gateway-status-update-structure
   char presence[512];
-  snprintf(presence, sizeof(presence)-1, fmt_presence, 
+  ret = snprintf(presence, sizeof(presence), fmt_presence, 
            "null", "null", "online", "false");
+  ASSERT_S(ret < (int)sizeof(presence), "Out of bounds write attempt");
 
   //https://discord.com/developers/docs/topics/gateway#identify-identify-structure
   char event_data[512];
+  ret = snprintf(event_data, sizeof(event_data), fmt_event_data,
+                  token, WS_INTENT_GUILD_MESSAGES, properties, presence);
+  ASSERT_S(ret < (int)sizeof(presence), "Out of bounds write attempt");
+
   int len = sizeof(fmt_identify);
-  len += snprintf(event_data, sizeof(event_data)-1, fmt_event_data,
-                  token, GUILD_MESSAGES, properties, presence);
+  len += ret;
 
   char *identify = malloc(len);
   ASSERT_S(NULL != identify, "Out of memory");
 
-  snprintf(identify, len-1, fmt_identify, event_data);
+  ret = snprintf(identify, len-1, fmt_identify, event_data);
+  ASSERT_S(ret < len, "Out of bounds write attempt");
 
   return identify;
 }
@@ -437,7 +451,8 @@ static void
 ws_send_heartbeat(struct discord_ws_s *ws)
 {
   char payload[64];
-  snprintf(payload, sizeof(payload)-1, "{\"op\":1,\"d\":%d}", ws->payload.seq_number);
+  int ret = snprintf(payload, sizeof(payload), "{\"op\":1,\"d\":%d}", ws->payload.seq_number);
+  ASSERT_S(ret < (int)sizeof(payload), "Out of bounds write attempt");
 
   D_PRINT("HEARTBEAT_PAYLOAD:\n\t\t%s", payload);
   ws_send_payload(ws, payload);

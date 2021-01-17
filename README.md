@@ -1,4 +1,4 @@
-# README
+# Orca: a C bot framework 
 
 Orca is a bot framework that is designed with minimum dependencies to
 make bot deployment deadly simple.  The primary design goals are:
@@ -18,11 +18,26 @@ make bot deployment deadly simple.  The primary design goals are:
 
 ## Build
 ### Install dependencies:
-For debian and ubuntu
+The only dependencies that is needed is curl-7.66.0 or higher built with openssl
+
+For Ubuntu
 ```
-apt-get install -y build-essential
-apt-get install -y libcurl4-openssl-dev
+sudo apt-get install -y build-essential libssl-dev
+sudo apt-get install -y libcurl4-openssl-dev
 ```
+
+
+For Debian
+```
+sudo apt-get install -y build-essential libssl-dev
+```
+Get the latest libcurl from https://packages.debian.org/unstable/libcurl4-openssl-dev
+```
+wget http://ftp.us.debian.org/debian/pool/main/c/curl/libcurl4-openssl-dev_7.74.0-1_amd64.deb
+sudo apt-get remove libcurl4-openssl-dev
+sudo dpkg -i libcurl4-openssl-dev_7.74.0-1_amd64.deb
+```
+
 
 ### Compile
 ```
@@ -31,7 +46,7 @@ make echo-bot
 
 ## Run echo-bot
 1. Get your bot token and paste it to `bot.config` to
-   replace "replace-this-with-your-bot-token". There are 
+   replace `YOUR-BOT-TOKEN`. There are 
    well written instructions from the [discord-irc](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) about 
    how to get token and add a bot to a server.
    
@@ -40,16 +55,16 @@ make echo-bot
 
 3. Run `./echo-bot.exe` in the same folder of `bot.config`
 
-## Test echo-bot
-Type any message in any channel of the server that the bot is invited.
+### Test echo-bot
+Type any message in any public channel of the server that the bot is invited.
+
+### Terminate echo-bot
+Close the Terminal that echo-bot is running or type "Ctrl-C" to kill it.
 
 
 ## Usage example
 ```c
-void on_message(
-    discord_t *client,
-    discord_user_t *self,
-    discord_message_t *message)
+void on_message(discord_t *client, discord_user_t *self, discord_message_t *message)
 {
   // make sure it doesn't echoes itself
   if (strcmp(self->username, message->author->username)){
@@ -67,5 +82,5 @@ void on_message(
 Join our discord server: https://discord.gg/2jfycwXVM3
 
 ## Contributions are welcome!
-Check our development [Roadmap](ROADMAP.md) and [Coding Guidelines](CODING_GUIDELINES.md) to get started
+Check our development [Roadmap](docs/ROADMAP.md) and [Coding Guidelines](docs/CODING_GUIDELINES.md) to get started
 

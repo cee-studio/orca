@@ -101,7 +101,7 @@ ws_send_resume(struct discord_ws_s *ws)
   char payload[MAX_PAYLOAD_LEN];
   int ret = snprintf(payload, MAX_PAYLOAD_LEN, fmt_payload,
       ws->p_client->settings.token, ws->session_id, ws->payload.seq_number);
-  ASSERT_S(ret < MAX_PAYLOAD_LEN, "Out of bounds write attempt");
+  ASSERT_S(ret < (int)sizeof(payload), "Out of bounds write attempt");
 
   D_NOTOP_PRINT("RESUME PAYLOAD:\n\t%s", payload);
   ws_send_payload(ws, payload);
@@ -310,6 +310,7 @@ ws_on_text_cb(void *data, CURL *ehandle, const char *text, size_t len)
   case GATEWAY_DISPATCH:
       on_dispatch(ws);
       break;
+  case GATEWAY_INVALID_SESSION: //@todo see if this is a valid solution
   case GATEWAY_RECONNECT:
       on_reconnect(ws);
       break;

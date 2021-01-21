@@ -1,4 +1,4 @@
-CC			?= gcc
+CC	:= gcc
 OBJDIR	:= obj
 LIBDIR	:= lib
 
@@ -9,11 +9,8 @@ OBJS 		:= $(addprefix $(OBJDIR)/, $(_OBJS))
 LIBDISCORD_CFLAGS	:= -I./
 LIBDISCORD_LDFLAGS	:=  -L./$(LIBDIR) -ldiscord -lcurl
 
-ifeq ($(CC),stensal-c)
-	LIBDISCORD_LDFLAGS += -lbearssl -static 
-else
-	LIBDISCORD_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcrypto -lm
-endif
+
+LIBDISCORD_LDFLAGS += -lbearssl -static
 
 
 LIBS_CFLAGS		:= $(LIBDISCORD_CFLAGS)
@@ -21,13 +18,9 @@ LIBS_LDFLAGS	:= $(LIBDISCORD_LDFLAGS)
 
 LIBDISCORD_SLIB	:= $(LIBDIR)/libdiscord.a
 
-CFLAGS := -Wall -Wextra -pedantic -std=c11 -O0 -g -DLIBDISCORD_DEBUG -D_GNU_SOURCE
+CFLAGS := -Wall -Wextra -pedantic -std=c11 -O0 -g -DLIBDISCORD_DEBUG -D__stensal__
 
-ifeq ($(CC),stensal-c)
-	CFLAGS += -D_DEFAULT_SOURCE
-else
-	CFLAGS += -fPIC -D_XOPEN_SOURCE=700
-endif
+CFLAGS += -D_DEFAULT_SOURCE
 
 PREFIX ?= /usr/local
 
@@ -70,12 +63,6 @@ $(OBJDIR)/curl-websocket.o : curl-websocket.c
 
 $(LIBDISCORD_SLIB) : $(OBJS)
 	$(AR) -cvq $@ $(OBJS)
-
-install : all
-	install -d $(PREFIX)/lib/
-	install -m 644 $(LIBDISCORD_SLIB) $(PREFIX)/lib/
-	install -d $(PREFIX)/include/
-	install -m 644 libdiscord.h $(PREFIX)/include/
 
 clean :
 	rm -rf $(OBJDIR) $(LIBDIR) *.exe 

@@ -17,67 +17,22 @@ make bot deployment deadly simple.  The primary design goals are:
 - superior reliability
 
 ## Build
-### Install dependencies:
-The only dependencies that is needed is curl-7.66.0 or higher built with openssl
+#### Install dependencies:
+The only dependencies that is needed is curl-7.64.0 or higher built with openssl
 
-For Ubuntu
+For Ubuntu and Debian
 ```
-sudo apt-get install -y build-essential libssl-dev
-sudo apt-get install -y libcurl4-openssl-dev
-```
-
-
-For Debian
-```
-sudo apt-get install -y build-essential libssl-dev
-```
-Get the latest libcurl from https://packages.debian.org/unstable/libcurl4-openssl-dev
-```
-wget http://ftp.us.debian.org/debian/pool/main/c/curl/libcurl4-openssl-dev_7.74.0-1_amd64.deb
-sudo apt-get remove libcurl4-openssl-dev
-sudo dpkg -i libcurl4-openssl-dev_7.74.0-1_amd64.deb
+sudo apt-get install -y build-essential 
+sudo apt-get install -y libcurl4-openssl-dev libssl-dev
 ```
 
-
-### Compile
-```
-make echo-bot
-```
-
-## Run echo-bot
-1. Get your bot token and paste it to `bot.config` to
-   replace `YOUR-BOT-TOKEN`. There are 
-   well written instructions from the [discord-irc](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) about 
-   how to get token and add a bot to a server.
-   
-2. Invite your bot to a testing server. We can invite your bots
-   to our testing servers. 
-
-3. Run `./echo-bot.exe` in the same folder of `bot.config`
-
-### Test echo-bot
-Type any message in any public channel of the server that the bot is invited.
-
-### Terminate echo-bot
-Close the Terminal that echo-bot is running or type "Ctrl-C" to kill it.
+\* If you do not have Ubuntu or Debian but have Windows 10, you can install WSL2 and get either Ubuntu or Debian [here](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
 
-## Usage example
-```c
-void on_message(discord_t *client, discord_user_t *self, discord_message_t *message)
-{
-  // make sure it doesn't echoes itself
-  if (strcmp(self->username, message->author->username)){
-    discord_send_message(client, message->channel_id, message->content);
-  }
-}
-```
+## Tutorial on how to make a bot
 
-## Supported Features:
-  - discord gateway rate limiting
-  - discord gateway ws resuming
-  - basic discord rest API endpoints
-  
+Instructions on how to make a ping-pong bot is found [here](/docs/BUILDING_A_BOT.md).
+
 ## Participate in discussions and get tech support
 Join our discord server: https://discord.gg/2jfycwXVM3
 

@@ -7,7 +7,7 @@
 
 void on_ready(discord_t *client, const discord_user_t *self)
 {
-  fprintf(stderr, "\n\nPin-Bot succesfully connected to Discord as %s#%s!\n\n",
+  fprintf(stderr, "\n\nPingPong-Bot succesfully connected to Discord as %s#%s!\n\n",
       self->username, self->discriminator);
 
   (void)client;
@@ -18,15 +18,19 @@ void on_message_create(
     const discord_user_t *self,
     const discord_message_t *message)
 {
-  // make sure bot ignores msgs from other bots
+  // make sure bot doesn't echoes other bots
   if (message->author->bot)
     return;
-  // make sure it ignores itself
+  // make sure it doesn't echoes itself
   if (0 == strcmp(self->username, message->author->username))
     return;
 
-  if (strstr(message->content, "pin me")) 
-    discord_pin_message(client, message->channel_id, message->id);
+  if (0 == strcmp(message->content, "ping"))
+    discord_send_message(client, message->channel_id, "pong");
+  else if (0 == strcmp(message->content, "pong"))
+    discord_send_message(client, message->channel_id, "ping");
+
+  (void)self;
 }
 
 int main(int argc, char *argv[])
@@ -51,6 +55,3 @@ int main(int argc, char *argv[])
 
   discord_global_cleanup();
 }
-
-
-

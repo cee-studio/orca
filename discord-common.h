@@ -63,17 +63,19 @@ struct api_resbody_s {
   size_t size; //the response str length
 };
 
-#define MAX_HEADER_SIZE 1000
+#define MAX_HEADER_SIZE 100
 
 struct api_header_s {
-  char *key[MAX_HEADER_SIZE];
-  char *field[MAX_HEADER_SIZE];
+  char field[MAX_HEADER_SIZE][MAX_HEADER_LEN];
+  char value[MAX_HEADER_SIZE][MAX_HEADER_LEN];
   int size;
 };
 
 struct api_bucket_s {
-  char *hash_key; //the hash key associated with this bucket
-  int remaining; //simultaneous connections this bucket can do
+  char *hash; //the hash associated with this bucket
+  int remaining; //connections this bucket can do before cooldown
+  long long reset_after_ms;
+  long long reset_ms;
 };
 
 struct discord_api_s {
@@ -82,8 +84,13 @@ struct discord_api_s {
   struct api_resbody_s body; //the api response string
   struct api_header_s pairs; //the key/field pairs response header
 
-  struct api_bucket_s *client_buckets;
-  size_t num_buckets;
+  struct { /* RATELIMITING STRUCTURE */
+    struct api_bucket_s **buckets; //active client buckets
+    size_t num_buckets; //amount of active client buckets
+    
+    //check GNU tree functions from search.h
+    void *routes_root; //the encountered routes tree's root
+  } ratelimit;
 
   CURL *ehandle; //the curl's easy handle used to perform requests
 
@@ -147,9 +154,10 @@ enum ws_opcodes {
 };
 
 enum ws_status {
-  WS_DISCONNECTED, //connected to ws
-  WS_RECONNECTING, //attempting reconnection to ws
-  WS_CONNECTED,    //disconnected from ws
+  WS_DISCONNECTED,  //disconnected from ws
+  WS_RESUME,        //attempt to resume ws session
+  WS_FRESH,         //attempt a fresh ws session (session timed out)
+  WS_CONNECTED,     //connected to ws
 };
 
 struct discord_ws_s {
@@ -238,6 +246,13 @@ void Discord_api_request(
   enum http_method http_method,
   char endpoint[],
   ...);
+
+/* discord-api-ratelimit.c */
+
+void Discord_ratelimit_buckets_cleanup(struct discord_api_s *api);
+long long Discord_ratelimit_delay(struct api_bucket_s *bucket, _Bool use_clock);
+struct api_bucket_s* Discord_ratelimit_tryget_bucket(struct discord_api_s *api, char endpoint[]);
+void Discord_ratelimit_build_bucket(struct discord_api_s *api, struct api_bucket_s *bucket, char endpoint[]);
 
 /* discord-websockets.c */
 

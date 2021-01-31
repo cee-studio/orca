@@ -76,10 +76,36 @@ char* http_code_print(enum http_code code);
 char* http_reason_print(enum http_code code);
 char* http_method_print(enum http_method method);
 
+/* set url to be used for the request */
+void set_url(CURL *ehandle, char base_api_url[], char endpoint[], va_list *args);
 /* set specific http method used for the request */
 void set_method(CURL *ehandle, enum http_method method, struct sized_buffer *body);
-/* set url to be used for the request */
-void set_url(CURL *ehandle, char *base_api_url, char endpoint[]);
+
+typedef enum {ACTION_SUCCESS, ACTION_RETRY, ACTION_ABORT} perform_action;
+typedef perform_action (http_response_cb)(
+    void *data,
+    enum http_code code, 
+    struct sized_buffer *body,
+    struct api_header_s *pairs);
+
+struct perform_cbs {
+  void *p_data; // data to be received by callbacks
+
+  void (*start)(void*); // trigger once at function start
+  void (*before_perform)(void*); // trigger before perform attempt
+
+  http_response_cb *on_1xx; // trigger at 1xx code
+  http_response_cb *on_2xx; // trigger every 2xx code
+  http_response_cb *on_3xx; // trigger every 3xx code
+  http_response_cb *on_4xx; // trigger every 4xx code
+  http_response_cb *on_5xx; // trigger every 5xx code
+};
+
+void perform_request(
+  struct sized_buffer *body,
+  struct api_header_s *pairs,
+  CURL *ehandle,
+  struct perform_cbs *cbs);
 
 CURL* custom_easy_init(struct _settings_s *settings,
                  struct curl_slist *req_header,

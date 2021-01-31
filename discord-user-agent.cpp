@@ -68,31 +68,115 @@ cleanup(dati *ua)
   }
 }
 
-/* perform the request */
-static http_code
-perform_request(
-  dati *ua,
-  struct resp_handle *resp_handle,
-  char endpoint[])
-{ 
-  CURLcode ecode;
-  //perform the connection
-  ecode = curl_easy_perform(ua->ehandle);
-  ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
+struct ratelimit {
+  dati *ua;
+  bucket::dati *bucket;
+  char *endpoint;
+  struct resp_handle *resp_handle;
+};
 
-  //get response's code
-  enum http_code code;
-  ecode = curl_easy_getinfo(ua->ehandle, CURLINFO_RESPONSE_CODE, &code);
-  ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
+//attempt to fetch a bucket handling connections from this endpoint
+static void
+start_cb(void *p_data)
+{
+  struct ratelimit *data = (struct ratelimit*)p_data;
+  data->bucket = bucket::try_get(data->ua, data->endpoint);
+}
 
-  //get request's url
-  const char *url = NULL;
-  ecode = curl_easy_getinfo(ua->ehandle, CURLINFO_EFFECTIVE_URL, &url);
-  ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
+static void
+before_perform_cb(void *p_data)
+{
+  struct ratelimit *data = (struct ratelimit*)p_data;
+  bucket::try_cooldown(data->bucket);
+}
 
-  D_PRINT("Request URL: %s", url);
+static perform_action
+on_success_cb(
+  void *p_data,
+  enum http_code code,
+  struct sized_buffer *body,
+  struct api_header_s *pairs)
+{
+  D_NOTOP_PRINT("(%d)%s - %s", 
+      code,
+      http_code_print(code),
+      http_reason_print(code));
 
-  return code;
+  struct ratelimit *data = (struct ratelimit*)p_data;
+
+  if (HTTP_OK == code) {
+    if (data->resp_handle && data->resp_handle->ok_cb) {
+      (*data->resp_handle->ok_cb)(
+          body->start,
+          body->size, 
+          data->resp_handle->ok_obj);
+    }
+  }
+
+  bucket::build(data->ua, data->bucket, data->endpoint);
+
+  return ACTION_SUCCESS;
+}
+
+static perform_action
+on_failure_cb(
+  void *p_data,
+  enum http_code code,
+  struct sized_buffer *body,
+  struct api_header_s *pairs)
+{
+  if (code >= 500) { // server related error, retry
+    D_NOTOP_PRINT("(%d)%s - %s", 
+        code,
+        http_code_print(code),
+        http_reason_print(code));
+
+    orka_sleep_ms(5000); // wait a bit before retrying
+
+    return ACTION_RETRY; // RETRY
+  }
+
+  switch (code) {
+  case HTTP_BAD_REQUEST:
+  case HTTP_UNAUTHORIZED:
+  case HTTP_FORBIDDEN:
+  case HTTP_NOT_FOUND:
+  case HTTP_METHOD_NOT_ALLOWED:
+  default:
+      ERR("(%d)%s - %s",  //print error and abort
+          code,
+          http_code_print(code),
+          http_reason_print(code));
+
+      return ACTION_ABORT;
+  case HTTP_TOO_MANY_REQUESTS:
+   {
+      D_NOTOP_PRINT("(%d)%s - %s", 
+          code,
+          http_code_print(code),
+          http_reason_print(code));
+
+      char message[256];
+      long long retry_after_ms = 0;
+
+      json_scanf(body->start, body->size,
+                  "[message]%s [retry_after]%lld",
+                  message, &retry_after_ms);
+
+      if (retry_after_ms) { // retry after attribute received
+        D_NOTOP_PRINT("RATELIMIT MESSAGE:\n\t%s (wait: %lld ms)", message, retry_after_ms);
+
+        orka_sleep_ms(retry_after_ms); // wait a bit before retrying
+
+        return ACTION_RETRY;
+      }
+      
+      // no retry after included, we should abort
+
+      ERR("RATELIMIT MESSAGE:\n\t%s", message);
+      return ACTION_ABORT;
+   }
+  }
 }
 
 /* template function for performing requests */
@@ -105,117 +189,38 @@ run(
   char endpoint[],
   ...)
 {
-  //create the url route
   va_list args;
   va_start (args, endpoint);
-  char url_route[MAX_URL_LEN];
-  int ret = vsnprintf(url_route, sizeof(url_route), endpoint, args);
-  ASSERT_S(ret < (int)sizeof(url_route), "oob write of url_route");
+
+  set_url(ua->ehandle, BASE_API_URL, endpoint, &args); //set the request URL
+
   va_end(args);
 
   set_method(ua->ehandle, http_method, body); //set the request method
-  set_url(ua->ehandle, BASE_API_URL, url_route); //set the request URL
 
-  /* CALLBACK 1 */
-  //attempt to fetch a bucket handling connections from this endpoint
-  bucket::dati *bucket = bucket::try_get(ua, endpoint);
-  /* * * * * * */
-  enum http_code http_code;
-  do {
-    /* CALLBACK 2 */
-    bucket::try_cooldown(bucket);
-    /* * * * * * */
-  
-    http_code = perform_request(ua, resp_handle, endpoint); //perform the request
-    switch (http_code) {
-    case CURL_NO_RESPONSE: return; /* EARLY EXIT */
+  struct ratelimit ratelimit = {
+    .ua = ua, 
+    .bucket = NULL, 
+    .endpoint = endpoint,
+    .resp_handle = resp_handle
+  };
 
-/* THE FOLLOWING WILL SUCCESFULLY RETURN */
-    case HTTP_OK:
-        if (resp_handle->ok_cb) {
-          (*resp_handle->ok_cb)(ua->body.start, ua->body.size, resp_handle->ok_obj);
-        }
-    /* fall through */
-    case HTTP_CREATED:
-    case HTTP_NO_CONTENT:
-    case HTTP_NOT_MODIFIED:
-        D_NOTOP_PRINT("(%d)%s - %s", 
-            http_code,
-            http_code_print(http_code),
-            http_reason_print(http_code));
+  struct perform_cbs cbs = {
+    .p_data = (void*)&ratelimit,
+    .start = &start_cb,
+    .before_perform = &before_perform_cb,
+    .on_1xx = NULL,
+    .on_2xx = &on_success_cb,
+    .on_3xx = &on_success_cb,
+    .on_4xx = &on_failure_cb,
+    .on_5xx = &on_failure_cb,
+  };
 
-        /* CALLBACK 3 */
-        //build and updates bucket's rate limiting information
-        bucket::build(ua, bucket, endpoint);
-        /* * * * * * */
-
-        //reset the size of response body and header pairs for a fresh start
-        ua->body.size = 0;
-        ua->pairs.size = 0;
-
-        return; //EARLY EXIT (SUCCESS)
-
-/* THE FOLLOWING WILL ATTEMPT RETRY WHEN TRIGGERED */
-    case HTTP_TOO_MANY_REQUESTS:
-     {
-        D_NOTOP_PRINT("(%d)%s - %s", 
-            http_code,
-            http_code_print(http_code),
-            http_reason_print(http_code));
-
-        char message[256];
-        long long retry_after = 0;
-
-        json_scanf(ua->body.start, ua->body.size,
-                    "[message]%s [retry_after]%lld",
-                    message, &retry_after);
-
-        if (retry_after) // retry after attribute received
-          D_NOTOP_PRINT("Ratelimit Message: %s (wait: %lld ms)", message, retry_after);
-        else // no retry after included, we should abort
-          ERR("Ratelimit Message: %s", message);
-
-        orka_sleep_ms(retry_after);
-
-        break;
-     }
-    case HTTP_GATEWAY_UNAVAILABLE:
-        D_NOTOP_PRINT("(%d)%s - %s", 
-            http_code,
-            http_code_print(http_code),
-            http_reason_print(http_code));
-
-        orka_sleep_ms(5000); //wait a bit
-
-        break;
-
-/* THE FOLLOWING WILL ABORT WHEN TRIGGERED */
-    case HTTP_BAD_REQUEST:
-    case HTTP_UNAUTHORIZED:
-    case HTTP_FORBIDDEN:
-    case HTTP_NOT_FOUND:
-    case HTTP_METHOD_NOT_ALLOWED:
-    default:
-        if (http_code >= 500) {// server related error, retry
-          D_NOTOP_PRINT("(%d)%s - %s", 
-              http_code,
-              http_code_print(http_code),
-              http_reason_print(http_code));
-          break;
-        }
-
-        ERR("(%d)%s - %s", 
-            http_code,
-            http_code_print(http_code),
-            http_reason_print(http_code));
-    }
-
-    //reset the size of response body and header pairs for a fresh start
-    
-    ua->body.size = 0;
-    ua->pairs.size = 0;
-
-  } while (1);
+  perform_request(
+    &ua->body,
+    &ua->pairs,
+    ua->ehandle,
+    &cbs);
 }
 
 } // namespace user_agent

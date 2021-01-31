@@ -81,8 +81,6 @@ ws_close_opcode_print(enum ws_close_opcodes gateway_opcode)
 static void
 ws_send_payload(websockets::dati *ws, char payload[])
 {
-  ws->ping_tstamp = ws->now_tstamp;
-
   json_dump("SEND PAYLOAD", &ws->p_client->settings, payload);
 
   bool ret = cws_send_text(ws->ehandle, payload);
@@ -336,12 +334,6 @@ ws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
   switch (ws->payload.opcode){
   case GATEWAY_HELLO:
       on_hello(ws);
-  /* fall through */    
-  case GATEWAY_HEARTBEAT_ACK:
-      // get request / response interval in milliseconds
-      ws->ping_ms = orka_timestamp_ms() - ws->ping_tstamp;
-      D_PRINT("PING: %d ms", ws->ping_ms);
-
       break;
   case GATEWAY_DISPATCH:
       on_dispatch(ws);
@@ -351,6 +343,11 @@ ws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
       break;
   case GATEWAY_RECONNECT:
       on_reconnect(ws);
+      break;
+  case GATEWAY_HEARTBEAT_ACK:
+      // get request / response interval in milliseconds
+      ws->ping_ms = orka_timestamp_ms() - ws->hbeat.tstamp;
+      D_PRINT("PING: %d ms", ws->ping_ms);
       break;
   default:
       ERR("Not yet implemented WebSockets opcode (code: %d)", ws->payload.opcode);

@@ -68,75 +68,56 @@ cleanup(dati *ua)
   }
 }
 
-struct ratelimit {
+struct _ratelimit {
   dati *ua;
   bucket::dati *bucket;
   char *endpoint;
-  struct resp_handle *resp_handle;
 };
 
-//attempt to fetch a bucket handling connections from this endpoint
 static void
-start_cb(void *p_data)
+bucket_cooldown_cb(void *p_data)
 {
-  struct ratelimit *data = (struct ratelimit*)p_data;
-  data->bucket = bucket::try_get(data->ua, data->endpoint);
-}
-
-static void
-before_perform_cb(void *p_data)
-{
-  struct ratelimit *data = (struct ratelimit*)p_data;
+  struct _ratelimit *data = (struct _ratelimit*)p_data;
   bucket::try_cooldown(data->bucket);
 }
 
-static perform_action
+static enum http_action
 on_success_cb(
   void *p_data,
-  enum http_code code,
+  int httpcode,
   struct sized_buffer *body,
   struct api_header_s *pairs)
 {
   D_NOTOP_PRINT("(%d)%s - %s", 
-      code,
-      http_code_print(code),
-      http_reason_print(code));
+      httpcode,
+      http_code_print(httpcode),
+      http_reason_print(httpcode));
 
-  struct ratelimit *data = (struct ratelimit*)p_data;
-
-  if (HTTP_OK == code) {
-    if (data->resp_handle && data->resp_handle->ok_cb) {
-      (*data->resp_handle->ok_cb)(
-          body->start,
-          body->size, 
-          data->resp_handle->ok_obj);
-    }
-  }
-
+  struct _ratelimit *data = (struct _ratelimit*)p_data;
   bucket::build(data->ua, data->bucket, data->endpoint);
 
-  return ACTION_SUCCESS;
+  return ACTION_DONE;
 }
 
-static perform_action
+static enum http_action
 on_failure_cb(
   void *p_data,
-  enum http_code code,
+  int httpcode,
   struct sized_buffer *body,
   struct api_header_s *pairs)
 {
-  if (code >= 500) { // server related error, retry
+  if (httpcode >= 500) { // server related error, retry
     D_NOTOP_PRINT("(%d)%s - %s", 
-        code,
-        http_code_print(code),
-        http_reason_print(code));
+        httpcode,
+        http_code_print(httpcode),
+        http_reason_print(httpcode));
 
-    orka_sleep_ms(5000); // wait a bit before retrying
+    orka_sleep_ms(5000); // wait arbitrarily 5 seconds before retry
 
     return ACTION_RETRY; // RETRY
   }
 
-  switch (code) {
+  switch (httpcode) {
   case HTTP_BAD_REQUEST:
   case HTTP_UNAUTHORIZED:
   case HTTP_FORBIDDEN:
@@ -144,17 +125,17 @@ on_failure_cb(
   case HTTP_METHOD_NOT_ALLOWED:
   default:
       ERR("(%d)%s - %s",  //print error and abort
-          code,
-          http_code_print(code),
-          http_reason_print(code));
+          httpcode,
+          http_code_print(httpcode),
+          http_reason_print(httpcode));
 
       return ACTION_ABORT;
   case HTTP_TOO_MANY_REQUESTS:
    {
       D_NOTOP_PRINT("(%d)%s - %s", 
-          code,
-          http_code_print(code),
-          http_reason_print(code));
+          httpcode,
+          http_code_print(httpcode),
+          http_reason_print(httpcode));
 
       char message[256];
       long long retry_after_ms = 0;
@@ -192,23 +173,21 @@ run(
   va_list args;
   va_start (args, endpoint);
 
-  set_url(ua->ehandle, BASE_API_URL, endpoint, &args); //set the request URL
+  set_url2(ua->ehandle, BASE_API_URL, endpoint, &args); //set the request URL
 
   va_end(args);
 
   set_method(ua->ehandle, http_method, body); //set the request method
 
-  struct ratelimit ratelimit = {
+  struct _ratelimit ratelimit = {
     .ua = ua, 
-    .bucket = NULL, 
-    .endpoint = endpoint,
-    .resp_handle = resp_handle
+    .bucket = bucket::try_get(ua, endpoint), 
+    .endpoint = endpoint
   };
 
   struct perform_cbs cbs = {
     .p_data = (void*)&ratelimit,
-    .start = &start_cb,
-    .before_perform = &before_perform_cb,
+    .before_perform = &bucket_cooldown_cb,
     .on_1xx = NULL,
     .on_2xx = &on_success_cb,
     .on_3xx = &on_success_cb,
@@ -216,7 +195,8 @@ run(
     .on_5xx = &on_failure_cb,
   };
 
-  perform_request(
+  perform_request2(
+    resp_handle,
     &ua->body,
     &ua->pairs,
     ua->ehandle,

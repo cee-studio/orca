@@ -124,7 +124,7 @@ on_failure_cb(
   case HTTP_NOT_FOUND:
   case HTTP_METHOD_NOT_ALLOWED:
   default:
-      ERR("(%d)%s - %s",  //print error and abort
+      NOTOP_PRINT("(%d)%s - %s",  //print error and abort
           httpcode,
           http_code_print(httpcode),
           http_reason_print(httpcode));
@@ -132,7 +132,7 @@ on_failure_cb(
       return ACTION_ABORT;
   case HTTP_TOO_MANY_REQUESTS:
    {
-      D_NOTOP_PRINT("(%d)%s - %s", 
+      NOTOP_PRINT("(%d)%s - %s", 
           httpcode,
           http_code_print(httpcode),
           http_reason_print(httpcode));
@@ -145,7 +145,7 @@ on_failure_cb(
                   message, &retry_after_ms);
 
       if (retry_after_ms) { // retry after attribute received
-        D_NOTOP_PRINT("RATELIMIT MESSAGE:\n\t%s (wait: %lld ms)", message, retry_after_ms);
+        NOTOP_PRINT("RATELIMIT MESSAGE:\n\t%s (wait: %lld ms)", message, retry_after_ms);
 
         orka_sleep_ms(retry_after_ms); // wait a bit before retrying
 
@@ -154,10 +154,24 @@ on_failure_cb(
       
       // no retry after included, we should abort
 
-      ERR("RATELIMIT MESSAGE:\n\t%s", message);
+      NOTOP_PRINT("RATELIMIT MESSAGE:\n\t%s", message);
       return ACTION_ABORT;
    }
   }
+}
+
+static void
+default_error_cb(char *str, size_t len, void *p_err)
+{
+  char message[256] = {0};
+  int code = 0;
+
+  json_scanf(str, len, "[message]%s [code]%d", message, &code);
+
+  NOTOP_PRINT("Error Description:\n\t\t%s (code %d)"
+      "- See Discord's JSON Error Codes", message, code);
+
+  (void)p_err;
 }
 
 /* template function for performing requests */
@@ -194,6 +208,10 @@ run(
     .on_4xx = &on_failure_cb,
     .on_5xx = &on_failure_cb,
   };
+
+  if (resp_handle && !resp_handle->err_cb) { //set default callback for err_cb
+    resp_handle->err_cb = &default_error_cb;
+  }
 
   perform_request2(
     resp_handle,

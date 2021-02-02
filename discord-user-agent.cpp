@@ -187,7 +187,7 @@ run(
   va_list args;
   va_start (args, endpoint);
 
-  set_url2(ua->ehandle, BASE_API_URL, endpoint, &args); //set the request URL
+  set_url(ua->ehandle, BASE_API_URL, endpoint, args); //set the request URL
 
   va_end(args);
 
@@ -213,7 +213,7 @@ run(
     resp_handle->err_cb = &default_error_cb;
   }
 
-  perform_request2(
+  perform_request(
     resp_handle,
     &ua->body,
     &ua->pairs,

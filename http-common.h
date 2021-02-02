@@ -74,8 +74,7 @@ char* http_reason_print(int httpcode);
 char* http_method_print(enum http_method method);
 
 /* set url to be used for the request */
-void set_url(CURL *ehandle, char base_api_url[], char url_route[]);
-void set_url2(CURL *ehandle, char base_api_url[], char endpoint[], va_list *args);
+void set_url(CURL *ehandle, char base_api_url[], char endpoint[], va_list args);
 /* set specific http method used for the request */
 void set_method(CURL *ehandle, enum http_method method, struct sized_buffer *request_body);
 
@@ -99,7 +98,7 @@ struct perform_cbs {
   http_response_cb *on_5xx; // triggers on 5xx code
 };
 
-void perform_request2(
+void perform_request(
   struct resp_handle *resp_handle,
   struct sized_buffer *request_body,
   struct api_header_s *pairs,

@@ -142,24 +142,12 @@ set_method(CURL *ehandle, enum http_method method, struct sized_buffer *request_
   }
 }
 
-// @todo this should be completely replaced by set_url2
 void
-set_url(CURL *ehandle, char base_api_url[], char url_route[])
-{
-  char base_url[MAX_URL_LEN];
-  int ret = snprintf(base_url, sizeof(base_url), "%s%s", base_api_url, url_route);
-  ASSERT_S(ret < (int)sizeof(base_url), "Out of bounds write attempt");
-
-  CURLcode ecode = curl_easy_setopt(ehandle, CURLOPT_URL, base_url);
-  ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
-}
-
-void
-set_url2(CURL *ehandle, char base_api_url[], char endpoint[], va_list *args)
+set_url(CURL *ehandle, char base_api_url[], char endpoint[], va_list args)
 {
   //create the url route
   char url_route[MAX_URL_LEN];
-  int ret = vsnprintf(url_route, sizeof(url_route), endpoint, *args);
+  int ret = vsnprintf(url_route, sizeof(url_route), endpoint, args);
   ASSERT_S(ret < (int)sizeof(url_route), "oob write of url_route");
 
   char base_url[MAX_URL_LEN];
@@ -220,15 +208,17 @@ default_abort_cb(
 }
 
 void
-perform_request2(
+perform_request(
   struct resp_handle *resp_handle,
   struct sized_buffer *request_body,
   struct api_header_s *pairs,
   CURL *ehandle,
   struct perform_cbs *cbs)
 {
-  if (!cbs->before_perform) cbs->before_perform = &default_cb;
+  ASSERT_S(NULL != cbs, "Missing pointer to callback struct");
 
+  /* SET DEFAULT CALLBACKS */
+  if (!cbs->before_perform) cbs->before_perform = &default_cb;
   if (!cbs->on_1xx) cbs->on_1xx = &default_success_cb;
   if (!cbs->on_2xx) cbs->on_2xx = &default_success_cb;
   if (!cbs->on_3xx) cbs->on_3xx = &default_success_cb;

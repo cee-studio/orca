@@ -81,7 +81,7 @@ bucket_cooldown_cb(void *p_data)
   bucket::try_cooldown(data->bucket);
 }
 
-static enum http_action
+static perform_action
 on_success_cb(
   void *p_data,
   int httpcode,
@@ -99,7 +99,7 @@ on_success_cb(
   return ACTION_DONE;
 }
 
-static enum http_action
+static perform_action
 on_failure_cb(
   void *p_data,
   int httpcode,

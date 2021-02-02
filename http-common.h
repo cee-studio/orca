@@ -9,7 +9,6 @@ extern "C" {
 #include "orka-debug.h"
 #include "ntl.h"
 
-
 /* UTILITY MACROS */
 #define STREQ(str1, str2) (0 == strcmp(str1, str2))
 #define STRNEQ(str1, str2, n) (0 == strncmp(str1, str2, n))
@@ -80,9 +79,9 @@ void set_url2(CURL *ehandle, char base_api_url[], char endpoint[], va_list *args
 /* set specific http method used for the request */
 void set_method(CURL *ehandle, enum http_method method, struct sized_buffer *request_body);
 
-enum http_action { ACTION_DONE, ACTION_RETRY, ACTION_ABORT };
+typedef enum { ACTION_DONE, ACTION_RETRY, ACTION_ABORT } perform_action;
 
-typedef enum http_action (http_response_cb)(
+typedef perform_action (http_response_cb)(
     void *data,
     int httpcode, 
     struct sized_buffer *request_body,

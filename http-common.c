@@ -177,7 +177,7 @@ default_cb(void *data)
   (void)data; 
 }
 
-static enum http_action
+static perform_action
 default_success_cb(
   void *p_data,
   int httpcode,
@@ -191,7 +191,7 @@ default_success_cb(
   (void)pairs;
 }
 
-static enum http_action
+static perform_action
 default_retry_cb(
   void *p_data,
   int httpcode,
@@ -205,7 +205,7 @@ default_retry_cb(
   (void)pairs;
 }
 
-static enum http_action 
+static perform_action 
 default_abort_cb(
   void *p_data,
   int httpcode,
@@ -235,7 +235,7 @@ perform_request2(
   if (!cbs->on_4xx) cbs->on_4xx = &default_abort_cb;
   if (!cbs->on_5xx) cbs->on_5xx = &default_retry_cb;
 
-  enum http_action action;
+  perform_action action;
   do {
     /* triggers on every start of loop iteration */
     (*cbs->before_perform)(cbs->p_data);

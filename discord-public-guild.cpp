@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include <libdiscord.h>
+#include <orka-utils.h>
 
 namespace discord {
 namespace guild {
@@ -95,15 +96,15 @@ json_load(char *str, size_t len, void *p_member)
   json_scanf(str, len,
      "[user]%F"
      "[nick]%s"
-     "[joined_at]%s"
-     "[premium_since]%s"
+     "[joined_at]%F"
+     "[premium_since]%F"
      "[deaf]%b"
      "[mute]%b"
      "[pending]%b",
       &user::json_load, member->user,
       member->nick,
-      member->joined_at,
-      member->premium_since,
+      &orka_iso8601_to_unix_ms, &member->joined_at,
+      &orka_iso8601_to_unix_ms, &member->premium_since,
       &member->deaf,
       &member->mute,
       &member->pending);
@@ -299,6 +300,92 @@ get_list(client *client, const char guild_id[])
     HTTP_GET, GUILD BANS, guild_id);
 
   return new_bans;
+}
+
+void
+create(client *client, const char guild_id[], const char user_id[], int delete_message_days, const char reason[])
+{
+  const int MAX_DELETE_MESSAGE_DAYS = 7;
+  if (IS_EMPTY_STRING(guild_id)) {
+    D_PUTS("Missing 'guild_id'");
+    return;
+  }
+  if (IS_EMPTY_STRING(user_id)) {
+    D_PUTS("Missing 'user_id'");
+    return;
+  }
+  if(reason && strlen(reason) > MAX_REASON_LEN) {
+    D_PRINT("Reason length exceeds %u characters threshold (%zu)", MAX_REASON_LEN, strlen(reason));
+    return;
+  }
+  if(delete_message_days < 0 || delete_message_days > MAX_DELETE_MESSAGE_DAYS) {
+    D_PRINT("delete_message_days should be in the interval [0, %d]\n", MAX_DELETE_MESSAGE_DAYS);
+    return;
+  }
+
+  char buf[MAX_PAYLOAD_LEN];
+  buf[0] = '\0';
+  char *str = buf;
+  str += sprintf(str, "{");
+
+  if(delete_message_days > 0) {
+    str += sprintf(str, "\"delete_message_days\":%d", delete_message_days);
+  }
+
+  if(!IS_EMPTY_STRING(reason)) {
+    if(delete_message_days > 0) {
+      str += sprintf(str, ",");
+    }
+    str += sprintf(str, "\"reason\":\"%s\"", reason);
+  }
+
+  str += sprintf(str, "}");
+
+  struct resp_handle resp_handle = { NULL, NULL };
+  struct sized_buffer body = { buf, (size_t) (str - buf) };
+
+  user_agent::run( 
+    &client->ua,
+    &resp_handle,
+    &body,
+    HTTP_PUT, GUILD BAN, guild_id, user_id);
+}
+
+void
+remove(client *client, const char guild_id[], const char user_id[], const char reason[])
+{
+  if (IS_EMPTY_STRING(guild_id)) {
+    D_PUTS("Missing 'guild_id'");
+    return;
+  }
+  if (IS_EMPTY_STRING(user_id)) {
+    D_PUTS("Missing 'user_id'");
+    return;
+  }
+  if(reason && strlen(reason) > MAX_REASON_LEN) {
+    D_PRINT("Reason length exceeds %u characters threshold (%zu)", MAX_REASON_LEN, strlen(reason));
+    return;
+  }
+
+  char buf[MAX_PAYLOAD_LEN];
+  buf[0] = '\0';
+  char *str = buf;
+  str += sprintf(str, "{");
+
+  if(!IS_EMPTY_STRING(reason)) {
+    str += sprintf(str, "\"reason\":\"%s\"", reason);
+  }
+
+  str += sprintf(str, "}");
+
+  struct resp_handle resp_handle = { NULL, NULL };
+  struct sized_buffer body = {buf, (size_t) (str - buf)};
+
+  user_agent::run( 
+    &client->ua,
+    &resp_handle,
+    &body,
+    HTTP_DELETE, GUILD BAN, guild_id, user_id);
 }
 
 } // namespace ban

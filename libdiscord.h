@@ -1,6 +1,7 @@
 #ifndef LIBDISCORD_H_
 #define LIBDISCORD_H_
 
+#include <stdint.h>
 #include "discord-common.h"
 
 /* This is the version number of the package from which this header
@@ -72,7 +73,7 @@ struct dati {
   char owner_id[SNOWFLAKE_INTERNAL_WORKER_ID];
   char application_id[SNOWFLAKE_INTERNAL_WORKER_ID];
   char parent_id[SNOWFLAKE_INTERNAL_WORKER_ID];
-  char last_pin_timestamp[SNOWFLAKE_TIMESTAMP];
+  int64_t last_pin_timestamp;
   message::dati **messages;
 };
 
@@ -93,8 +94,8 @@ struct dati {
   user::dati *author;
   //struct discord_guildmember_s *member;
   char content[MAX_MESSAGE_LEN];
-  char timestamp[SNOWFLAKE_TIMESTAMP];
-  char edited_timestamp[SNOWFLAKE_TIMESTAMP];
+  int64_t timestamp;
+  int64_t edited_timestamp;
   bool tts;
   bool mention_everyone;
   user::dati **mentions;
@@ -179,7 +180,7 @@ struct dati {
   char system_channel_id[SNOWFLAKE_INTERNAL_WORKER_ID];
   int system_channel_flags;
   char rules_channel_id[SNOWFLAKE_INTERNAL_WORKER_ID];
-  char joined_at[SNOWFLAKE_TIMESTAMP];
+  int64_t joined_at;
   bool large;
   bool unavailable;
   int member_count;
@@ -217,8 +218,8 @@ struct dati {
   user::dati *user;
   char nick[MAX_NAME_LEN];
   //roles
-  char joined_at[SNOWFLAKE_TIMESTAMP];
-  char premium_since[SNOWFLAKE_TIMESTAMP];
+  int64_t joined_at;
+  int64_t premium_since;
   bool deaf;
   bool mute;
   bool pending;
@@ -253,6 +254,8 @@ void json_list_load(char *str, size_t len, void *p_ban);
 
 void get(client *client, const char guild_id[], const char user_id[], dati *p_ban);
 dati **get_list(client *client, const char guild_id[]);
+void create(client *client, const char guild_id[], const char user_id[], int delete_message_days, const char reason[]);
+void remove(client *client, const char guild_id[], const char user_id[], const char reason[]);
 
 } // namespace ban
 

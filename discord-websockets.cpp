@@ -146,7 +146,9 @@ on_dispatch_message(websockets::dati *ws, int offset)
   channel::message::json_load(ws->payload.event_data,
       sizeof(ws->payload.event_data), (void*)message);
 
+
   /* @todo implement MESSAGE DELETE BULK */
+
   if (STREQ("CREATE", ws->payload.event_name + offset)) {
     if (ws->cbs.on_message.create)
       (*ws->cbs.on_message.create)(ws->p_client, ws->me, message);
@@ -203,6 +205,7 @@ on_dispatch(websockets::dati *ws)
 
     return;
   }
+
 
   if (STRNEQ("MESSAGE_", ws->payload.event_name, 8)) {
     on_dispatch_message(ws, 8);

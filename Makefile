@@ -58,6 +58,9 @@ bot-pin : all bot-pin.c
 bot-ping-pong : all bot-ping-pong.c
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) \
 		bot-ping-pong.c -o bot-ping-pong.exe $(LIBS_LDFLAGS)
+bot-log : all bot-log.c
+	$(CC) $(CFLAGS) $(LIBS_CFLAGS) \
+		bot-log.c -o bot-log.exe $(LIBS_LDFLAGS)
 
 $(OBJDIR)/http-common.o : http-common.c
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<

@@ -36,7 +36,7 @@ endif
 
 .PHONY : all mkdir install clean purge
 
-all : mkdir $(OBJS) $(LIBDISCORD_SLIB) bot-echo bot-pin bot-ping-pong bot-mimic test-api test-ws
+all : mkdir $(OBJS) $(LIBDISCORD_SLIB) bot-echo bot-pin bot-ping-pong bot-mimic bot-log test-api test-ws
 
 mkdir :
 	mkdir -p $(OBJDIR) $(LIBDIR)
@@ -81,6 +81,9 @@ bot-ping-pong : bot-ping-pong.cpp
 bot-mimic : bot-mimic.cpp
 	$(CXX) $(CFLAGS) $(LIBS_CFLAGS) \
 		bot-mimic.cpp $(OBJS) -o bot-mimic.exe $(LIBS_LDFLAGS)
+bot-log : bot-log.cpp
+	$(CXX) $(CFLAGS) $(LIBS_CFLAGS) \
+		bot-log.cpp $(OBJS) -o bot-log.exe $(LIBS_LDFLAGS)
 
 $(LIBDISCORD_SLIB) : $(OBJS)
 	$(AR) -cvq $@ $(OBJS)

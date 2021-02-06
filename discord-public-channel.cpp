@@ -56,7 +56,7 @@ json_load(char *str, size_t len, void *p_channel) {
 dati*
 init()
 {
-  dati *new_channel = (dati*)calloc(1, sizeof (dati));
+  dati *new_channel = (dati*)calloc(1, sizeof(dati));
   return new_channel;
 }
 
@@ -117,17 +117,17 @@ unpin_message(client *client, const uint64_t channel_id, const uint64_t message_
     return;
   }
 
-  struct resp_handle resp_handle = {NULL, NULL};
-  struct sized_buffer body = {"", 0};
+  struct sized_buffer req_body = {"", 0};
 
   user_agent::run( 
     &client->ua,
-    &resp_handle,
-    &body, //empty POSTFIELDS
+    NULL,
+    &req_body, //empty POSTFIELDS
     HTTP_DELETE, PINNED_MESSAGE, channel_id, message_id);
 }
 
 namespace message {
+
 void
 json_load(char *str, size_t len, void *p_message)
 {
@@ -196,7 +196,7 @@ json_list_load(char *str, size_t len, void *p_messages)
 static dati*
 message_init()
 {
-  dati *new_message = (dati*)calloc(1, sizeof *new_message);
+  dati *new_message = (dati*)calloc(1, sizeof(dati));
   if (NULL == new_message) return NULL;
 
   new_message->author = user::init();
@@ -266,7 +266,7 @@ run(client *client, const uint64_t channel_id, params *params, dati *p_message)
     return;
   }
   if (strlen(params->content) >= MAX_MESSAGE_LEN) {
-    D_PRINT("Content length exceeds 2000 characters threshold (%u)", strlen(params->content));
+    D_PRINT("Content length exceeds 2000 characters threshold (%zu)", strlen(params->content));
     return;
   }
 
@@ -281,12 +281,12 @@ run(client *client, const uint64_t channel_id, params *params, dati *p_message)
     .err_cb = NULL, 
     .err_obj = NULL};
 
-  struct sized_buffer body = {payload, strlen(payload)};
+  struct sized_buffer req_body = {payload, strlen(payload)};
 
   user_agent::run( 
     &client->ua,
     &resp_handle,
-    &body,
+    &req_body,
     HTTP_POST, CHANNEL MESSAGES, channel_id);
 }
 
@@ -309,8 +309,8 @@ del(client *client, const uint64_t channel_id, const uint64_t message_id)
 
   user_agent::run(
     &client->ua,
-    &resp_handle,
-    &body,
+    NULL,
+    NULL,
     HTTP_DELETE, CHANNEL MESSAGE, channel_id, message_id);
 }
 

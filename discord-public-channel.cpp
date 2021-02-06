@@ -50,9 +50,6 @@ json_load(char *str, size_t len, void *p_channel) {
                &channel->last_pin_timestamp,
                &message::json_list_load, &channel->messages);
 
-    PRINT("%s", str);
-    ERR("%d", channel->id);
-
     D_NOTOP_PUTS("Channel object loaded with API response");
 }
 

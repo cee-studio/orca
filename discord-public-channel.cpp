@@ -59,7 +59,7 @@ json_load(char *str, size_t len, void *p_channel) {
 dati*
 init()
 {
-  dati *new_channel = (dati*)calloc(1, sizeof *new_channel);
+  dati *new_channel = (dati*)calloc(1, sizeof (dati));
   return new_channel;
 }
 
@@ -99,12 +99,12 @@ pin_message(client *client, const uint64_t channel_id, const uint64_t message_id
   }
 
   struct resp_handle resp_handle = {NULL, NULL};
-  struct sized_buffer body = {"", 0};
+  struct sized_buffer req_body = {"", 0};
 
   user_agent::run( 
     &client->ua,
     &resp_handle,
-    &body, //empty POSTFIELDS
+    &req_body, //empty POSTFIELDS
     HTTP_PUT, PINNED_MESSAGE, channel_id, message_id);
 }
 

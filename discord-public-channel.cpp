@@ -100,7 +100,7 @@ pin_message(client *client, const uint64_t channel_id, const uint64_t message_id
 
   user_agent::run( 
     &client->ua,
-    &resp_handle,
+    NULL,
     &req_body, //empty POSTFIELDS
     HTTP_PUT, PINNED_MESSAGE, channel_id, message_id);
 }

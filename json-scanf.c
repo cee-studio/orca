@@ -24,18 +24,18 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <stdbool.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "json-scanf.h"
 #include "json-common.h"
-
 #include "ntl.h"
 
 #define JSMN_STATIC  // dont expose jsmn symbols
 #define JSMN_PARENT_LINKS // add parent links to jsmn_tok, which are needed
 #define JSMN_STRICT  // parse json in strict mode
 #include "jsmn.h"
+#include "ntl.h"
 
 #define N_PATH_MAX 8
 #define KEY_MAX 128
@@ -55,7 +55,7 @@ struct extractor_specifier {
   bool has_dynamic_size;
   bool allocate_memory;
   bool is_funptr;
-  extractor *funptr;
+  void *funptr;
 };
 
 static char*
@@ -94,7 +94,7 @@ static char * copy_over_string (size_t * new_size, char * str, size_t len)
   else {
     // ill formed string
     char * p = NULL;
-    asprintf(&p, "cannot unescape an ill-formed-string %.*s", (int)len, str);
+    asprintf(&p, "cannot unescape an ill-formed-string %.*s", len, str);
     *new_size = strlen(p) + 1;
     return p;
   }
@@ -164,7 +164,7 @@ match_path (char *buffer, jsmntok_t *t,
           } else {
             // we have to allow this potential oob write as
             // we don't know the buffer size of recipient.
-            sprintf((char *) es->recipient, "%.*s", (int)new_size, escaped);
+            sprintf((char *) es->recipient, "%.*s", new_size, escaped);
           }
         }
         if (escaped != buffer + t[i].start)
@@ -228,10 +228,8 @@ match_path (char *buffer, jsmntok_t *t,
     }
   }
   else if (STREQ(es->type_specifier, "funptr")) {
-    extractor *e = es->funptr;
-    int ret = (*e)(buffer + t[i].start, t[i].end - t[i].start, es->recipient);
-    if (0 == ret)
-      es->is_applied = false;
+    extractor *e = (extractor *)es->funptr;
+    (*e)(buffer + t[i].start, t[i].end - t[i].start, es->recipient);
   }
   else if (STREQ(es->type_specifier, "token")) {
     struct sized_buffer * tk = es->recipient;
@@ -298,7 +296,6 @@ match_path (char *buffer, jsmntok_t *t,
   }
   else if (STREQ(es->type_specifier, "exist")) {
     // this has to be applied after all applications are done
-    es->is_applied = false;
   }
   else {
       goto type_error;
@@ -637,7 +634,7 @@ json_scanf(char *buffer, size_t buf_size, char *format, ...)
   struct extractor_specifier *es = format_parse(format, &num_keys);
   if (NULL == es) return 0;
 
-  struct extractor_specifier * capture_existance = NULL;
+  struct extractor_specifier * capture_existence = NULL;
 
   va_list ap;
   va_start(ap, format);
@@ -646,14 +643,14 @@ json_scanf(char *buffer, size_t buf_size, char *format, ...)
       es[i].size = va_arg(ap, int); // use this as a size
     }
     else if (es[i].is_funptr) {
-      es[i].funptr = va_arg(ap, extractor*);
+      es[i].funptr = va_arg(ap, void*);
     }
     void *p_value = va_arg(ap, void*);
     ASSERT_S(NULL != p_value, "NULL pointer given as argument parameter");
     es[i].recipient = p_value;
 
     if (STREQ(es[i].type_specifier, "exist")) {
-      capture_existance = &es[i];
+      capture_existence = &es[i];
     }
   }
   va_end(ap);
@@ -705,12 +702,12 @@ json_scanf(char *buffer, size_t buf_size, char *format, ...)
     if (es[i].is_applied) extracted_values ++;
   }
 
-  if (capture_existance) {
+  if (capture_existence) {
     void ** has_values = NULL;
-    if (capture_existance->allocate_memory)
+    if (capture_existence->allocate_memory)
       has_values = ntl_calloc(extracted_values, sizeof(void *));
     else
-      has_values = (void **) capture_existance->recipient;
+      has_values = (void **) capture_existence->recipient;
 
     for (size_t i = 0, j = 0; i < num_keys; i++) {
       if (es[i].is_applied) {
@@ -718,7 +715,7 @@ json_scanf(char *buffer, size_t buf_size, char *format, ...)
         j++;
       }
     }
-    *(void **)capture_existance->recipient = (void *) has_values;
+    *(void **)capture_existence->recipient = (void *) has_values;
   }
 
 cleanup:

@@ -8,16 +8,82 @@
 namespace discord {
 namespace channel {
 
+void
+json_load(char *str, size_t len, void *p_channel) {
+    dati *channel = (dati*)p_channel;
+
+    json_scanf(str, len,
+               "[id]%F"
+               "[type]%d"
+               "[guild_id]%F"
+               "[position]%d"
+               "[name]%s"
+               "[topic]%s"
+               "[nfsw]%d"
+               "[last_message_id]%F"
+               "[bitrate]%d"
+               "[user_limit]%d"
+               "[rate_limit_per_user]%d"
+               "[recipients]%p"
+               "[icon]%s"
+               "[owner_id]%F"
+               "[application_id]%F"
+               "[parent_id]%F"
+               "[last_pin_timestamp]%F"
+               "[messages]%F",
+               &orka_strtoull, &channel->id,
+               &channel->type,
+               &channel->guild_id,
+               &channel->position,
+               channel->name,
+               channel->topic,
+               &channel->nsfw,
+               &channel->last_message_id,
+               &channel->bitrate,
+               &channel->user_limit,
+               &channel->rate_limit_per_user,
+               &user::json_list_load, &channel->recipients,
+               channel->icon,
+               &channel->owner_id,
+               &channel->application_id,
+               &channel->parent_id,
+               &channel->last_pin_timestamp,
+               &message::json_list_load, &channel->messages);
+
+    PRINT("%s", str);
+    ERR("%d", channel->id);
+
+    D_NOTOP_PUTS("Channel object loaded with API response");
+}
+
 dati*
 init()
 {
-  dati *new_channel = (dati*)calloc(1, sizeof(dati));
+  dati *new_channel = (dati*)calloc(1, sizeof *new_channel);
   return new_channel;
 }
 
 void
 cleanup(dati *channel) {
   free(channel);
+}
+
+void
+get(client *client, const uint64_t channel_id, dati *p_channel)
+{
+    if (!channel_id) {
+        D_PUTS("Missing 'channel_id");
+        return;
+    }
+
+    struct resp_handle resp_handle = {&json_load, (void*)p_channel};
+    struct sized_buffer body = {NULL, 0};
+
+    user_agent::run(
+            &client->ua,
+            &resp_handle,
+            &body,
+            HTTP_GET, CHANNEL, channel_id);
 }
 
 void
@@ -32,12 +98,13 @@ pin_message(client *client, const uint64_t channel_id, const uint64_t message_id
     return;
   }
 
-  struct sized_buffer req_body = {"", 0};
+  struct resp_handle resp_handle = {NULL, NULL};
+  struct sized_buffer body = {"", 0};
 
   user_agent::run( 
     &client->ua,
-    NULL,
-    &req_body, //empty POSTFIELDS
+    &resp_handle,
+    &body, //empty POSTFIELDS
     HTTP_PUT, PINNED_MESSAGE, channel_id, message_id);
 }
 
@@ -53,17 +120,17 @@ unpin_message(client *client, const uint64_t channel_id, const uint64_t message_
     return;
   }
 
-  struct sized_buffer req_body = {"", 0};
+  struct resp_handle resp_handle = {NULL, NULL};
+  struct sized_buffer body = {"", 0};
 
   user_agent::run( 
     &client->ua,
-    NULL,
-    &req_body, //empty POSTFIELDS
+    &resp_handle,
+    &body, //empty POSTFIELDS
     HTTP_DELETE, PINNED_MESSAGE, channel_id, message_id);
 }
 
 namespace message {
-
 void
 json_load(char *str, size_t len, void *p_message)
 {
@@ -111,10 +178,28 @@ json_load(char *str, size_t len, void *p_message)
   D_NOTOP_PUTS("Message object loaded with API response"); 
 }
 
+void
+json_list_load(char *str, size_t len, void *p_messages)
+{
+    struct sized_buffer **buf = NULL;
+    json_scanf(str, len, "[]%A", &buf);
+
+    size_t n = ntl_length((void**)buf);
+    dati **new_messages = (dati **)ntl_calloc(n, sizeof(dati*));
+    for (size_t i = 0; buf[i]; i++) {
+        new_messages[i] = init();
+        json_load(buf[i]->start, buf[i]->size, new_messages[i]);
+    }
+
+    free(buf);
+
+    *(dati ***)p_messages = new_messages;
+}
+
 static dati*
 message_init()
 {
-  dati *new_message = (dati*)calloc(1, sizeof(dati));
+  dati *new_message = (dati*)calloc(1, sizeof *new_message);
   if (NULL == new_message) return NULL;
 
   new_message->author = user::init();
@@ -184,7 +269,7 @@ run(client *client, const uint64_t channel_id, params *params, dati *p_message)
     return;
   }
   if (strlen(params->content) >= MAX_MESSAGE_LEN) {
-    D_PRINT("Content length exceeds 2000 characters threshold (%zu)", strlen(params->content));
+    D_PRINT("Content length exceeds 2000 characters threshold (%u)", strlen(params->content));
     return;
   }
 
@@ -199,12 +284,12 @@ run(client *client, const uint64_t channel_id, params *params, dati *p_message)
     .err_cb = NULL, 
     .err_obj = NULL};
 
-  struct sized_buffer req_body = {payload, strlen(payload)};
+  struct sized_buffer body = {payload, strlen(payload)};
 
   user_agent::run( 
     &client->ua,
     &resp_handle,
-    &req_body,
+    &body,
     HTTP_POST, CHANNEL MESSAGES, channel_id);
 }
 
@@ -222,10 +307,13 @@ del(client *client, const uint64_t channel_id, const uint64_t message_id)
     return;
   }
 
+  struct resp_handle resp_handle = {NULL, NULL, NULL, NULL};
+  struct sized_buffer body = {NULL, 0};
+
   user_agent::run(
     &client->ua,
-    NULL,
-    NULL,
+    &resp_handle,
+    &body,
     HTTP_DELETE, CHANNEL MESSAGE, channel_id, message_id);
 }
 

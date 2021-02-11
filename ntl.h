@@ -32,7 +32,7 @@
  * p[n] points to NULL
  *
  *
- *  for (int i = 0; p[i]; i++)
+ *  for (size_t i = 0; p[i]; i++)
  *    // do something here for each element
  *
  */

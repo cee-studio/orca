@@ -658,7 +658,7 @@ struct dati {
   //@todo missing voice_states;
   member::dati **members;
   channel::dati **channels; //@todo add to json_load
-  //@todo missing_presences;
+  //@todo missing presences;
   int max_presences;
   int max_members;
   char vanity_url_code[MAX_URL_LEN];
@@ -671,7 +671,7 @@ struct dati {
   int max_video_channel_users;
   int approximate_member_count;
   int approximate_presence_count;
-  //@todo missing welcome_screen;
+  welcome_screen::dati *welcome_screen;
 };
 
 void init_dati(dati *guild);

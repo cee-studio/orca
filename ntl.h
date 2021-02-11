@@ -134,12 +134,12 @@ struct ntl_str_delimiter {
  * ntl_to_buf(buf, n, ..) serialize p to buf and return the number of
  *       bytes written excluding \0
  */
-int ntl_to_buf(char *buf, size_t buf_size, void **p,
+size_t ntl_to_buf(char *buf, size_t buf_size, void **p,
                struct ntl_str_delimiter  * d,
                ntl_elem_serializer * x);
 
 
-int ntl_to_abuf(char **buf_ptr, void **p, struct ntl_str_delimiter  * d,
+size_t ntl_to_abuf(char **buf_ptr, void **p, struct ntl_str_delimiter  * d,
                 ntl_elem_serializer * x);
 
 

@@ -52,7 +52,7 @@ int main () {
   fprintf(stderr, "%s\n", bigbuf);
 
   int b = 0;
-  void *A[2] = {&b, 0};
+  void *A[4] = {&b, 0, 0};
   json_inject(bigbuf, sizeof(bigbuf), "[ b, b ] @", &i, &b, &A);
   fprintf(stderr, "used @ %s\n", bigbuf);
 
@@ -109,5 +109,27 @@ int main () {
 
   fprintf(stderr, "%s\n", p);
   free(p);
+
+  int delete_message_days = 100;
+  char * reason = "a bad reason";
+
+
+  void *A1[4] = {0};
+  if (delete_message_days > 0)
+    A1[0] = &delete_message_days;
+
+
+  if (strlen(reason))
+    A1[1] = reason;
+
+  int ret = json_inject(bigbuf, sizeof(bigbuf),
+                        "(delete_message_days):d"
+                        "(reason):s"
+                        "@",
+                        &delete_message_days,
+                        reason,
+                        A1);
+
+  fprintf(stderr, "%s", bigbuf);
   return 0;
 }

@@ -493,19 +493,19 @@ run(client *client, const uint64_t channel_id, const uint64_t message_id, params
 
   if(params->content)
     A[0] = params->content;
-  else A[0] = (void*) 0xFFFFFFFFFFFFFFFF;
+  else A[0] = AVAILABILITY_IGNORE;
 
   if(params->embed)
     A[1] = params->embed;
-  else A[1] = (void*) 0xFFFFFFFFFFFFFFFF;
+  else A[1] = AVAILABILITY_IGNORE;
 
   if(params->flags)
     A[2] = params->flags;
-  else A[2] = (void*) 0xFFFFFFFFFFFFFFFF;
+  else A[2] = AVAILABILITY_IGNORE;
 
   /*if(params->allowed_mentions)
     A[3] = params->allowed_mentions;
-  else A[3] = (void*) 0xFFFFFFFFFFFFFFFF;*/
+  else A[3] = AVAILABILITY_IGNORE;*/
 
   json_inject(payload, sizeof(payload),
     "(content):s"

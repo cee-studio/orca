@@ -2,6 +2,11 @@
 #define JSON_ACTOR_H
 #include <stdarg.h>
 
+/* When a value is NULL, its corresponding index in the
+availability array must be set to any other value, like
+this one */
+#define AVAILABILITY_IGNORE ((void*) 0xFFFFFFFFFFFFFFFF)
+
 /*
  *
  * json actor (injector or extractor) specification grammar

@@ -268,6 +268,20 @@ default_abort_cb(
   (void)pairs;
 }
 
+
+static void
+save_response(void (*f) (char * pos, size_t, void *p),
+              char * pos, size_t s, void * p)
+{
+  char tmpfile[40] = "orka-resp-XXXXXX";
+  mktemp(tmpfile);
+  FILE * fp = fopen(tmpfile, "w");
+  fwrite(pos, 1, s,  fp);
+  fclose(fp);
+  f(pos, s, p);
+  remove(tmpfile);
+}
+
 void
 perform_request(
   struct resp_handle *resp_handle,
@@ -341,10 +355,16 @@ perform_request(
       action = (*cbs.on_2xx)(cbs.p_data, httpcode, resp_body, pairs);
 
       if (resp_handle && resp_handle->ok_cb) {
+        save_response(resp_handle->ok_cb,
+                      resp_body->start,
+                      resp_body->size,
+                      resp_handle->ok_obj);
+        /*
         (*resp_handle->ok_cb)(
             resp_body->start,
             resp_body->size, 
             resp_handle->ok_obj);
+            */
       }
     }
     else if (httpcode >= 100) { // INFO RESPONSE

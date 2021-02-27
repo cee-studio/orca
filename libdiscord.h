@@ -1,7 +1,6 @@
 #ifndef LIBDISCORD_H_
 #define LIBDISCORD_H_
 
-#include <inttypes.h>
 #include "discord-common.h"
 
 

@@ -141,10 +141,7 @@ get_guilds(client *client)
 
 void leave_guild(client *client, const u64_snowflake_t guild_id)
 {
-  char buf[3];
-  strcpy(buf, "{}");
-
-  struct sized_buffer body = { buf, strlen(buf) };
+  struct sized_buffer body = { "{}", 2 };
 
   user_agent::run(
     &client->ua,

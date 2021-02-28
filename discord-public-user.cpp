@@ -139,6 +139,21 @@ get_guilds(client *client)
   return new_guilds;
 }
 
+void leave_guild(client *client, const u64_snowflake_t guild_id)
+{
+  char buf[3];
+  strcpy(buf, "{}");
+
+  struct sized_buffer body = { buf, strlen(buf) };
+
+  user_agent::run(
+    &client->ua,
+    NULL,
+    &body,
+    HTTP_DELETE,
+    "/users/@me/guilds/%llu", guild_id);
+}
+
 } // namespace me
 
 } // namespace user

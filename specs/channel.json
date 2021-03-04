@@ -38,7 +38,7 @@
         {"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id"},
         {"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"application_id"},
         {"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"parent_id"},
-        {"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"last_pin_timestamp"},
+        {"type":{"base":"char", "dec":"*", "converter":"iso8601"}, "name":"last_pin_timestamp"},
         {"type":{"base":"message::dati", "dec":"ntl"}, "name":"messages"}
       ]
     }

@@ -100,6 +100,8 @@ struct user_agent_s {
   void *data; // user arbitrary data for setopt_cb
   void (*setopt_cb)(CURL *ehandle, void *data); // set custom easy_setopts
 
+  pthread_mutex_t lock;
+
   curl_mime* (*mime_cb)(CURL *ehandle, void *data); // @todo this is temporary
   curl_mime *mime; // @todo this is temporary
   void *data2; // @todo this is temporary

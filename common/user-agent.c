@@ -228,22 +228,19 @@ set_url(struct user_agent_s *ua, struct ua_conn_s *conn, char endpoint[], va_lis
 }
 
 static void
-noop_cb(void *data) { return; (void)data; }
+noop_cb(void *data){return;}
 
 static perform_action
-noop_success_cb(void *p_data, int httpcode, struct ua_conn_s *conn) { 
-  return ACTION_SUCCESS; (void)p_data; (void)httpcode; (void)conn;
-}
+noop_success_cb(void *p_data, int httpcode, struct ua_conn_s *conn)
+  {return ACTION_SUCCESS;}
 
 static perform_action
-noop_retry_cb(void *p_data, int httpcode, struct ua_conn_s *conn) {
-  return ACTION_RETRY; (void)p_data; (void)httpcode; (void)conn;
-}
+noop_retry_cb(void *p_data, int httpcode, struct ua_conn_s *conn) 
+  {return ACTION_RETRY;}
 
 static perform_action 
-noop_abort_cb(void *p_data, int httpcode, struct ua_conn_s *conn) { 
-  return ACTION_ABORT; (void)p_data; (void)httpcode; (void)conn;
-}
+noop_abort_cb(void *p_data, int httpcode, struct ua_conn_s *conn) 
+  {return ACTION_ABORT;}
 
 static int
 send_request(struct ua_conn_s *conn)
@@ -530,6 +527,10 @@ conns_cleanup(struct ua_conn_s *conns, size_t num_conn)
 static struct ua_conn_s*
 get_conn(struct user_agent_s *ua)
 {
+  pthread_mutex_lock(&ua->lock);
+
+  struct ua_conn_s *ret_conn = NULL;
+
   if (!ua->num_available) { // no available conn, create new
     struct ua_conn_s *new_conn = realloc(ua->conns, (1 + ua->num_conn) * sizeof(struct ua_conn_s));
 
@@ -538,19 +539,22 @@ get_conn(struct user_agent_s *ua)
 
     ++ua->num_conn;
 
-    return &ua->conns[ua->num_conn-1];
+    ret_conn = &ua->conns[ua->num_conn-1];
   }
   else {
     for (size_t i=0; i < ua->num_conn; ++i) {
       if (ua->conns[i].is_available) {
         ua->conns[i].is_available = 0;
         --ua->num_available;
-        return &ua->conns[i];
+        ret_conn = &ua->conns[i];
+        break; /* EARLY BREAK */
       }
     }
-    ERR("Couldn't get a connection (internal error)");
-    return NULL; // avoid -Wreturn-type
   }
+
+  pthread_mutex_unlock(&ua->lock);
+
+  return ret_conn;
 }
 
 void
@@ -567,6 +571,10 @@ ua_init(struct user_agent_s *ua, const char base_url[])
 
   // default configs
   orka_config_init(&ua->config, NULL, NULL);
+
+  if (pthread_mutex_init(&ua->lock, NULL)) {
+    ERR("Couldn't initialize mutex");
+  }
 }
 
 void
@@ -587,6 +595,7 @@ ua_cleanup(struct user_agent_s *ua)
   curl_slist_free_all(ua->reqheader);
   orka_config_cleanup(&ua->config);
   conns_cleanup(ua->conns, ua->num_conn);
+  pthread_mutex_destroy(&ua->lock);
 }
 
 /* template function for performing requests */
@@ -604,7 +613,6 @@ ua_vrun(
     req_body = &blank_req_body;
   }
   struct ua_conn_s *conn = get_conn(ua);
-
   set_url(ua, conn, endpoint, args); //set the request url
 
   (*ua->config.json_cb)(

@@ -28,9 +28,9 @@ struct ws_callbacks {
 
   int (*on_start)(void *data); // execs once, before attempting connection return 1 for proceed, 0 for abort
   void (*on_iter)(void *data); // execs at end of every loop iteration
-  /* on_dispatch should return a valid event code by parsing the text,
+  /* on_text_event should return a valid event code by parsing the text,
    *  if code is invalid then on_text will be executed instead */
-  int (*on_dispatch)(void *data, const char *text, size_t len);
+  int (*on_text_event)(void *data, const char *text, size_t len);
 
   /* common websockets callbacks */
   void (*on_connect)(void *data, const char *protocols);

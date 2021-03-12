@@ -27,13 +27,13 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
 {
   struct websockets_s *ws = p_ws;
 
-  int event_code = (*ws->cbs.on_dispatch)(ws->cbs.data, text, len);
+  int event_code = (*ws->cbs.on_text_event)(ws->cbs.data, text, len);
   for (size_t i=0; i < ws->cbs.num_events; ++i) {
     if (event_code == ws->cbs.on_event[i].code) 
     {
       (*ws->config.json_cb)(
         true,
-        event_code, "ON_DISPATCH",
+        event_code, "ON_TEXT_EVENT",
         &ws->config, 
         ws->base_url, 
         (char*)text);
@@ -112,7 +112,7 @@ custom_cws_new(struct websockets_s *ws)
 
 static int noop_on_start(void *a){return 1;}
 static void noop_on_iter(void *a){return;}
-static int noop_on_dispatch(void *a, const char *b, size_t c)
+static int noop_on_text_event(void *a, const char *b, size_t c)
   {return INT_MIN;} // return unlikely event value as default
 
 static void noop_on_connect(void *a, const char *b){return;}
@@ -143,7 +143,7 @@ ws_init(
   memcpy(&ws->cbs, cbs, sizeof(struct ws_callbacks));
   if (!ws->cbs.on_iter) ws->cbs.on_iter = &noop_on_iter;
   if (!ws->cbs.on_start) ws->cbs.on_start = &noop_on_start;
-  if (!ws->cbs.on_dispatch) ws->cbs.on_dispatch = &noop_on_dispatch;
+  if (!ws->cbs.on_text_event) ws->cbs.on_text_event = &noop_on_text_event;
   if (!ws->cbs.on_connect) ws->cbs.on_connect = &noop_on_connect;
   if (!ws->cbs.on_text) ws->cbs.on_text = &noop_on_text;
   if (!ws->cbs.on_binary) ws->cbs.on_binary = &noop_on_binary;

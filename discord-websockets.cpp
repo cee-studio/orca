@@ -883,7 +883,7 @@ on_iter_cb(void *p_ws)
 }
 
 static int
-on_dispatch_cb(void *p_ws, const char *text, size_t len)
+on_text_event_cb(void *p_ws, const char *text, size_t len)
 {
   dati *ws = (dati*)p_ws;
 
@@ -922,7 +922,7 @@ init(dati *ws, const char token[], const char config_file[])
     .data = (void*)ws,
     .on_start = &on_start_cb,
     .on_iter = &on_iter_cb,
-    .on_dispatch = &on_dispatch_cb,
+    .on_text_event = &on_text_event_cb,
     .on_connect = &on_connect_cb,
     .on_text = &on_text_cb,
     .on_close = &on_close_cb

@@ -18,6 +18,8 @@ enum ws_status {
 struct event_cbs {
   int code; // code that should trigger the callback
   void (*cb)(void *data);
+  pthread_t tid[10]; //@todo default size is just for prototyping
+  size_t curr_thread;
 };
 
 struct ws_callbacks {
@@ -26,8 +28,8 @@ struct ws_callbacks {
   struct event_cbs *on_event;
   size_t num_events;
 
-  int (*on_start)(void *data); // execs once, before attempting connection return 1 for proceed, 0 for abort
-  void (*on_iter)(void *data); // execs at end of every loop iteration
+  int (*on_startup)(void *data); // exec before loop starts (return 1 for proceed, 0 for abort)
+  void (*on_iter_end)(void *data); // execs at end of every loop iteration
   /* on_text_event should return a valid event code by parsing the text,
    *  if code is invalid then on_text will be executed instead */
   int (*on_text_event)(void *data, const char *text, size_t len);
@@ -58,6 +60,8 @@ struct websockets_s {
   char *base_url;
 
   struct ws_callbacks cbs;
+
+  pthread_mutex_t lock;
 };
 
 void ws_init(struct websockets_s *ws, const char base_url[], struct ws_callbacks *cbs);

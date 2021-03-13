@@ -227,19 +227,16 @@ set_url(struct user_agent_s *ua, struct ua_conn_s *conn, char endpoint[], va_lis
   DS_PRINT("Request URL: %s", conn->req_url);
 }
 
-static void
-noop_cb(void *data){return;}
-
-static perform_action
-noop_success_cb(void *p_data, int httpcode, struct ua_conn_s *conn)
+static void noop_iter_cb(void *data){return;}
+static ua_action_t noop_success_cb(void *a, int b, struct ua_conn_s *c)
   {return ACTION_SUCCESS;}
 
-static perform_action
-noop_retry_cb(void *p_data, int httpcode, struct ua_conn_s *conn) 
+static ua_action_t
+noop_retry_cb(void *a, int b, struct ua_conn_s *c) 
   {return ACTION_RETRY;}
 
-static perform_action 
-noop_abort_cb(void *p_data, int httpcode, struct ua_conn_s *conn) 
+static ua_action_t 
+noop_abort_cb(void *a, int b, struct ua_conn_s *c) 
   {return ACTION_ABORT;}
 
 static int
@@ -267,27 +264,32 @@ static void
 perform_request(
   struct ua_conn_s *conn, 
   struct resp_handle *resp_handle,
-  struct perform_cbs *p_cbs,
+  struct ua_callbacks *p_cbs,
   struct orka_config *config)
 {
-  struct perform_cbs cbs;
+  struct ua_callbacks cbs;
   if (p_cbs)
-    memcpy(&cbs, p_cbs, sizeof(struct perform_cbs));
+    memcpy(&cbs, p_cbs, sizeof(struct ua_callbacks));
   else
-    memset(&cbs, 0, sizeof(struct perform_cbs));
+    memset(&cbs, 0, sizeof(struct ua_callbacks));
 
   /* SET DEFAULT CALLBACKS */
-  if (!cbs.before_perform) cbs.before_perform = &noop_cb;
+  if (!cbs.on_iter_start) cbs.on_iter_start = &noop_cb;
   if (!cbs.on_1xx) cbs.on_1xx = &noop_success_cb;
   if (!cbs.on_2xx) cbs.on_2xx = &noop_success_cb;
   if (!cbs.on_3xx) cbs.on_3xx = &noop_success_cb;
   if (!cbs.on_4xx) cbs.on_4xx = &noop_abort_cb;
   if (!cbs.on_5xx) cbs.on_5xx = &noop_retry_cb;
 
-  perform_action action;
+  if (cbs.on_startup) {
+    if ( !(*cbs.on_startup)(cbs.data) ) 
+      return; /* EARLY RETURN */
+  }
+
+  ua_action_t action;
   do {
     /* triggers on every start of loop iteration */
-    (*cbs.before_perform)(cbs.p_data);
+    (*cbs.on_iter_start)(cbs.data);
   
     int httpcode = send_request(conn);
     (*config->json_cb)(
@@ -299,7 +301,7 @@ perform_request(
 
     /* triggers response related callbacks */
     if (httpcode >= 500) { // SERVER ERROR
-      action = (*cbs.on_5xx)(cbs.p_data, httpcode, conn);
+      action = (*cbs.on_5xx)(cbs.data, httpcode, conn);
 
       if (resp_handle) {
         if (resp_handle->err_cb) {
@@ -318,7 +320,7 @@ perform_request(
       }
     }
     else if (httpcode >= 400) { // CLIENT ERROR
-      action = (*cbs.on_4xx)(cbs.p_data, httpcode, conn);
+      action = (*cbs.on_4xx)(cbs.data, httpcode, conn);
 
       if (resp_handle) {
         if(resp_handle->err_cb) {
@@ -337,10 +339,10 @@ perform_request(
       }
     }
     else if (httpcode >= 300) { // REDIRECTING
-      action = (*cbs.on_3xx)(cbs.p_data, httpcode, conn);
+      action = (*cbs.on_3xx)(cbs.data, httpcode, conn);
     }
     else if (httpcode >= 200) { // SUCCESS RESPONSES
-      action = (*cbs.on_2xx)(cbs.p_data, httpcode, conn);
+      action = (*cbs.on_2xx)(cbs.data, httpcode, conn);
 
       if (resp_handle) {
         if (resp_handle->ok_cb) {
@@ -359,7 +361,7 @@ perform_request(
       }
     }
     else if (httpcode >= 100) { // INFO RESPONSE
-      action = (*cbs.on_1xx)(cbs.p_data, httpcode, conn);
+      action = (*cbs.on_1xx)(cbs.data, httpcode, conn);
     }
 
     // soft reset conn fields for next possible iteration
@@ -532,12 +534,10 @@ get_conn(struct user_agent_s *ua)
   struct ua_conn_s *ret_conn = NULL;
 
   if (!ua->num_available) { // no available conn, create new
-    struct ua_conn_s *new_conn = realloc(ua->conns, (1 + ua->num_conn) * sizeof(struct ua_conn_s));
-
-    conn_init(ua, &new_conn[ua->num_conn]);
-    ua->conns = new_conn;
+    conn_init(ua, &ua->conns[ua->num_conn]);
 
     ++ua->num_conn;
+    ASSERT_S(ua->num_conn < MAX_CONNECTIONS, "Out of bounds write");
 
     ret_conn = &ua->conns[ua->num_conn-1];
   }
@@ -604,7 +604,7 @@ ua_vrun(
   struct user_agent_s *ua,
   struct resp_handle *resp_handle,
   struct sized_buffer *req_body,
-  struct perform_cbs *cbs,
+  struct ua_callbacks *cbs,
   enum http_method http_method,
   char endpoint[], va_list args)
 {
@@ -625,7 +625,10 @@ ua_vrun(
   set_method(ua, conn, http_method, req_body); //set the request method
 
   perform_request(conn, resp_handle, cbs, &ua->config);
+
+  pthread_mutex_lock(&ua->lock);
   ++ua->num_available;
+  pthread_mutex_unlock(&ua->lock);
 
   if (ua->mime) { // @todo this is temporary
     curl_mime_free(ua->mime); 
@@ -639,7 +642,7 @@ ua_run(
   struct user_agent_s *ua,
   struct resp_handle *resp_handle,
   struct sized_buffer *req_body,
-  struct perform_cbs *cbs,
+  struct ua_callbacks *cbs,
   enum http_method http_method,
   char endpoint[], ...)
 {

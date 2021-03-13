@@ -86,11 +86,13 @@ struct resp_handle {
   cxt_load_obj_cb *cxt_err_cb;
 };
 
+#define MAX_CONNECTIONS 50 //@todo temporary solution
+
 struct user_agent_s {
   struct orka_config config;
   struct curl_slist *reqheader; //the request header sent to the api
 
-  struct ua_conn_s *conns;
+  struct ua_conn_s conns[MAX_CONNECTIONS];
   size_t num_conn;
 
   int num_available; // num of available conns
@@ -112,9 +114,9 @@ typedef enum {
   ACTION_FAILURE, // continue after failed request
   ACTION_RETRY,   // retry connection
   ACTION_ABORT    // abort after failed request
-} perform_action;
+} ua_action_t;
 
-typedef perform_action (http_response_cb)(
+typedef ua_action_t (http_response_cb)(
     void *data,
     int httpcode, 
     struct ua_conn_s *conn);
@@ -122,13 +124,14 @@ typedef perform_action (http_response_cb)(
 struct perform_cbs {
   void *p_data; // data to be received by callbacks
 
-  void (*before_perform)(void*); // trigger before perform attempt
+  int (*on_startup)(void *data); // exec before loop starts (return 1 for proceed, 0 for abort)
+  void (*on_iter_start)(void *data); // execs at end of every loop iteration
 
-  http_response_cb *on_1xx; // triggers on 1xx code
-  http_response_cb *on_2xx; // triggers on 2xx code
-  http_response_cb *on_3xx; // triggers on 3xx code
-  http_response_cb *on_4xx; // triggers on 4xx code
-  http_response_cb *on_5xx; // triggers on 5xx code
+  http_response_cb *on_1xx; // execs on 1xx code
+  http_response_cb *on_2xx; // execs on 2xx code
+  http_response_cb *on_3xx; // execs on 3xx code
+  http_response_cb *on_4xx; // execs on 4xx code
+  http_response_cb *on_5xx; // execs on 5xx code
 };
 
 char* http_code_print(int httpcode);

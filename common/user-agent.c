@@ -274,7 +274,7 @@ perform_request(
     memset(&cbs, 0, sizeof(struct ua_callbacks));
 
   /* SET DEFAULT CALLBACKS */
-  if (!cbs.on_iter_start) cbs.on_iter_start = &noop_cb;
+  if (!cbs.on_iter_start) cbs.on_iter_start = &noop_iter_cb;
   if (!cbs.on_1xx) cbs.on_1xx = &noop_success_cb;
   if (!cbs.on_2xx) cbs.on_2xx = &noop_success_cb;
   if (!cbs.on_3xx) cbs.on_3xx = &noop_success_cb;

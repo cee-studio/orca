@@ -121,8 +121,8 @@ typedef ua_action_t (http_response_cb)(
     int httpcode, 
     struct ua_conn_s *conn);
 
-struct perform_cbs {
-  void *p_data; // data to be received by callbacks
+struct ua_callbacks {
+  void *data; // data to be received by callbacks
 
   int (*on_startup)(void *data); // exec before loop starts (return 1 for proceed, 0 for abort)
   void (*on_iter_start)(void *data); // execs at end of every loop iteration
@@ -157,14 +157,14 @@ void ua_vrun(
   struct user_agent_s *ua,
   struct resp_handle *resp_handle,
   struct sized_buffer *req_body,
-  struct perform_cbs *cbs,
+  struct ua_callbacks *cbs,
   enum http_method http_method,
   char endpoint[], va_list args);
 void ua_run(
   struct user_agent_s *ua,
   struct resp_handle *resp_handle,
   struct sized_buffer *req_body,
-  struct perform_cbs *cbs,
+  struct ua_callbacks *cbs,
   enum http_method http_method,
   char endpoint[], ...);
 

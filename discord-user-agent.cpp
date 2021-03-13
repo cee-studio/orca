@@ -45,11 +45,19 @@ struct _ratelimit {
   char *endpoint;
 };
 
-static void
-bucket_cooldown_cb(void *p_data)
+static int
+bucket_tryget_cb(void *p_ratelimit)
 {
-  struct _ratelimit *data = (struct _ratelimit*)p_data;
-  bucket::try_cooldown(data->bucket);
+  struct _ratelimit *rl = (struct _ratelimit*)p_ratelimit;
+  rl->bucket = bucket::try_get(rl->ua, rl->endpoint);
+  return 1;
+}
+
+static void
+bucket_cooldown_cb(void *p_ratelimit)
+{
+  struct _ratelimit *rl = (struct _ratelimit*)p_ratelimit;
+  bucket::try_cooldown(rl->bucket);
 }
 
 static ua_action_t
@@ -145,14 +153,6 @@ default_error_cb(char *str, size_t len, void *p_err)
 
   NOTOP_PRINT("Error Description:\n\t\t%s (code %d)"
       "- See Discord's JSON Error Codes", err->message, err->code);
-}
-
-static int
-bucket_tryget_cb(void *p_ratelimit)
-{
-  struct _ratelimit_s *rl = (struct _ratelimit_s)p_ratelimit;
-  rl->bucket = bucket::try_get(rl->ua, rl->endpoint), 
-  return 1;
 }
 
 /* template function for performing requests */

@@ -52,7 +52,7 @@ bucket_cooldown_cb(void *p_data)
   bucket::try_cooldown(data->bucket);
 }
 
-static perform_action
+static ua_action_t
 on_success_cb(
   void *p_data,
   int httpcode,
@@ -69,7 +69,7 @@ on_success_cb(
   return ACTION_SUCCESS;
 }
 
-static perform_action
+static ua_action_t
 on_failure_cb(
   void *p_data,
   int httpcode,
@@ -147,6 +147,14 @@ default_error_cb(char *str, size_t len, void *p_err)
       "- See Discord's JSON Error Codes", err->message, err->code);
 }
 
+static int
+bucket_tryget_cb(void *p_ratelimit)
+{
+  struct _ratelimit_s *rl = (struct _ratelimit_s)p_ratelimit;
+  rl->bucket = bucket::try_get(rl->ua, rl->endpoint), 
+  return 1;
+}
+
 /* template function for performing requests */
 void
 run(
@@ -162,13 +170,13 @@ run(
 
   struct _ratelimit ratelimit = {
     .ua = ua, 
-    .bucket = bucket::try_get(ua, endpoint), 
     .endpoint = endpoint
   };
 
-  struct perform_cbs cbs = {
-    .p_data = (void*)&ratelimit,
-    .before_perform = &bucket_cooldown_cb,
+  struct ua_callbacks cbs = {
+    .data = (void*)&ratelimit,
+    .on_startup = &bucket_tryget_cb,
+    .on_iter_start = &bucket_cooldown_cb,
     .on_1xx = NULL,
     .on_2xx = &on_success_cb,
     .on_3xx = &on_success_cb,

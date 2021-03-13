@@ -24,8 +24,9 @@ cws_on_close_cb(void *p_ws, CURL *ehandle, enum cws_close_reason cwscode, const 
 }
 
 struct _event_cxt {
-  struct websockets_s *ws;
-  struct event_cbs *event;
+  struct websockets_s *ws; // the websockets client
+  struct event_cbs *event; // callback associated with event
+  struct worker_thread *wthread; // thread associated with event
 };
 
 static void*
@@ -33,15 +34,17 @@ event_run(void *p_cxt)
 {
   struct _event_cxt *cxt = p_cxt;
 
-  pthread_mutex_lock(&cxt->ws->lock);
-  ++cxt->event->curr_thread;
-  pthread_mutex_unlock(&cxt->ws->lock);
-
   (*cxt->event->cb)(cxt->ws->cbs.data);
 
   pthread_mutex_lock(&cxt->ws->lock);
-  --cxt->event->curr_thread;
+
+  ++cxt->ws->num_notbusy;
+  cxt->wthread->is_busy = 0;
+  pthread_cond_signal(&cxt->ws->cond);
+
   pthread_mutex_unlock(&cxt->ws->lock);
+
+  free(cxt);
 
   return NULL;
 }
@@ -62,18 +65,34 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
         ws->base_url, 
         (char*)text);
 
-      struct _event_cxt cxt = {
-        .ws = ws,
-        .event = &ws->cbs.on_event[i]
-      };
-
       pthread_mutex_lock(&ws->lock);
-      pthread_t *tid = &cxt.event->tid[cxt.event->curr_thread];
-      pthread_mutex_unlock(&ws->lock);
 
-      pthread_join(*tid, NULL);
-      if (pthread_create(tid, NULL, &event_run, &cxt))
+      // wait until a thread is available before proceeding
+      while (!ws->num_notbusy) {
+        pthread_cond_wait(&ws->cond, &ws->lock);
+      }
+
+      struct _event_cxt *cxt = calloc(1, sizeof(struct _event_cxt));
+      cxt->ws = ws;
+      cxt->event = &ws->cbs.on_event[i];
+
+      // get available thread
+      for (size_t i=0; i < MAX_THREADS; ++i) {
+        if (!ws->wthreads[i].is_busy) {
+          cxt->wthread = &ws->wthreads[i];
+          cxt->wthread->is_busy = 1;
+          --ws->num_notbusy;
+          break; /* EARLY BREAK */
+        }
+      }
+      ASSERT_S(NULL != cxt->wthread, "Internal thread synchronization error (couldn't fetch thread)");
+
+      if (pthread_create(&cxt->wthread->tid, NULL, &event_run, cxt))
         ERR("Couldn't create thread");
+      if (pthread_detach(cxt->wthread->tid))
+        ERR("Couldn't detach thread");
+
+      pthread_mutex_unlock(&ws->lock);
 
       return; /* EARLY RETURN */
     }
@@ -148,7 +167,7 @@ custom_cws_new(struct websockets_s *ws)
 static int noop_on_startup(void *a){return 1;}
 static void noop_on_iter_end(void *a){return;}
 static int noop_on_text_event(void *a, const char *b, size_t c)
-  {return INT_MIN;} // return unlikely event value as default
+{return INT_MIN;} // return unlikely event value as default
 
 static void noop_on_connect(void *a, const char *b){return;}
 static void noop_on_text(void *a, const char *b, size_t c){return;}
@@ -175,6 +194,8 @@ ws_init(
 
   orka_config_init(&ws->config, NULL, NULL);
 
+  ws->num_notbusy = MAX_THREADS;
+
   memcpy(&ws->cbs, cbs, sizeof(struct ws_callbacks));
   if (!ws->cbs.on_startup) ws->cbs.on_startup = &noop_on_startup;
   if (!ws->cbs.on_iter_end) ws->cbs.on_iter_end = &noop_on_iter_end;
@@ -186,9 +207,10 @@ ws_init(
   if (!ws->cbs.on_pong) ws->cbs.on_pong = &noop_on_pong;
   if (!ws->cbs.on_close) ws->cbs.on_close = &noop_on_close;
 
-  if (pthread_mutex_init(&ws->lock, NULL)) {
-    ERR("Couldn't initialize mutex");
-  }
+  if (pthread_mutex_init(&ws->lock, NULL))
+    ERR("Couldn't initialize pthread mutex");
+  if (pthread_cond_init(&ws->cond, NULL))
+    ERR("Couldn't initialize pthread cond");
 }
 
 void
@@ -213,6 +235,7 @@ ws_cleanup(struct websockets_s *ws)
   cws_free(ws->ehandle);
   orka_config_cleanup(&ws->config);
   pthread_mutex_destroy(&ws->lock);
+  pthread_cond_destroy(&ws->cond);
 }
 
 static int
@@ -241,10 +264,9 @@ event_loop(struct websockets_s *ws)
     mcode = curl_multi_wait(ws->mhandle, NULL, 0, ws->wait_ms, &numfds);
     ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
-    if (ws->status != WS_CONNECTED) continue; // wait until connection is established
-
-    (*ws->cbs.on_iter_end)(ws->cbs.data);
-
+    if (ws->status == WS_CONNECTED) { // run if connection established
+      (*ws->cbs.on_iter_end)(ws->cbs.data);
+    }
   } while(is_running);
 
   curl_multi_remove_handle(ws->mhandle, ws->ehandle);
@@ -311,6 +333,8 @@ ws_set_event(
   int event_code, 
   void (*user_cb)(void *data))
 {
+  ASSERT_S(WS_DISCONNECTED == ws->status, "Can't set event on a running client");
+
   ++ws->cbs.num_events;
   ws->cbs.on_event = realloc(ws->cbs.on_event, 
                       ws->cbs.num_events * sizeof(struct event_cbs));

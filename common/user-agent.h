@@ -55,7 +55,7 @@ struct ua_respheader_s {
 };
 
 struct ua_conn_s {
-  int is_available; // boolean
+  int is_busy; // boolean
 
   CURL *ehandle; //the curl's easy handle used to perform requests
   struct sized_buffer resp_body; //the api response string
@@ -93,16 +93,16 @@ struct user_agent_s {
   struct curl_slist *reqheader; //the request header sent to the api
 
   struct ua_conn_s conns[MAX_CONNECTIONS];
-  size_t num_conn;
-
-  int num_available; // num of available conns
+  int num_notbusy; // num of available conns
+  size_t num_conn; // amount of conns (available or in use)
 
   char *base_url;
 
+  pthread_mutex_t cbs_lock;
+  pthread_mutex_t lock;
+
   void *data; // user arbitrary data for setopt_cb
   void (*setopt_cb)(CURL *ehandle, void *data); // set custom easy_setopts
-
-  pthread_mutex_t lock;
 
   curl_mime* (*mime_cb)(CURL *ehandle, void *data); // @todo this is temporary
   curl_mime *mime; // @todo this is temporary

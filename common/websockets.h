@@ -18,8 +18,6 @@ enum ws_status {
 struct event_cbs {
   int code; // code that should trigger the callback
   void (*cb)(void *data);
-  pthread_t tid[10]; //@todo default size is just for prototyping
-  size_t curr_thread;
 };
 
 struct ws_callbacks {
@@ -43,6 +41,12 @@ struct ws_callbacks {
   void (*on_close)(void *data, enum cws_close_reason cwscode, const char *reason, size_t len);
 };
 
+struct worker_thread {
+  pthread_t tid;
+  int is_busy; // boolean
+};
+
+#define MAX_THREADS 2 //@todo temp size just for prototyping
 struct websockets_s {
   struct orka_config config;
   enum ws_status status;
@@ -62,6 +66,9 @@ struct websockets_s {
   struct ws_callbacks cbs;
 
   pthread_mutex_t lock;
+  pthread_cond_t cond;
+  struct worker_thread wthreads[MAX_THREADS];
+  int num_notbusy; // num of available threads
 };
 
 void ws_init(struct websockets_s *ws, const char base_url[], struct ws_callbacks *cbs);

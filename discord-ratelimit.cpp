@@ -155,11 +155,10 @@ create_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
   }
 
   //add new route to tree
-  struct _route_s *route_check;
-  route_check = *(struct _route_s **)tsearch(new_route, &ua->ratelimit.routes_root, &routecmp);
-  ASSERT_S(route_check == new_route, "Couldn't create new bucket route");
+  struct _route_s *route;
+  route = *(struct _route_s **)tsearch(new_route, &ua->ratelimit.routes_root, &routecmp);
 
-  parse_ratelimits(new_route->p_bucket, conn);
+  parse_ratelimits(route->p_bucket, conn);
 }
 
 /* Attempt to build and/or updates bucket's rate limiting information.

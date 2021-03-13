@@ -834,7 +834,7 @@ on_text_cb(void *p_ws, const char *text, size_t len)
 }
 
 static int
-on_start_cb(void *p_ws)
+on_startup_cb(void *p_ws)
 {
   dati *ws = (dati*)p_ws;
 
@@ -865,7 +865,7 @@ send_heartbeat(dati *ws)
 }
 
 static void
-on_iter_cb(void *p_ws)
+on_iter_end_cb(void *p_ws)
 {
   dati *ws = (dati*)p_ws;
 
@@ -920,8 +920,8 @@ init(dati *ws, const char token[], const char config_file[])
 {
   struct ws_callbacks cbs = {
     .data = (void*)ws,
-    .on_start = &on_start_cb,
-    .on_iter = &on_iter_cb,
+    .on_startup = &on_startup_cb,
+    .on_iter_end = &on_iter_end_cb,
     .on_text_event = &on_text_event_cb,
     .on_connect = &on_connect_cb,
     .on_text = &on_text_cb,

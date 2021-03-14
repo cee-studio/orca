@@ -117,10 +117,10 @@ parse_ratelimits(dati *bucket, struct ua_conn_s *conn)
  *  client buckets.
  * If no match is found then we create a new client bucket */
 static void
-create_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
+match_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
 {
   char *bucket_hash = ua_respheader_value(conn, "x-ratelimit-bucket");
-  if (NULL == bucket_hash) return; //no hash information in header
+  if (!bucket_hash) return; //no hash information in header
 
   // create new route that will link the endpoint with a bucket
   struct _route_s *new_route = (struct _route_s*) calloc(1, sizeof *new_route);
@@ -154,11 +154,11 @@ create_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
     new_route->p_bucket = new_bucket; //route points to new bucket
   }
 
-  //add new route to tree
-  struct _route_s *route;
-  route = *(struct _route_s **)tsearch(new_route, &ua->ratelimit.routes_root, &routecmp);
+  //add new route to tree and update its bucket ratelimit fields
+  struct _route_s *ret_route;
+  ret_route = *(struct _route_s **)tsearch(new_route, &ua->ratelimit.routes_root, &routecmp);
 
-  parse_ratelimits(route->p_bucket, conn);
+  parse_ratelimits(ret_route->p_bucket, conn);
 }
 
 /* Attempt to build and/or updates bucket's rate limiting information.
@@ -167,16 +167,16 @@ create_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
 void
 build(user_agent::dati *ua, dati *bucket, char endpoint[], struct ua_conn_s *conn)
 {
-  /* for the first use of an endpoint, we attempt to establish a
-      route between it and a bucket (create a new bucket if needed) */
+  /* no bucket means first time using this endpoint.  attempt to 
+   *  establish a route between it and a bucket via its unique hash 
+   *  (will create a new bucket if it can't establish a route) */
   if (!bucket) {
-    create_route(ua, endpoint, conn);
-    return;
+    match_route(ua, endpoint, conn);
+    return; /* EARLY RETURN */
   }
-
-  // otherwise we just update the bucket rate limit values
-
-  parse_ratelimits(bucket, conn);
+  else { // update the bucket rate limit values
+    parse_ratelimits(bucket, conn);
+  }
 }
 
 /* This comparison routines can be used with tdelete()

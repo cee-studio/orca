@@ -67,8 +67,10 @@ struct websockets_s {
 
   pthread_mutex_t lock;
   pthread_cond_t cond;
+
   struct worker_thread wthreads[MAX_THREADS];
   int num_notbusy; // num of available threads
+  pthread_mutex_t wthreads_lock; // lock for fns used across callbacks
 };
 
 void ws_init(struct websockets_s *ws, const char base_url[], struct ws_callbacks *cbs);
@@ -88,7 +90,7 @@ void ws_send_text(struct websockets_s *ws, char text[]);
 void ws_run(struct websockets_s *ws);
 uint64_t ws_timestamp(struct websockets_s *ws);
 enum ws_status ws_get_status(struct websockets_s *ws);
-enum ws_status ws_set_status(struct websockets_s *ws, enum ws_status status);
+void ws_set_status(struct websockets_s *ws, enum ws_status status);
 void ws_set_refresh_rate(struct websockets_s *ws, uint64_t wait_ms);
 void ws_set_max_reconnect(struct websockets_s *ws, int max_attempts);
 void ws_set_event(

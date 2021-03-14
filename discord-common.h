@@ -118,7 +118,7 @@ struct dati { /* USER AGENT STRUCTURE */
 
   /* stores last json error detected, fields are reseted after
    *  get_json_error() is called */
-  struct error json_err;
+  struct error json_err; //@todo provide a callback instead
 
   client *p_client; //points to client this struct is a part of
 };
@@ -139,6 +139,8 @@ struct dati { /* BUCKET STRUCTURE */
   int remaining; //connections this bucket can do before cooldown
   int64_t reset_after_ms;
   uint64_t reset_tstamp;
+
+  pthread_mutex_t lock; // used to synchronize buckets
 };
 
 void cleanup(user_agent::dati *ua);

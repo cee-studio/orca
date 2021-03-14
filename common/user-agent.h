@@ -63,7 +63,12 @@ struct ua_conn_s {
 
   char req_url[MAX_URL_LEN]; //request's url
   char *resp_url; //response's url
+
+  void *data; //user arbitrary data
 };
+
+void* ua_conn_set_data(struct ua_conn_s *conn, void *data);
+void* ua_conn_get_data(struct ua_conn_s *conn);
 
 //callback for object to be loaded by api response
 typedef void (load_obj_cb)(char *str, size_t len, void *p_obj);

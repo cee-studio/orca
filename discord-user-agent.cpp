@@ -62,7 +62,7 @@ bucket_cooldown_cb(void *p_ratelimit)
 
 static ua_action_t
 on_success_cb(
-  void *p_data,
+  void *p_ratelimit,
   int httpcode,
   struct ua_conn_s *conn)
 {
@@ -71,15 +71,15 @@ on_success_cb(
       http_code_print(httpcode),
       http_reason_print(httpcode));
 
-  struct _ratelimit *data = (struct _ratelimit*)p_data;
-  bucket::build(data->ua, data->bucket, data->endpoint, conn);
+  struct _ratelimit *rl = (struct _ratelimit*)p_ratelimit;
+  bucket::build(rl->ua, rl->bucket, rl->endpoint, conn);
 
   return ACTION_SUCCESS;
 }
 
 static ua_action_t
 on_failure_cb(
-  void *p_data,
+  void *p_ratelimit,
   int httpcode,
   struct ua_conn_s *conn)
 {

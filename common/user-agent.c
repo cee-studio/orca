@@ -378,27 +378,26 @@ perform_request(
     *conn->resp_body.start = '\0';
     conn->resp_body.size = 0;
     conn->resp_header.size = 0;
+    conn->data = NULL;
 
     switch (action) {
     case ACTION_SUCCESS:
     case ACTION_FAILURE:
         D_PRINT("FINISHED REQUEST AT %s", conn->resp_url);
-        pthread_mutex_lock(&ua->lock);
-        conn->is_busy = 1;
-        pthread_mutex_unlock(&ua->lock);
-        return;
+        break;
     case ACTION_RETRY:
-        D_PRINT("RETRYING TO PERFORM REQUEST AT %s", conn->resp_url);
+        D_PRINT("RETRYING REQUEST AT %s", conn->resp_url);
         break;
     case ACTION_ABORT:
     default:
         ERR("COULDN'T PERFORM REQUEST AT %s", conn->resp_url);
     }
-
   } while (ACTION_RETRY == action);
 
   pthread_mutex_lock(&ua->lock);
+  conn->is_busy = 0;
   ++ua->num_notbusy;
+
   if (ua->mime) { // @todo this is temporary
     curl_mime_free(ua->mime); 
     ua->mime = NULL;
@@ -407,7 +406,7 @@ perform_request(
 }
 
 static size_t
-curl_resheader_cb(char *str, size_t size, size_t nmemb, void *p_userdata)
+conn_resheader_cb(char *str, size_t size, size_t nmemb, void *p_userdata)
 {
   size_t realsize = size * nmemb;
   struct ua_respheader_s *resp_header = (struct ua_respheader_s *)p_userdata;
@@ -448,7 +447,7 @@ curl_resheader_cb(char *str, size_t size, size_t nmemb, void *p_userdata)
 /* get api response body string
 * see: https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html */
 static size_t
-curl_resbody_cb(char *str, size_t size, size_t nmemb, void *p_userdata)
+conn_resbody_cb(char *str, size_t size, size_t nmemb, void *p_userdata)
 {
   size_t realsize = size * nmemb;
   struct sized_buffer *resp_body = (struct sized_buffer *)p_userdata;
@@ -493,7 +492,7 @@ conn_init(struct user_agent_s *ua, struct ua_conn_s *conn)
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set response body callback
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_WRITEFUNCTION, &curl_resbody_cb);
+  ecode = curl_easy_setopt(new_ehandle, CURLOPT_WRITEFUNCTION, &conn_resbody_cb);
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set ptr to response body to be filled at callback
@@ -501,7 +500,7 @@ conn_init(struct user_agent_s *ua, struct ua_conn_s *conn)
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set response header callback
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_HEADERFUNCTION, &curl_resheader_cb);
+  ecode = curl_easy_setopt(new_ehandle, CURLOPT_HEADERFUNCTION, &conn_resheader_cb);
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set ptr to response header to be filled at callback
@@ -561,10 +560,9 @@ get_conn(struct user_agent_s *ua)
 
     ret_conn = &ua->conns[ua->num_conn-1];
   }
-  else {
+  else { // available conn, pick one
     for (size_t i=0; i < ua->num_conn; ++i) {
-      if (ua->conns[i].is_busy) {
-        ua->conns[i].is_busy = 0;
+      if (!ua->conns[i].is_busy) {
         --ua->num_notbusy;
         ret_conn = &ua->conns[i];
         break; /* EARLY BREAK */
@@ -573,9 +571,21 @@ get_conn(struct user_agent_s *ua)
   }
   ASSERT_S(NULL != ret_conn, "Internal thread synchronization error (couldn't fetch conn)");
 
+  ret_conn->is_busy = 1;
+
   pthread_mutex_unlock(&ua->lock);
 
   return ret_conn;
+}
+
+void*
+ua_conn_set_data(struct ua_conn_s *conn, void *data) {
+  return conn->data = data;
+}
+
+void*
+ua_conn_get_data(struct ua_conn_s *conn) {
+  return conn->data;
 }
 
 void

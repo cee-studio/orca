@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <search.h> // for POSIX tree (tfind, tsearch, tdestroy)
+#include <pthread.h> // for bucket synchronization
 
 #include <libdiscord.h>
 #include "orka-utils.h"
@@ -26,12 +27,20 @@ struct _route_s {
 void
 try_cooldown(dati *bucket)
 {
-  if (NULL == bucket || bucket->remaining)
+  if (NULL == bucket) return; /* EARLY RETURN */
+
+  pthread_mutex_lock(&bucket->lock);
+
+  if (bucket->remaining) { // no cooldown needed
+    pthread_mutex_unlock(&bucket->lock);
     return; /* EARLY RETURN */
+  }
 
   int64_t delay_ms = (int64_t)(bucket->reset_tstamp - orka_timestamp_ms());
-  if (delay_ms <= 0) //no delay needed
+  if (delay_ms <= 0) { //no delay needed
+    pthread_mutex_unlock(&bucket->lock);
     return; /* EARLY RETURN */
+  }
 
   if (delay_ms > bucket->reset_after_ms) //don't delay in excess
     delay_ms = bucket->reset_after_ms;
@@ -42,6 +51,8 @@ try_cooldown(dati *bucket)
           bucket->hash, delay_ms);
 
   orka_sleep_ms(delay_ms); //sleep for delay amount (if any)
+
+  pthread_mutex_unlock(&bucket->lock);
 }
 
 /* works like strcmp, but will check if endpoing matches a major 
@@ -112,6 +123,24 @@ parse_ratelimits(dati *bucket, struct ua_conn_s *conn)
   }
 }
 
+static dati*
+bucket_init(char bucket_hash[])
+{
+  dati *new_bucket = (dati*) calloc(1, sizeof *new_bucket);
+  new_bucket->hash = strdup(bucket_hash);
+  if (pthread_mutex_init(&new_bucket->lock, NULL))
+    ERR("Couldn't initialize pthread mutex");
+  return new_bucket;
+}
+
+static void
+bucket_cleanup(dati *bucket) 
+{
+  free(bucket->hash);
+  pthread_mutex_destroy(&bucket->lock);
+  free(bucket);
+}
+
 /* Attempt to create a route between endpoint and a client bucket by
  *  comparing the hash retrieved from header to hashes from existing
  *  client buckets.
@@ -124,24 +153,19 @@ match_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
 
   // create new route that will link the endpoint with a bucket
   struct _route_s *new_route = (struct _route_s*) calloc(1, sizeof *new_route);
-  ASSERT_S(NULL != new_route, "Out of memory");
 
   new_route->str = strdup(endpoint);
-  ASSERT_S(NULL != new_route->str, "Out of memory");
 
   //attempt to match hash to client bucket hashes
   for (size_t i=0; i < ua->ratelimit.num_buckets; ++i) {
     if (STREQ(bucket_hash, ua->ratelimit.buckets[i]->hash)) {
       new_route->p_bucket = ua->ratelimit.buckets[i];
+      break; /* EARLY BREAK */
     }
   }
 
   if (!new_route->p_bucket) { //couldn't find match, create new bucket
-    dati *new_bucket = (dati*) calloc(1, sizeof *new_bucket);
-    ASSERT_S(NULL != new_bucket, "Out of memory");
-
-    new_bucket->hash = strdup(bucket_hash);
-    ASSERT_S(NULL != new_bucket->hash, "Our of memory");
+    dati *new_bucket = bucket_init(bucket_hash);
 
     ++ua->ratelimit.num_buckets; //increments client buckets
 
@@ -179,13 +203,13 @@ build(user_agent::dati *ua, dati *bucket, char endpoint[], struct ua_conn_s *con
   }
 }
 
-/* This comparison routines can be used with tdelete()
+/* This comparison routines can be used with tdestroy()
  * when explicity deleting a root node, as no comparison
  * is necessary. */
 static void
-route_cleanup(void *p_route) {
+route_cleanup(void *p_route) 
+{
   struct _route_s *route = (struct _route_s*)p_route;
-
   free(route->str);
   free(route);
 }
@@ -199,8 +223,7 @@ cleanup(user_agent::dati *ua)
 
   //destroy every client bucket found
   for (size_t i=0; i < ua->ratelimit.num_buckets; ++i) {
-    free(ua->ratelimit.buckets[i]->hash);
-    free(ua->ratelimit.buckets[i]);
+    bucket_cleanup(ua->ratelimit.buckets[i]);
   }
   free(ua->ratelimit.buckets);
 }

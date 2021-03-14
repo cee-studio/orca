@@ -93,9 +93,13 @@ try_get(user_agent::dati *ua, char endpoint[])
   struct _route_s search_route = {
     .str = endpoint
   };
-
   struct _route_s **p_route;
+  pthread_mutex_lock(&ua->lock);
+
   p_route = (struct _route_s**)tfind(&search_route, &ua->ratelimit.routes_root, &routecmp);
+
+  pthread_mutex_unlock(&ua->lock);
+
   //if found matching route, return its bucket, otherwise NULL
   return (p_route) ? (*p_route)->p_bucket : NULL;
 }
@@ -191,16 +195,17 @@ match_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
 void
 build(user_agent::dati *ua, dati *bucket, char endpoint[], struct ua_conn_s *conn)
 {
+  pthread_mutex_lock(&ua->lock);
+
   /* no bucket means first time using this endpoint.  attempt to 
    *  establish a route between it and a bucket via its unique hash 
    *  (will create a new bucket if it can't establish a route) */
-  if (!bucket) {
+  if (!bucket)
     match_route(ua, endpoint, conn);
-    return; /* EARLY RETURN */
-  }
-  else { // update the bucket rate limit values
+  else // update the bucket rate limit values
     parse_ratelimits(bucket, conn);
-  }
+
+  pthread_mutex_unlock(&ua->lock);
 }
 
 /* This comparison routines can be used with tdestroy()

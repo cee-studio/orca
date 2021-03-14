@@ -65,7 +65,7 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
 
     (*ws->config.json_cb)(
       true,
-      event_code, "ON_TEXT_EVENT",
+      event_code, "ON_EVENT",
       &ws->config, 
       ws->base_url, 
       (char*)text);

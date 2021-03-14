@@ -121,6 +121,8 @@ struct dati { /* USER AGENT STRUCTURE */
   struct error json_err; //@todo provide a callback instead
 
   client *p_client; //points to client this struct is a part of
+
+  pthread_mutex_t lock; // used to synchronize this struct fields
 };
 
 void init(dati *ua, const char token[], const char config_file[]);

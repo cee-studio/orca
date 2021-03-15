@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <pthread.h>
 
 #include <libdiscord.h>
 #include "orka-utils.h"
@@ -31,10 +30,6 @@ init(dati *ua, const char token[], const char config_file[])
 
   ua_reqheader_add(&ua->common, "Authorization", auth);
   ua_reqheader_add(&ua->common, "X-RateLimit-Precision", "millisecond");
-
-  // @todo can we move this elsewhere ?
-  if (pthread_mutex_init(&ua->lock, NULL))
-    ERR("Couldn't initialize mutex");
 }
 
 void
@@ -42,7 +37,6 @@ cleanup(dati *ua)
 {
   bucket::cleanup(ua);
   ua_cleanup(&ua->common);
-  pthread_mutex_destroy(&ua->lock);
 }
 
 struct _ratelimit {

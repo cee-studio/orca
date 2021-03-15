@@ -1,6 +1,7 @@
 #ifndef USER_AGENT_H
 #define USER_AGENT_H
 
+#include <inttypes.h>
 #include <curl/curl.h>
 
 #include "ntl.h"
@@ -55,7 +56,8 @@ struct ua_respheader_s {
 };
 
 struct ua_conn_s {
-  int is_busy; // boolean
+  bool is_busy;
+  uint64_t perform_tstamp; // timestamp of when the request completed
 
   CURL *ehandle; //the curl's easy handle used to perform requests
   struct sized_buffer resp_body; //the api response string
@@ -109,9 +111,9 @@ struct user_agent_s {
   void *data; // user arbitrary data for setopt_cb
   void (*setopt_cb)(CURL *ehandle, void *data); // set custom easy_setopts
 
-  curl_mime* (*mime_cb)(CURL *ehandle, void *data); // @todo this is temporary
-  curl_mime *mime; // @todo this is temporary
   void *data2; // @todo this is temporary
+  curl_mime *mime; // @todo this is temporary
+  curl_mime* (*mime_cb)(CURL *ehandle, void *data); // @todo this is temporary
 };
 
 typedef enum { 
@@ -131,6 +133,8 @@ struct ua_callbacks {
 
   int (*on_startup)(void *data); // exec before loop starts (return 1 for proceed, 0 for abort)
   void (*on_iter_start)(void *data); // execs at end of every loop iteration
+  void (*on_iter_end)(void *data); // execs at end of every loop iteration
+  void (*on_exit)(void *data); // execs after loop ends
 
   http_response_cb *on_1xx; // execs on 1xx code
   http_response_cb *on_2xx; // execs on 2xx code

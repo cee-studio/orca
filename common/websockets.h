@@ -5,6 +5,7 @@
 extern "C" {
 #endif // __cplusplus
 
+#include <inttypes.h>
 #include "curl-websocket.h"
 #include "orka-config.h"
 
@@ -17,7 +18,7 @@ enum ws_status {
 
 struct event_cbs {
   int code; // code that should trigger the callback
-  void (*cb)(void *data);
+  void (*cb)(void *data, void *event_data);
 };
 
 struct ws_callbacks {
@@ -43,10 +44,13 @@ struct ws_callbacks {
 
 struct worker_thread {
   pthread_t tid;
-  int is_busy; // boolean
+  bool is_busy;
+
+  void *data; /* user arbitrary data */
+  void (*cleanup)(void *data);
 };
 
-#define MAX_THREADS 2 //@todo temp size just for prototyping
+#define MAX_THREADS 10 //@todo temp size just for prototyping
 struct websockets_s {
   struct orka_config config;
   enum ws_status status;
@@ -70,6 +74,9 @@ struct websockets_s {
 
   struct worker_thread wthreads[MAX_THREADS];
   int num_notbusy; // num of available threads
+  void *tmp_data; // user arbitrary data that will be passed to wthread
+  void (*tmp_cleanup)(void *tmp_data); // cleanup passed to wthread
+
   pthread_mutex_t wthreads_lock; // lock for fns used across callbacks
 };
 
@@ -96,7 +103,11 @@ void ws_set_max_reconnect(struct websockets_s *ws, int max_attempts);
 void ws_set_event(
   struct websockets_s *ws, 
   int event_code, 
-  void (*user_cb)(void *data));
+  void (*user_cb)(void *data, void *event_data));
+void ws_set_event_data(
+  struct websockets_s *ws, 
+  void *data, 
+  void (*cleanup)(void *data));
 
 #ifdef __cplusplus
 }

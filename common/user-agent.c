@@ -243,6 +243,7 @@ send_request(struct ua_conn_s *conn)
   //@todo shouldn't abort on error
   ecode = curl_easy_perform(conn->ehandle);
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
+  conn->perform_tstamp = orka_timestamp_ms();
 
   //get response's code
   int httpcode;
@@ -271,6 +272,8 @@ perform_request(
 
   /* SET DEFAULT CALLBACKS */
   if (!cbs.on_iter_start) cbs.on_iter_start = &noop_iter_cb;
+  if (!cbs.on_iter_end) cbs.on_iter_end = &noop_iter_cb;
+  if (!cbs.on_exit) cbs.on_exit = &noop_iter_cb;
   if (!cbs.on_1xx) cbs.on_1xx = &noop_success_cb;
   if (!cbs.on_2xx) cbs.on_2xx = &noop_success_cb;
   if (!cbs.on_3xx) cbs.on_3xx = &noop_success_cb;
@@ -374,12 +377,6 @@ perform_request(
       pthread_mutex_unlock(&ua->cbs_lock);
     }
 
-    // soft reset conn fields for next possible iteration
-    *conn->resp_body.start = '\0';
-    conn->resp_body.size = 0;
-    conn->resp_header.size = 0;
-    conn->data = NULL;
-
     switch (action) {
     case ACTION_SUCCESS:
     case ACTION_FAILURE:
@@ -392,15 +389,28 @@ perform_request(
     default:
         ERR("COULDN'T PERFORM REQUEST AT %s", conn->resp_url);
     }
+    pthread_mutex_lock(&ua->cbs_lock);
+    (*cbs.on_iter_end)(cbs.data);
+    pthread_mutex_unlock(&ua->cbs_lock);
   } while (ACTION_RETRY == action);
 
   pthread_mutex_lock(&ua->lock);
-  conn->is_busy = 0;
+  // soft reset conn fields for next possible iteration
+  // @todo create function for this ?
+  conn->perform_tstamp = 0;
+  *conn->resp_body.start = '\0';
+  conn->resp_body.size = 0;
+  conn->resp_header.size = 0;
+  conn->data = NULL;
+  conn->is_busy = false;
   ++ua->num_notbusy;
-
   if (ua->mime) { // @todo this is temporary
     curl_mime_free(ua->mime); 
     ua->mime = NULL;
+  }
+
+  if (cbs.on_exit) {
+    (*cbs.on_exit)(cbs.data);
   }
   pthread_mutex_unlock(&ua->lock);
 }
@@ -548,10 +558,9 @@ conns_cleanup(struct ua_conn_s *conns, size_t num_conn)
 static struct ua_conn_s*
 get_conn(struct user_agent_s *ua)
 {
-  pthread_mutex_lock(&ua->lock);
-
   struct ua_conn_s *ret_conn = NULL;
 
+  pthread_mutex_lock(&ua->lock);
   if (!ua->num_notbusy) { // no available conn, create new
     conn_init(ua, &ua->conns[ua->num_conn]);
 
@@ -571,8 +580,7 @@ get_conn(struct user_agent_s *ua)
   }
   ASSERT_S(NULL != ret_conn, "Internal thread synchronization error (couldn't fetch conn)");
 
-  ret_conn->is_busy = 1;
-
+  ret_conn->is_busy = true;
   pthread_mutex_unlock(&ua->lock);
 
   return ret_conn;

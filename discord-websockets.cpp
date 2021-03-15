@@ -415,7 +415,7 @@ static void
 ws_send_identify(dati *ws)
 {
   /* Ratelimit check */
-  if (( ws_timestamp(&ws->common) - ws->session.identify_tstamp ) < 5 ) {
+  if ((ws_timestamp(&ws->common) - ws->session.identify_tstamp ) < 5) {
     ++ws->session.concurrent;
     VASSERT_S(ws->session.concurrent < ws->session.max_concurrency,
         "Reach identify request threshold (%d every 5 seconds)", ws->session.max_concurrency);
@@ -441,14 +441,15 @@ ws_send_identify(dati *ws)
 }
 
 static void
-on_hello(void *p_ws)
+on_hello(void *p_ws, void *event_data)
 {
   dati *ws = (dati*)p_ws;
+  struct payload_s *payload = (struct payload_s*)event_data;
 
   ws->hbeat.interval_ms = 0;
   ws->hbeat.tstamp = orka_timestamp_ms();
 
-  json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data),
+  json_scanf(payload->event_data, sizeof(payload->event_data),
              "[heartbeat_interval]%ld", &ws->hbeat.interval_ms);
   ASSERT_S(ws->hbeat.interval_ms > 0, "Invalid heartbeat_ms");
 
@@ -459,12 +460,15 @@ on_hello(void *p_ws)
 }
 
 static void
-on_dispatch_message_reaction(dati *ws, enum dispatch_code code)
+on_dispatch_message_reaction(
+  dati *ws, 
+  enum dispatch_code code,
+  struct payload_s *payload)
 {
   uint64_t user_id=0, message_id=0, channel_id=0, guild_id=0;
   guild::member::dati *member = guild::member::dati_alloc();
   emoji::dati *emoji = emoji::dati_alloc();
-  json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data),
+  json_scanf(payload->event_data, sizeof(payload->event_data),
       "[user_id]%F"
       "[message_id]%F"
       "[member]%F"
@@ -520,13 +524,16 @@ on_dispatch_message_reaction(dati *ws, enum dispatch_code code)
 }
 
 static void
-on_dispatch_message(dati *ws, enum dispatch_code code)
+on_dispatch_message(
+  dati *ws, 
+  enum dispatch_code code,
+  struct payload_s *payload)
 {
   if (MESSAGE_DELETE_BULK == code && ws->cbs.on_message.delete_bulk)
   {
     struct sized_buffer **buf = NULL;
     uint64_t channel_id = 0, guild_id = 0;
-    json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data),
+    json_scanf(payload->event_data, sizeof(payload->event_data),
         "[ids]%A"
         "[channel_id]%F"
         "[guild_id]%F",
@@ -553,8 +560,8 @@ on_dispatch_message(dati *ws, enum dispatch_code code)
   channel::message::dati *msg = channel::message::dati_alloc();
   ASSERT_S(NULL != msg, "Out of memory");
 
-  channel::message::dati_from_json(ws->payload.event_data,
-      sizeof(ws->payload.event_data), msg);
+  channel::message::dati_from_json(payload->event_data,
+      sizeof(payload->event_data), msg);
 
   switch (code) {
   case MESSAGE_CREATE:
@@ -617,18 +624,21 @@ on_dispatch_message(dati *ws, enum dispatch_code code)
 }
 
 static void
-on_dispatch_guild_member(dati *ws, enum dispatch_code code)
+on_dispatch_guild_member(
+  dati *ws, 
+  enum dispatch_code code, 
+  struct payload_s *payload)
 {
   guild::member::dati *member = guild::member::dati_alloc();
   ASSERT_S(NULL != member, "Out of memory");
 
-  guild::member::dati_from_json(ws->payload.event_data,
-      sizeof(ws->payload.event_data), member);
+  guild::member::dati_from_json(payload->event_data,
+      sizeof(payload->event_data), member);
 
   uint64_t guild_id = 0;
   json_scanf(
-    ws->payload.event_data,
-    sizeof(ws->payload.event_data),
+    payload->event_data,
+    sizeof(payload->event_data),
     "[guild_id]%F",
     &orka_strtoull, &guild_id);
 
@@ -682,15 +692,16 @@ get_dispatch_code(char event_name[])
 }
 
 static void
-on_dispatch(void *p_ws)
+on_dispatch(void *p_ws, void *event_data)
 {
   dati *ws = (dati*)p_ws;
+  struct payload_s *payload = (struct payload_s*)event_data;
 
-  user::dati_from_json(ws->payload.event_data,
-      sizeof(ws->payload.event_data), ws->me);
+  user::dati_from_json(payload->event_data,
+      sizeof(payload->event_data), ws->me);
 
   /* Ratelimit check */
-  if ( (ws_timestamp(&ws->common) - ws->session.event_tstamp) < 60 ) {
+  if ((ws_timestamp(&ws->common) - ws->session.event_tstamp) < 60) {
     ++ws->session.event_count;
     ASSERT_S(ws->session.event_count < 120,
         "Reach event dispatch threshold (120 every 60 seconds)");
@@ -700,13 +711,13 @@ on_dispatch(void *p_ws)
     ws->session.event_count = 0;
   }
 
-  enum dispatch_code code = get_dispatch_code(ws->payload.event_name);
+  enum dispatch_code code = get_dispatch_code(payload->event_name);
   switch (code) {
   case READY:
       ws_set_status(&ws->common, WS_CONNECTED);
       D_PUTS("Succesfully started a Discord session!");
 
-      json_scanf(ws->payload.event_data, sizeof(ws->payload.event_data),
+      json_scanf(payload->event_data, sizeof(payload->event_data),
                  "[session_id]%s", ws->session_id);
       ASSERT_S(ws->session_id, "Missing session_id from READY event");
 
@@ -722,32 +733,33 @@ on_dispatch(void *p_ws)
   case MESSAGE_REACTION_REMOVE:
   case MESSAGE_REACTION_REMOVE_ALL: 
   case MESSAGE_REACTION_REMOVE_EMOJI:
-      on_dispatch_message_reaction(ws, code);
+      on_dispatch_message_reaction(ws, code, payload);
       break;
   case MESSAGE_CREATE: 
   case MESSAGE_UPDATE:
   case MESSAGE_DELETE: 
   case MESSAGE_DELETE_BULK:
-      on_dispatch_message(ws, code);
+      on_dispatch_message(ws, code, payload);
       break;
   case GUILD_MEMBER_ADD: 
   case GUILD_MEMBER_UPDATE:
   case GUILD_MEMBER_REMOVE:
-      on_dispatch_guild_member(ws, code);
+      on_dispatch_guild_member(ws, code, payload);
       break;
   default:
       PRINT("Expected not yet implemented GATEWAY DISPATCH event: %s",
-          ws->payload.event_name);
+          payload->event_name);
       break;
   }
 }
 
 static void
-on_invalid_session(void *p_ws)
+on_invalid_session(void *p_ws, void *event_data)
 {
   dati *ws = (dati*)p_ws;
+  struct payload_s *payload = (struct payload_s*)event_data;
 
-  bool is_resumable = strcmp(ws->payload.event_data, "false");
+  bool is_resumable = strcmp(payload->event_data, "false");
   const char *reason;
   if (is_resumable) {
     ws_set_status(&ws->common, WS_RESUME);
@@ -762,7 +774,7 @@ on_invalid_session(void *p_ws)
 }
 
 static void
-on_reconnect(void *p_ws)
+on_reconnect(void *p_ws, void *event_data)
 {
   dati *ws = (dati*)p_ws;
 
@@ -774,7 +786,7 @@ on_reconnect(void *p_ws)
 }
 
 static void
-on_heartbeat_ack(void *p_ws)
+on_heartbeat_ack(void *p_ws, void *event_data)
 {
   dati *ws = (dati*)p_ws;
 
@@ -889,6 +901,9 @@ on_text_event_cb(void *p_ws, const char *text, size_t len)
 
   D_PRINT("ON_DISPATCH:\t%s\n", text);
 
+  struct payload_s *payloadcpy = \
+        (struct payload_s*)calloc(1, sizeof(struct payload_s));
+
   int tmp_seq_number; //check value first, then assign
   json_scanf((char*)text, len,
               "[t]%s [s]%d [op]%d [d]%S",
@@ -911,6 +926,9 @@ on_text_event_cb(void *p_ws, const char *text, size_t len)
                    : "NULL", //otherwise prints NULL
                 ws->payload.seq_number,
                 ws->payload.event_data);
+
+  memcpy(payloadcpy, &ws->payload, sizeof(struct payload_s));
+  ws_set_event_data(&ws->common, payloadcpy, &free);
 
   return ws->payload.opcode;
 }

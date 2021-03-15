@@ -50,6 +50,7 @@ try_cooldown(dati *bucket)
           "\tWait for:\t %" PRId64 " ms",
           bucket->hash, delay_ms);
 
+  //@todo replace with pthread_timedwait() ?
   orka_sleep_ms(delay_ms); //sleep for delay amount (if any)
 
   pthread_mutex_unlock(&bucket->lock);
@@ -94,11 +95,7 @@ try_get(user_agent::dati *ua, char endpoint[])
     .str = endpoint
   };
   struct _route_s **p_route;
-  pthread_mutex_lock(&ua->lock);
-
   p_route = (struct _route_s**)tfind(&search_route, &ua->ratelimit.routes_root, &routecmp);
-
-  pthread_mutex_unlock(&ua->lock);
 
   //if found matching route, return its bucket, otherwise NULL
   return (p_route) ? (*p_route)->p_bucket : NULL;
@@ -109,22 +106,17 @@ try_get(user_agent::dati *ua, char endpoint[])
 static void
 parse_ratelimits(dati *bucket, struct ua_conn_s *conn)
 { 
-  char *value; //fetch header value as string
+  if (bucket->update_tstamp > conn->perform_tstamp)
+    return; /* EARLY RETURN */
+  bucket->update_tstamp = conn->perform_tstamp;
 
-  value = ua_respheader_value(conn, "x-ratelimit-remaining");
-  if (NULL != value) {
-    bucket->remaining =  strtol(value, NULL, 10);
-  }
-
-  value = ua_respheader_value(conn, "x-ratelimit-reset-after");
-  if (NULL != value) {
-    bucket->reset_after_ms = 1000 * strtod(value, NULL);
-  }
-
-  value = ua_respheader_value(conn, "x-ratelimit-reset");
-  if (NULL != value) {
-    bucket->reset_tstamp = 1000 * strtod(value, NULL);
-  }
+  char *str; // fetch header value as string
+  if ( (str = ua_respheader_value(conn, "x-ratelimit-reset")) )
+    bucket->reset_tstamp = 1000 * strtod(str, NULL);
+  if ( (str = ua_respheader_value(conn, "x-ratelimit-remaining")) )
+    bucket->remaining =  strtol(str, NULL, 10);
+  if ( (str = ua_respheader_value(conn, "x-ratelimit-reset-after")) )
+    bucket->reset_after_ms = 1000 * strtod(str, NULL);
 }
 
 static dati*
@@ -195,8 +187,6 @@ match_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
 void
 build(user_agent::dati *ua, dati *bucket, char endpoint[], struct ua_conn_s *conn)
 {
-  pthread_mutex_lock(&ua->lock);
-
   /* no bucket means first time using this endpoint.  attempt to 
    *  establish a route between it and a bucket via its unique hash 
    *  (will create a new bucket if it can't establish a route) */
@@ -204,8 +194,6 @@ build(user_agent::dati *ua, dati *bucket, char endpoint[], struct ua_conn_s *con
     match_route(ua, endpoint, conn);
   else // update the bucket rate limit values
     parse_ratelimits(bucket, conn);
-
-  pthread_mutex_unlock(&ua->lock);
 }
 
 /* This comparison routines can be used with tdestroy()

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
 #include <pthread.h>
 
 #include "websockets.h"
@@ -37,13 +36,18 @@ event_run(void *p_cxt)
 {
   struct _event_cxt *cxt = p_cxt;
 
+  (*cxt->event->cb)(cxt->ws->cbs.data, cxt->wthread->data);
+
   pthread_mutex_lock(&cxt->ws->lock); //@todo special lock for events ?
-  (*cxt->event->cb)(cxt->ws->cbs.data);
-
+  cxt->wthread->is_busy = false;
   ++cxt->ws->num_notbusy;
-  cxt->wthread->is_busy = 0;
-  pthread_cond_signal(&cxt->ws->cond);
+  if (cxt->wthread->data && cxt->wthread->cleanup) {
+    (*cxt->wthread->cleanup)(cxt->wthread->data);
+  }
+  cxt->wthread->cleanup = NULL;
+  cxt->wthread->data = NULL;
 
+  pthread_cond_signal(&cxt->ws->cond);
   pthread_mutex_unlock(&cxt->ws->lock);
 
   free(cxt);
@@ -56,12 +60,13 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
 {
   struct websockets_s *ws = p_ws;
 
-  pthread_mutex_lock(&ws->lock);
 
   int event_code = (*ws->cbs.on_text_event)(ws->cbs.data, text, len);
   for (size_t i=0; i < ws->cbs.num_events; ++i) {
     if (event_code != ws->cbs.on_event[i].code) 
       continue;
+
+    pthread_mutex_lock(&ws->lock);
 
     (*ws->config.json_cb)(
       true,
@@ -75,16 +80,22 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
       pthread_cond_wait(&ws->cond, &ws->lock);
     }
 
+    //@todo non-heap MT-Safe alternative ?
     struct _event_cxt *cxt = calloc(1, sizeof(struct _event_cxt));
     cxt->ws = ws;
     cxt->event = &ws->cbs.on_event[i];
 
-    // get available thread
+    // get a available thread
     for (size_t i=0; i < MAX_THREADS; ++i) {
       if (!ws->wthreads[i].is_busy) {
-        cxt->wthread = &ws->wthreads[i];
-        cxt->wthread->is_busy = 1;
         --ws->num_notbusy;
+
+        cxt->wthread = &ws->wthreads[i];
+        cxt->wthread->is_busy = true;
+        cxt->wthread->data = ws->tmp_data;
+        cxt->wthread->cleanup = ws->tmp_cleanup;
+        ws->tmp_data = NULL;
+        ws->tmp_cleanup = NULL;
         break; /* EARLY BREAK */
       }
     }
@@ -98,6 +109,15 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
     pthread_mutex_unlock(&ws->lock);
     return; /* EARLY RETURN */
   }
+
+  pthread_mutex_lock(&ws->lock);
+
+  if (ws->tmp_data && ws->tmp_cleanup) {
+    (*ws->tmp_cleanup)(ws->tmp_data);
+  }
+  ws->tmp_cleanup = NULL;
+  ws->tmp_data = NULL;
+
   (*ws->config.json_cb)(
     false,
     0, "ON_TEXT",
@@ -364,7 +384,7 @@ void
 ws_set_event(
   struct websockets_s *ws, 
   int event_code, 
-  void (*user_cb)(void *data))
+  void (*user_cb)(void *data, void *event_data))
 {
   ASSERT_S(WS_DISCONNECTED == ws_get_status(ws), "Can't set event on a running client");
 
@@ -375,6 +395,15 @@ ws_set_event(
   memset(&ws->cbs.on_event[ws->cbs.num_events-1], 0, sizeof(struct event_cbs));
   ws->cbs.on_event[ws->cbs.num_events-1].code = event_code;
   ws->cbs.on_event[ws->cbs.num_events-1].cb = user_cb;
+}
+
+/* this is a one time data, it will be used just on the current event
+    loop iteration, and then be freed accordingly */
+void
+ws_set_event_data(struct websockets_s *ws, void *data, void (*cleanup)(void *data))
+{
+  ws->tmp_data = data;
+  ws->tmp_cleanup = cleanup;
 }
 
 static enum ws_status

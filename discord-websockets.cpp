@@ -441,10 +441,10 @@ ws_send_identify(dati *ws)
 }
 
 static void
-on_hello(void *p_ws, void *event_data)
+on_hello(void *p_ws, void *curr_iter_data)
 {
   dati *ws = (dati*)p_ws;
-  struct payload_s *payload = (struct payload_s*)event_data;
+  struct payload_s *payload = (struct payload_s*)curr_iter_data;
 
   ws->hbeat.interval_ms = 0;
   ws->hbeat.tstamp = orka_timestamp_ms();
@@ -692,10 +692,10 @@ get_dispatch_code(char event_name[])
 }
 
 static void
-on_dispatch(void *p_ws, void *event_data)
+on_dispatch(void *p_ws, void *curr_iter_data)
 {
   dati *ws = (dati*)p_ws;
-  struct payload_s *payload = (struct payload_s*)event_data;
+  struct payload_s *payload = (struct payload_s*)curr_iter_data;
 
   user::dati_from_json(payload->event_data,
       sizeof(payload->event_data), ws->me);
@@ -754,10 +754,10 @@ on_dispatch(void *p_ws, void *event_data)
 }
 
 static void
-on_invalid_session(void *p_ws, void *event_data)
+on_invalid_session(void *p_ws, void *curr_iter_data)
 {
   dati *ws = (dati*)p_ws;
-  struct payload_s *payload = (struct payload_s*)event_data;
+  struct payload_s *payload = (struct payload_s*)curr_iter_data;
 
   bool is_resumable = strcmp(payload->event_data, "false");
   const char *reason;
@@ -774,7 +774,7 @@ on_invalid_session(void *p_ws, void *event_data)
 }
 
 static void
-on_reconnect(void *p_ws, void *event_data)
+on_reconnect(void *p_ws, void *curr_iter_data)
 {
   dati *ws = (dati*)p_ws;
 
@@ -786,7 +786,7 @@ on_reconnect(void *p_ws, void *event_data)
 }
 
 static void
-on_heartbeat_ack(void *p_ws, void *event_data)
+on_heartbeat_ack(void *p_ws, void *curr_iter_data)
 {
   dati *ws = (dati*)p_ws;
 
@@ -928,7 +928,7 @@ on_text_event_cb(void *p_ws, const char *text, size_t len)
                 ws->payload.event_data);
 
   memcpy(payloadcpy, &ws->payload, sizeof(struct payload_s));
-  ws_set_event_data(&ws->common, payloadcpy, &free);
+  ws_set_curr_iter_data(&ws->common, payloadcpy, &free);
 
   return ws->payload.opcode;
 }

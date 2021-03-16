@@ -18,7 +18,7 @@ enum ws_status {
 
 struct event_cbs {
   int code; // code that should trigger the callback
-  void (*cb)(void *data, void *event_data);
+  void (*cb)(void *data, void *curr_iter_data); // see ws_set_curr_iter_data()
 };
 
 struct ws_callbacks {
@@ -42,7 +42,7 @@ struct ws_callbacks {
   void (*on_close)(void *data, enum cws_close_reason cwscode, const char *reason, size_t len);
 };
 
-struct worker_thread {
+struct thread_pool {
   pthread_t tid;
   bool is_busy;
 
@@ -69,15 +69,18 @@ struct websockets_s {
 
   struct ws_callbacks cbs;
 
-  pthread_mutex_t lock;
+  pthread_mutex_t lock; //for the websockets struct itself
   pthread_cond_t cond;
 
-  struct worker_thread wthreads[MAX_THREADS];
-  int num_notbusy; // num of available threads
-  void *tmp_data; // user arbitrary data that will be passed to wthread
-  void (*tmp_cleanup)(void *tmp_data); // cleanup passed to wthread
+  /* will last only for this current loop iteration, the data is 
+   *   passed as a on_event callback parameter, and free'd from 
+   *   memory with the given cleanup function (if any is given) */
+  void *curr_iter_data;
+  void (*curr_iter_cleanup)(void *curr_iter_data);
 
-  pthread_mutex_t wthreads_lock; // lock for fns used across callbacks
+  struct thread_pool threads[MAX_THREADS];
+  int num_notbusy; // num of available threads
+  pthread_mutex_t threads_lock; // lock for fns used across callbacks
 };
 
 void ws_init(struct websockets_s *ws, const char base_url[], struct ws_callbacks *cbs);
@@ -103,11 +106,13 @@ void ws_set_max_reconnect(struct websockets_s *ws, int max_attempts);
 void ws_set_event(
   struct websockets_s *ws, 
   int event_code, 
-  void (*user_cb)(void *data, void *event_data));
-void ws_set_event_data(
+  void (*user_cb)(void *data, void *curr_iter_data));
+/* this should be used at on_text_event callbacks, it is the data that
+ *  can be accessed within the on_event callbacks parameter */
+void ws_set_curr_iter_data(
   struct websockets_s *ws, 
-  void *data, 
-  void (*cleanup)(void *data));
+  void *curr_iter_data, 
+  void (*curr_iter_cleanup)(void *curr_iter_data));
 
 #ifdef __cplusplus
 }

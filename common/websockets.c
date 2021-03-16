@@ -28,7 +28,7 @@ cws_on_close_cb(void *p_ws, CURL *ehandle, enum cws_close_reason cwscode, const 
 struct _event_cxt {
   struct websockets_s *ws; // the websockets client
   struct event_cbs *event; // callback associated with event
-  struct worker_thread *wthread; // thread associated with event
+  struct thread_pool *thread; // thread associated with event
 };
 
 static void*
@@ -36,16 +36,16 @@ event_run(void *p_cxt)
 {
   struct _event_cxt *cxt = p_cxt;
 
-  (*cxt->event->cb)(cxt->ws->cbs.data, cxt->wthread->data);
+  (*cxt->event->cb)(cxt->ws->cbs.data, cxt->thread->data);
 
   pthread_mutex_lock(&cxt->ws->lock); //@todo special lock for events ?
-  cxt->wthread->is_busy = false;
+  cxt->thread->is_busy = false;
   ++cxt->ws->num_notbusy;
-  if (cxt->wthread->data && cxt->wthread->cleanup) {
-    (*cxt->wthread->cleanup)(cxt->wthread->data);
+  if (cxt->thread->data && cxt->thread->cleanup) {
+    (*cxt->thread->cleanup)(cxt->thread->data);
   }
-  cxt->wthread->cleanup = NULL;
-  cxt->wthread->data = NULL;
+  cxt->thread->cleanup = NULL;
+  cxt->thread->data = NULL;
 
   pthread_cond_signal(&cxt->ws->cond);
   pthread_mutex_unlock(&cxt->ws->lock);
@@ -87,23 +87,23 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
 
     // get a available thread
     for (size_t i=0; i < MAX_THREADS; ++i) {
-      if (!ws->wthreads[i].is_busy) {
+      if (!ws->threads[i].is_busy) {
         --ws->num_notbusy;
 
-        cxt->wthread = &ws->wthreads[i];
-        cxt->wthread->is_busy = true;
-        cxt->wthread->data = ws->tmp_data;
-        cxt->wthread->cleanup = ws->tmp_cleanup;
-        ws->tmp_data = NULL;
-        ws->tmp_cleanup = NULL;
+        cxt->thread = &ws->threads[i];
+        cxt->thread->is_busy = true;
+        cxt->thread->data = ws->curr_iter_data;
+        cxt->thread->cleanup = ws->curr_iter_cleanup;
+        ws->curr_iter_data = NULL;
+        ws->curr_iter_cleanup = NULL;
         break; /* EARLY BREAK */
       }
     }
-    ASSERT_S(NULL != cxt->wthread, "Internal thread synchronization error (couldn't fetch thread)");
+    ASSERT_S(NULL != cxt->thread, "Internal thread synchronization error (couldn't fetch thread)");
 
-    if (pthread_create(&cxt->wthread->tid, NULL, &event_run, cxt))
+    if (pthread_create(&cxt->thread->tid, NULL, &event_run, cxt))
       ERR("Couldn't create thread");
-    if (pthread_detach(cxt->wthread->tid))
+    if (pthread_detach(cxt->thread->tid))
       ERR("Couldn't detach thread");
 
     pthread_mutex_unlock(&ws->lock);
@@ -112,11 +112,11 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
 
   pthread_mutex_lock(&ws->lock);
 
-  if (ws->tmp_data && ws->tmp_cleanup) {
-    (*ws->tmp_cleanup)(ws->tmp_data);
+  if (ws->curr_iter_data && ws->curr_iter_cleanup) {
+    (*ws->curr_iter_cleanup)(ws->curr_iter_data);
   }
-  ws->tmp_cleanup = NULL;
-  ws->tmp_data = NULL;
+  ws->curr_iter_cleanup = NULL;
+  ws->curr_iter_data = NULL;
 
   (*ws->config.json_cb)(
     false,
@@ -236,7 +236,7 @@ ws_init(
 
   if (pthread_mutex_init(&ws->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
-  if (pthread_mutex_init(&ws->wthreads_lock, NULL))
+  if (pthread_mutex_init(&ws->threads_lock, NULL))
     ERR("Couldn't initialize pthread mutex");
   if (pthread_cond_init(&ws->cond, NULL))
     ERR("Couldn't initialize pthread cond");
@@ -264,7 +264,7 @@ ws_cleanup(struct websockets_s *ws)
   cws_free(ws->ehandle);
   orka_config_cleanup(&ws->config);
   pthread_mutex_destroy(&ws->lock);
-  pthread_mutex_destroy(&ws->wthreads_lock);
+  pthread_mutex_destroy(&ws->threads_lock);
   pthread_cond_destroy(&ws->cond);
 }
 
@@ -287,9 +287,9 @@ event_loop(struct websockets_s *ws)
   do {
     int numfds;
 
-    pthread_mutex_lock(&ws->wthreads_lock);
+    pthread_mutex_lock(&ws->threads_lock);
     ws->now_tstamp = orka_timestamp_ms(); //update our concept of now
-    pthread_mutex_unlock(&ws->wthreads_lock);
+    pthread_mutex_unlock(&ws->threads_lock);
 
     mcode = curl_multi_perform(ws->mhandle, &is_running);
     ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
@@ -322,7 +322,7 @@ ws_close(
 void
 ws_send_text(struct websockets_s *ws, char text[])
 {
-  pthread_mutex_lock(&ws->wthreads_lock);
+  pthread_mutex_lock(&ws->threads_lock);
   (*ws->config.json_cb)(
     false, 
     0, "SEND", 
@@ -332,52 +332,52 @@ ws_send_text(struct websockets_s *ws, char text[])
 
   bool ret = cws_send_text(ws->ehandle, text);
   if (false == ret) PRINT("Couldn't send websockets payload");
-  pthread_mutex_unlock(&ws->wthreads_lock);
+  pthread_mutex_unlock(&ws->threads_lock);
 }
 
 uint64_t
 ws_timestamp(struct websockets_s *ws) 
 {
-  pthread_mutex_lock(&ws->wthreads_lock);
+  pthread_mutex_lock(&ws->threads_lock);
   uint64_t now_tstamp = ws->now_tstamp;
-  pthread_mutex_unlock(&ws->wthreads_lock);
+  pthread_mutex_unlock(&ws->threads_lock);
   return now_tstamp;
 }
 
 enum ws_status
 ws_get_status(struct websockets_s *ws) 
 {
-  pthread_mutex_lock(&ws->wthreads_lock);
+  pthread_mutex_lock(&ws->threads_lock);
   enum ws_status status = ws->status;
-  pthread_mutex_unlock(&ws->wthreads_lock);
+  pthread_mutex_unlock(&ws->threads_lock);
   return status;
 }
 
 void
 ws_set_status(struct websockets_s *ws, enum ws_status status) 
 {
-  pthread_mutex_lock(&ws->wthreads_lock);
+  pthread_mutex_lock(&ws->threads_lock);
   if (status == WS_CONNECTED) {
     ws->reconnect.attempt = 0;
   }
   ws->status = status;
-  pthread_mutex_unlock(&ws->wthreads_lock);
+  pthread_mutex_unlock(&ws->threads_lock);
 }
 
 void
 ws_set_refresh_rate(struct websockets_s *ws, uint64_t wait_ms) 
 {
-  pthread_mutex_lock(&ws->wthreads_lock);
+  pthread_mutex_lock(&ws->threads_lock);
   ws->wait_ms = wait_ms;
-  pthread_mutex_unlock(&ws->wthreads_lock);
+  pthread_mutex_unlock(&ws->threads_lock);
 }
 
 void
 ws_set_max_reconnect(struct websockets_s *ws, int max_attempts) 
 {
-  pthread_mutex_lock(&ws->wthreads_lock);
+  pthread_mutex_lock(&ws->threads_lock);
   ws->reconnect.threshold = max_attempts;
-  pthread_mutex_unlock(&ws->wthreads_lock);
+  pthread_mutex_unlock(&ws->threads_lock);
 }
 
 void
@@ -397,13 +397,17 @@ ws_set_event(
   ws->cbs.on_event[ws->cbs.num_events-1].cb = user_cb;
 }
 
-/* this is a one time data, it will be used just on the current event
-    loop iteration, and then be freed accordingly */
+/* set data that will be accessable on current loop iteration with 
+ *  any on_event callback.  It will be freed before the next 
+ *  iteration by calling user defined cleanup() method */
 void
-ws_set_event_data(struct websockets_s *ws, void *data, void (*cleanup)(void *data))
+ws_set_curr_iter_data(
+  struct websockets_s *ws, 
+  void *curr_iter_data, 
+  void (*curr_iter_cleanup)(void *curr_iter_data))
 {
-  ws->tmp_data = data;
-  ws->tmp_cleanup = cleanup;
+  ws->curr_iter_data = curr_iter_data;
+  ws->curr_iter_cleanup = curr_iter_cleanup;
 }
 
 static enum ws_status

@@ -381,6 +381,8 @@ struct dati { /* WEBSOCKETS STRUCTURE */
   user::dati *me; //the user associated with this client
 
   client *p_client; //points to client this struct is a part of
+
+  pthread_mutex_t lock; //for accessing ws fields within events
 };
 
 void init(dati *ws, const char token[], const char config_file[]);

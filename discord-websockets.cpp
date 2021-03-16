@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h> // for isspace()
+#include <pthread.h>
 
 #include <libdiscord.h>
 
@@ -415,7 +416,8 @@ static void
 ws_send_identify(dati *ws)
 {
   /* Ratelimit check */
-  if ((ws_timestamp(&ws->common) - ws->session.identify_tstamp ) < 5) {
+  pthread_mutex_lock(&ws->lock);
+  if ((ws_timestamp(&ws->common) - ws->session.identify_tstamp) < 5) {
     ++ws->session.concurrent;
     VASSERT_S(ws->session.concurrent < ws->session.max_concurrency,
         "Reach identify request threshold (%d every 5 seconds)", ws->session.max_concurrency);
@@ -423,6 +425,7 @@ ws_send_identify(dati *ws)
   else {
     ws->session.concurrent = 0;
   }
+  pthread_mutex_unlock(&ws->lock);
 
   char payload[MAX_PAYLOAD_LEN];
   int ret = json_inject(payload, sizeof(payload), 
@@ -437,7 +440,9 @@ ws_send_identify(dati *ws)
   send_payload(ws, payload);
 
   //get timestamp for this identify
+  pthread_mutex_lock(&ws->lock);
   ws->session.identify_tstamp = ws_timestamp(&ws->common);
+  pthread_mutex_unlock(&ws->lock);
 }
 
 static void
@@ -446,8 +451,10 @@ on_hello(void *p_ws, void *curr_iter_data)
   dati *ws = (dati*)p_ws;
   struct payload_s *payload = (struct payload_s*)curr_iter_data;
 
+  pthread_mutex_lock(&ws->lock);
   ws->hbeat.interval_ms = 0;
   ws->hbeat.tstamp = orka_timestamp_ms();
+  pthread_mutex_unlock(&ws->lock);
 
   json_scanf(payload->event_data, sizeof(payload->event_data),
              "[heartbeat_interval]%ld", &ws->hbeat.interval_ms);
@@ -701,6 +708,7 @@ on_dispatch(void *p_ws, void *curr_iter_data)
       sizeof(payload->event_data), ws->me);
 
   /* Ratelimit check */
+  pthread_mutex_lock(&ws->lock);
   if ((ws_timestamp(&ws->common) - ws->session.event_tstamp) < 60) {
     ++ws->session.event_count;
     ASSERT_S(ws->session.event_count < 120,
@@ -710,6 +718,7 @@ on_dispatch(void *p_ws, void *curr_iter_data)
     ws->session.event_tstamp = ws_timestamp(&ws->common);
     ws->session.event_count = 0;
   }
+  pthread_mutex_unlock(&ws->lock);
 
   enum dispatch_code code = get_dispatch_code(payload->event_name);
   switch (code) {
@@ -791,8 +800,10 @@ on_heartbeat_ack(void *p_ws, void *curr_iter_data)
   dati *ws = (dati*)p_ws;
 
   // get request / response interval in milliseconds
+  pthread_mutex_lock(&ws->lock);
   ws->ping_ms = orka_timestamp_ms() - ws->hbeat.tstamp;
   D_PRINT("PING: %d ms", ws->ping_ms);
+  pthread_mutex_unlock(&ws->lock);
 }
 
 static void
@@ -878,11 +889,13 @@ on_iter_end_cb(void *p_ws)
 
   /*check if timespan since first pulse is greater than
    * minimum heartbeat interval required*/
+  pthread_mutex_lock(&ws->lock);
   if (ws->hbeat.interval_ms < (ws_timestamp(&ws->common) - ws->hbeat.tstamp)) {
     send_heartbeat(ws);
 
     ws->hbeat.tstamp = ws_timestamp(&ws->common); //update heartbeat timestamp
   }
+  pthread_mutex_unlock(&ws->lock);
 
   if (ws->cbs.on_idle) {
     (*ws->cbs.on_idle)(ws->p_client, ws->me);
@@ -969,6 +982,9 @@ init(dati *ws, const char token[], const char config_file[])
 
   ws->me = user::dati_alloc();
   user::me::get(ws->p_client, ws->me);
+
+  if (pthread_mutex_init(&ws->lock, NULL))
+    ERR("Couldn't initialize pthread mutex");
 }
 
 void
@@ -977,6 +993,7 @@ cleanup(dati *ws)
   user::dati_free(ws->me);
   identify::dati_free(ws->identify);
   ws_cleanup(&ws->common);
+  pthread_mutex_destroy(&ws->lock);
 }
 
 namespace session {
@@ -1012,7 +1029,7 @@ dati_from_json(char *str, size_t len, void *p_session)
 void
 get(client *client, dati *p_session)
 {
-  struct resp_handle resp_handle =
+  struct resp_handle resp_handle = \
     { .ok_cb = &dati_from_json, .ok_obj = (void*)p_session };
 
   user_agent::run( 
@@ -1026,7 +1043,7 @@ get(client *client, dati *p_session)
 void
 get_bot(client *client, dati *p_session)
 {
-  struct resp_handle resp_handle =
+  struct resp_handle resp_handle = \
     { .ok_cb = &dati_from_json, .ok_obj = (void*)p_session};
 
   user_agent::run( 
@@ -1041,8 +1058,7 @@ get_bot(client *client, dati *p_session)
 
 /* connects to the discord websockets server */
 void
-run(dati *ws)
-{
+run(dati *ws) {
   ws_run(&ws->common);
 }
 

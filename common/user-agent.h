@@ -93,15 +93,13 @@ struct resp_handle {
   cxt_load_obj_cb *cxt_err_cb;
 };
 
-#define MAX_CONNECTIONS 50 //@todo temporary solution
-
 struct user_agent_s {
   struct orka_config config;
-  struct curl_slist *reqheader; //the request header sent to the api
+  struct curl_slist *req_header; // the request header sent to the api
 
-  struct ua_conn_s conns[MAX_CONNECTIONS];
+  struct ua_conn_s **conns; // connection pool for reuse
   int num_notbusy; // num of available conns
-  size_t num_conn; // amount of conns (available or in use)
+  size_t num_conn; // amount of conns created
 
   char *base_url;
 

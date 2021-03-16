@@ -32,7 +32,7 @@ ua_reqheader_add(struct user_agent_s *ua, char field[],  char value[])
 
   /* check for match in existing fields */
   size_t len = strlen(field);
-  struct curl_slist *node = ua->reqheader;
+  struct curl_slist *node = ua->req_header;
   while (NULL != node) {
     if (0 == strncasecmp(node->data, field, len)) {
       free(node->data);
@@ -43,22 +43,22 @@ ua_reqheader_add(struct user_agent_s *ua, char field[],  char value[])
   }
 
   /* couldn't find match, we will create a new field */
-  if (NULL == ua->reqheader) 
-    ua->reqheader = curl_slist_append(NULL, buf);
+  if (NULL == ua->req_header) 
+    ua->req_header = curl_slist_append(NULL, buf);
   else
-    curl_slist_append(ua->reqheader, buf);
+    curl_slist_append(ua->req_header, buf);
 }
 
 // @todo this needs some testing
 void
 ua_reqheader_del(struct user_agent_s *ua, char field[])
 {
-  struct curl_slist *node = ua->reqheader;
+  struct curl_slist *node = ua->req_header;
   size_t len = strlen(field);
   if (0 == strncasecmp(node->data, field, len)) {
     free(node->data);
     free(node);
-    ua->reqheader = NULL;
+    ua->req_header = NULL;
 
     return; /* EARLY EXIT */
   }
@@ -484,17 +484,16 @@ ua_mime_setopt(struct user_agent_s *ua, void *data, curl_mime* (mime_cb)(CURL *e
   ua->data2 = data;
 }
 
-static void
-conn_init(struct user_agent_s *ua, struct ua_conn_s *conn)
+static struct ua_conn_s*
+conn_init(struct user_agent_s *ua)
 {
-  memset(conn, 0, sizeof(struct ua_conn_s));
-
-  CURL *new_ehandle = curl_easy_init();
+  struct ua_conn_s *new_conn = calloc(1, sizeof(struct ua_conn_s));
+  CURL *new_ehandle = curl_easy_init(); // will be given to new_conn
 
   CURLcode ecode;
 
   //set ptr to request header we will be using for API communication
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_HTTPHEADER, ua->reqheader);
+  ecode = curl_easy_setopt(new_ehandle, CURLOPT_HTTPHEADER, ua->req_header);
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //enable follow redirections
@@ -506,7 +505,7 @@ conn_init(struct user_agent_s *ua, struct ua_conn_s *conn)
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set ptr to response body to be filled at callback
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_WRITEDATA, &conn->resp_body);
+  ecode = curl_easy_setopt(new_ehandle, CURLOPT_WRITEDATA, &new_conn->resp_body);
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set response header callback
@@ -514,7 +513,7 @@ conn_init(struct user_agent_s *ua, struct ua_conn_s *conn)
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   //set ptr to response header to be filled at callback
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_HEADERDATA, &conn->resp_header);
+  ecode = curl_easy_setopt(new_ehandle, CURLOPT_HEADERDATA, &new_conn->resp_header);
   ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
 
   /* DEBUG MODE SETOPTS START
@@ -538,21 +537,18 @@ conn_init(struct user_agent_s *ua, struct ua_conn_s *conn)
     (*ua->setopt_cb)(new_ehandle, ua->data);
   }
 
-  conn->ehandle = new_ehandle;
+  new_conn->ehandle = new_ehandle;
+
+  return new_conn;
 }
 
 static void
-conns_cleanup(struct ua_conn_s *conns, size_t num_conn)
+conn_cleanup(struct ua_conn_s *conn)
 {
-  if (!conns) return;
-
-  for (size_t i=0; i < num_conn; ++i) {
-    curl_easy_cleanup(conns[i].ehandle);
-    if (conns[i].resp_body.start) {
-      free(conns[i].resp_body.start);
-    }
-  }
-  free(conns); 
+  curl_easy_cleanup(conn->ehandle);
+  if (conn->resp_body.start)
+    free(conn->resp_body.start);
+  free(conn);
 }
 
 static struct ua_conn_s*
@@ -562,18 +558,18 @@ get_conn(struct user_agent_s *ua)
 
   pthread_mutex_lock(&ua->lock);
   if (!ua->num_notbusy) { // no available conn, create new
-    conn_init(ua, &ua->conns[ua->num_conn]);
-
     ++ua->num_conn;
-    ASSERT_S(ua->num_conn < MAX_CONNECTIONS, "Out of bounds write");
 
-    ret_conn = &ua->conns[ua->num_conn-1];
+    ua->conns = realloc(ua->conns, ua->num_conn * sizeof *ua->conns);
+    ua->conns[ua->num_conn-1] = conn_init(ua);
+
+    ret_conn = ua->conns[ua->num_conn-1];
   }
   else { // available conn, pick one
     for (size_t i=0; i < ua->num_conn; ++i) {
-      if (!ua->conns[i].is_busy) {
+      if (!ua->conns[i]->is_busy) {
         --ua->num_notbusy;
-        ret_conn = &ua->conns[i];
+        ret_conn = ua->conns[i];
         break; /* EARLY BREAK */
       }
     }
@@ -632,9 +628,11 @@ void
 ua_cleanup(struct user_agent_s *ua)
 {
   free(ua->base_url);
-  curl_slist_free_all(ua->reqheader);
+  curl_slist_free_all(ua->req_header);
   orka_config_cleanup(&ua->config);
-  conns_cleanup(ua->conns, ua->num_conn);
+  for (size_t i=0; i < ua->num_conn; ++i) {
+    conn_cleanup(ua->conns[i]);
+  }
   pthread_mutex_destroy(&ua->lock);
   pthread_mutex_destroy(&ua->cbs_lock);
 }

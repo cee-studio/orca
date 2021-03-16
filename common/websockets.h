@@ -22,12 +22,13 @@ struct event_cbs {
 };
 
 struct ws_callbacks {
-  void *data; /* user arbitrary data to be passed to callbacks */
+  void *data; // user arbitrary data to be passed to callbacks
 
   struct event_cbs *on_event;
   size_t num_events;
 
   int (*on_startup)(void *data); // exec before loop starts (return 1 for proceed, 0 for abort)
+  void (*on_iter_start)(void *data); // execs at end of every loop iteration
   void (*on_iter_end)(void *data); // execs at end of every loop iteration
   /* on_text_event should return a valid event code by parsing the text,
    *  if code is invalid then on_text will be executed instead */
@@ -46,8 +47,9 @@ struct thread_pool {
   pthread_t tid;
   bool is_busy;
 
-  void *data; /* user arbitrary data */
-  void (*cleanup)(void *data);
+  /* the following are set by ws_set_curr_iter_data() */
+  void *data; //user arbitrary data that lasts for this thread cycle
+  void (*cleanup)(void *data); //data cleanup method
 };
 
 #define MAX_THREADS 10 //@todo temp size just for prototyping

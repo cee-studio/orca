@@ -121,18 +121,15 @@ typedef enum {
   ACTION_ABORT    // abort after failed request
 } ua_action_t;
 
-typedef ua_action_t (http_response_cb)(
-    void *data,
-    int httpcode, 
-    struct ua_conn_s *conn);
+typedef ua_action_t 
+(http_response_cb)(void *data, int httpcode, struct ua_conn_s *conn);
 
 struct ua_callbacks {
-  void *data; // data to be received by callbacks
+  void *data; // user arbitrary data to be passed to callbacks
 
   int (*on_startup)(void *data); // exec before loop starts (return 1 for proceed, 0 for abort)
   void (*on_iter_start)(void *data); // execs at end of every loop iteration
   void (*on_iter_end)(void *data); // execs at end of every loop iteration
-  void (*on_exit)(void *data); // execs after loop ends
 
   http_response_cb *on_1xx; // execs on 1xx code
   http_response_cb *on_2xx; // execs on 2xx code

@@ -796,11 +796,8 @@ on_heartbeat_ack(void *p_ws, void *curr_iter_data)
 }
 
 static void
-on_connect_cb(void *p_ws, const char *ws_protocols)
-{
+on_connect_cb(void *p_ws, const char *ws_protocols) {
   D_PRINT("Connected, WS-Protocols: '%s'", ws_protocols);
-
-  (void)p_ws;
 }
 
 static void
@@ -839,10 +836,8 @@ on_close_cb(void *p_ws, enum cws_close_reason cwscode, const char *reason, size_
 }
 
 static void
-on_text_cb(void *p_ws, const char *text, size_t len)
-{
+on_text_cb(void *p_ws, const char *text, size_t len) {
   D_NOTOP_PUTS("FALLBACK TO ON_TEXT");
-  (void)p_ws;(void)text;(void)len;
 }
 
 static int

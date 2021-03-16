@@ -22,7 +22,6 @@ cws_on_close_cb(void *p_ws, CURL *ehandle, enum cws_close_reason cwscode, const 
   pthread_mutex_lock(&ws->lock);
   (*ws->cbs.on_close)(ws->cbs.data, cwscode, reason, len);
   pthread_mutex_unlock(&ws->lock);
-  (void)ehandle;
 }
 
 struct _event_cxt {
@@ -38,7 +37,7 @@ event_run(void *p_cxt)
 
   (*cxt->event->cb)(cxt->ws->cbs.data, cxt->thread->data);
 
-  pthread_mutex_lock(&cxt->ws->lock); //@todo special lock for events ?
+  pthread_mutex_lock(&cxt->ws->lock);
   cxt->thread->is_busy = false;
   ++cxt->ws->num_notbusy;
   if (cxt->thread->data && cxt->thread->cleanup) {
@@ -137,7 +136,6 @@ cws_on_binary_cb(void *p_ws, CURL *ehandle, const void *mem, size_t len)
   pthread_mutex_lock(&ws->lock);
   (*ws->cbs.on_binary)(ws->cbs.data, mem, len);
   pthread_mutex_unlock(&ws->lock);
-  (void)ehandle;
 }
 
 static void
@@ -147,7 +145,6 @@ cws_on_ping_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
   pthread_mutex_lock(&ws->lock);
   (*ws->cbs.on_ping)(ws->cbs.data, reason, len);
   pthread_mutex_unlock(&ws->lock);
-  (void)ehandle;
 }
 
 static void
@@ -157,7 +154,6 @@ cws_on_pong_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
   pthread_mutex_lock(&ws->lock);
   (*ws->cbs.on_pong)(ws->cbs.data, reason, len);
   pthread_mutex_unlock(&ws->lock);
-  (void)ehandle;
 }
 
 /* init easy handle with some default opt */
@@ -192,7 +188,7 @@ custom_cws_new(struct websockets_s *ws)
 }
 
 static int noop_on_startup(void *a){return 1;}
-static void noop_on_iter_end(void *a){return;}
+static void noop_on_iter(void *a){return;}
 static int noop_on_text_event(void *a, const char *b, size_t c)
 {return INT_MIN;} // return unlikely event value as default
 
@@ -225,7 +221,8 @@ ws_init(
 
   memcpy(&ws->cbs, cbs, sizeof(struct ws_callbacks));
   if (!ws->cbs.on_startup) ws->cbs.on_startup = &noop_on_startup;
-  if (!ws->cbs.on_iter_end) ws->cbs.on_iter_end = &noop_on_iter_end;
+  if (!ws->cbs.on_iter_start) ws->cbs.on_iter_start = &noop_on_iter;
+  if (!ws->cbs.on_iter_end) ws->cbs.on_iter_end = &noop_on_iter;
   if (!ws->cbs.on_text_event) ws->cbs.on_text_event = &noop_on_text_event;
   if (!ws->cbs.on_connect) ws->cbs.on_connect = &noop_on_connect;
   if (!ws->cbs.on_text) ws->cbs.on_text = &noop_on_text;
@@ -291,6 +288,13 @@ event_loop(struct websockets_s *ws)
     ws->now_tstamp = orka_timestamp_ms(); //update our concept of now
     pthread_mutex_unlock(&ws->threads_lock);
 
+    // @todo branchless alternative ?
+    if (ws_get_status(ws) == WS_CONNECTED) { // run if connection established
+      pthread_mutex_lock(&ws->lock);
+      (*ws->cbs.on_iter_start)(ws->cbs.data);
+      pthread_mutex_unlock(&ws->lock);
+    }
+
     mcode = curl_multi_perform(ws->mhandle, &is_running);
     ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
@@ -298,13 +302,13 @@ event_loop(struct websockets_s *ws)
     mcode = curl_multi_wait(ws->mhandle, NULL, 0, ws->wait_ms, &numfds);
     ASSERT_S(CURLM_OK == mcode, curl_multi_strerror(mcode));
 
+    // @todo branchless alternative ?
     if (ws_get_status(ws) == WS_CONNECTED) { // run if connection established
       pthread_mutex_lock(&ws->lock);
       (*ws->cbs.on_iter_end)(ws->cbs.data);
       pthread_mutex_unlock(&ws->lock);
     }
   } while(is_running);
-
   curl_multi_remove_handle(ws->mhandle, ws->ehandle);
 }
 

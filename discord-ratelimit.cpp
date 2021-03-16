@@ -50,7 +50,6 @@ try_cooldown(dati *bucket)
           "\tWait for:\t %" PRId64 " ms",
           bucket->hash, delay_ms);
 
-  //@todo replace with pthread_timedwait() ?
   orka_sleep_ms(delay_ms); //sleep for delay amount (if any)
 
   pthread_mutex_unlock(&bucket->lock);
@@ -161,16 +160,13 @@ match_route(user_agent::dati *ua, char endpoint[], struct ua_conn_s *conn)
   }
 
   if (!new_route->p_bucket) { //couldn't find match, create new bucket
-    dati *new_bucket = bucket_init(bucket_hash);
-
     ++ua->ratelimit.num_buckets; //increments client buckets
 
-    void *tmp = realloc(ua->ratelimit.buckets, ua->ratelimit.num_buckets * sizeof(dati*));
-    ASSERT_S(NULL != tmp, "Out of memory");
+    ua->ratelimit.buckets = (dati**)realloc(ua->ratelimit.buckets, \
+                              ua->ratelimit.num_buckets * sizeof(dati*));
 
-    ua->ratelimit.buckets = (dati**)tmp;
+    dati *new_bucket = bucket_init(bucket_hash);
     ua->ratelimit.buckets[ua->ratelimit.num_buckets-1] = new_bucket;
-
     new_route->p_bucket = new_bucket; //route points to new bucket
   }
 

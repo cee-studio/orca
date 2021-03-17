@@ -87,6 +87,63 @@ unpin_message(client *client, const uint64_t channel_id, const uint64_t message_
     "/channels/%llu/pins/%llu", channel_id, message_id);
 }
 
+namespace get_channel_messages {
+
+message::dati**
+run(client *client, const uint64_t channel_id, params *params)
+{
+  if (!channel_id) {
+    D_PUTS("Missing 'channel_id'");
+    return NULL;
+  }
+  if (!params) {
+    D_PUTS("Missing 'params'");
+    return NULL;
+  }
+  if (params->limit < 1 || params->limit > 100) {
+    D_PUTS("'limit' value should be in an interval of (1-100)");
+    return NULL;
+  }
+
+  char limit_query[64];
+  snprintf(limit_query, sizeof(limit_query),
+           "?limit=%d", params->limit);
+
+  char around_query[64] = "";
+  if (params->around) {
+    snprintf(around_query, sizeof(around_query),
+             "&around=%" PRIu64 , params->around);
+  }
+
+  char before_query[64] = "";
+  if (params->before) {
+    snprintf(before_query, sizeof(before_query),
+             "&before=%" PRIu64 , params->before);
+  }
+
+  char after_query[64] = "";
+  if (params->after) {
+    snprintf(after_query, sizeof(after_query),
+             "&after=%" PRIu64 , params->after);
+  }
+
+  message::dati **new_messages = NULL;
+
+  struct resp_handle resp_handle =
+    { .ok_cb = &dati_list_from_json_v, .ok_obj = (void*)&new_messages};
+
+  user_agent::run(
+    &client->ua,
+    &resp_handle,
+    NULL,
+    HTTP_GET,
+    "/channels/%llu/messages%s%s%s",
+    channel_id, limit_query, around_query, before_query, after_query);
+
+  return new_messages;
+}
+} // namespace get_channel_messages
+
 namespace message {
 
 void
@@ -145,64 +202,6 @@ dati_from_json(char *str, size_t len, dati *message)
 
   DS_NOTOP_PUTS("Message object loaded with API response"); 
 }
-
-namespace get_list {
-
-message::dati**
-run(client *client, const uint64_t channel_id, params *params)
-{
-  if (!channel_id) {
-    D_PUTS("Missing 'channel_id'");
-    return NULL;
-  }
-  if (!params) {
-    D_PUTS("Missing 'params'");
-    return NULL;
-  }
-  if (params->limit < 1 || params->limit > 100) {
-    D_PUTS("'limit' value should be in an interval of (1-100)");
-    return NULL;
-  }
-
-  char limit_query[64];
-  snprintf(limit_query, sizeof(limit_query),
-      "?limit=%d", params->limit);
-
-  char around_query[64] = "";
-  if (params->around) {
-    snprintf(around_query, sizeof(around_query),
-        "&around=%" PRIu64 , params->around);
-  }
-
-  char before_query[64] = "";
-  if (params->before) {
-    snprintf(before_query, sizeof(before_query),
-        "&before=%" PRIu64 , params->before);
-  }
-
-  char after_query[64] = "";
-  if (params->after) {
-    snprintf(after_query, sizeof(after_query),
-        "&after=%" PRIu64 , params->after);
-  }
-
-  dati **new_messages = NULL;
-
-  struct resp_handle resp_handle = 
-    { .ok_cb = &dati_list_from_json_v, .ok_obj = (void*)&new_messages};
-
-  user_agent::run( 
-    &client->ua,
-    &resp_handle,
-    NULL,
-    HTTP_GET, 
-    "/channels/%llu/messages%s%s%s", 
-    channel_id, limit_query, around_query, before_query, after_query);
-
-  return new_messages;
-}
-
-} // namespace get_list
 
 namespace create {
 

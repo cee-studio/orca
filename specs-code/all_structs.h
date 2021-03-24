@@ -549,1068 +549,6 @@ struct discord_create_guild_template_params {
     void *record_null[2];
   } __M; // metadata
 };
-/* This file is generated from specs/channel.group-dm-add-recipient.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/channel#group-dm-add-recipient */
-/* This is defined at specs/channel.group-dm-add-recipient.json:8:22 */
-struct discord_group_dm_add_recipient_params {
-  /* specs/channel.group-dm-add-recipient.json:11:20
-     '{ "name": "access_token", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *access_token;
-
-  /* specs/channel.group-dm-add-recipient.json:12:20
-     '{ "name": "nick", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *nick;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; // metadata
-};
-/* This file is generated from specs/channel.create-channel-invite.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/channel#create-channel-invite */
-/* This is defined at specs/channel.create-channel-invite.json:8:22 */
-struct discord_create_channel_invite_params {
-  /* specs/channel.create-channel-invite.json:11:20
-     '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "loc":"url"}'
-  */
-  u64_snowflake_t channel_id;
-
-  /* specs/channel.create-channel-invite.json:12:20
-     '{ "name": "max_age", "type":{ "base":"int" } }'
-  */
-  int max_age;
-
-  /* specs/channel.create-channel-invite.json:13:20
-     '{ "name": "max_uses", "type":{ "base":"int" } }'
-  */
-  int max_uses;
-
-  /* specs/channel.create-channel-invite.json:14:20
-     '{ "name": "temporary", "type":{ "base":"bool"}}'
-  */
-  bool temporary;
-
-  /* specs/channel.create-channel-invite.json:15:20
-     '{ "name": "unique", "type":{ "base":"bool"}}'
-  */
-  bool unique;
-
-  /* specs/channel.create-channel-invite.json:16:20
-     '{ "name": "target_user", "type":{ "base":"char", "dec":"*"}, 
-          "option":true, "inject_if_not":null}'
-  */
-  char *target_user;
-
-  /* specs/channel.create-channel-invite.json:18:20
-     '{ "name": "target_user_type", "type":{ "base":"int" },
-          "option":true, "inject_if_not":0}'
-  */
-  int target_user_type;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; // metadata
-};
-/* This file is generated from specs/voice.json, Please don't edit it. */
-/*
-(null)
-*/
-
-/* Title: Voice State Object */
-/* https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure */
-/* This is defined at specs/voice.json:8:22 */
-struct discord_voice {
-  /* specs/voice.json:11:20
-     '{ "name": "guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
-  */
-  u64_snowflake_t guild_id;
-
-  /* specs/voice.json:12:20
-     '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}}'
-  */
-  u64_snowflake_t channel_id;
-
-  /* specs/voice.json:13:20
-     '{ "name": "user_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
-  */
-  u64_snowflake_t user_id;
-
-  /* specs/voice.json:14:20
-     '{ "name": "member", "type":{ "base":"struct discord_guild_member", "dec":"*" }}'
-  */
-  struct discord_guild_member *member;
-
-  /* specs/voice.json:15:20
-     '{ "name": "session_id", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *session_id;
-
-  /* specs/voice.json:16:20
-     '{ "name": "deaf", "type":{ "base":"bool" }}'
-  */
-  bool deaf;
-
-  /* specs/voice.json:17:20
-     '{ "name": "mute", "type":{ "base":"bool" }}'
-  */
-  bool mute;
-
-  /* specs/voice.json:18:20
-     '{ "name": "self_deaf", "type":{ "base":"bool" }}'
-  */
-  bool self_deaf;
-
-  /* specs/voice.json:19:20
-     '{ "name": "self_mute", "type":{ "base":"bool" }}'
-  */
-  bool self_mute;
-
-  /* specs/voice.json:20:20
-     '{ "name": "self_stream", "type":{ "base":"bool" }}'
-  */
-  bool self_stream;
-
-  /* specs/voice.json:21:20
-     '{ "name": "self_video", "type":{ "base":"bool" }}'
-  */
-  bool self_video;
-
-  /* specs/voice.json:22:20
-     '{ "name": "supress", "type":{ "base":"bool" }}'
-  */
-  bool supress;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[12];
-    void *record_defined[12];
-    void *record_null[12];
-  } __M; // metadata
-};
-
-/* Title: Voice Region Object */
-/* https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure */
-/* This is defined at specs/voice.json:29:22 */
-struct discord_voice_region {
-  /* specs/voice.json:32:20
-     '{ "name": "id", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit" }'
-  */
-  char *id; // @todo fixed size limit
-
-  /* specs/voice.json:33:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit" }'
-  */
-  char *name; // @todo fixed size limit
-
-  /* specs/voice.json:34:20
-     '{ "name": "vip", "type":{ "base":"bool" }}'
-  */
-  bool vip;
-
-  /* specs/voice.json:35:20
-     '{ "name": "optimal", "type":{ "base":"bool" }}'
-  */
-  bool optimal;
-
-  /* specs/voice.json:36:20
-     '{ "name": "deprecated", "type":{ "base":"bool" }}'
-  */
-  bool deprecated;
-
-  /* specs/voice.json:37:20
-     '{ "name": "custom", "type":{ "base":"bool" }}'
-  */
-  bool custom;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[6];
-    void *record_defined[6];
-    void *record_null[6];
-  } __M; // metadata
-};
-/* This file is generated from specs/channel.get-reactions.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/channel#get-reactions */
-/* This is defined at specs/channel.get-reactions.json:8:22 */
-struct discord_get_reactions_params {
-  /* specs/channel.get-reactions.json:11:20
-     '{ "name": "before", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query"}'
-  */
-  u64_snowflake_t before;
-
-  /* specs/channel.get-reactions.json:12:20
-     '{ "name": "after", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query"}'
-  */
-  u64_snowflake_t after;
-
-  /* specs/channel.get-reactions.json:13:20
-     '{ "name": "limit", "type":{ "base":"int" }, "loc":"query"}'
-  */
-  int limit;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; // metadata
-};
-/* This file is generated from specs/guild.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
-*/
-
-/* Title: Guild Structure */
-/* This is defined at specs/guild.json:8:22 */
-struct discord_guild {
-  /* specs/guild.json:11:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/guild.json:12:66
-     '{"type":{"base":"char", "dec":"[MAX_NAME_LEN]"}, "name":"name"}'
-  */
-  char name[MAX_NAME_LEN];
-
-  /* specs/guild.json:13:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"icon"}'
-  */
-  char *icon;
-
-  /* specs/guild.json:14:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"icon_hash"}'
-  */
-  char *icon_hash;
-
-  /* specs/guild.json:15:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"splash"}'
-  */
-  char *splash;
-
-  /* specs/guild.json:16:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"discovery_splash"}'
-  */
-  char *discovery_splash;
-
-  /* specs/guild.json:17:42
-     '{"type":{"base":"bool"}, "name":"owner", "option":true}'
-  */
-  bool owner;
-
-  /* specs/guild.json:18:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id"}'
-  */
-  u64_snowflake_t owner_id;
-
-  /* specs/guild.json:19:41
-     '{"type":{"base":"int"}, "name":"permissions", "option":true}'
-  */
-  int permissions;
-
-  /* specs/guild.json:20:68
-     '{"type":{"base":"char", "dec":"[MAX_REGION_LEN]"}, "name":"region"}'
-  */
-  char region[MAX_REGION_LEN];
-
-  /* specs/guild.json:21:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"afk_channel_id"}'
-  */
-  u64_snowflake_t afk_channel_id;
-
-  /* specs/guild.json:22:41
-     '{"type":{"base":"int"}, "name":"afk_timeout"}'
-  */
-  int afk_timeout;
-
-  /* specs/guild.json:23:42
-     '{"type":{"base":"bool"}, "name":"widget_enabled", "option":true}'
-  */
-  bool widget_enabled;
-
-  /* specs/guild.json:24:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"widget_channel_id", "option":true}'
-  */
-  u64_snowflake_t widget_channel_id;
-
-  /* specs/guild.json:25:94
-     '{"type":{"base":"int", "int_alias":"enum discord_guild_verification_level"}, "name":"verification_level"}'
-  */
-  enum discord_guild_verification_level verification_level;
-
-  /* specs/guild.json:27:32
-     '{"type":{"base":"int", "int_alias":"enum discord_guild_default_message_notification_level"}, 
-              "name":"default_message_notifications"}'
-  */
-  enum discord_guild_default_message_notification_level default_message_notifications;
-
-  /* specs/guild.json:29:32
-     '{"type":{"base":"int", "int_alias":"enum discord_guild_explicit_content_filter_level"},
-              "name":"explicit_content_filter"}'
-  */
-  enum discord_guild_explicit_content_filter_level explicit_content_filter;
-
-  /* specs/guild.json:30:76
-     '{"type":{"base":"struct discord_guild_role", "dec":"ntl"}, "name":"roles", "todo":true, 
-              "comment":"array of role objects"}'
-  */
-  //@todo roles array of role objects;
-
-  /* specs/guild.json:32:71
-     '{"type":{"base":"struct discord_emoji", "dec":"ntl"}, "name":"emojis"}'
-  */
-  struct discord_emoji **emojis;
-
-  /* specs/guild.json:33:57
-     '{"type":{"base":"ja_str", "dec":"ntl"}, "name":"features", "todo":true", 
-              "comment":"array of guild feature strings"}'
-  */
-  //@todo features array of guild feature strings;
-
-  /* specs/guild.json:35:85
-     '{"type":{"base":"int", "int_alias":"enum discord_guild_mfa_level"}, "name":"mfa_level"}'
-  */
-  enum discord_guild_mfa_level mfa_level;
-
-  /* specs/guild.json:36:95
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"application_id"}'
-  */
-  u64_snowflake_t application_id;
-
-  /* specs/guild.json:37:95
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"system_channel_id"}'
-  */
-  u64_snowflake_t system_channel_id;
-
-  /* specs/guild.json:38:96
-     '{"type":{"base":"int", "int_alias":"enum discord_guild_system_channel_flags"}, "name":"system_channel_flags"}'
-  */
-  enum discord_guild_system_channel_flags system_channel_flags;
-
-  /* specs/guild.json:39:95
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"rules_channel_id"}'
-  */
-  u64_snowflake_t rules_channel_id;
-
-  /* specs/guild.json:40:76
-     '{"type":{"base":"char", "dec":"*", "converter":"iso8601"}, "name":"joined_at", "option":true}'
-  */
-  u64_unix_ms_t joined_at;
-
-  /* specs/guild.json:41:42
-     '{"type":{"base":"bool"}, "name":"large", "option":true}'
-  */
-  bool large;
-
-  /* specs/guild.json:42:42
-     '{"type":{"base":"bool"}, "name":"unavailable", "option":true}'
-  */
-  bool unavailable;
-
-  /* specs/guild.json:43:41
-     '{"type":{"base":"int"}, "name":"member_count", "option":true}'
-  */
-  int member_count;
-
-  /* specs/guild.json:44:71
-     '{"type":{"base":"struct discord_voice", "dec":"ntl"}, "name":"voice_states", "todo":true", 
-         "comment":"array of partial voice state objects"}'
-  */
-  //@todo voice_states array of partial voice state objects;
-
-  /* specs/guild.json:46:78
-     '{"type":{"base":"struct discord_guild_member", "dec":"ntl"}, "name":"members", "option":true}'
-  */
-  struct discord_guild_member **members;
-
-  /* specs/guild.json:47:73
-     '{"type":{"base":"struct discord_channel", "dec":"ntl"}, "name":"channels", "option":true,
-         "comment":"array of channel objects"}'
-  */
-  struct discord_channel **channels; // array of channel objects
-
-  /* specs/guild.json:49:41
-     '{"type":{"base":"int"}, "name":"presences", "todo":true, "option":true,
-         "comment":"array of partial presence update objects"}'
-  */
-  //@todo presences array of partial presence update objects;
-
-  /* specs/guild.json:51:41
-     '{"type":{"base":"int"}, "name":"max_presences", "option":true}'
-  */
-  int max_presences;
-
-  /* specs/guild.json:52:41
-     '{"type":{"base":"int"}, "name":"max_members", "option":true}'
-  */
-  int max_members;
-
-  /* specs/guild.json:53:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"vanity_url"}'
-  */
-  char *vanity_url;
-
-  /* specs/guild.json:54:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"description"}'
-  */
-  char *description;
-
-  /* specs/guild.json:55:70
-     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"banner"}'
-  */
-  char *banner;
-
-  /* specs/guild.json:56:88
-     '{"type":{"base":"int", "int_alias":"enum discord_guild_premium_tier"}, "name":"premium_tier"}'
-  */
-  enum discord_guild_premium_tier premium_tier;
-
-  /* specs/guild.json:57:41
-     '{"type":{"base":"int"}, "name":"premium_subscription_count", "option":true}'
-  */
-  int premium_subscription_count;
-
-  /* specs/guild.json:58:68
-     '{"type":{"base":"char", "dec":"[MAX_LOCALE_LEN]"}, "name":"preferred_locale"}'
-  */
-  char preferred_locale[MAX_LOCALE_LEN];
-
-  /* specs/guild.json:60:27
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, 
-         "name":"public_updates_channel_id"}'
-  */
-  u64_snowflake_t public_updates_channel_id;
-
-  /* specs/guild.json:61:41
-     '{"type":{"base":"int"}, "name":"max_video_channel_users", "option":true}'
-  */
-  int max_video_channel_users;
-
-  /* specs/guild.json:62:41
-     '{"type":{"base":"int"}, "name":"approximate_member_count", "option":true}'
-  */
-  int approximate_member_count;
-
-  /* specs/guild.json:63:41
-     '{"type":{"base":"int"}, "name":"approximate_presence_count", "option":true}'
-  */
-  int approximate_presence_count;
-
-  /* specs/guild.json:64:84
-     '{"type":{"base":"struct discord_guild_welcome_screen", "dec":"*"}, "name":"welcome_screen", "option":true}'
-  */
-  struct discord_guild_welcome_screen *welcome_screen;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[46];
-    void *record_defined[46];
-    void *record_null[46];
-  } __M; // metadata
-};
-/* This file is generated from specs/guild.ban.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/guild#ban-object
-*/
-
-/* This is defined at specs/guild.ban.json:7:22 */
-struct discord_guild_ban {
-  /* specs/guild.ban.json:10:20
-     '{ "name": "reason", "type":{ "base":"char", "dec":"[MAX_REASON_LEN]" }}'
-  */
-  char reason[MAX_REASON_LEN];
-
-  /* specs/guild.ban.json:11:20
-     '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}'
-  */
-  struct discord_user *user; // partial user object
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; // metadata
-};
-/* This file is generated from specs/guild.modify-guild-member.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/guild#modify-guild-member */
-/* This is defined at specs/guild.modify-guild-member.json:8:22 */
-struct discord_modify_guild_member_params {
-  /* specs/guild.modify-guild-member.json:11:20
-     '{ "name": "nick", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *nick;
-
-  /* specs/guild.modify-guild-member.json:12:20
-     '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}'
-  */
-  ja_u64 **roles;
-
-  /* specs/guild.modify-guild-member.json:13:20
-     '{ "name": "mute", "type":{ "base":"bool" }, "inject_if_not":false}'
-  */
-  bool mute;
-
-  /* specs/guild.modify-guild-member.json:14:20
-     '{ "name": "deaf", "type":{ "base":"bool" }, "inject_if_not":false}'
-  */
-  bool deaf;
-
-  /* specs/guild.modify-guild-member.json:15:20
-     '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}'
-  */
-  u64_snowflake_t channel_id;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; // metadata
-};
-/* This file is generated from specs/guild.integration.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
-*/
-
-/* Title: Integration Account Structure */
-/* https://discord.com/developers/docs/resources/guild#integration-account-object-integration-account-structure */
-/* This is defined at specs/guild.integration.json:21:22 */
-struct discord_guild_integration_account {
-  /* specs/guild.integration.json:23:19
-     '{ "name":"id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/guild.integration.json:24:19
-     '{ "name":"name", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *name;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; // metadata
-};
-
-/* Title: Integration Application Object */
-/* https://discord.com/developers/docs/resources/guild#integration-application-object-integration-application-structure */
-/* This is defined at specs/guild.integration.json:31:22 */
-struct discord_guild_integration_application {
-  /* specs/guild.integration.json:33:19
-     '{ "name":"id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/guild.integration.json:34:19
-     '{ "name":"name", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *name;
-
-  /* specs/guild.integration.json:35:19
-     '{ "name":"icon", "type":{ "base":"char", "dec":"[MAX_SHA256_LEN]" }}'
-  */
-  char icon[MAX_SHA256_LEN];
-
-  /* specs/guild.integration.json:36:19
-     '{ "name":"description", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *description;
-
-  /* specs/guild.integration.json:37:19
-     '{ "name":"summary", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *summary;
-
-  /* specs/guild.integration.json:38:19
-     '{ "name":"bot", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true}'
-  */
-  struct discord_user *bot;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[6];
-    void *record_defined[6];
-    void *record_null[6];
-  } __M; // metadata
-};
-
-/* Title: Integration Structure */
-/* https://discord.com/developers/docs/resources/guild#integration-object-integration-structure */
-/* This is defined at specs/guild.integration.json:44:22 */
-struct discord_guild_integration {
-  /* specs/guild.integration.json:47:20
-     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/guild.integration.json:48:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *name;
-
-  /* specs/guild.integration.json:49:20
-     '{ "name": "type", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *type;
-
-  /* specs/guild.integration.json:50:20
-     '{ "name": "enabled", "type":{ "base":"bool"}}'
-  */
-  bool enabled;
-
-  /* specs/guild.integration.json:51:20
-     '{ "name": "syncing", "type":{ "base":"bool"}}'
-  */
-  bool syncing;
-
-  /* specs/guild.integration.json:52:20
-     '{ "name": "role_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}}'
-  */
-  u64_snowflake_t role_id;
-
-  /* specs/guild.integration.json:53:20
-     '{ "name": "enable_emotions", "type":{ "base":"bool"}}'
-  */
-  bool enable_emotions;
-
-  /* specs/guild.integration.json:54:20
-     '{ "name": "expire_behavior", "type":{ "base":"int", "int_alias":"enum discord_guild_integration_expire_behaviors"}}'
-  */
-  enum discord_guild_integration_expire_behaviors expire_behavior;
-
-  /* specs/guild.integration.json:55:20
-     '{ "name": "expire_grace_period", "type":{ "base":"int"}}'
-  */
-  int expire_grace_period;
-
-  /* specs/guild.integration.json:56:20
-     '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*"}, "opt":true}'
-  */
-  struct discord_user *user;
-
-  /* specs/guild.integration.json:57:20
-     '{ "name": "account", "type":{ "base":"struct discord_guild_integration_account", "dec":"*"}}'
-  */
-  struct discord_guild_integration_account *account;
-
-  /* specs/guild.integration.json:58:20
-     '{ "name": "synced_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}'
-  */
-  u64_unix_ms_t synced_at;
-
-  /* specs/guild.integration.json:59:20
-     '{ "name": "subscriber_count", "type":{ "base":"int"}}'
-  */
-  int subscriber_count;
-
-  /* specs/guild.integration.json:60:20
-     '{ "name": "revoked", "type":{ "base":"bool"}}'
-  */
-  bool revoked;
-
-  /* specs/guild.integration.json:61:20
-     '{ "name": "application", "type":{ "base":"struct discord_guild_integration_application", "dec":"*" }}'
-  */
-  struct discord_guild_integration_application *application;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[15];
-    void *record_defined[15];
-    void *record_null[15];
-  } __M; // metadata
-};
-/* This file is generated from specs/guild.enum.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
-*/
-
-/* Title: Unavailable Guild Object */
-/* https://discord.com/developers/docs/resources/guild#unavailable-guild-object */
-/* This is defined at specs/guild.enum.json:91:23 */
-struct discord_guild_unavailable {
-  /* specs/guild.enum.json:93:18
-     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/guild.enum.json:94:18
-     '{"name":"unavailable", "type":{"base":"bool"}}'
-  */
-  bool unavailable;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; // metadata
-};
-
-/* Title: Guild Preview Object */
-/* https://discord.com/developers/docs/resources/guild#guild-preview-object */
-/* This is defined at specs/guild.enum.json:100:23 */
-struct discord_guild_preview {
-  /* specs/guild.enum.json:102:18
-     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/guild.enum.json:103:18
-     '{"name":"name", "type":{"base":"char", "dec":"[MAX_NAME_LEN]"}}'
-  */
-  char name[MAX_NAME_LEN];
-
-  /* specs/guild.enum.json:104:18
-     '{"name":"icon", "type":{"base":"char", "dec":"*", "nullable":true}}'
-  */
-  char *icon;
-
-  /* specs/guild.enum.json:105:18
-     '{"name":"splash", "type":{"base":"char", "dec":"*", "nullable":true}}'
-  */
-  char *splash;
-
-  /* specs/guild.enum.json:106:18
-     '{"name":"discovery", "type":{"base":"char", "dec":"*", "nullable":true}}'
-  */
-  char *discovery;
-
-  /* specs/guild.enum.json:107:18
-     '{"name":"emojis", "type":{"base":"struct discord_emoji", "dec":"ntl"}}'
-  */
-  struct discord_emoji **emojis;
-
-  /* specs/guild.enum.json:108:18
-     '{"name":"features", "todo":true, "type":{"base":"char", "dec":"ntl"}}'
-  */
-  //@todo features (null);
-
-  /* specs/guild.enum.json:109:18
-     '{"name":"approximate_member_count", "type":{"base":"int"}}'
-  */
-  int approximate_member_count;
-
-  /* specs/guild.enum.json:110:18
-     '{"name":"approximate_presence_count", "type":{"base":"int"}}'
-  */
-  int approximate_presence_count;
-
-  /* specs/guild.enum.json:111:18
-     '{"name":"description", "type":{"base":"char", "dec":"[MAX_DESCRIPTION_LEN]"}}'
-  */
-  char description[MAX_DESCRIPTION_LEN];
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[10];
-    void *record_defined[10];
-    void *record_null[10];
-  } __M; // metadata
-};
-
-/* Title: Guild Widget Object */
-/* https://discord.com/developers/docs/resources/guild#guild-widget-object */
-/* This is defined at specs/guild.enum.json:117:23 */
-struct discord_guild_widget {
-  /* specs/guild.enum.json:119:18
-     '{"name":"enabled", "type":{"base":"bool"}}'
-  */
-  bool enabled;
-
-  /* specs/guild.enum.json:120:18
-     '{"name":"channel_id", "type":{"base":"char", "dec":"*", "converter":"snowflake", 
-         "nullable":true}}'
-  */
-  u64_snowflake_t channel_id;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; // metadata
-};
-/* This file is generated from specs/channel.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/channel#channel-object-channel-types
-*/
-
-/* Title: Channel Structure */
-/* https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
-/* This is defined at specs/channel.json:25:22 */
-struct discord_channel {
-  /* specs/channel.json:28:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/channel.json:29:83
-     '{"type":{"base":"int", "int_alias":"enum discord_channel_types"}, "name":"type"}'
-  */
-  enum discord_channel_types type;
-
-  /* specs/channel.json:30:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"guild_id",
-         "option":true, "inject_if_not":0 }'
-  */
-  u64_snowflake_t guild_id;
-
-  /* specs/channel.json:32:41
-     '{"type":{"base":"int"}, "name":"position",
-         "option":true, "inject_if_not":0 }'
-  */
-  int position;
-
-  /* specs/channel.json:34:83
-     '{"type":{"base":"struct discord_channel_overwrite", "dec":"ntl"}, "name":"permission_overwrites",
-         "option":true, "inject_if_not":null }'
-  */
-  struct discord_channel_overwrite **permission_overwrites;
-
-  /* specs/channel.json:36:66
-     '{"type":{"base":"char", "dec":"[MAX_NAME_LEN]"}, "name":"name", 
-         "option":true, "inject_if_not":""}'
-  */
-  char name[MAX_NAME_LEN];
-
-  /* specs/channel.json:38:67
-     '{"type":{"base":"char", "dec":"[MAX_TOPIC_LEN]"}, "name":"topic",
-         "option":true, "inject_if_not":"" }'
-  */
-  char topic[MAX_TOPIC_LEN];
-
-  /* specs/channel.json:40:42
-     '{"type":{"base":"bool"}, "name":"nsfw", "option":true, "inject_if_not":false}'
-  */
-  bool nsfw;
-
-  /* specs/channel.json:41:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"last_message_id",
-         "option":true, "inject_if_not":0}'
-  */
-  u64_snowflake_t last_message_id;
-
-  /* specs/channel.json:43:41
-     '{"type":{"base":"int"}, "name":"bitrate", "option":true, "inject_if_not":0}'
-  */
-  int bitrate;
-
-  /* specs/channel.json:44:41
-     '{"type":{"base":"int"}, "name":"user_limit", "option":true, "inject_if_not":0}'
-  */
-  int user_limit;
-
-  /* specs/channel.json:45:41
-     '{"type":{"base":"int"}, "name":"rate_limit_per_user", 
-         "option":true, "inject_if_not":0}'
-  */
-  int rate_limit_per_user;
-
-  /* specs/channel.json:47:70
-     '{"type":{"base":"struct discord_user", "dec":"ntl"}, "name":"recipients",
-         "option":true, "inject_if_not":null}'
-  */
-  struct discord_user **recipients;
-
-  /* specs/channel.json:49:68
-     '{"type":{"base":"char", "dec":"[MAX_SHA256_LEN]"}, "name":"icon",
-         "option":true, "inject_if_not":""}'
-  */
-  char icon[MAX_SHA256_LEN];
-
-  /* specs/channel.json:51:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id",
-         "option":true, "inject_if_not":0}'
-  */
-  u64_snowflake_t owner_id;
-
-  /* specs/channel.json:53:78
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"application_id",
-         "option":true, "inject_if_not":0}'
-  */
-  u64_snowflake_t application_id;
-
-  /* specs/channel.json:55:95
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"parent_id",
-         "option":true, "inject_if_not":0}'
-  */
-  u64_snowflake_t parent_id;
-
-  /* specs/channel.json:57:93
-     '{"type":{"base":"char", "dec":"*", "converter":"iso8601", "nullable":true}, "name":"last_pin_timestamp",
-         "option":true, "inject_if_not":0}'
-  */
-  u64_unix_ms_t last_pin_timestamp;
-
-  /* specs/channel.json:59:73
-     '{"type":{"base":"struct discord_message", "dec":"ntl"}, "name":"messages"}'
-  */
-  struct discord_message **messages;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[19];
-    void *record_defined[19];
-    void *record_null[19];
-  } __M; // metadata
-};
-/* This file is generated from specs/webhook.edit-webhook-message.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/webhook#edit-webhook-message */
-/* This is defined at specs/webhook.edit-webhook-message.json:8:22 */
-struct discord_edit_webhook_message_params {
-  /* specs/webhook.edit-webhook-message.json:11:20
-     '{ "name": "content", "type":{ "base":"char", "dec":"[2000+1]" }, 
-          "comment":"name of the webhook(1-2000) chars" }'
-  */
-  char content[2000+1]; // name of the webhook(1-2000) chars
-
-  /* specs/webhook.edit-webhook-message.json:13:20
-     '{ "name": "embeds", "type":{ "base":"struct discord_channel_embed", "dec":"ntl" }, 
-          "comment":"array of up to 10 embeds objects" }'
-  */
-  struct discord_channel_embed **embeds; // array of up to 10 embeds objects
-
-  /* specs/webhook.edit-webhook-message.json:15:20
-     '{ "name": "allowed_mentions", 
-          "type":{ "base":"struct discord_channel_allowed_mentions", "dec":"*" }, 
-          "comment":"allowed mentions for the message" }'
-  */
-  struct discord_channel_allowed_mentions *allowed_mentions; // allowed mentions for the message
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; // metadata
-};
 /* This file is generated from specs/audit_log.json, Please don't edit it. */
 /*
 (null)
@@ -2089,6 +1027,828 @@ struct discord_audit_log_change_key {
     void *arg_switches[54];
     void *record_defined[54];
     void *record_null[54];
+  } __M; // metadata
+};
+/* This file is generated from specs/guild.create-channel.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/guild#create-guild-channel */
+/* This is defined at specs/guild.create-channel.json:8:22 */
+struct discord_create_guild_channel_params {
+  /* specs/guild.create-channel.json:11:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *name;
+
+  /* specs/guild.create-channel.json:12:20
+     '{ "name": "type", "type":{ "base":"int" }}'
+  */
+  int type;
+
+  /* specs/guild.create-channel.json:13:20
+     '{ "name": "topic", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *topic;
+
+  /* specs/guild.create-channel.json:14:20
+     '{ "name": "bitrate", "type":{ "base":"int" }, "inject_if_not":0}'
+  */
+  int bitrate;
+
+  /* specs/guild.create-channel.json:15:20
+     '{ "name": "user_limit", "type":{ "base":"int" }, "inject_if_not":0}'
+  */
+  int user_limit;
+
+  /* specs/guild.create-channel.json:16:20
+     '{ "name": "rate_limit_per_user", "type":{ "base":"int" }, "inject_if_not":0}'
+  */
+  int rate_limit_per_user;
+
+  /* specs/guild.create-channel.json:17:20
+     '{ "name": "position", "type":{ "base":"int" } }'
+  */
+  int position;
+
+  /* specs/guild.create-channel.json:18:20
+     '{ "name": "permission_overwrites", "type":{ "base":"struct discord_channel_overwrite", "dec":"ntl" }, "inject_if_not":null}'
+  */
+  struct discord_channel_overwrite **permission_overwrites;
+
+  /* specs/guild.create-channel.json:19:20
+     '{ "name": "parent_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}'
+  */
+  u64_snowflake_t parent_id;
+
+  /* specs/guild.create-channel.json:20:20
+     '{ "name": "nsfw", "type":{ "base":"bool" }}'
+  */
+  bool nsfw;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[10];
+    void *record_defined[10];
+    void *record_null[10];
+  } __M; // metadata
+};
+/* This file is generated from specs/voice.json, Please don't edit it. */
+/*
+(null)
+*/
+
+/* Title: Voice State Object */
+/* https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure */
+/* This is defined at specs/voice.json:8:22 */
+struct discord_voice {
+  /* specs/voice.json:11:20
+     '{ "name": "guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
+  */
+  u64_snowflake_t guild_id;
+
+  /* specs/voice.json:12:20
+     '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}}'
+  */
+  u64_snowflake_t channel_id;
+
+  /* specs/voice.json:13:20
+     '{ "name": "user_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
+  */
+  u64_snowflake_t user_id;
+
+  /* specs/voice.json:14:20
+     '{ "name": "member", "type":{ "base":"struct discord_guild_member", "dec":"*" }}'
+  */
+  struct discord_guild_member *member;
+
+  /* specs/voice.json:15:20
+     '{ "name": "session_id", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *session_id;
+
+  /* specs/voice.json:16:20
+     '{ "name": "deaf", "type":{ "base":"bool" }}'
+  */
+  bool deaf;
+
+  /* specs/voice.json:17:20
+     '{ "name": "mute", "type":{ "base":"bool" }}'
+  */
+  bool mute;
+
+  /* specs/voice.json:18:20
+     '{ "name": "self_deaf", "type":{ "base":"bool" }}'
+  */
+  bool self_deaf;
+
+  /* specs/voice.json:19:20
+     '{ "name": "self_mute", "type":{ "base":"bool" }}'
+  */
+  bool self_mute;
+
+  /* specs/voice.json:20:20
+     '{ "name": "self_stream", "type":{ "base":"bool" }}'
+  */
+  bool self_stream;
+
+  /* specs/voice.json:21:20
+     '{ "name": "self_video", "type":{ "base":"bool" }}'
+  */
+  bool self_video;
+
+  /* specs/voice.json:22:20
+     '{ "name": "supress", "type":{ "base":"bool" }}'
+  */
+  bool supress;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[12];
+    void *record_defined[12];
+    void *record_null[12];
+  } __M; // metadata
+};
+
+/* Title: Voice Region Object */
+/* https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure */
+/* This is defined at specs/voice.json:29:22 */
+struct discord_voice_region {
+  /* specs/voice.json:32:20
+     '{ "name": "id", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit" }'
+  */
+  char *id; // @todo fixed size limit
+
+  /* specs/voice.json:33:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit" }'
+  */
+  char *name; // @todo fixed size limit
+
+  /* specs/voice.json:34:20
+     '{ "name": "vip", "type":{ "base":"bool" }}'
+  */
+  bool vip;
+
+  /* specs/voice.json:35:20
+     '{ "name": "optimal", "type":{ "base":"bool" }}'
+  */
+  bool optimal;
+
+  /* specs/voice.json:36:20
+     '{ "name": "deprecated", "type":{ "base":"bool" }}'
+  */
+  bool deprecated;
+
+  /* specs/voice.json:37:20
+     '{ "name": "custom", "type":{ "base":"bool" }}'
+  */
+  bool custom;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[6];
+    void *record_defined[6];
+    void *record_null[6];
+  } __M; // metadata
+};
+/* This file is generated from specs/emoji.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
+*/
+
+/* Title: Emoji Structure */
+/* This is defined at specs/emoji.json:8:22 */
+struct discord_emoji {
+  /* specs/emoji.json:11:20
+     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/emoji.json:12:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"[MAX_NAME_LEN]"}}'
+  */
+  char name[MAX_NAME_LEN];
+
+  /* specs/emoji.json:13:20
+     '{ "name": "roles", "type":{ "base":"struct discord_guild_role", "dec":"ntl"}, "option":true,
+          "todo":true }'
+  */
+  //@todo roles (null);
+
+  /* specs/emoji.json:15:20
+     '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true }'
+  */
+  struct discord_user *user;
+
+  /* specs/emoji.json:16:20
+     '{ "name": "require_colons", "type":{ "base":"bool" }, "option":true}'
+  */
+  bool require_colons;
+
+  /* specs/emoji.json:17:20
+     '{ "name": "managed", "type":{ "base":"bool" }, "option":true}'
+  */
+  bool managed;
+
+  /* specs/emoji.json:18:20
+     '{ "name": "animated", "type":{ "base":"bool" }, "option":true}'
+  */
+  bool animated;
+
+  /* specs/emoji.json:19:20
+     '{ "name": "available", "type":{ "base":"bool" }, "option":true}'
+  */
+  bool available;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[8];
+    void *record_defined[8];
+    void *record_null[8];
+  } __M; // metadata
+};
+/* This file is generated from specs/channel.get-reactions.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/channel#get-reactions */
+/* This is defined at specs/channel.get-reactions.json:8:22 */
+struct discord_get_reactions_params {
+  /* specs/channel.get-reactions.json:11:20
+     '{ "name": "before", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query"}'
+  */
+  u64_snowflake_t before;
+
+  /* specs/channel.get-reactions.json:12:20
+     '{ "name": "after", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query"}'
+  */
+  u64_snowflake_t after;
+
+  /* specs/channel.get-reactions.json:13:20
+     '{ "name": "limit", "type":{ "base":"int" }, "loc":"query"}'
+  */
+  int limit;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[3];
+    void *record_defined[3];
+    void *record_null[3];
+  } __M; // metadata
+};
+/* This file is generated from specs/guild.enum.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
+*/
+
+/* Title: Unavailable Guild Object */
+/* https://discord.com/developers/docs/resources/guild#unavailable-guild-object */
+/* This is defined at specs/guild.enum.json:91:23 */
+struct discord_guild_unavailable {
+  /* specs/guild.enum.json:93:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/guild.enum.json:94:18
+     '{"name":"unavailable", "type":{"base":"bool"}}'
+  */
+  bool unavailable;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+};
+
+/* Title: Guild Preview Object */
+/* https://discord.com/developers/docs/resources/guild#guild-preview-object */
+/* This is defined at specs/guild.enum.json:100:23 */
+struct discord_guild_preview {
+  /* specs/guild.enum.json:102:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/guild.enum.json:103:18
+     '{"name":"name", "type":{"base":"char", "dec":"[MAX_NAME_LEN]"}}'
+  */
+  char name[MAX_NAME_LEN];
+
+  /* specs/guild.enum.json:104:18
+     '{"name":"icon", "type":{"base":"char", "dec":"*", "nullable":true}}'
+  */
+  char *icon;
+
+  /* specs/guild.enum.json:105:18
+     '{"name":"splash", "type":{"base":"char", "dec":"*", "nullable":true}}'
+  */
+  char *splash;
+
+  /* specs/guild.enum.json:106:18
+     '{"name":"discovery", "type":{"base":"char", "dec":"*", "nullable":true}}'
+  */
+  char *discovery;
+
+  /* specs/guild.enum.json:107:18
+     '{"name":"emojis", "type":{"base":"struct discord_emoji", "dec":"ntl"}}'
+  */
+  struct discord_emoji **emojis;
+
+  /* specs/guild.enum.json:108:18
+     '{"name":"features", "todo":true, "type":{"base":"char", "dec":"ntl"}}'
+  */
+  //@todo features (null);
+
+  /* specs/guild.enum.json:109:18
+     '{"name":"approximate_member_count", "type":{"base":"int"}}'
+  */
+  int approximate_member_count;
+
+  /* specs/guild.enum.json:110:18
+     '{"name":"approximate_presence_count", "type":{"base":"int"}}'
+  */
+  int approximate_presence_count;
+
+  /* specs/guild.enum.json:111:18
+     '{"name":"description", "type":{"base":"char", "dec":"[MAX_DESCRIPTION_LEN]"}}'
+  */
+  char description[MAX_DESCRIPTION_LEN];
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[10];
+    void *record_defined[10];
+    void *record_null[10];
+  } __M; // metadata
+};
+
+/* Title: Guild Widget Object */
+/* https://discord.com/developers/docs/resources/guild#guild-widget-object */
+/* This is defined at specs/guild.enum.json:117:23 */
+struct discord_guild_widget {
+  /* specs/guild.enum.json:119:18
+     '{"name":"enabled", "type":{"base":"bool"}}'
+  */
+  bool enabled;
+
+  /* specs/guild.enum.json:120:18
+     '{"name":"channel_id", "type":{"base":"char", "dec":"*", "converter":"snowflake", 
+         "nullable":true}}'
+  */
+  u64_snowflake_t channel_id;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+};
+/* This file is generated from specs/guild.ban.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/guild#ban-object
+*/
+
+/* This is defined at specs/guild.ban.json:7:22 */
+struct discord_guild_ban {
+  /* specs/guild.ban.json:10:20
+     '{ "name": "reason", "type":{ "base":"char", "dec":"[MAX_REASON_LEN]" }}'
+  */
+  char reason[MAX_REASON_LEN];
+
+  /* specs/guild.ban.json:11:20
+     '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}'
+  */
+  struct discord_user *user; // partial user object
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+};
+/* This file is generated from specs/guild.modify-guild-member.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/guild#modify-guild-member */
+/* This is defined at specs/guild.modify-guild-member.json:8:22 */
+struct discord_modify_guild_member_params {
+  /* specs/guild.modify-guild-member.json:11:20
+     '{ "name": "nick", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *nick;
+
+  /* specs/guild.modify-guild-member.json:12:20
+     '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}'
+  */
+  ja_u64 **roles;
+
+  /* specs/guild.modify-guild-member.json:13:20
+     '{ "name": "mute", "type":{ "base":"bool" }, "inject_if_not":false}'
+  */
+  bool mute;
+
+  /* specs/guild.modify-guild-member.json:14:20
+     '{ "name": "deaf", "type":{ "base":"bool" }, "inject_if_not":false}'
+  */
+  bool deaf;
+
+  /* specs/guild.modify-guild-member.json:15:20
+     '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}'
+  */
+  u64_snowflake_t channel_id;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[5];
+    void *record_defined[5];
+    void *record_null[5];
+  } __M; // metadata
+};
+/* This file is generated from specs/guild.integration.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
+*/
+
+/* Title: Integration Account Structure */
+/* https://discord.com/developers/docs/resources/guild#integration-account-object-integration-account-structure */
+/* This is defined at specs/guild.integration.json:21:22 */
+struct discord_guild_integration_account {
+  /* specs/guild.integration.json:23:19
+     '{ "name":"id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/guild.integration.json:24:19
+     '{ "name":"name", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *name;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+};
+
+/* Title: Integration Application Object */
+/* https://discord.com/developers/docs/resources/guild#integration-application-object-integration-application-structure */
+/* This is defined at specs/guild.integration.json:31:22 */
+struct discord_guild_integration_application {
+  /* specs/guild.integration.json:33:19
+     '{ "name":"id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/guild.integration.json:34:19
+     '{ "name":"name", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *name;
+
+  /* specs/guild.integration.json:35:19
+     '{ "name":"icon", "type":{ "base":"char", "dec":"[MAX_SHA256_LEN]" }}'
+  */
+  char icon[MAX_SHA256_LEN];
+
+  /* specs/guild.integration.json:36:19
+     '{ "name":"description", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *description;
+
+  /* specs/guild.integration.json:37:19
+     '{ "name":"summary", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *summary;
+
+  /* specs/guild.integration.json:38:19
+     '{ "name":"bot", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true}'
+  */
+  struct discord_user *bot;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[6];
+    void *record_defined[6];
+    void *record_null[6];
+  } __M; // metadata
+};
+
+/* Title: Integration Structure */
+/* https://discord.com/developers/docs/resources/guild#integration-object-integration-structure */
+/* This is defined at specs/guild.integration.json:44:22 */
+struct discord_guild_integration {
+  /* specs/guild.integration.json:47:20
+     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/guild.integration.json:48:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}'
+  */
+  char *name;
+
+  /* specs/guild.integration.json:49:20
+     '{ "name": "type", "type":{ "base":"char", "dec":"*"}}'
+  */
+  char *type;
+
+  /* specs/guild.integration.json:50:20
+     '{ "name": "enabled", "type":{ "base":"bool"}}'
+  */
+  bool enabled;
+
+  /* specs/guild.integration.json:51:20
+     '{ "name": "syncing", "type":{ "base":"bool"}}'
+  */
+  bool syncing;
+
+  /* specs/guild.integration.json:52:20
+     '{ "name": "role_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}}'
+  */
+  u64_snowflake_t role_id;
+
+  /* specs/guild.integration.json:53:20
+     '{ "name": "enable_emotions", "type":{ "base":"bool"}}'
+  */
+  bool enable_emotions;
+
+  /* specs/guild.integration.json:54:20
+     '{ "name": "expire_behavior", "type":{ "base":"int", "int_alias":"enum discord_guild_integration_expire_behaviors"}}'
+  */
+  enum discord_guild_integration_expire_behaviors expire_behavior;
+
+  /* specs/guild.integration.json:55:20
+     '{ "name": "expire_grace_period", "type":{ "base":"int"}}'
+  */
+  int expire_grace_period;
+
+  /* specs/guild.integration.json:56:20
+     '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*"}, "opt":true}'
+  */
+  struct discord_user *user;
+
+  /* specs/guild.integration.json:57:20
+     '{ "name": "account", "type":{ "base":"struct discord_guild_integration_account", "dec":"*"}}'
+  */
+  struct discord_guild_integration_account *account;
+
+  /* specs/guild.integration.json:58:20
+     '{ "name": "synced_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}'
+  */
+  u64_unix_ms_t synced_at;
+
+  /* specs/guild.integration.json:59:20
+     '{ "name": "subscriber_count", "type":{ "base":"int"}}'
+  */
+  int subscriber_count;
+
+  /* specs/guild.integration.json:60:20
+     '{ "name": "revoked", "type":{ "base":"bool"}}'
+  */
+  bool revoked;
+
+  /* specs/guild.integration.json:61:20
+     '{ "name": "application", "type":{ "base":"struct discord_guild_integration_application", "dec":"*" }}'
+  */
+  struct discord_guild_integration_application *application;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[15];
+    void *record_defined[15];
+    void *record_null[15];
+  } __M; // metadata
+};
+/* This file is generated from specs/invite.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/invite#invite-object
+*/
+
+/* Title: Invite Structure */
+/* https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
+/* This is defined at specs/invite.json:19:22 */
+struct discord_invite {
+  /* specs/invite.json:22:20
+     '{ "name": "code", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}'
+  */
+  char *code; // @todo fixed size limit
+
+  /* specs/invite.json:23:20
+     '{ "name": "guild", "type":{ "base":"struct discord_guild", "dec":"*"}, "comment":"partial guild object"}'
+  */
+  struct discord_guild *guild; // partial guild object
+
+  /* specs/invite.json:24:20
+     '{ "name": "channel", "type":{ "base":"struct discord_channel", "dec":"*"}, "comment":"partial channel object"}'
+  */
+  struct discord_channel *channel; // partial channel object
+
+  /* specs/invite.json:25:20
+     '{ "name": "inviter", "type":{ "base":"struct discord_user", "dec":"*"}}'
+  */
+  struct discord_user *inviter;
+
+  /* specs/invite.json:26:20
+     '{ "name": "target_user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}'
+  */
+  struct discord_user *target_user; // partial user object
+
+  /* specs/invite.json:27:20
+     '{ "name": "target_user_type", "type":{ "base":"int", "int_alias":"enum discord_invite_target_user_types" }}'
+  */
+  enum discord_invite_target_user_types target_user_type;
+
+  /* specs/invite.json:28:20
+     '{ "name": "approximate_presence_count", "type":{ "base":"int" }}'
+  */
+  int approximate_presence_count;
+
+  /* specs/invite.json:29:20
+     '{ "name": "approximate_member_count", "type":{ "base":"int" }}'
+  */
+  int approximate_member_count;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[8];
+    void *record_defined[8];
+    void *record_null[8];
+  } __M; // metadata
+};
+
+/* Title: Invite Metadata Structure */
+/* https://discord.com/developers/docs/resources/invite#invite-metadata-object */
+/* This is defined at specs/invite.json:36:22 */
+struct discord_invite_metadata {
+  /* specs/invite.json:39:20
+     '{ "name": "user", "type":{ "base":"int" }}'
+  */
+  int user;
+
+  /* specs/invite.json:40:20
+     '{ "name": "max_uses", "type":{ "base":"int" }}'
+  */
+  int max_uses;
+
+  /* specs/invite.json:41:20
+     '{ "name": "max_age", "type":{ "base":"int" }}'
+  */
+  int max_age;
+
+  /* specs/invite.json:42:20
+     '{ "name": "temporary", "type":{ "base":"int" }}'
+  */
+  int temporary;
+
+  /* specs/invite.json:43:20
+     '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}'
+  */
+  u64_unix_ms_t created_at;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[5];
+    void *record_defined[5];
+    void *record_null[5];
+  } __M; // metadata
+};
+/* This file is generated from specs/webhook.edit-webhook-message.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/webhook#edit-webhook-message */
+/* This is defined at specs/webhook.edit-webhook-message.json:8:22 */
+struct discord_edit_webhook_message_params {
+  /* specs/webhook.edit-webhook-message.json:11:20
+     '{ "name": "content", "type":{ "base":"char", "dec":"[2000+1]" }, 
+          "comment":"name of the webhook(1-2000) chars" }'
+  */
+  char content[2000+1]; // name of the webhook(1-2000) chars
+
+  /* specs/webhook.edit-webhook-message.json:13:20
+     '{ "name": "embeds", "type":{ "base":"struct discord_channel_embed", "dec":"ntl" }, 
+          "comment":"array of up to 10 embeds objects" }'
+  */
+  struct discord_channel_embed **embeds; // array of up to 10 embeds objects
+
+  /* specs/webhook.edit-webhook-message.json:15:20
+     '{ "name": "allowed_mentions", 
+          "type":{ "base":"struct discord_channel_allowed_mentions", "dec":"*" }, 
+          "comment":"allowed mentions for the message" }'
+  */
+  struct discord_channel_allowed_mentions *allowed_mentions; // allowed mentions for the message
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[3];
+    void *record_defined[3];
+    void *record_null[3];
   } __M; // metadata
 };
 /* This file is generated from specs/template.create-guild-from-template.json, Please don't edit it. */
@@ -2731,63 +2491,23 @@ struct discord_channel_embed_field {
     void *record_null[3];
   } __M; // metadata
 };
-/* This file is generated from specs/guild.create-channel.json, Please don't edit it. */
+/* This file is generated from specs/channel.group-dm-add-recipient.json, Please don't edit it. */
 /*
 
 */
 
-/* https://discord.com/developers/docs/resources/guild#create-guild-channel */
-/* This is defined at specs/guild.create-channel.json:8:22 */
-struct discord_create_guild_channel_params {
-  /* specs/guild.create-channel.json:11:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*" }}'
+/* https://discord.com/developers/docs/resources/channel#group-dm-add-recipient */
+/* This is defined at specs/channel.group-dm-add-recipient.json:8:22 */
+struct discord_group_dm_add_recipient_params {
+  /* specs/channel.group-dm-add-recipient.json:11:20
+     '{ "name": "access_token", "type":{ "base":"char", "dec":"*"}}'
   */
-  char *name;
+  char *access_token;
 
-  /* specs/guild.create-channel.json:12:20
-     '{ "name": "type", "type":{ "base":"int" }}'
+  /* specs/channel.group-dm-add-recipient.json:12:20
+     '{ "name": "nick", "type":{ "base":"char", "dec":"*"}}'
   */
-  int type;
-
-  /* specs/guild.create-channel.json:13:20
-     '{ "name": "topic", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *topic;
-
-  /* specs/guild.create-channel.json:14:20
-     '{ "name": "bitrate", "type":{ "base":"int" }, "inject_if_not":0}'
-  */
-  int bitrate;
-
-  /* specs/guild.create-channel.json:15:20
-     '{ "name": "user_limit", "type":{ "base":"int" }, "inject_if_not":0}'
-  */
-  int user_limit;
-
-  /* specs/guild.create-channel.json:16:20
-     '{ "name": "rate_limit_per_user", "type":{ "base":"int" }, "inject_if_not":0}'
-  */
-  int rate_limit_per_user;
-
-  /* specs/guild.create-channel.json:17:20
-     '{ "name": "position", "type":{ "base":"int" } }'
-  */
-  int position;
-
-  /* specs/guild.create-channel.json:18:20
-     '{ "name": "permission_overwrites", "type":{ "base":"struct discord_channel_overwrite", "dec":"ntl" }, "inject_if_not":null}'
-  */
-  struct discord_channel_overwrite **permission_overwrites;
-
-  /* specs/guild.create-channel.json:19:20
-     '{ "name": "parent_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}'
-  */
-  u64_snowflake_t parent_id;
-
-  /* specs/guild.create-channel.json:20:20
-     '{ "name": "nsfw", "type":{ "base":"bool" }}'
-  */
-  bool nsfw;
+  char *nick;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -2797,71 +2517,9 @@ struct discord_create_guild_channel_params {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[10];
-    void *record_defined[10];
-    void *record_null[10];
-  } __M; // metadata
-};
-/* This file is generated from specs/emoji.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
-*/
-
-/* Title: Emoji Structure */
-/* This is defined at specs/emoji.json:8:22 */
-struct discord_emoji {
-  /* specs/emoji.json:11:20
-     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}}'
-  */
-  u64_snowflake_t id;
-
-  /* specs/emoji.json:12:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"[MAX_NAME_LEN]"}}'
-  */
-  char name[MAX_NAME_LEN];
-
-  /* specs/emoji.json:13:20
-     '{ "name": "roles", "type":{ "base":"struct discord_guild_role", "dec":"ntl"}, "option":true,
-          "todo":true }'
-  */
-  //@todo roles (null);
-
-  /* specs/emoji.json:15:20
-     '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true }'
-  */
-  struct discord_user *user;
-
-  /* specs/emoji.json:16:20
-     '{ "name": "require_colons", "type":{ "base":"bool" }, "option":true}'
-  */
-  bool require_colons;
-
-  /* specs/emoji.json:17:20
-     '{ "name": "managed", "type":{ "base":"bool" }, "option":true}'
-  */
-  bool managed;
-
-  /* specs/emoji.json:18:20
-     '{ "name": "animated", "type":{ "base":"bool" }, "option":true}'
-  */
-  bool animated;
-
-  /* specs/emoji.json:19:20
-     '{ "name": "available", "type":{ "base":"bool" }, "option":true}'
-  */
-  bool available;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
   } __M; // metadata
 };
 /* This file is generated from specs/webhook.create-webhook.json, Please don't edit it. */
@@ -3182,109 +2840,251 @@ struct discord_create_group_dm_params {
     void *record_null[2];
   } __M; // metadata
 };
-/* This file is generated from specs/emoji.modify-guild-emoji.json, Please don't edit it. */
+/* This file is generated from specs/guild.json, Please don't edit it. */
 /*
-
+https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
 */
 
-/* https://discord.com/developers/docs/resources/emoji#modify-guild-emoji */
-/* This is defined at specs/emoji.modify-guild-emoji.json:8:22 */
-struct discord_modify_guild_emoji_params {
-  /* specs/emoji.modify-guild-emoji.json:11:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *name;
-
-  /* specs/emoji.modify-guild-emoji.json:12:20
-     '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"roles for which this emoji will be whitelisted"}'
-  */
-  ja_u64 **roles; // roles for which this emoji will be whitelisted
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; // metadata
-};
-/* This file is generated from specs/user.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/user#user-object
-*/
-
-/* Title: User Structure */
-/* This is defined at specs/user.json:42:18 */
-struct discord_user {
-  /* specs/user.json:45:14
-     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"} }'
+/* Title: Guild Structure */
+/* This is defined at specs/guild.json:8:22 */
+struct discord_guild {
+  /* specs/guild.json:11:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}'
   */
   u64_snowflake_t id;
 
-  /* specs/user.json:46:14
-     '{ "name": "username", "type":{ "base":"char", "dec":"[MAX_USERNAME_LEN]"}}'
+  /* specs/guild.json:12:66
+     '{"type":{"base":"char", "dec":"[MAX_NAME_LEN]"}, "name":"name"}'
   */
-  char username[MAX_USERNAME_LEN];
+  char name[MAX_NAME_LEN];
 
-  /* specs/user.json:47:14
-     '{ "name": "discriminator", "type":{ "base":"char", "dec":"[MAX_DISCRIMINATOR_LEN]" }}'
+  /* specs/guild.json:13:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"icon"}'
   */
-  char discriminator[MAX_DISCRIMINATOR_LEN];
+  char *icon;
 
-  /* specs/user.json:48:14
-     '{ "name": "avatar", "type":{ "base":"char", "dec":"[MAX_SHA256_LEN]" }}'
+  /* specs/guild.json:14:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"icon_hash"}'
   */
-  char avatar[MAX_SHA256_LEN];
+  char *icon_hash;
 
-  /* specs/user.json:49:14
-     '{ "name": "bot", "type":{ "base":"bool" }}'
+  /* specs/guild.json:15:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"splash"}'
   */
-  bool bot;
+  char *splash;
 
-  /* specs/user.json:50:14
-     '{ "name": "System", "json_key": "system", "type":{ "base":"bool" }}'
+  /* specs/guild.json:16:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"discovery_splash"}'
   */
-  bool System;
+  char *discovery_splash;
 
-  /* specs/user.json:51:14
-     '{ "name": "mfa_enabled", "type":{ "base":"bool" }}'
+  /* specs/guild.json:17:42
+     '{"type":{"base":"bool"}, "name":"owner", "option":true}'
   */
-  bool mfa_enabled;
+  bool owner;
 
-  /* specs/user.json:52:14
-     '{ "name": "locale", "type":{ "base":"char", "dec":"[MAX_LOCALE_LEN]" }}'
+  /* specs/guild.json:18:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id"}'
   */
-  char locale[MAX_LOCALE_LEN];
+  u64_snowflake_t owner_id;
 
-  /* specs/user.json:53:14
-     '{ "name": "verified", "type":{ "base":"bool" }}'
+  /* specs/guild.json:19:41
+     '{"type":{"base":"int"}, "name":"permissions", "option":true}'
   */
-  bool verified;
+  int permissions;
 
-  /* specs/user.json:54:14
-     '{ "name": "email", "type":{ "base":"char", "dec":"[MAX_EMAIL_LEN]" }}'
+  /* specs/guild.json:20:68
+     '{"type":{"base":"char", "dec":"[MAX_REGION_LEN]"}, "name":"region"}'
   */
-  char email[MAX_EMAIL_LEN];
+  char region[MAX_REGION_LEN];
 
-  /* specs/user.json:55:14
-     '{ "name": "flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}'
+  /* specs/guild.json:21:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"afk_channel_id"}'
   */
-  enum discord_user_flags flags;
+  u64_snowflake_t afk_channel_id;
 
-  /* specs/user.json:56:14
-     '{ "name": "premium_type", "type":{ "base":"int", "int_alias": "enum discord_user_premium_types" }}'
+  /* specs/guild.json:22:41
+     '{"type":{"base":"int"}, "name":"afk_timeout"}'
   */
-  enum discord_user_premium_types premium_type;
+  int afk_timeout;
 
-  /* specs/user.json:57:14
-     '{ "name": "public_flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}'
+  /* specs/guild.json:23:42
+     '{"type":{"base":"bool"}, "name":"widget_enabled", "option":true}'
   */
-  enum discord_user_flags public_flags;
+  bool widget_enabled;
+
+  /* specs/guild.json:24:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"widget_channel_id", "option":true}'
+  */
+  u64_snowflake_t widget_channel_id;
+
+  /* specs/guild.json:25:94
+     '{"type":{"base":"int", "int_alias":"enum discord_guild_verification_level"}, "name":"verification_level"}'
+  */
+  enum discord_guild_verification_level verification_level;
+
+  /* specs/guild.json:27:32
+     '{"type":{"base":"int", "int_alias":"enum discord_guild_default_message_notification_level"}, 
+              "name":"default_message_notifications"}'
+  */
+  enum discord_guild_default_message_notification_level default_message_notifications;
+
+  /* specs/guild.json:29:32
+     '{"type":{"base":"int", "int_alias":"enum discord_guild_explicit_content_filter_level"},
+              "name":"explicit_content_filter"}'
+  */
+  enum discord_guild_explicit_content_filter_level explicit_content_filter;
+
+  /* specs/guild.json:30:76
+     '{"type":{"base":"struct discord_guild_role", "dec":"ntl"}, "name":"roles", "todo":true, 
+              "comment":"array of role objects"}'
+  */
+  //@todo roles array of role objects;
+
+  /* specs/guild.json:32:71
+     '{"type":{"base":"struct discord_emoji", "dec":"ntl"}, "name":"emojis"}'
+  */
+  struct discord_emoji **emojis;
+
+  /* specs/guild.json:33:57
+     '{"type":{"base":"ja_str", "dec":"ntl"}, "name":"features", "todo":true", 
+              "comment":"array of guild feature strings"}'
+  */
+  //@todo features array of guild feature strings;
+
+  /* specs/guild.json:35:85
+     '{"type":{"base":"int", "int_alias":"enum discord_guild_mfa_level"}, "name":"mfa_level"}'
+  */
+  enum discord_guild_mfa_level mfa_level;
+
+  /* specs/guild.json:36:95
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"application_id"}'
+  */
+  u64_snowflake_t application_id;
+
+  /* specs/guild.json:37:95
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"system_channel_id"}'
+  */
+  u64_snowflake_t system_channel_id;
+
+  /* specs/guild.json:38:96
+     '{"type":{"base":"int", "int_alias":"enum discord_guild_system_channel_flags"}, "name":"system_channel_flags"}'
+  */
+  enum discord_guild_system_channel_flags system_channel_flags;
+
+  /* specs/guild.json:39:95
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"rules_channel_id"}'
+  */
+  u64_snowflake_t rules_channel_id;
+
+  /* specs/guild.json:40:76
+     '{"type":{"base":"char", "dec":"*", "converter":"iso8601"}, "name":"joined_at", "option":true}'
+  */
+  u64_unix_ms_t joined_at;
+
+  /* specs/guild.json:41:42
+     '{"type":{"base":"bool"}, "name":"large", "option":true}'
+  */
+  bool large;
+
+  /* specs/guild.json:42:42
+     '{"type":{"base":"bool"}, "name":"unavailable", "option":true}'
+  */
+  bool unavailable;
+
+  /* specs/guild.json:43:41
+     '{"type":{"base":"int"}, "name":"member_count", "option":true}'
+  */
+  int member_count;
+
+  /* specs/guild.json:44:71
+     '{"type":{"base":"struct discord_voice", "dec":"ntl"}, "name":"voice_states", "todo":true", 
+         "comment":"array of partial voice state objects"}'
+  */
+  //@todo voice_states array of partial voice state objects;
+
+  /* specs/guild.json:46:78
+     '{"type":{"base":"struct discord_guild_member", "dec":"ntl"}, "name":"members", "option":true}'
+  */
+  struct discord_guild_member **members;
+
+  /* specs/guild.json:47:73
+     '{"type":{"base":"struct discord_channel", "dec":"ntl"}, "name":"channels", "option":true,
+         "comment":"array of channel objects"}'
+  */
+  struct discord_channel **channels; // array of channel objects
+
+  /* specs/guild.json:49:41
+     '{"type":{"base":"int"}, "name":"presences", "todo":true, "option":true,
+         "comment":"array of partial presence update objects"}'
+  */
+  //@todo presences array of partial presence update objects;
+
+  /* specs/guild.json:51:41
+     '{"type":{"base":"int"}, "name":"max_presences", "option":true}'
+  */
+  int max_presences;
+
+  /* specs/guild.json:52:41
+     '{"type":{"base":"int"}, "name":"max_members", "option":true}'
+  */
+  int max_members;
+
+  /* specs/guild.json:53:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"vanity_url"}'
+  */
+  char *vanity_url;
+
+  /* specs/guild.json:54:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"description"}'
+  */
+  char *description;
+
+  /* specs/guild.json:55:70
+     '{"type":{"base":"char", "dec":"*", "nullable":true}, "name":"banner"}'
+  */
+  char *banner;
+
+  /* specs/guild.json:56:88
+     '{"type":{"base":"int", "int_alias":"enum discord_guild_premium_tier"}, "name":"premium_tier"}'
+  */
+  enum discord_guild_premium_tier premium_tier;
+
+  /* specs/guild.json:57:41
+     '{"type":{"base":"int"}, "name":"premium_subscription_count", "option":true}'
+  */
+  int premium_subscription_count;
+
+  /* specs/guild.json:58:68
+     '{"type":{"base":"char", "dec":"[MAX_LOCALE_LEN]"}, "name":"preferred_locale"}'
+  */
+  char preferred_locale[MAX_LOCALE_LEN];
+
+  /* specs/guild.json:60:27
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, 
+         "name":"public_updates_channel_id"}'
+  */
+  u64_snowflake_t public_updates_channel_id;
+
+  /* specs/guild.json:61:41
+     '{"type":{"base":"int"}, "name":"max_video_channel_users", "option":true}'
+  */
+  int max_video_channel_users;
+
+  /* specs/guild.json:62:41
+     '{"type":{"base":"int"}, "name":"approximate_member_count", "option":true}'
+  */
+  int approximate_member_count;
+
+  /* specs/guild.json:63:41
+     '{"type":{"base":"int"}, "name":"approximate_presence_count", "option":true}'
+  */
+  int approximate_presence_count;
+
+  /* specs/guild.json:64:84
+     '{"type":{"base":"struct discord_guild_welcome_screen", "dec":"*"}, "name":"welcome_screen", "option":true}'
+  */
+  struct discord_guild_welcome_screen *welcome_screen;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -3294,125 +3094,11 @@ struct discord_user {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[13];
-    void *record_defined[13];
-    void *record_null[13];
+    void *arg_switches[46];
+    void *record_defined[46];
+    void *record_null[46];
   } __M; // metadata
 };
-
-/* Title: Connection Structure */
-/* https://discord.com/developers/docs/resources/user#connection-object-connection-structure */
-/* This is defined at specs/user.json:74:18 */
-struct discord_connection {
-  /* specs/user.json:77:14
-     '{ "name": "id", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}'
-  */
-  char *id; // @todo fixed size limit
-
-  /* specs/user.json:78:14
-     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *name;
-
-  /* specs/user.json:79:14
-     '{ "name": "type", "type":{ "base":"char", "dec":"*"}}'
-  */
-  char *type;
-
-  /* specs/user.json:80:14
-     '{ "name": "revoked", "type":{ "base":"bool"}}'
-  */
-  bool revoked;
-
-  /* specs/user.json:81:20
-     '{ "name": "integrations", "type": {"base":"struct discord_guild_integration", "dec":"ntl"}, "todo":true}'
-  */
-  //@todo integrations (null);
-
-  /* specs/user.json:82:14
-     '{ "name": "verified", "type":{ "base":"bool" }}'
-  */
-  bool verified;
-
-  /* specs/user.json:83:14
-     '{ "name": "friend_sync", "type":{ "base":"bool" }}'
-  */
-  bool friend_sync;
-
-  /* specs/user.json:84:14
-     '{ "name": "show_activity", "type":{ "base":"bool" }}'
-  */
-  bool show_activity;
-
-  /* specs/user.json:85:14
-     '{ "name": "visibility", "type":{ "base":"int", "int_alias":"enum discord_user_connection_visibility_types" }}'
-  */
-  enum discord_user_connection_visibility_types visibility;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[9];
-    void *record_defined[9];
-    void *record_null[9];
-  } __M; // metadata
-};
-/* This file is generated from specs/guild.role.create.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/guild#create-guild-role */
-/* This is defined at specs/guild.role.create.json:8:22 */
-struct discord_create_guild_role_params {
-  /* specs/guild.role.create.json:11:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*" }}'
-  */
-  char *name;
-
-  /* specs/guild.role.create.json:12:20
-     '{ "name": "permissions", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_permissions_bitwise_flags" }, 
-          "inject_if_not":0}'
-  */
-  enum discord_permissions_bitwise_flags permissions;
-
-  /* specs/guild.role.create.json:14:20
-     '{ "name": "color", "type":{ "base":"int" }, "inject_if_not":0}'
-  */
-  int color;
-
-  /* specs/guild.role.create.json:15:20
-     '{ "name": "hoist", "type":{ "base":"bool" }, "inject_if_not":false}'
-  */
-  bool hoist;
-
-  /* specs/guild.role.create.json:16:20
-     '{ "name": "memtionable", "type":{ "base":"bool" }, "inject_if_not":false}'
-  */
-  bool memtionable;
-
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; // metadata
-};
-/* This file is generated from specs/permissions.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/topics/permissions
-*/
 /* This file is generated from specs/webhook.execute-webhook.json, Please don't edit it. */
 /*
 
@@ -3503,6 +3189,146 @@ struct discord_execute_webhook_params {
     void *arg_switches[9];
     void *record_defined[9];
     void *record_null[9];
+  } __M; // metadata
+};
+/* This file is generated from specs/guild.role.create.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/guild#create-guild-role */
+/* This is defined at specs/guild.role.create.json:8:22 */
+struct discord_create_guild_role_params {
+  /* specs/guild.role.create.json:11:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"*" }}'
+  */
+  char *name;
+
+  /* specs/guild.role.create.json:12:20
+     '{ "name": "permissions", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_permissions_bitwise_flags" }, 
+          "inject_if_not":0}'
+  */
+  enum discord_permissions_bitwise_flags permissions;
+
+  /* specs/guild.role.create.json:14:20
+     '{ "name": "color", "type":{ "base":"int" }, "inject_if_not":0}'
+  */
+  int color;
+
+  /* specs/guild.role.create.json:15:20
+     '{ "name": "hoist", "type":{ "base":"bool" }, "inject_if_not":false}'
+  */
+  bool hoist;
+
+  /* specs/guild.role.create.json:16:20
+     '{ "name": "memtionable", "type":{ "base":"bool" }, "inject_if_not":false}'
+  */
+  bool memtionable;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[5];
+    void *record_defined[5];
+    void *record_null[5];
+  } __M; // metadata
+};
+/* This file is generated from specs/emoji.modify-guild-emoji.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/emoji#modify-guild-emoji */
+/* This is defined at specs/emoji.modify-guild-emoji.json:8:22 */
+struct discord_modify_guild_emoji_params {
+  /* specs/emoji.modify-guild-emoji.json:11:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}'
+  */
+  char *name;
+
+  /* specs/emoji.modify-guild-emoji.json:12:20
+     '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"roles for which this emoji will be whitelisted"}'
+  */
+  ja_u64 **roles; // roles for which this emoji will be whitelisted
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+};
+/* This file is generated from specs/permissions.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/topics/permissions
+*/
+/* This file is generated from specs/channel.create-channel-invite.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/channel#create-channel-invite */
+/* This is defined at specs/channel.create-channel-invite.json:8:22 */
+struct discord_create_channel_invite_params {
+  /* specs/channel.create-channel-invite.json:11:20
+     '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "loc":"url"}'
+  */
+  u64_snowflake_t channel_id;
+
+  /* specs/channel.create-channel-invite.json:12:20
+     '{ "name": "max_age", "type":{ "base":"int" } }'
+  */
+  int max_age;
+
+  /* specs/channel.create-channel-invite.json:13:20
+     '{ "name": "max_uses", "type":{ "base":"int" } }'
+  */
+  int max_uses;
+
+  /* specs/channel.create-channel-invite.json:14:20
+     '{ "name": "temporary", "type":{ "base":"bool"}}'
+  */
+  bool temporary;
+
+  /* specs/channel.create-channel-invite.json:15:20
+     '{ "name": "unique", "type":{ "base":"bool"}}'
+  */
+  bool unique;
+
+  /* specs/channel.create-channel-invite.json:16:20
+     '{ "name": "target_user", "type":{ "base":"char", "dec":"*"}, 
+          "option":true, "inject_if_not":null}'
+  */
+  char *target_user;
+
+  /* specs/channel.create-channel-invite.json:18:20
+     '{ "name": "target_user_type", "type":{ "base":"int" },
+          "option":true, "inject_if_not":0}'
+  */
+  int target_user_type;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[7];
+    void *record_defined[7];
+    void *record_null[7];
   } __M; // metadata
 };
 /* This file is generated from specs/guild.role.json, Please don't edit it. */
@@ -3972,6 +3798,136 @@ struct discord_modify_guild_template_params {
     void *record_null[2];
   } __M; // metadata
 };
+/* This file is generated from specs/channel.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/channel#channel-object-channel-types
+*/
+
+/* Title: Channel Structure */
+/* https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
+/* This is defined at specs/channel.json:25:22 */
+struct discord_channel {
+  /* specs/channel.json:28:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}'
+  */
+  u64_snowflake_t id;
+
+  /* specs/channel.json:29:83
+     '{"type":{"base":"int", "int_alias":"enum discord_channel_types"}, "name":"type"}'
+  */
+  enum discord_channel_types type;
+
+  /* specs/channel.json:30:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"guild_id",
+         "option":true, "inject_if_not":0 }'
+  */
+  u64_snowflake_t guild_id;
+
+  /* specs/channel.json:32:41
+     '{"type":{"base":"int"}, "name":"position",
+         "option":true, "inject_if_not":0 }'
+  */
+  int position;
+
+  /* specs/channel.json:34:83
+     '{"type":{"base":"struct discord_channel_overwrite", "dec":"ntl"}, "name":"permission_overwrites",
+         "option":true, "inject_if_not":null }'
+  */
+  struct discord_channel_overwrite **permission_overwrites;
+
+  /* specs/channel.json:36:66
+     '{"type":{"base":"char", "dec":"[MAX_NAME_LEN]"}, "name":"name", 
+         "option":true, "inject_if_not":""}'
+  */
+  char name[MAX_NAME_LEN];
+
+  /* specs/channel.json:38:67
+     '{"type":{"base":"char", "dec":"[MAX_TOPIC_LEN]"}, "name":"topic",
+         "option":true, "inject_if_not":"" }'
+  */
+  char topic[MAX_TOPIC_LEN];
+
+  /* specs/channel.json:40:42
+     '{"type":{"base":"bool"}, "name":"nsfw", "option":true, "inject_if_not":false}'
+  */
+  bool nsfw;
+
+  /* specs/channel.json:41:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"last_message_id",
+         "option":true, "inject_if_not":0}'
+  */
+  u64_snowflake_t last_message_id;
+
+  /* specs/channel.json:43:41
+     '{"type":{"base":"int"}, "name":"bitrate", "option":true, "inject_if_not":0}'
+  */
+  int bitrate;
+
+  /* specs/channel.json:44:41
+     '{"type":{"base":"int"}, "name":"user_limit", "option":true, "inject_if_not":0}'
+  */
+  int user_limit;
+
+  /* specs/channel.json:45:41
+     '{"type":{"base":"int"}, "name":"rate_limit_per_user", 
+         "option":true, "inject_if_not":0}'
+  */
+  int rate_limit_per_user;
+
+  /* specs/channel.json:47:70
+     '{"type":{"base":"struct discord_user", "dec":"ntl"}, "name":"recipients",
+         "option":true, "inject_if_not":null}'
+  */
+  struct discord_user **recipients;
+
+  /* specs/channel.json:49:68
+     '{"type":{"base":"char", "dec":"[MAX_SHA256_LEN]"}, "name":"icon",
+         "option":true, "inject_if_not":""}'
+  */
+  char icon[MAX_SHA256_LEN];
+
+  /* specs/channel.json:51:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id",
+         "option":true, "inject_if_not":0}'
+  */
+  u64_snowflake_t owner_id;
+
+  /* specs/channel.json:53:78
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"application_id",
+         "option":true, "inject_if_not":0}'
+  */
+  u64_snowflake_t application_id;
+
+  /* specs/channel.json:55:95
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"parent_id",
+         "option":true, "inject_if_not":0}'
+  */
+  u64_snowflake_t parent_id;
+
+  /* specs/channel.json:57:93
+     '{"type":{"base":"char", "dec":"*", "converter":"iso8601", "nullable":true}, "name":"last_pin_timestamp",
+         "option":true, "inject_if_not":0}'
+  */
+  u64_unix_ms_t last_pin_timestamp;
+
+  /* specs/channel.json:59:73
+     '{"type":{"base":"struct discord_message", "dec":"ntl"}, "name":"messages"}'
+  */
+  struct discord_message **messages;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[19];
+    void *record_defined[19];
+    void *record_null[19];
+  } __M; // metadata
+};
 /* This file is generated from specs/guild.member.json, Please don't edit it. */
 /*
 https://discord.com/developers/docs/resources/guild#guild-member-object
@@ -4068,54 +4024,78 @@ struct discord_modify_current_user_params {
     void *record_null[2];
   } __M; // metadata
 };
-/* This file is generated from specs/invite.json, Please don't edit it. */
+/* This file is generated from specs/user.json, Please don't edit it. */
 /*
-https://discord.com/developers/docs/resources/invite#invite-object
+https://discord.com/developers/docs/resources/user#user-object
 */
 
-/* Title: Invite Structure */
-/* https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
-/* This is defined at specs/invite.json:19:22 */
-struct discord_invite {
-  /* specs/invite.json:22:20
-     '{ "name": "code", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}'
+/* Title: User Structure */
+/* This is defined at specs/user.json:42:18 */
+struct discord_user {
+  /* specs/user.json:45:14
+     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"} }'
   */
-  char *code; // @todo fixed size limit
+  u64_snowflake_t id;
 
-  /* specs/invite.json:23:20
-     '{ "name": "guild", "type":{ "base":"struct discord_guild", "dec":"*"}, "comment":"partial guild object"}'
+  /* specs/user.json:46:14
+     '{ "name": "username", "type":{ "base":"char", "dec":"[MAX_USERNAME_LEN]"}}'
   */
-  struct discord_guild *guild; // partial guild object
+  char username[MAX_USERNAME_LEN];
 
-  /* specs/invite.json:24:20
-     '{ "name": "channel", "type":{ "base":"struct discord_channel", "dec":"*"}, "comment":"partial channel object"}'
+  /* specs/user.json:47:14
+     '{ "name": "discriminator", "type":{ "base":"char", "dec":"[MAX_DISCRIMINATOR_LEN]" }}'
   */
-  struct discord_channel *channel; // partial channel object
+  char discriminator[MAX_DISCRIMINATOR_LEN];
 
-  /* specs/invite.json:25:20
-     '{ "name": "inviter", "type":{ "base":"struct discord_user", "dec":"*"}}'
+  /* specs/user.json:48:14
+     '{ "name": "avatar", "type":{ "base":"char", "dec":"[MAX_SHA256_LEN]" }}'
   */
-  struct discord_user *inviter;
+  char avatar[MAX_SHA256_LEN];
 
-  /* specs/invite.json:26:20
-     '{ "name": "target_user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}'
+  /* specs/user.json:49:14
+     '{ "name": "bot", "type":{ "base":"bool" }}'
   */
-  struct discord_user *target_user; // partial user object
+  bool bot;
 
-  /* specs/invite.json:27:20
-     '{ "name": "target_user_type", "type":{ "base":"int", "int_alias":"enum discord_invite_target_user_types" }}'
+  /* specs/user.json:50:14
+     '{ "name": "System", "json_key": "system", "type":{ "base":"bool" }}'
   */
-  enum discord_invite_target_user_types target_user_type;
+  bool System;
 
-  /* specs/invite.json:28:20
-     '{ "name": "approximate_presence_count", "type":{ "base":"int" }}'
+  /* specs/user.json:51:14
+     '{ "name": "mfa_enabled", "type":{ "base":"bool" }}'
   */
-  int approximate_presence_count;
+  bool mfa_enabled;
 
-  /* specs/invite.json:29:20
-     '{ "name": "approximate_member_count", "type":{ "base":"int" }}'
+  /* specs/user.json:52:14
+     '{ "name": "locale", "type":{ "base":"char", "dec":"[MAX_LOCALE_LEN]" }}'
   */
-  int approximate_member_count;
+  char locale[MAX_LOCALE_LEN];
+
+  /* specs/user.json:53:14
+     '{ "name": "verified", "type":{ "base":"bool" }}'
+  */
+  bool verified;
+
+  /* specs/user.json:54:14
+     '{ "name": "email", "type":{ "base":"char", "dec":"[MAX_EMAIL_LEN]" }}'
+  */
+  char email[MAX_EMAIL_LEN];
+
+  /* specs/user.json:55:14
+     '{ "name": "flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}'
+  */
+  enum discord_user_flags flags;
+
+  /* specs/user.json:56:14
+     '{ "name": "premium_type", "type":{ "base":"int", "int_alias": "enum discord_user_premium_types" }}'
+  */
+  enum discord_user_premium_types premium_type;
+
+  /* specs/user.json:57:14
+     '{ "name": "public_flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}'
+  */
+  enum discord_user_flags public_flags;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -4125,40 +4105,60 @@ struct discord_invite {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
+    void *arg_switches[13];
+    void *record_defined[13];
+    void *record_null[13];
   } __M; // metadata
 };
 
-/* Title: Invite Metadata Structure */
-/* https://discord.com/developers/docs/resources/invite#invite-metadata-object */
-/* This is defined at specs/invite.json:36:22 */
-struct discord_invite_metadata {
-  /* specs/invite.json:39:20
-     '{ "name": "user", "type":{ "base":"int" }}'
+/* Title: Connection Structure */
+/* https://discord.com/developers/docs/resources/user#connection-object-connection-structure */
+/* This is defined at specs/user.json:74:18 */
+struct discord_connection {
+  /* specs/user.json:77:14
+     '{ "name": "id", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}'
   */
-  int user;
+  char *id; // @todo fixed size limit
 
-  /* specs/invite.json:40:20
-     '{ "name": "max_uses", "type":{ "base":"int" }}'
+  /* specs/user.json:78:14
+     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}'
   */
-  int max_uses;
+  char *name;
 
-  /* specs/invite.json:41:20
-     '{ "name": "max_age", "type":{ "base":"int" }}'
+  /* specs/user.json:79:14
+     '{ "name": "type", "type":{ "base":"char", "dec":"*"}}'
   */
-  int max_age;
+  char *type;
 
-  /* specs/invite.json:42:20
-     '{ "name": "temporary", "type":{ "base":"int" }}'
+  /* specs/user.json:80:14
+     '{ "name": "revoked", "type":{ "base":"bool"}}'
   */
-  int temporary;
+  bool revoked;
 
-  /* specs/invite.json:43:20
-     '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}'
+  /* specs/user.json:81:20
+     '{ "name": "integrations", "type": {"base":"struct discord_guild_integration", "dec":"ntl"}, "todo":true}'
   */
-  u64_unix_ms_t created_at;
+  //@todo integrations (null);
+
+  /* specs/user.json:82:14
+     '{ "name": "verified", "type":{ "base":"bool" }}'
+  */
+  bool verified;
+
+  /* specs/user.json:83:14
+     '{ "name": "friend_sync", "type":{ "base":"bool" }}'
+  */
+  bool friend_sync;
+
+  /* specs/user.json:84:14
+     '{ "name": "show_activity", "type":{ "base":"bool" }}'
+  */
+  bool show_activity;
+
+  /* specs/user.json:85:14
+     '{ "name": "visibility", "type":{ "base":"int", "int_alias":"enum discord_user_connection_visibility_types" }}'
+  */
+  enum discord_user_connection_visibility_types visibility;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -4168,8 +4168,8 @@ struct discord_invite_metadata {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
+    void *arg_switches[9];
+    void *record_defined[9];
+    void *record_null[9];
   } __M; // metadata
 };

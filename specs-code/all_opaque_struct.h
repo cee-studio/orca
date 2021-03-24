@@ -61,22 +61,43 @@ struct discord_message;
 /* https://discord.com/developers/docs/resources/template#create-guild-template */
 /* This is defined at specs/template.create-guild-template.json:8:22 */
 struct discord_create_guild_template_params;
-/* This file is generated from specs/channel.group-dm-add-recipient.json, Please don't edit it. */
+/* This file is generated from specs/audit_log.json, Please don't edit it. */
+/*
+(null)
+*/
+
+/* Title: Audit Log Structure */
+/* https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure */
+/* This is defined at specs/audit_log.json:8:22 */
+struct discord_audit_log;
+
+/* Title: Audit Log Entry Structure */
+/* https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-entry-structure */
+/* This is defined at specs/audit_log.json:64:22 */
+struct discord_audit_log_entry;
+
+/* Title: Optional Audit Entry Info Structure */
+/* https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-optional-audit-entry-info */
+/* This is defined at specs/audit_log.json:80:22 */
+struct discord_audit_log_entry_optional_info;
+
+/* Title: Audit Log Change Structure */
+/* https://discord.com/developers/docs/resources/audit-log#audit-log-change-object-audit-log-change-structure */
+/* This is defined at specs/audit_log.json:97:22 */
+struct discord_audit_log_change;
+
+/* Title: Audit Log Change Key */
+/* https://discord.com/developers/docs/resources/audit-log#audit-log-change-object-audit-log-change-key */
+/* This is defined at specs/audit_log.json:109:22 */
+struct discord_audit_log_change_key;
+/* This file is generated from specs/guild.create-channel.json, Please don't edit it. */
 /*
 
 */
 
-/* https://discord.com/developers/docs/resources/channel#group-dm-add-recipient */
-/* This is defined at specs/channel.group-dm-add-recipient.json:8:22 */
-struct discord_group_dm_add_recipient_params;
-/* This file is generated from specs/channel.create-channel-invite.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/channel#create-channel-invite */
-/* This is defined at specs/channel.create-channel-invite.json:8:22 */
-struct discord_create_channel_invite_params;
+/* https://discord.com/developers/docs/resources/guild#create-guild-channel */
+/* This is defined at specs/guild.create-channel.json:8:22 */
+struct discord_create_guild_channel_params;
 /* This file is generated from specs/voice.json, Please don't edit it. */
 /*
 (null)
@@ -91,6 +112,14 @@ struct discord_voice;
 /* https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure */
 /* This is defined at specs/voice.json:29:22 */
 struct discord_voice_region;
+/* This file is generated from specs/emoji.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
+*/
+
+/* Title: Emoji Structure */
+/* This is defined at specs/emoji.json:8:22 */
+struct discord_emoji;
 /* This file is generated from specs/channel.get-reactions.json, Please don't edit it. */
 /*
 
@@ -99,14 +128,25 @@ struct discord_voice_region;
 /* https://discord.com/developers/docs/resources/channel#get-reactions */
 /* This is defined at specs/channel.get-reactions.json:8:22 */
 struct discord_get_reactions_params;
-/* This file is generated from specs/guild.json, Please don't edit it. */
+/* This file is generated from specs/guild.enum.json, Please don't edit it. */
 /*
-https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
+https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
 */
 
-/* Title: Guild Structure */
-/* This is defined at specs/guild.json:8:22 */
-struct discord_guild;
+/* Title: Unavailable Guild Object */
+/* https://discord.com/developers/docs/resources/guild#unavailable-guild-object */
+/* This is defined at specs/guild.enum.json:91:23 */
+struct discord_guild_unavailable;
+
+/* Title: Guild Preview Object */
+/* https://discord.com/developers/docs/resources/guild#guild-preview-object */
+/* This is defined at specs/guild.enum.json:100:23 */
+struct discord_guild_preview;
+
+/* Title: Guild Widget Object */
+/* https://discord.com/developers/docs/resources/guild#guild-widget-object */
+/* This is defined at specs/guild.enum.json:117:23 */
+struct discord_guild_widget;
 /* This file is generated from specs/guild.ban.json, Please don't edit it. */
 /*
 https://discord.com/developers/docs/resources/guild#ban-object
@@ -141,34 +181,20 @@ struct discord_guild_integration_application;
 /* https://discord.com/developers/docs/resources/guild#integration-object-integration-structure */
 /* This is defined at specs/guild.integration.json:44:22 */
 struct discord_guild_integration;
-/* This file is generated from specs/guild.enum.json, Please don't edit it. */
+/* This file is generated from specs/invite.json, Please don't edit it. */
 /*
-https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
+https://discord.com/developers/docs/resources/invite#invite-object
 */
 
-/* Title: Unavailable Guild Object */
-/* https://discord.com/developers/docs/resources/guild#unavailable-guild-object */
-/* This is defined at specs/guild.enum.json:91:23 */
-struct discord_guild_unavailable;
+/* Title: Invite Structure */
+/* https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
+/* This is defined at specs/invite.json:19:22 */
+struct discord_invite;
 
-/* Title: Guild Preview Object */
-/* https://discord.com/developers/docs/resources/guild#guild-preview-object */
-/* This is defined at specs/guild.enum.json:100:23 */
-struct discord_guild_preview;
-
-/* Title: Guild Widget Object */
-/* https://discord.com/developers/docs/resources/guild#guild-widget-object */
-/* This is defined at specs/guild.enum.json:117:23 */
-struct discord_guild_widget;
-/* This file is generated from specs/channel.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/channel#channel-object-channel-types
-*/
-
-/* Title: Channel Structure */
-/* https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
-/* This is defined at specs/channel.json:25:22 */
-struct discord_channel;
+/* Title: Invite Metadata Structure */
+/* https://discord.com/developers/docs/resources/invite#invite-metadata-object */
+/* This is defined at specs/invite.json:36:22 */
+struct discord_invite_metadata;
 /* This file is generated from specs/webhook.edit-webhook-message.json, Please don't edit it. */
 /*
 
@@ -177,35 +203,6 @@ struct discord_channel;
 /* https://discord.com/developers/docs/resources/webhook#edit-webhook-message */
 /* This is defined at specs/webhook.edit-webhook-message.json:8:22 */
 struct discord_edit_webhook_message_params;
-/* This file is generated from specs/audit_log.json, Please don't edit it. */
-/*
-(null)
-*/
-
-/* Title: Audit Log Structure */
-/* https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure */
-/* This is defined at specs/audit_log.json:8:22 */
-struct discord_audit_log;
-
-/* Title: Audit Log Entry Structure */
-/* https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-entry-structure */
-/* This is defined at specs/audit_log.json:64:22 */
-struct discord_audit_log_entry;
-
-/* Title: Optional Audit Entry Info Structure */
-/* https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-optional-audit-entry-info */
-/* This is defined at specs/audit_log.json:80:22 */
-struct discord_audit_log_entry_optional_info;
-
-/* Title: Audit Log Change Structure */
-/* https://discord.com/developers/docs/resources/audit-log#audit-log-change-object-audit-log-change-structure */
-/* This is defined at specs/audit_log.json:97:22 */
-struct discord_audit_log_change;
-
-/* Title: Audit Log Change Key */
-/* https://discord.com/developers/docs/resources/audit-log#audit-log-change-object-audit-log-change-key */
-/* This is defined at specs/audit_log.json:109:22 */
-struct discord_audit_log_change_key;
 /* This file is generated from specs/template.create-guild-from-template.json, Please don't edit it. */
 /*
 
@@ -293,22 +290,14 @@ struct discord_channel_embed_footer;
 /* https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure */
 /* This is defined at specs/channel.objects.json:188:22 */
 struct discord_channel_embed_field;
-/* This file is generated from specs/guild.create-channel.json, Please don't edit it. */
+/* This file is generated from specs/channel.group-dm-add-recipient.json, Please don't edit it. */
 /*
 
 */
 
-/* https://discord.com/developers/docs/resources/guild#create-guild-channel */
-/* This is defined at specs/guild.create-channel.json:8:22 */
-struct discord_create_guild_channel_params;
-/* This file is generated from specs/emoji.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
-*/
-
-/* Title: Emoji Structure */
-/* This is defined at specs/emoji.json:8:22 */
-struct discord_emoji;
+/* https://discord.com/developers/docs/resources/channel#group-dm-add-recipient */
+/* This is defined at specs/channel.group-dm-add-recipient.json:8:22 */
+struct discord_group_dm_add_recipient_params;
 /* This file is generated from specs/webhook.create-webhook.json, Please don't edit it. */
 /*
 
@@ -363,39 +352,14 @@ struct discord_webhook;
 /* https://discord.com/developers/docs/resources/user#create-group-dm */
 /* This is defined at specs/user.create-group-dm.json:8:22 */
 struct discord_create_group_dm_params;
-/* This file is generated from specs/emoji.modify-guild-emoji.json, Please don't edit it. */
+/* This file is generated from specs/guild.json, Please don't edit it. */
 /*
-
+https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
 */
 
-/* https://discord.com/developers/docs/resources/emoji#modify-guild-emoji */
-/* This is defined at specs/emoji.modify-guild-emoji.json:8:22 */
-struct discord_modify_guild_emoji_params;
-/* This file is generated from specs/user.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/resources/user#user-object
-*/
-
-/* Title: User Structure */
-/* This is defined at specs/user.json:42:18 */
-struct discord_user;
-
-/* Title: Connection Structure */
-/* https://discord.com/developers/docs/resources/user#connection-object-connection-structure */
-/* This is defined at specs/user.json:74:18 */
-struct discord_connection;
-/* This file is generated from specs/guild.role.create.json, Please don't edit it. */
-/*
-
-*/
-
-/* https://discord.com/developers/docs/resources/guild#create-guild-role */
-/* This is defined at specs/guild.role.create.json:8:22 */
-struct discord_create_guild_role_params;
-/* This file is generated from specs/permissions.json, Please don't edit it. */
-/*
-https://discord.com/developers/docs/topics/permissions
-*/
+/* Title: Guild Structure */
+/* This is defined at specs/guild.json:8:22 */
+struct discord_guild;
 /* This file is generated from specs/webhook.execute-webhook.json, Please don't edit it. */
 /*
 
@@ -404,6 +368,34 @@ https://discord.com/developers/docs/topics/permissions
 /* https://discord.com/developers/docs/resources/webhook#execute-webhook */
 /* This is defined at specs/webhook.execute-webhook.json:8:22 */
 struct discord_execute_webhook_params;
+/* This file is generated from specs/guild.role.create.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/guild#create-guild-role */
+/* This is defined at specs/guild.role.create.json:8:22 */
+struct discord_create_guild_role_params;
+/* This file is generated from specs/emoji.modify-guild-emoji.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/emoji#modify-guild-emoji */
+/* This is defined at specs/emoji.modify-guild-emoji.json:8:22 */
+struct discord_modify_guild_emoji_params;
+/* This file is generated from specs/permissions.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/topics/permissions
+*/
+/* This file is generated from specs/channel.create-channel-invite.json, Please don't edit it. */
+/*
+
+*/
+
+/* https://discord.com/developers/docs/resources/channel#create-channel-invite */
+/* This is defined at specs/channel.create-channel-invite.json:8:22 */
+struct discord_create_channel_invite_params;
 /* This file is generated from specs/guild.role.json, Please don't edit it. */
 /*
 https://discord.com/developers/docs/topics/permissions#role-object-role-structure
@@ -472,6 +464,15 @@ struct discord_gateway_identify_status_update_activity;
 /* https://discord.com/developers/docs/resources/template#modify-guild-template */
 /* This is defined at specs/template.modify-guild-template.json:8:22 */
 struct discord_modify_guild_template_params;
+/* This file is generated from specs/channel.json, Please don't edit it. */
+/*
+https://discord.com/developers/docs/resources/channel#channel-object-channel-types
+*/
+
+/* Title: Channel Structure */
+/* https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
+/* This is defined at specs/channel.json:25:22 */
+struct discord_channel;
 /* This file is generated from specs/guild.member.json, Please don't edit it. */
 /*
 https://discord.com/developers/docs/resources/guild#guild-member-object
@@ -487,17 +488,16 @@ struct discord_guild_member;
 /* https://discord.com/developers/docs/resources/user#modify-current-user */
 /* This is defined at specs/user.modify-curent-user.json:8:22 */
 struct discord_modify_current_user_params;
-/* This file is generated from specs/invite.json, Please don't edit it. */
+/* This file is generated from specs/user.json, Please don't edit it. */
 /*
-https://discord.com/developers/docs/resources/invite#invite-object
+https://discord.com/developers/docs/resources/user#user-object
 */
 
-/* Title: Invite Structure */
-/* https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
-/* This is defined at specs/invite.json:19:22 */
-struct discord_invite;
+/* Title: User Structure */
+/* This is defined at specs/user.json:42:18 */
+struct discord_user;
 
-/* Title: Invite Metadata Structure */
-/* https://discord.com/developers/docs/resources/invite#invite-metadata-object */
-/* This is defined at specs/invite.json:36:22 */
-struct discord_invite_metadata;
+/* Title: Connection Structure */
+/* https://discord.com/developers/docs/resources/user#connection-object-connection-structure */
+/* This is defined at specs/user.json:74:18 */
+struct discord_connection;

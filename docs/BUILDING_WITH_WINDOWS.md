@@ -214,12 +214,12 @@ strndup (const char *s, size_t n)
 }
 ```
 
-Now, go to `discord-ratelimit.cpp` and include `tdestroy.h`:
+Now, go to `discord-ratelimit.c` and include `tdestroy.h`:
 ```c
 #include "tdestroy.h"
 ```
 
-Then, go to `discord-public-user.cpp` and include `strndup.h`:
+Then, go to `discord-public-user.c` and include `strndup.h`:
 ```c
 #include "strndup.h"
 ```
@@ -236,7 +236,7 @@ First, go to `common/user-agent.c`. Then, find the function `conn_init` and inse
 ```
 Then, go to `common/curl-websocket.c`, find the function `cws_new` and insert the following code after setting the other options:
 ```c
-    curl_easy_setopt(easy, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+  curl_easy_setopt(easy, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 ```
 
 ### Compile

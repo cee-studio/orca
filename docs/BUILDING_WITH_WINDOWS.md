@@ -236,7 +236,7 @@ First, go to `common/user-agent.c`. Then, find the function `conn_init` and inse
 ```
 Then, go to `common/curl-websocket.c`, find the function `cws_new` and insert the following code after setting the other options:
 ```c
-  curl_easy_setopt(easy, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+    curl_easy_setopt(easy, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 ```
 
 ### Compile

@@ -63,10 +63,9 @@ ifeq ($(BEARSSL),1)
 	LIBDISCORD_LDFLAGS += -lbearssl -static
 	CFLAGS += -DBEARSSL
 else ifeq ($(CC),stensal-c)
-	#LIBDISCORD_LDFLAGS += -lbearssl -static
-	#CFLAGS += -DBEARSSL
-	#CFLAGS += -DWOLFSSL
-	LIBDISCORD_LDFLAGS += -lcurl-ssl -lssl -lcrypto -lm -static
+	LIBDISCORD_LDFLAGS += -lcurl-bearssl -lbearssl -static
+	CFLAGS += -DBEARSSL
+	#LIBDISCORD_LDFLAGS += -lcurl-ssl -lssl -lcrypto -lm -static
 else
 	LIBDISCORD_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcrypto -lm
 endif

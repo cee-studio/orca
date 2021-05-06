@@ -128,21 +128,24 @@ on_hello(struct discord_voice *vc)
 static void
 on_ready(struct discord_voice *vc)
 {
-  if (!vc->cbs.on_ready) return;
-  vc->cbs.on_ready(vc);
+  struct discord *client = vc->p_client;
+  if (!client->voice_cbs.on_ready) return;
+  client->voice_cbs.on_ready(vc);
 }
 
 static void
 on_session_description(struct discord_voice *vc)
 {
-  if (!vc->cbs.on_session_descriptor) return;
-  vc->cbs.on_session_descriptor(vc);
+  struct discord *client = vc->p_client;
+  if (!client->voice_cbs.on_session_descriptor) return;
+  client->voice_cbs.on_session_descriptor(vc);
 }
 
 static void
 on_speaking(struct discord_voice *vc)
 {
-  if (!vc->cbs.on_speaking) return;
+  struct discord *client = vc->p_client;
+  if (!client->voice_cbs.on_speaking) return;
 
   u64_snowflake_t user_id;
   int speaking=0,delay=0,ssrc=0;
@@ -156,8 +159,8 @@ on_speaking(struct discord_voice *vc)
   log_debug("receiving VOICE_SPEAKING:%.*s",
             vc->payload.event_data.size, vc->payload.event_data.start);
 
-  (*vc->cbs.on_speaking)(
-      vc->p_client, 
+  (*client->voice_cbs.on_speaking) (
+      client,
       vc,
       vc->p_client->gw.bot,
       user_id,
@@ -177,37 +180,40 @@ on_resumed(struct discord_voice *vc)
 static void
 on_client_disconnect(struct discord_voice *vc)
 {
+  struct discord *client = vc->p_client;
+
   log_info("on_client_disconnect:%.*s",
            vc->payload.event_data.size, vc->payload.event_data.start);
 
-  if (!vc->cbs.on_client_disconnect) return;
+  if (!client->voice_cbs.on_client_disconnect) return;
 
   u64_snowflake_t user_id=0;
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
               "(user_id):s_as_u64", &user_id);
 
-  (*vc->cbs.on_client_disconnect)(
-      vc->p_client, 
+  (*client->voice_cbs.on_client_disconnect)(
+      client,
       vc,
-      vc->p_client->gw.bot,
+      client->gw.bot,
       user_id);
 }
 
 static void
 on_codec(struct discord_voice *vc)
 {
+  struct discord *client = vc->p_client;
   log_info("on_codec:%.*s", vc->payload.event_data.size, vc->payload.event_data.start);
 
-  if (!vc->cbs.on_codec) return;
+  if (!client->voice_cbs.on_codec) return;
 
   char audio_codec[64]={0}, video_codec[64]={0};
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
               "(audio_codec):s, (video_codec):s", &audio_codec, &video_codec);
 
-  (*vc->cbs.on_codec)(
-      vc->p_client, 
+  (*client->voice_cbs.on_codec)(
+      client,
       vc,
-      vc->p_client->gw.bot,
+      client->gw.bot,
       audio_codec,
       video_codec);
 }
@@ -367,7 +373,6 @@ _discord_voice_init(
   u64_snowflake_t channel_id)
 {
   new_vc->p_client = client;
-  new_vc->cbs.on_idle = &noop_idle_cb;
   new_vc->guild_id = guild_id;
   new_vc->channel_id = channel_id;
   new_vc->bot_id = client->gw.bot->id;
@@ -570,6 +575,7 @@ _discord_on_voice_state_update(struct discord *client, struct discord_voice_stat
 static void
 event_loop(struct discord_voice *vc)
 {
+  struct discord *client = vc->p_client;
   ws_start(vc->ws);
 
   bool is_running=false;
@@ -588,7 +594,8 @@ event_loop(struct discord_voice *vc)
       send_heartbeat(vc);
       vc->hbeat.tstamp = ws_timestamp(vc->ws); //update heartbeat timestamp
     }
-    (*vc->cbs.on_idle)(vc->p_client, vc, vc->p_client->gw.bot);
+    if (client->voice_cbs.on_idle)
+      (*client->voice_cbs.on_idle)(client, vc, vc->p_client->gw.bot);
   }
   vc->is_ready = false;
 }
@@ -700,6 +707,7 @@ _discord_on_voice_server_update(struct discord *client, u64_snowflake_t guild_id
   }
 }
 
+#if 0
 void
 discord_voice_set_on_speaking(struct discord_voice *vc, voice_speaking_cb *callback) {
   vc->cbs.on_speaking = callback;
@@ -718,6 +726,11 @@ discord_voice_set_on_codec(struct discord_voice *vc, voice_codec_cb *callback) {
 void 
 discord_voice_set_on_idle(struct discord_voice *vc, voice_idle_cb *callback){
   vc->cbs.on_idle = callback;
+}
+#endif
+
+void discord_init_voice_cbs(struct discord_voice_cbs *cbs) {
+  cbs->on_idle = &noop_idle_cb;
 }
 
 void

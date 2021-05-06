@@ -120,8 +120,6 @@ struct discord_voice {
     u64_unix_ms_t tstamp;
   } hbeat;
 
-  struct discord_voice_cbs cbs;
-
   //latency between client and websockets server
   /// @note calculated by interval response between HEARTBEAT and HEARTBEAT_ACK
   int ping_ms; /** @todo implement discord_voice_ping_ms() */

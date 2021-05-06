@@ -12,6 +12,7 @@
 #include "user-agent.h"
 #include "websockets.h"
 #include "orka-utils.h"
+#include "discord-voice-connections.h"
 
 /**
  * The handle used for performing HTTP Requests 
@@ -336,11 +337,10 @@ struct discord {
   // store bot.config file contents and sync logging between adapter/gw
   struct logconf config;
 
-#ifdef DISCORD_VOICE_CONNECTIONS_H
 #define NUM_VCS 512
   struct discord_voice vcs[NUM_VCS];
-#endif // DISCORD_VOICE_CONNECTIONS_H
-  
+  struct discord_voice_cbs voice_cbs;
+
   // space for user arbitrary data
   /// @see discord_get_data() and discord_set_data()
   void *data;

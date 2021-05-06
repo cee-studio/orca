@@ -41,15 +41,8 @@ GITHUB_OBJS  := $(GITHUB_SRC:%=$(OBJDIR)/%.o)
 REDDIT_OBJS  := $(REDDIT_SRC:%=$(OBJDIR)/%.o)
 SPECS_OBJS   := $(SPECS_SRC:%=$(OBJDIR)/%.o)
 DB_OBJS      := $(DB_SRC:%=$(OBJDIR)/%.o)
-ADD_ONS_OBJS := $(ADD_ONS_SRC:%=$(OBJDIR)/%.o)
 
 OBJS := $(COMMON_OBJS) $(DISCORD_OBJS) $(SLACK_OBJS) $(GITHUB_OBJS) $(REDDIT_OBJS)
-
-ifeq ($(addons),0)
-	CFLAGS += -D_DISCORD_ADD_ONS
-	OBJS += $(ADD_ONS_OBJS)
-endif
-
 
 BOT_SRC  := $(wildcard bots/bot-*.c)
 BOT_EXES := $(patsubst %.c, %.exe, $(BOT_SRC))
@@ -64,21 +57,16 @@ TEST_SRC  := $(wildcard test/test-*.cpp test/test-*.c)
 TEST_EXES := $(filter %.exe, $(TEST_SRC:.cpp=.exe) $(TEST_SRC:.c=.exe))
 
 LIBDISCORD_CFLAGS	:= -I./ -I./mujs  -I./sqlite3 -I./add-ons
-LIBDISCORD_LDFLAGS	:= -L./$(LIBDIR) -ldiscord -lcurl -lpthread
+LIBDISCORD_LDFLAGS	:= -L./$(LIBDIR) -ldiscord -lpthread
 
 ifeq ($(BEARSSL),1)
 	LIBDISCORD_LDFLAGS += -lbearssl -static
 	CFLAGS += -DBEARSSL
-else ifeq ($(MBEDTLS),1)
-	LIBDISCORD_LDFLAGS += -lmbedx509 -lmbedtls -lmbedcrypto -static
-	CFLAGS += -DMBEDTLS
-else ifeq ($(WOLFSSL),1)
-	LIBDISCORD_LDFLAGS += -lwolfssl -static
-	CFLAGS += -DWOLFSSL
 else ifeq ($(CC),stensal-c)
-	LIBDISCORD_LDFLAGS += -lwolfssl -static
+	#LIBDISCORD_LDFLAGS += -lbearssl -static
 	#CFLAGS += -DBEARSSL
-	CFLAGS += -DWOLFSSL
+	#CFLAGS += -DWOLFSSL
+	LIBDISCORD_LDFLAGS += -lcurl-ssl -lssl -lcrypto -lm -static
 else
 	LIBDISCORD_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcrypto -lm
 endif
@@ -177,8 +165,8 @@ actor-gen.exe: mkdir $(ACTOR_GEN_OBJS)
 #generic compilation
 %.bx:%.c discord mujs
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) -lmujs -lsqlite3
-%.bz:%.c discord mujs $(ADD_ONS_OBJS)
-	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(ADD_ONS_OBJS) $(LIBS_LDFLAGS) 
+%.bz:%.c discord mujs 
+	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) 
 %.exe:%.c libdiscord
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS)
 

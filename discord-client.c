@@ -299,6 +299,14 @@ discord_set_on_voice_server_update(struct discord *client, voice_server_update_c
 }
 
 void
+discord_set_voice_cbs(struct discord *client, struct discord_voice_cbs *callbacks) {
+  //memcpy(&client->voice_cbs, callbacks, sizeof (*callbacks));
+  int i = 0;
+  for (i = 0; i < NUM_VCS; i++)
+    memcpy(&client->vcs[i].cbs, callbacks, sizeof(*callbacks));
+}
+
+void
 discord_set_blocking_event_handler(struct discord *client, enum discord_event_handling_mode (*f)(void *cxt))
 {
   client->gw.blocking_event_handler = f;

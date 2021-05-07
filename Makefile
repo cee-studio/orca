@@ -66,7 +66,7 @@ else ifeq ($(CC),stensal-c)
 	CFLAGS += -DBEARSSL
 	#LIBDISCORD_LDFLAGS += -lcurl-ssl -lssl -lcrypto -lm -static
 else
-	LIBDISCORD_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcrypto -lm
+	LIBDISCORD_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcurl -lcrypto -lm
 endif
 
 

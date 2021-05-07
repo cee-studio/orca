@@ -16,7 +16,6 @@ GITHUB_SRC  := $(wildcard github-*.c)
 REDDIT_SRC  := $(wildcard reddit-*.c)
 
 DB_SRC      := $(wildcard sqlite3/*.c)
-ADD_ONS_SRC := $(wildcard add-ons/*.c)
 
 SPECS      	:= $(sort $(wildcard specs/*/*.json))
 SPECS_SUBDIR:= $(sort $(patsubst specs/%, %, $(dir $(SPECS))))
@@ -50,7 +49,7 @@ BOT_EXES := $(patsubst %.c, %.exe, $(BOT_SRC))
 BOTX_SRC  := $(wildcard botx/bot-*.c)
 BOTX_EXES := $(patsubst %.c, %.bx, $(BOTX_SRC))
 
-BOTZ_SRC  := $(wildcard add-ons/bots/bot-*.c)
+BOTZ_SRC  := $(wildcard add-ons/bot-*.c)
 BOTZ_EXES := $(patsubst %.c, %.bz, $(BOTZ_SRC))
 
 TEST_SRC  := $(wildcard test/test-*.cpp test/test-*.c)

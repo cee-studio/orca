@@ -11,7 +11,6 @@
 #include "discord-internal.h"
 #include "discord-voice-connections.h"
 #include "orka-utils.h"
-#include "vc-proto.h"
 
 
 static pthread_mutex_t client_lock = PTHREAD_MUTEX_INITIALIZER;

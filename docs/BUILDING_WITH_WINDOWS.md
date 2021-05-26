@@ -7,7 +7,7 @@ You can find the steps to download it [here](https://chocolatey.org/install).
 Then, open the command shell as administrator, type `choco install mingw`, press enter and wait.
 
 The second dependency is `wget`, a tool that allows you to download files from the internet using the terminal.
-Orca uses it because some files as in a separate repository, [cee-utils](https://github.com/cee-studio/cee-utils).
+Orca uses it because some files are in a separate repository, [cee-utils](https://github.com/cee-studio/cee-utils).
 Now that you already have chocolatey, open the command shell as administrator, type `choco install mingw`, press enter and wait.
 
 If you want to build orca for Windows, you'll also need curl.

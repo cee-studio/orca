@@ -17,7 +17,7 @@ jobs:
           ./scripts/get-cee-utils.sh
           echo "Clone Orca-Docs"
           git clone https://github.com/cee-studio/orca-docs
-          ln -s ../orca orca-docs/orca
+          cd orca-docs && git clone https://github.com/cee-studio/orca && cd ..
           echo "Install Sphinx"
           pip install sphinx
           pip install sphinx_rtd_theme

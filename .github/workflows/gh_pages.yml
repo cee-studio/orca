@@ -27,6 +27,8 @@ jobs:
 
       - name: Doxygen Action
         uses: mattnotmitt/doxygen-action@v1.3.1
+        with:
+          working-directory: '../orca-docs/'
 
       - name: Breathe Action
         run: make -C docs html
@@ -34,7 +36,7 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
+          working-directory: '../orca-docs/'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./docs/build/html
-

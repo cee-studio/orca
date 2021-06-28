@@ -1,0 +1,40 @@
+name: github pages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Dependencies
+        run: |
+          echo "Install cee-utils"
+          ./scripts/get-cee-utils.sh
+          echo "Clone Orca-Docs"
+          cd .. && git clone https://github.com/cee-studio/orca-docs
+          echo "Move Orca to Orca-Docs"
+          mv orca orca-docs/ && cd orca-docs
+          echo "Install Sphinx"
+          pip install sphinx
+          pip install sphinx_rtd_theme
+          echo "Install Breathe"
+          pip install breathe
+
+      - name: Doxygen Action
+        uses: mattnotmitt/doxygen-action@v1.3.1
+
+      - name: Breathe Action
+        run: make -C docs html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./docs/build/html
+

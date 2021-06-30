@@ -54,4 +54,6 @@ jobs:
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev
 
       - name: Run Makefile
-        run: make
+        run: |
+          git clone https://github.com/cee-studio/cee-utils
+          make

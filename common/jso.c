@@ -117,7 +117,7 @@ jso_ua_cleanup(js_State *J, void *p_ua) {
 }
 
 static void 
-Orca_constructor(js_State *J)
+new_Orca(js_State *J)
 {
   static struct logconf config={0};
   static _Bool first_run=0;
@@ -240,7 +240,7 @@ Orca_init(js_State *J)
     js_newcfunction(J, &Orca_prototype_setUrl, "Orca.prototype.setUrl", 2);
     js_defproperty(J, -2, "setUrl", JS_DONTENUM);
   }
-  js_newcconstructor(J, &Orca_constructor, &Orca_constructor, "Orca", 1);
+  js_newcconstructor(J, &new_Orca, &new_Orca, "Orca", 1);
   js_defglobal(J, "Orca", JS_DONTENUM); 
 }
 

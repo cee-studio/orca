@@ -2,7 +2,7 @@
 /**
  * @file specs-code/discord/gateway.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/gateway
  */
@@ -253,16 +253,16 @@ extern size_t discord_gateway_status_update_list_to_json(char *str, size_t len, 
  */
 struct discord_gateway_identify_connection {
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
-  char *$os;
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+  char *os;
 
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
-  char *$browser;
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+  char *browser;
 
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
-  char *$device;
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+  char *device;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected

@@ -2,7 +2,7 @@
 /**
  * @file specs-code/discord/audit_log.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */

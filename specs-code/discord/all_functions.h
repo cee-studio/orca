@@ -2,7 +2,7 @@
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
@@ -31,7 +31,7 @@ extern size_t discord_get_guild_audit_log_params_list_to_json(char *str, size_t 
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
@@ -142,7 +142,7 @@ extern size_t discord_audit_log_change_key_list_to_json(char *str, size_t len, s
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
@@ -331,7 +331,7 @@ extern size_t discord_thread_response_body_list_to_json(char *str, size_t len, s
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
@@ -790,7 +790,7 @@ extern size_t discord_embed_field_list_to_json(char *str, size_t len, struct dis
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see 
  */
@@ -839,7 +839,7 @@ extern size_t discord_modify_guild_emoji_params_list_to_json(char *str, size_t l
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/emoji
  */
@@ -868,7 +868,7 @@ extern size_t discord_emoji_list_to_json(char *str, size_t len, struct discord_e
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/gateway
  */
@@ -967,7 +967,7 @@ extern size_t discord_gateway_activity_list_to_json(char *str, size_t len, struc
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
@@ -1036,7 +1036,7 @@ extern size_t discord_modify_guild_template_params_list_to_json(char *str, size_
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
@@ -1065,7 +1065,7 @@ extern size_t discord_guild_template_list_to_json(char *str, size_t len, struct 
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
@@ -1314,7 +1314,7 @@ extern size_t discord_begin_guild_prune_params_list_to_json(char *str, size_t le
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
@@ -1559,7 +1559,7 @@ extern size_t discord_guild_welcome_screen_channel_list_to_json(char *str, size_
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
@@ -1588,7 +1588,7 @@ extern size_t discord_get_invite_params_list_to_json(char *str, size_t len, stru
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
@@ -1635,11 +1635,104 @@ extern void discord_invite_metadata_list_from_json_v(char *str, size_t len, void
 extern void discord_invite_metadata_list_from_json(char *str, size_t len, struct discord_invite_metadata ***p);
 extern size_t discord_invite_metadata_list_to_json_v(char *str, size_t len, void *p);
 extern size_t discord_invite_metadata_list_to_json(char *str, size_t len, struct discord_invite_metadata **p);
+/* This file is generated from specs/discord/message_components.json, Please don't edit it. */
+/**
+ * @file specs-code/discord/all_functions.h
+ * @author cee-studio
+ * @date 17 Jul 2021
+ * @brief Specs generated file
+ * @see https://discord.com/developers/docs/interactions/message-components#message-components
+ */
+
+
+extern void discord_component_cleanup_v(void *p);
+extern void discord_component_cleanup(struct discord_component *p);
+extern void discord_component_init_v(void *p);
+extern void discord_component_init(struct discord_component *p);
+extern struct discord_component * discord_component_alloc();
+extern void discord_component_free_v(void *p);
+extern void discord_component_free(struct discord_component *p);
+extern void discord_component_from_json_v(char *json, size_t len, void *p);
+extern void discord_component_from_json(char *json, size_t len, struct discord_component *p);
+extern size_t discord_component_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_component_to_json(char *json, size_t len, struct discord_component *p);
+extern size_t discord_component_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_component_to_query(char *json, size_t len, struct discord_component *p);
+extern void discord_component_list_free_v(void **p);
+extern void discord_component_list_free(struct discord_component **p);
+extern void discord_component_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_component_list_from_json(char *str, size_t len, struct discord_component ***p);
+extern size_t discord_component_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_component_list_to_json(char *str, size_t len, struct discord_component **p);
+
+
+
+extern void discord_button_cleanup_v(void *p);
+extern void discord_button_cleanup(struct discord_button *p);
+extern void discord_button_init_v(void *p);
+extern void discord_button_init(struct discord_button *p);
+extern struct discord_button * discord_button_alloc();
+extern void discord_button_free_v(void *p);
+extern void discord_button_free(struct discord_button *p);
+extern void discord_button_from_json_v(char *json, size_t len, void *p);
+extern void discord_button_from_json(char *json, size_t len, struct discord_button *p);
+extern size_t discord_button_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_button_to_json(char *json, size_t len, struct discord_button *p);
+extern size_t discord_button_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_button_to_query(char *json, size_t len, struct discord_button *p);
+extern void discord_button_list_free_v(void **p);
+extern void discord_button_list_free(struct discord_button **p);
+extern void discord_button_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_button_list_from_json(char *str, size_t len, struct discord_button ***p);
+extern size_t discord_button_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_button_list_to_json(char *str, size_t len, struct discord_button **p);
+
+
+
+extern void discord_select_menu_cleanup_v(void *p);
+extern void discord_select_menu_cleanup(struct discord_select_menu *p);
+extern void discord_select_menu_init_v(void *p);
+extern void discord_select_menu_init(struct discord_select_menu *p);
+extern struct discord_select_menu * discord_select_menu_alloc();
+extern void discord_select_menu_free_v(void *p);
+extern void discord_select_menu_free(struct discord_select_menu *p);
+extern void discord_select_menu_from_json_v(char *json, size_t len, void *p);
+extern void discord_select_menu_from_json(char *json, size_t len, struct discord_select_menu *p);
+extern size_t discord_select_menu_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_select_menu_to_json(char *json, size_t len, struct discord_select_menu *p);
+extern size_t discord_select_menu_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_select_menu_to_query(char *json, size_t len, struct discord_select_menu *p);
+extern void discord_select_menu_list_free_v(void **p);
+extern void discord_select_menu_list_free(struct discord_select_menu **p);
+extern void discord_select_menu_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_select_menu_list_from_json(char *str, size_t len, struct discord_select_menu ***p);
+extern size_t discord_select_menu_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_select_menu_list_to_json(char *str, size_t len, struct discord_select_menu **p);
+
+extern void discord_select_option_cleanup_v(void *p);
+extern void discord_select_option_cleanup(struct discord_select_option *p);
+extern void discord_select_option_init_v(void *p);
+extern void discord_select_option_init(struct discord_select_option *p);
+extern struct discord_select_option * discord_select_option_alloc();
+extern void discord_select_option_free_v(void *p);
+extern void discord_select_option_free(struct discord_select_option *p);
+extern void discord_select_option_from_json_v(char *json, size_t len, void *p);
+extern void discord_select_option_from_json(char *json, size_t len, struct discord_select_option *p);
+extern size_t discord_select_option_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_select_option_to_json(char *json, size_t len, struct discord_select_option *p);
+extern size_t discord_select_option_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_select_option_to_query(char *json, size_t len, struct discord_select_option *p);
+extern void discord_select_option_list_free_v(void **p);
+extern void discord_select_option_list_free(struct discord_select_option **p);
+extern void discord_select_option_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_select_option_list_from_json(char *str, size_t len, struct discord_select_option ***p);
+extern size_t discord_select_option_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_select_option_list_to_json(char *str, size_t len, struct discord_select_option **p);
 /* This file is generated from specs/discord/permissions.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/permissions
  */
@@ -1686,11 +1779,270 @@ extern void discord_permissions_role_tags_list_from_json_v(char *str, size_t len
 extern void discord_permissions_role_tags_list_from_json(char *str, size_t len, struct discord_permissions_role_tags ***p);
 extern size_t discord_permissions_role_tags_list_to_json_v(char *str, size_t len, void *p);
 extern size_t discord_permissions_role_tags_list_to_json(char *str, size_t len, struct discord_permissions_role_tags **p);
+/* This file is generated from specs/discord/slash_commands.json, Please don't edit it. */
+/**
+ * @file specs-code/discord/all_functions.h
+ * @author cee-studio
+ * @date 17 Jul 2021
+ * @brief Specs generated file
+ * @see https://discord.com/developers/docs/interactions/slash-commands#data-models-and-types
+ */
+
+
+extern void discord_application_command_cleanup_v(void *p);
+extern void discord_application_command_cleanup(struct discord_application_command *p);
+extern void discord_application_command_init_v(void *p);
+extern void discord_application_command_init(struct discord_application_command *p);
+extern struct discord_application_command * discord_application_command_alloc();
+extern void discord_application_command_free_v(void *p);
+extern void discord_application_command_free(struct discord_application_command *p);
+extern void discord_application_command_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_from_json(char *json, size_t len, struct discord_application_command *p);
+extern size_t discord_application_command_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_to_json(char *json, size_t len, struct discord_application_command *p);
+extern size_t discord_application_command_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_to_query(char *json, size_t len, struct discord_application_command *p);
+extern void discord_application_command_list_free_v(void **p);
+extern void discord_application_command_list_free(struct discord_application_command **p);
+extern void discord_application_command_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_list_from_json(char *str, size_t len, struct discord_application_command ***p);
+extern size_t discord_application_command_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_list_to_json(char *str, size_t len, struct discord_application_command **p);
+
+extern void discord_application_command_option_cleanup_v(void *p);
+extern void discord_application_command_option_cleanup(struct discord_application_command_option *p);
+extern void discord_application_command_option_init_v(void *p);
+extern void discord_application_command_option_init(struct discord_application_command_option *p);
+extern struct discord_application_command_option * discord_application_command_option_alloc();
+extern void discord_application_command_option_free_v(void *p);
+extern void discord_application_command_option_free(struct discord_application_command_option *p);
+extern void discord_application_command_option_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_option_from_json(char *json, size_t len, struct discord_application_command_option *p);
+extern size_t discord_application_command_option_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_option_to_json(char *json, size_t len, struct discord_application_command_option *p);
+extern size_t discord_application_command_option_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_option_to_query(char *json, size_t len, struct discord_application_command_option *p);
+extern void discord_application_command_option_list_free_v(void **p);
+extern void discord_application_command_option_list_free(struct discord_application_command_option **p);
+extern void discord_application_command_option_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_option_list_from_json(char *str, size_t len, struct discord_application_command_option ***p);
+extern size_t discord_application_command_option_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_option_list_to_json(char *str, size_t len, struct discord_application_command_option **p);
+
+
+
+extern void discord_application_command_option_choice_cleanup_v(void *p);
+extern void discord_application_command_option_choice_cleanup(struct discord_application_command_option_choice *p);
+extern void discord_application_command_option_choice_init_v(void *p);
+extern void discord_application_command_option_choice_init(struct discord_application_command_option_choice *p);
+extern struct discord_application_command_option_choice * discord_application_command_option_choice_alloc();
+extern void discord_application_command_option_choice_free_v(void *p);
+extern void discord_application_command_option_choice_free(struct discord_application_command_option_choice *p);
+extern void discord_application_command_option_choice_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_option_choice_from_json(char *json, size_t len, struct discord_application_command_option_choice *p);
+extern size_t discord_application_command_option_choice_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_option_choice_to_json(char *json, size_t len, struct discord_application_command_option_choice *p);
+extern size_t discord_application_command_option_choice_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_option_choice_to_query(char *json, size_t len, struct discord_application_command_option_choice *p);
+extern void discord_application_command_option_choice_list_free_v(void **p);
+extern void discord_application_command_option_choice_list_free(struct discord_application_command_option_choice **p);
+extern void discord_application_command_option_choice_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_option_choice_list_from_json(char *str, size_t len, struct discord_application_command_option_choice ***p);
+extern size_t discord_application_command_option_choice_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_option_choice_list_to_json(char *str, size_t len, struct discord_application_command_option_choice **p);
+
+extern void discord_guild_application_command_permissions_cleanup_v(void *p);
+extern void discord_guild_application_command_permissions_cleanup(struct discord_guild_application_command_permissions *p);
+extern void discord_guild_application_command_permissions_init_v(void *p);
+extern void discord_guild_application_command_permissions_init(struct discord_guild_application_command_permissions *p);
+extern struct discord_guild_application_command_permissions * discord_guild_application_command_permissions_alloc();
+extern void discord_guild_application_command_permissions_free_v(void *p);
+extern void discord_guild_application_command_permissions_free(struct discord_guild_application_command_permissions *p);
+extern void discord_guild_application_command_permissions_from_json_v(char *json, size_t len, void *p);
+extern void discord_guild_application_command_permissions_from_json(char *json, size_t len, struct discord_guild_application_command_permissions *p);
+extern size_t discord_guild_application_command_permissions_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_guild_application_command_permissions_to_json(char *json, size_t len, struct discord_guild_application_command_permissions *p);
+extern size_t discord_guild_application_command_permissions_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_guild_application_command_permissions_to_query(char *json, size_t len, struct discord_guild_application_command_permissions *p);
+extern void discord_guild_application_command_permissions_list_free_v(void **p);
+extern void discord_guild_application_command_permissions_list_free(struct discord_guild_application_command_permissions **p);
+extern void discord_guild_application_command_permissions_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_application_command_permissions_list_from_json(char *str, size_t len, struct discord_guild_application_command_permissions ***p);
+extern size_t discord_guild_application_command_permissions_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_application_command_permissions_list_to_json(char *str, size_t len, struct discord_guild_application_command_permissions **p);
+
+extern void discord_application_command_permissions_cleanup_v(void *p);
+extern void discord_application_command_permissions_cleanup(struct discord_application_command_permissions *p);
+extern void discord_application_command_permissions_init_v(void *p);
+extern void discord_application_command_permissions_init(struct discord_application_command_permissions *p);
+extern struct discord_application_command_permissions * discord_application_command_permissions_alloc();
+extern void discord_application_command_permissions_free_v(void *p);
+extern void discord_application_command_permissions_free(struct discord_application_command_permissions *p);
+extern void discord_application_command_permissions_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_permissions_from_json(char *json, size_t len, struct discord_application_command_permissions *p);
+extern size_t discord_application_command_permissions_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_permissions_to_json(char *json, size_t len, struct discord_application_command_permissions *p);
+extern size_t discord_application_command_permissions_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_permissions_to_query(char *json, size_t len, struct discord_application_command_permissions *p);
+extern void discord_application_command_permissions_list_free_v(void **p);
+extern void discord_application_command_permissions_list_free(struct discord_application_command_permissions **p);
+extern void discord_application_command_permissions_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_permissions_list_from_json(char *str, size_t len, struct discord_application_command_permissions ***p);
+extern size_t discord_application_command_permissions_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_permissions_list_to_json(char *str, size_t len, struct discord_application_command_permissions **p);
+
+
+
+extern void discord_interaction_cleanup_v(void *p);
+extern void discord_interaction_cleanup(struct discord_interaction *p);
+extern void discord_interaction_init_v(void *p);
+extern void discord_interaction_init(struct discord_interaction *p);
+extern struct discord_interaction * discord_interaction_alloc();
+extern void discord_interaction_free_v(void *p);
+extern void discord_interaction_free(struct discord_interaction *p);
+extern void discord_interaction_from_json_v(char *json, size_t len, void *p);
+extern void discord_interaction_from_json(char *json, size_t len, struct discord_interaction *p);
+extern size_t discord_interaction_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_interaction_to_json(char *json, size_t len, struct discord_interaction *p);
+extern size_t discord_interaction_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_interaction_to_query(char *json, size_t len, struct discord_interaction *p);
+extern void discord_interaction_list_free_v(void **p);
+extern void discord_interaction_list_free(struct discord_interaction **p);
+extern void discord_interaction_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_list_from_json(char *str, size_t len, struct discord_interaction ***p);
+extern size_t discord_interaction_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_list_to_json(char *str, size_t len, struct discord_interaction **p);
+
+
+
+extern void discord_application_command_interaction_data_cleanup_v(void *p);
+extern void discord_application_command_interaction_data_cleanup(struct discord_application_command_interaction_data *p);
+extern void discord_application_command_interaction_data_init_v(void *p);
+extern void discord_application_command_interaction_data_init(struct discord_application_command_interaction_data *p);
+extern struct discord_application_command_interaction_data * discord_application_command_interaction_data_alloc();
+extern void discord_application_command_interaction_data_free_v(void *p);
+extern void discord_application_command_interaction_data_free(struct discord_application_command_interaction_data *p);
+extern void discord_application_command_interaction_data_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_interaction_data_from_json(char *json, size_t len, struct discord_application_command_interaction_data *p);
+extern size_t discord_application_command_interaction_data_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_to_json(char *json, size_t len, struct discord_application_command_interaction_data *p);
+extern size_t discord_application_command_interaction_data_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_to_query(char *json, size_t len, struct discord_application_command_interaction_data *p);
+extern void discord_application_command_interaction_data_list_free_v(void **p);
+extern void discord_application_command_interaction_data_list_free(struct discord_application_command_interaction_data **p);
+extern void discord_application_command_interaction_data_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_interaction_data_list_from_json(char *str, size_t len, struct discord_application_command_interaction_data ***p);
+extern size_t discord_application_command_interaction_data_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_list_to_json(char *str, size_t len, struct discord_application_command_interaction_data **p);
+
+extern void discord_application_command_interaction_data_resolved_cleanup_v(void *p);
+extern void discord_application_command_interaction_data_resolved_cleanup(struct discord_application_command_interaction_data_resolved *p);
+extern void discord_application_command_interaction_data_resolved_init_v(void *p);
+extern void discord_application_command_interaction_data_resolved_init(struct discord_application_command_interaction_data_resolved *p);
+extern struct discord_application_command_interaction_data_resolved * discord_application_command_interaction_data_resolved_alloc();
+extern void discord_application_command_interaction_data_resolved_free_v(void *p);
+extern void discord_application_command_interaction_data_resolved_free(struct discord_application_command_interaction_data_resolved *p);
+extern void discord_application_command_interaction_data_resolved_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_interaction_data_resolved_from_json(char *json, size_t len, struct discord_application_command_interaction_data_resolved *p);
+extern size_t discord_application_command_interaction_data_resolved_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_resolved_to_json(char *json, size_t len, struct discord_application_command_interaction_data_resolved *p);
+extern size_t discord_application_command_interaction_data_resolved_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_resolved_to_query(char *json, size_t len, struct discord_application_command_interaction_data_resolved *p);
+extern void discord_application_command_interaction_data_resolved_list_free_v(void **p);
+extern void discord_application_command_interaction_data_resolved_list_free(struct discord_application_command_interaction_data_resolved **p);
+extern void discord_application_command_interaction_data_resolved_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_interaction_data_resolved_list_from_json(char *str, size_t len, struct discord_application_command_interaction_data_resolved ***p);
+extern size_t discord_application_command_interaction_data_resolved_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_resolved_list_to_json(char *str, size_t len, struct discord_application_command_interaction_data_resolved **p);
+
+extern void discord_application_command_interaction_data_option_cleanup_v(void *p);
+extern void discord_application_command_interaction_data_option_cleanup(struct discord_application_command_interaction_data_option *p);
+extern void discord_application_command_interaction_data_option_init_v(void *p);
+extern void discord_application_command_interaction_data_option_init(struct discord_application_command_interaction_data_option *p);
+extern struct discord_application_command_interaction_data_option * discord_application_command_interaction_data_option_alloc();
+extern void discord_application_command_interaction_data_option_free_v(void *p);
+extern void discord_application_command_interaction_data_option_free(struct discord_application_command_interaction_data_option *p);
+extern void discord_application_command_interaction_data_option_from_json_v(char *json, size_t len, void *p);
+extern void discord_application_command_interaction_data_option_from_json(char *json, size_t len, struct discord_application_command_interaction_data_option *p);
+extern size_t discord_application_command_interaction_data_option_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_option_to_json(char *json, size_t len, struct discord_application_command_interaction_data_option *p);
+extern size_t discord_application_command_interaction_data_option_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_option_to_query(char *json, size_t len, struct discord_application_command_interaction_data_option *p);
+extern void discord_application_command_interaction_data_option_list_free_v(void **p);
+extern void discord_application_command_interaction_data_option_list_free(struct discord_application_command_interaction_data_option **p);
+extern void discord_application_command_interaction_data_option_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_interaction_data_option_list_from_json(char *str, size_t len, struct discord_application_command_interaction_data_option ***p);
+extern size_t discord_application_command_interaction_data_option_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_interaction_data_option_list_to_json(char *str, size_t len, struct discord_application_command_interaction_data_option **p);
+
+extern void discord_interaction_response_cleanup_v(void *p);
+extern void discord_interaction_response_cleanup(struct discord_interaction_response *p);
+extern void discord_interaction_response_init_v(void *p);
+extern void discord_interaction_response_init(struct discord_interaction_response *p);
+extern struct discord_interaction_response * discord_interaction_response_alloc();
+extern void discord_interaction_response_free_v(void *p);
+extern void discord_interaction_response_free(struct discord_interaction_response *p);
+extern void discord_interaction_response_from_json_v(char *json, size_t len, void *p);
+extern void discord_interaction_response_from_json(char *json, size_t len, struct discord_interaction_response *p);
+extern size_t discord_interaction_response_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_interaction_response_to_json(char *json, size_t len, struct discord_interaction_response *p);
+extern size_t discord_interaction_response_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_interaction_response_to_query(char *json, size_t len, struct discord_interaction_response *p);
+extern void discord_interaction_response_list_free_v(void **p);
+extern void discord_interaction_response_list_free(struct discord_interaction_response **p);
+extern void discord_interaction_response_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_response_list_from_json(char *str, size_t len, struct discord_interaction_response ***p);
+extern size_t discord_interaction_response_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_response_list_to_json(char *str, size_t len, struct discord_interaction_response **p);
+
+
+
+extern void discord_interaction_application_command_callback_data_cleanup_v(void *p);
+extern void discord_interaction_application_command_callback_data_cleanup(struct discord_interaction_application_command_callback_data *p);
+extern void discord_interaction_application_command_callback_data_init_v(void *p);
+extern void discord_interaction_application_command_callback_data_init(struct discord_interaction_application_command_callback_data *p);
+extern struct discord_interaction_application_command_callback_data * discord_interaction_application_command_callback_data_alloc();
+extern void discord_interaction_application_command_callback_data_free_v(void *p);
+extern void discord_interaction_application_command_callback_data_free(struct discord_interaction_application_command_callback_data *p);
+extern void discord_interaction_application_command_callback_data_from_json_v(char *json, size_t len, void *p);
+extern void discord_interaction_application_command_callback_data_from_json(char *json, size_t len, struct discord_interaction_application_command_callback_data *p);
+extern size_t discord_interaction_application_command_callback_data_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_interaction_application_command_callback_data_to_json(char *json, size_t len, struct discord_interaction_application_command_callback_data *p);
+extern size_t discord_interaction_application_command_callback_data_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_interaction_application_command_callback_data_to_query(char *json, size_t len, struct discord_interaction_application_command_callback_data *p);
+extern void discord_interaction_application_command_callback_data_list_free_v(void **p);
+extern void discord_interaction_application_command_callback_data_list_free(struct discord_interaction_application_command_callback_data **p);
+extern void discord_interaction_application_command_callback_data_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_application_command_callback_data_list_from_json(char *str, size_t len, struct discord_interaction_application_command_callback_data ***p);
+extern size_t discord_interaction_application_command_callback_data_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_application_command_callback_data_list_to_json(char *str, size_t len, struct discord_interaction_application_command_callback_data **p);
+
+
+
+extern void discord_message_interaction_cleanup_v(void *p);
+extern void discord_message_interaction_cleanup(struct discord_message_interaction *p);
+extern void discord_message_interaction_init_v(void *p);
+extern void discord_message_interaction_init(struct discord_message_interaction *p);
+extern struct discord_message_interaction * discord_message_interaction_alloc();
+extern void discord_message_interaction_free_v(void *p);
+extern void discord_message_interaction_free(struct discord_message_interaction *p);
+extern void discord_message_interaction_from_json_v(char *json, size_t len, void *p);
+extern void discord_message_interaction_from_json(char *json, size_t len, struct discord_message_interaction *p);
+extern size_t discord_message_interaction_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_message_interaction_to_json(char *json, size_t len, struct discord_message_interaction *p);
+extern size_t discord_message_interaction_to_query_v(char *json, size_t len, void *p);
+extern size_t discord_message_interaction_to_query(char *json, size_t len, struct discord_message_interaction *p);
+extern void discord_message_interaction_list_free_v(void **p);
+extern void discord_message_interaction_list_free(struct discord_message_interaction **p);
+extern void discord_message_interaction_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_message_interaction_list_from_json(char *str, size_t len, struct discord_message_interaction ***p);
+extern size_t discord_message_interaction_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_message_interaction_list_to_json(char *str, size_t len, struct discord_message_interaction **p);
 /* This file is generated from specs/discord/user.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
@@ -1739,7 +2091,7 @@ extern size_t discord_create_group_dm_params_list_to_json(char *str, size_t len,
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
@@ -1794,7 +2146,7 @@ extern size_t discord_connection_list_to_json(char *str, size_t len, struct disc
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/voice-connections
  */
@@ -1809,7 +2161,7 @@ extern size_t discord_connection_list_to_json(char *str, size_t len, struct disc
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/voice
  */
@@ -1858,7 +2210,7 @@ extern size_t discord_voice_region_list_to_json(char *str, size_t len, struct di
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
@@ -1947,7 +2299,7 @@ extern size_t discord_edit_webhook_message_params_list_to_json(char *str, size_t
 /**
  * @file specs-code/discord/all_functions.h
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */

@@ -1078,9 +1078,9 @@ discord_gateway_init(struct discord_gateway *gw, struct logconf *config, struct 
   gw->id = discord_gateway_identify_alloc();
   asprintf(&gw->id->token, "%.*s", (int)token->size, token->start);
 
-  gw->id->properties->$os = strdup("POSIX");
-  gw->id->properties->$browser = strdup("orca");
-  gw->id->properties->$device = strdup("orca");
+  gw->id->properties->os = strdup("POSIX");
+  gw->id->properties->browser = strdup("orca");
+  gw->id->properties->device = strdup("orca");
   gw->id->presence->since = cee_timestamp_ms();
 
   gw->cbs.on_idle = &noop_idle_cb;

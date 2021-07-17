@@ -2,7 +2,7 @@
 /**
  * @file specs-code/discord/gateway.c
  * @author cee-studio
- * @date 01 Jul 2021
+ * @date 17 Jul 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/gateway
  */
@@ -781,26 +781,26 @@ void discord_gateway_identify_connection_from_json(char *json, size_t len, struc
   size_t r=0;
   r=json_extract(json, len, 
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
                 "($os):?s,"
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
                 "($browser):?s,"
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
                 "($device):?s,"
                 "@arg_switches:b"
                 "@record_defined"
                 "@record_null",
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
-                &p->$os,
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+                &p->os,
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
-                &p->$browser,
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+                &p->browser,
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
-                &p->$device,
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+                &p->device,
                 p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches,
                 p->__M.record_defined, sizeof(p->__M.record_defined),
                 p->__M.record_null, sizeof(p->__M.record_null));
@@ -811,16 +811,16 @@ static void discord_gateway_identify_connection_use_default_inject_settings(stru
 {
   p->__M.enable_arg_switches = true;
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
-  p->__M.arg_switches[0] = p->$os;
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+  p->__M.arg_switches[0] = p->os;
 
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
-  p->__M.arg_switches[1] = p->$browser;
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+  p->__M.arg_switches[1] = p->browser;
 
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
-  p->__M.arg_switches[2] = p->$device;
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+  p->__M.arg_switches[2] = p->device;
 
 }
 
@@ -830,24 +830,24 @@ size_t discord_gateway_identify_connection_to_json(char *json, size_t len, struc
   discord_gateway_identify_connection_use_default_inject_settings(p);
   r=json_inject(json, len, 
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
                 "($os):s,"
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
                 "($browser):s,"
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
                 "($device):s,"
                 "@arg_switches:b",
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
-                p->$os,
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+                p->os,
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
-                p->$browser,
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+                p->browser,
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
-                p->$device,
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+                p->device,
                 p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches);
   return r;
 }
@@ -891,29 +891,29 @@ size_t discord_gateway_identify_connection_list_to_json_v(char *str, size_t len,
 
 void discord_gateway_identify_connection_cleanup(struct discord_gateway_identify_connection *d) {
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
-  if (d->$os)
-    free(d->$os);
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+  if (d->os)
+    free(d->os);
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
-  if (d->$browser)
-    free(d->$browser);
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+  if (d->browser)
+    free(d->browser);
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
-  if (d->$device)
-    free(d->$device);
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+  if (d->device)
+    free(d->device);
 }
 
 void discord_gateway_identify_connection_init(struct discord_gateway_identify_connection *p) {
   memset(p, 0, sizeof(struct discord_gateway_identify_connection));
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
 
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
 
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
 
 }
 struct discord_gateway_identify_connection* discord_gateway_identify_connection_alloc() {

@@ -2,9 +2,11 @@
 #include <stdlib.h>
 
 #include "mujs.h"
+#include "user-agent.h"
 #include "jso.h"
 
 const char *handle=NULL; /* handle to stowed away js function */
+const char *g_config_file;
 
 void js_request(js_State *J)
 {

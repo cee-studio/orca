@@ -662,7 +662,7 @@ _discord_on_voice_server_update(struct discord *client, u64_snowflake_t guild_id
     log_info("Voice ws uses token %s", vc->new_token);
     // exits the current event_loop to redirect
     vc->is_redirect = true;
-    ws_close(vc->ws, WS_CLOSE_REASON_NORMAL);
+    ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, "", 0);
   }
   else {
     log_info("Voice ws uses " ANSICOLOR("%s", ANSI_FG_RED), vc->new_url);
@@ -717,7 +717,7 @@ discord_voice_shutdown(struct discord_voice *vc)
   vc->reconnect.enable = false;
   vc->is_resumable = false;
   vc->shutdown = true;
-  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL);
+  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, "", 0);
 
   send_voice_state_update(
     &vc->p_client->gw, 
@@ -732,7 +732,7 @@ discord_voice_reconnect(struct discord_voice *vc, bool resume)
 {
   vc->reconnect.enable = true;
   vc->is_resumable = resume;
-  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL);
+  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, "", 0);
 }
 
 bool

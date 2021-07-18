@@ -904,7 +904,7 @@ on_invalid_session(struct discord_gateway *gw)
   else
     log_info("Session is not resumable");
 
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, "", 0);
 }
 
 static void
@@ -914,7 +914,7 @@ on_reconnect(struct discord_gateway *gw)
 #if 0
   gw->reconnect.enable = true;
 #endif
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, "", 0);
 }
 
 static void
@@ -1207,7 +1207,7 @@ discord_gateway_shutdown(struct discord_gateway *gw)
   gw->reconnect.enable = false;
   gw->is_resumable = false;
   gw->shutdown = true;
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, "", 0);
 }
 
 void
@@ -1215,5 +1215,5 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
 {
   gw->reconnect.enable = true;
   gw->is_resumable = resume;
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, "", 0);
 }

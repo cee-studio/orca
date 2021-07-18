@@ -1,3 +1,4 @@
+#define _GNU_SOURCE /* asprintf() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -93,6 +94,7 @@ struct websockets {
    * @see ws_close()
    */
   enum ws_close_reason pending_close;
+  struct sized_buffer pending_reason;
 };
 
 
@@ -327,20 +329,18 @@ _ws_cws_new(struct websockets *ws, const char ws_protocols[])
 }
 
 static bool 
-_ws_close(struct websockets *ws, enum ws_close_reason code)
+_ws_close(struct websockets *ws, enum ws_close_reason code, struct sized_buffer *reason)
 {
-  static const char reason[] = "Client initializes close";
-
   log_http(
     ws->p_config, 
     &ws->info.loginfo,
     ws,
     ws->base_url, 
     (struct sized_buffer){"", 0},
-    (struct sized_buffer){(char*)reason, sizeof(reason)},
+    *reason,
     "WS_SEND_CLOSE(%d)", code);
 
-  log_trace("[%s] "ANSICOLOR("SEND", ANSI_FG_GREEN)" CLOSE (%s) [@@@_%zu_@@@]", ws->tag, reason, ws->info.loginfo.counter);
+  log_trace("[%s] "ANSICOLOR("SEND", ANSI_FG_GREEN)" CLOSE (%.*s) [@@@_%zu_@@@]", ws->tag, (int)reason->size, reason->start, ws->info.loginfo.counter);
 
   if (WS_DISCONNECTED == ws->status) {
     log_warn("[%s] "ANSICOLOR("Failed", ANSI_FG_RED)" at SEND CLOSE : Connection already closed [@@@_%zu_@@@]", ws->tag, ws->info.loginfo.counter);
@@ -352,8 +352,8 @@ _ws_close(struct websockets *ws, enum ws_close_reason code)
   }
   _ws_set_status_nolock(ws, WS_DISCONNECTING);
 
-  if (!cws_close(ws->ehandle, (enum cws_close_reason)code, reason, sizeof(reason))) {
-    log_error("[%s] "ANSICOLOR("Failed", ANSI_FG_RED)" at SEND CLOSE(%d): %s [@@@_%zu_@@@]", ws->tag, code, reason, ws->info.loginfo.counter);
+  if (!cws_close(ws->ehandle, (enum cws_close_reason)code, reason->start, reason->size)) {
+    log_error("[%s] "ANSICOLOR("Failed", ANSI_FG_RED)" at SEND CLOSE(%d): %.*s [@@@_%zu_@@@]", ws->tag, code, (int)reason->size, reason->start, ws->info.loginfo.counter);
     return false;
   }
   return true;
@@ -558,10 +558,15 @@ bool ws_pong(struct websockets *ws, struct ws_info *info, const char *reason, si
 void
 ws_start(struct websockets *ws) 
 {
-  log_debug("ws_start");
   ws->tid = pthread_self(); // save the starting thread
   ws->tag = logconf_tag(ws->p_config, ws);
   ws->pending_close = 0;
+  if (ws->pending_reason.start) {
+    free(ws->pending_reason.start);
+    ws->pending_reason.start = NULL;
+  }
+  ws->pending_reason.size = 0;
+
   VASSERT_S(false == ws_is_alive(ws), \
       "[%s] Please shutdown current WebSockets connection before calling ws_start() (Current status: %s)", ws->tag, _ws_status_print(ws->status));
   VASSERT_S(NULL == ws->ehandle, \
@@ -613,8 +618,14 @@ ws_perform(struct websockets *ws, bool *p_is_running, uint64_t wait_ms)
         log_debug("curl_multi_wait returns %d pending file descriptors.", numfds);
         cee_sleep_ms(5);
       }
-      _ws_close(ws, ws->pending_close);
-      ws->pending_close = 0; // reset
+      _ws_close(ws, ws->pending_close, &ws->pending_reason);
+      // reset
+      ws->pending_close = 0;
+      if (ws->pending_reason.start) {
+        free(ws->pending_reason.start);
+        ws->pending_reason.start = NULL;
+      }
+      ws->pending_reason.size = 0;
     }
     pthread_mutex_unlock(&ws->lock);
   }
@@ -655,7 +666,6 @@ ws_perform(struct websockets *ws, bool *p_is_running, uint64_t wait_ms)
       cws_free(ws->ehandle);
       ws->ehandle = NULL;
     }
-    ws->pending_close = 0; // reset just in case
 
     _ws_set_status(ws, WS_DISCONNECTED);
   }
@@ -683,11 +693,13 @@ ws_is_functional(struct websockets *ws) {
 }
 
 void 
-ws_close(struct websockets *ws, enum ws_close_reason code)
+ws_close(struct websockets *ws, const enum ws_close_reason code, const char reason[], const size_t len)
 {
-  log_warn("Attempting to close WebSockets connection with %s", ws_close_opcode_print(code));
+  log_warn("Attempting to close WebSockets connection with %s : %.*s", ws_close_opcode_print(code), (int)len, reason);
   pthread_mutex_lock(&ws->lock);
   ws->pending_close = code;
+  ws->pending_reason.size = asprintf(&ws->pending_reason.start, "%.*s",
+                                (int)len, reason);
   pthread_mutex_unlock(&ws->lock);
 }
 

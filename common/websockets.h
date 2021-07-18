@@ -254,9 +254,13 @@ bool ws_is_functional(struct websockets *ws);
  *
  * This will activate a internal WS_USER_CMD_EXIT flag that will
  *        force disconnect when the next iteration begins.
+ * @note it will create a copy of the reason string
  * @param ws the WebSockets handle created with ws_init()
+ * @param code the WebSockets CLOSE opcode
+ * @param reason the close reason
+ * @param lean the reason length
  */
-void ws_close(struct websockets *ws, enum ws_close_reason code);
+void ws_close(struct websockets *ws, const enum ws_close_reason code, const char reason[], const size_t len);
 
 /**
  * @brief Check if current thread is the same as the event-loop main-thread

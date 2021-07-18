@@ -240,8 +240,6 @@ discord_create_message(
     void *A[6]={}; // pointer availability array
     if (params->content)
       A[0] = (void *)params->content;
-    if (params->nonce)
-      A[1] = (void *)params->nonce;
     if (true == params->tts)
       A[2] = (void *)&params->tts;
     if (params->embed)
@@ -256,7 +254,6 @@ discord_create_message(
     char *payload=NULL;
     size_t ret = json_ainject(&payload,
                   "(content):s"
-                  "(nonce):s"
                   "(tts):b"
                   "(embed):F"
                   /* @todo
@@ -265,7 +262,6 @@ discord_create_message(
                   "(message_reference):F"
                   "@arg_switches",
                   params->content,
-                  params->nonce,
                   &params->tts,
                   &discord_embed_to_json, params->embed,
                   /* @todo

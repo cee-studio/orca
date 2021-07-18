@@ -9,7 +9,7 @@ An explanation of important folders for developers who would like to contribute 
 | licenses/            | License for Orca, and some other libraries used by Orca              |
 | mujs/                | An embedded JavaScript engine                                        |
 | scripts/             | Cee-Studio specific scripts                                          |
-| specs/               | Data used to generate types & structures used by Orca                |
+| specs/               | Data used to generate types and structures used by Orca              |
 | specs/discord/       | Information to generate Discord-specific types and structures        |
 | specs/reddit/        | Information to generate Reddit-specific types and structures         |
 | specs-code/          | Where files generated from ``specs/`` are dumped to                  |

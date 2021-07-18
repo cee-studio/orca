@@ -35,7 +35,7 @@ reddit_adapter_init(struct reddit_adapter *adapter, struct logconf *config)
   ua_set_url(adapter->ua, BASE_API_URL);
   logconf_add_id(config, adapter->ua, "REDDIT_HTTP");
 
-  ua_easy_setopt(adapter->ua, adapter->p_client, &curl_setopt_cb);
+  ua_curl_easy_setopt(adapter->ua, adapter->p_client, &curl_setopt_cb);
 
   char auth[512];
   snprintf(auth, sizeof(auth), "orca:github.com/cee-studio/orca:v.0 (by /u/%.*s)",

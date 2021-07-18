@@ -71,10 +71,10 @@ discord_get_gateway_bot(struct discord *client, struct discord_session *p_sessio
            "/gateway/bot");
 }
 
-static char*
+static const char*
 opcode_print(enum discord_gateway_opcodes opcode)
 {
-  char *str = discord_gateway_opcodes_to_string(opcode);
+  const char *str = discord_gateway_opcodes_to_string(opcode);
   if (NULL == str) {
     log_warn("Invalid Gateway opcode (code: %d)", opcode);
     str = "Invalid Gateway opcode";
@@ -82,10 +82,10 @@ opcode_print(enum discord_gateway_opcodes opcode)
   return str;
 }
 
-static char*
+static const char*
 close_opcode_print(enum discord_gateway_close_opcodes opcode)
 {
-  char *str = discord_gateway_close_opcodes_to_string(opcode);
+  const char *str = discord_gateway_close_opcodes_to_string(opcode);
   if (str) return str;
   str = ws_close_opcode_print((enum ws_close_reason)opcode);
   if (str) return str;
@@ -682,11 +682,10 @@ dispatch_run(void *p_cxt)
       &cxt->p_gw->sb_bot, 
       &cxt->data);
 
+  free(cxt->data.start);
   if (!is_main_thread) {
     log_info("Thread " ANSICOLOR("exits", ANSI_FG_RED) " from serving %s",
              cxt->event_name);
-
-    free(cxt->data.start);
     free(cxt);
     pthread_exit(NULL);
   }
@@ -872,6 +871,7 @@ on_dispatch(struct discord_gateway *gw)
                                             cxt.event);
   switch (mode) {
   case DISCORD_EVENT_IGNORE: 
+      free(cxt.data.start);
       return;
   case DISCORD_EVENT_MAIN_THREAD:
       cxt.is_main_thread = true;
@@ -904,7 +904,7 @@ on_invalid_session(struct discord_gateway *gw)
   else
     log_info("Session is not resumable");
 
-  ws_exit_event_loop(gw->ws);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
 }
 
 static void
@@ -914,7 +914,7 @@ on_reconnect(struct discord_gateway *gw)
 #if 0
   gw->reconnect.enable = true;
 #endif
-  ws_exit_event_loop(gw->ws);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
 }
 
 static void
@@ -1207,7 +1207,7 @@ discord_gateway_shutdown(struct discord_gateway *gw)
   gw->reconnect.enable = false;
   gw->is_resumable = false;
   gw->shutdown = true;
-  ws_exit_event_loop(gw->ws);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
 }
 
 void
@@ -1215,5 +1215,5 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
 {
   gw->reconnect.enable = true;
   gw->is_resumable = resume;
-  ws_exit_event_loop(gw->ws);
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL);
 }

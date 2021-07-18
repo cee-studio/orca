@@ -298,7 +298,7 @@ discord_create_message(
   { // content-type is multipart/form-data
     ua_reqheader_add(client->adapter.ua, "Content-Type", "multipart/form-data");
 
-    ua_mime_setopt(client->adapter.ua, params, &curl_mime_cb);
+    ua_curl_mime_setopt(client->adapter.ua, params, &curl_mime_cb);
 
     code = discord_adapter_run( 
              &client->adapter,

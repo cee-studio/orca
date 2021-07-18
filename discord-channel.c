@@ -237,37 +237,45 @@ discord_create_message(
       }
     }
 
-    void *A[6]={}; // pointer availability array
+    void *A[8]={0}; // pointer availability array
     if (params->content)
       A[0] = (void *)params->content;
     if (true == params->tts)
       A[2] = (void *)&params->tts;
     if (params->embed)
       A[3] = (void *)params->embed;
+    if (params->embeds)
+      A[4] = (void *)params->embeds;
     /* @todo change current A[4] to A[5]
     if (params->allowed_mentions)
-      A[4] = (void *)params->allowed_mentions;
+      A[5] = (void *)params->allowed_mentions;
     */
     if (params->message_reference)
-      A[4] = (void *)params->message_reference;
+      A[5] = (void *)params->message_reference;
+    if (params->components)
+      A[6] = (void *)params->components;
 
     char *payload=NULL;
     size_t ret = json_ainject(&payload,
                   "(content):s"
                   "(tts):b"
                   "(embed):F"
+                  "(embeds):F"
                   /* @todo
                   "(allowed_mentions):F"
                   */
                   "(message_reference):F"
+                  "(components):F"
                   "@arg_switches",
                   params->content,
                   &params->tts,
                   &discord_embed_to_json, params->embed,
+                  &discord_embed_list_to_json, params->embeds,
                   /* @todo
                   params->allowed_mentions,
                   */
                   &discord_message_reference_to_json, params->message_reference,
+                  &discord_component_list_to_json, params->components,
                   A, sizeof(A));
 
     if (!payload) {

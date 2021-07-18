@@ -102,8 +102,12 @@ discord_message_from_json(char *json, size_t len, struct discord_message *p)
                 "(application):F,"
                 "(message_reference):F,"
                 "(flags):d,"
-                "(stickers):F,"
                 "(referenced_message):F,"
+                "(interaction):F,"
+                "(thread):F,"
+                "(components):F,"
+                "(sticker_items):F,"
+                "(stickers):F,"
                 "@arg_switches:b"
                 "@record_defined"
                 "@record_null",
@@ -131,8 +135,12 @@ discord_message_from_json(char *json, size_t len, struct discord_message *p)
                 discord_message_application_list_from_json, &p->application,
                 discord_message_reference_from_json, p->message_reference,
                 &p->flags,
-                discord_message_sticker_list_from_json, &p->stickers,
                 discord_message_from_json, p->referenced_message,
+                discord_message_interaction_from_json, p->interaction,
+                discord_channel_from_json, p->thread,
+                discord_component_list_from_json, &p->components,
+                discord_message_sticker_list_from_json, &p->sticker_items,
+                discord_message_sticker_list_from_json, &p->stickers,
                 p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches,
                 p->__M.record_defined, sizeof(p->__M.record_defined),
                 p->__M.record_null, sizeof(p->__M.record_null));

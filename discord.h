@@ -335,7 +335,7 @@ struct discord_create_message_params {
   struct discord_embed *embed; ///< deprecated
   struct discord_channel_allowed_mentions *allowed_mentions;
   struct discord_message_reference *message_reference;
-  NTL_T(struct discord_message_component) components;
+  NTL_T(struct discord_component) components;
   
   // parameters for @b multipart/form-data
   // @note if just name field is set, will search for file in working directory

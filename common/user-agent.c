@@ -615,7 +615,7 @@ perform_request(
   conn->info.httpcode = send_request(ua, conn);
 
   /* triggers response related callbacks */
-  if (conn->info.httpcode >= 500) {
+  if (conn->info.httpcode >= 500 && conn->info.httpcode < 600) {
     log_error("[%s] "ANSICOLOR("SERVER ERROR", ANSI_FG_RED)" (%d)%s - %s [@@@_%zu_@@@]",
         conn->tag,
         conn->info.httpcode,

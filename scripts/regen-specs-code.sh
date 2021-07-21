@@ -2,11 +2,9 @@
 mypath=$(dirname $(readlink -f $0))
 pushd $mypath/..
 make purge && 
-make mkdir &&
-make get_cee_utils &&
+make cee_utils &&
 make specs_clean &&
 make clean_actor_gen &&
-make actor-gen.exe &&
 make all_headers &&
 make specs &&
 popd

@@ -2,67 +2,36 @@ CC           ?= gcc
 ACC          ?= gcc
 OBJDIR	     := obj
 LIBDIR	     := lib
-SPECSDIR     := specs-code
 ACTOR_OBJDIR := actor_obj
 
 PREFIX ?= /usr/local
 SHELL  := /bin/bash
 
-# common/utils src
-CEE_UTILS_SRC  := $(wildcard cee-utils/*.c) 
-COMMON_SRC     := $(wildcard common/*.c) $(wildcard common/**/*.c)
+# DB
+DB_SRC  := $(wildcard sqlite3/*.c)
+DB_OBJS := $(DB_SRC:%=$(OBJDIR)/%.o)
 
-# API specific src
-DISCORD_SRC := $(wildcard discord-*.c)
-GITHUB_SRC  := $(wildcard github-*.c)
-REDDIT_SRC  := $(wildcard reddit-*.c)
+# common/utils
+CEE_UTILS_DIR  := cee-utils
+CEE_UTILS_SRC  := $(wildcard $(CEE_UTILS_DIR)/*.c) 
+CEE_UTILS_OBJS := $(CEE_UTILS_SRC:%=$(OBJDIR)/%.o)
 
-# DB src
-DB_SRC      := $(wildcard sqlite3/*.c)
+COMMON_DIR		 := common
+COMMON_SRC     := $(wildcard $(COMMON_DIR)/*.c) $(wildcard $(COMMON_DIR)/**/*.c)
+COMMON_OBJS    := $(COMMON_SRC:%=$(OBJDIR)/%.o)
 
-# specs src
+# Specs
+SPECSDIR     := specs-code
 SPECS      	 := $(sort $(wildcard specs/*/*.json))
-SPECS_SRC    := $(patsubst specs/%, $(SPECSDIR)/%, $(SPECS:%.json=%.c))
 SPECS_SUBDIR := $(sort $(patsubst specs/%, %, $(dir $(SPECS))))
 
-# generated code src
-ACTOR_GEN_SRC = cee-utils/cee-utils.c   \
-				        cee-utils/json-actor.c  \
-				        cee-utils/ntl.c 			  \
-				        cee-utils/json-string.c \
-				        cee-utils/json-scanf.c 	\
-				        cee-utils/json-struct.c \
-				        cee-utils/json-printf.c \
-				        cee-utils/log.c         \
-				        specs/specs-gen.c
-
-
-DB_OBJS        := $(DB_SRC:%=$(OBJDIR)/%.o)
-SPECS_OBJS     := $(SPECS_SRC:%=$(OBJDIR)/%.o)
-ACTOR_GEN_OBJS := $(ACTOR_GEN_SRC:%=$(ACTOR_OBJDIR)/%.o)
-
-# utils objects
-CEE_UTILS_OBJS  := $(CEE_UTILS_SRC:%=$(OBJDIR)/%.o)
-COMMON_OBJS     := $(COMMON_SRC:%=$(OBJDIR)/%.o)
-
-# API objects
+# APIs objs
+DISCORD_SRC := $(wildcard discord-*.c $(SPECSDIR)/discord/*.c)
 DISCORD_OBJS := $(DISCORD_SRC:%=$(OBJDIR)/%.o)
-GITHUB_OBJS  := $(GITHUB_SRC:%=$(OBJDIR)/%.o)
+REDDIT_SRC := $(wildcard reddit-*.c $(SPECSDIR)/reddit/*.c)
 REDDIT_OBJS  := $(REDDIT_SRC:%=$(OBJDIR)/%.o)
-
-# objects
-ORCA_OBJS := $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(DISCORD_OBJS) $(GITHUB_OBJS) $(REDDIT_OBJS)
-
-
-BOT_SRC  := $(wildcard bots/bot-*.c)
-BOT_EXES := $(patsubst %.c, %.exe, $(BOT_SRC))
-
-BOTX_SRC  := $(wildcard botx/bot-*.c)
-BOTX_EXES := $(patsubst %.c, %.bx, $(BOTX_SRC))
-
-TEST_SRC  := $(wildcard test/test-*.c)
-TEST_EXES := $(filter %.exe, $(TEST_SRC:.c=.exe))
-
+GITHUB_SRC  := $(wildcard github-*.c)
+GITHUB_OBJS  := $(GITHUB_SRC:%=$(OBJDIR)/%.o)
 
 # API libs cflags
 LIBDISCORD_CFLAGS	:=
@@ -75,21 +44,41 @@ LIBGITHUB_LDFLAGS	 := -lgithub
 LIBREDDIT_LDFLAGS	 := -lreddit
 
 # API libs
-LIBDISCORD := $(LIBDIR)/libdiscord.a
-LIBGITHUB  := $(LIBDIR)/libgithub.a
-LIBREDDIT  := $(LIBDIR)/libreddit.a
+LIBDISCORD := $(LIBADDONS) $(LIBDIR)/libdiscord.a
+LIBGITHUB  := $(LIBADDONS) $(LIBDIR)/libgithub.a
+LIBREDDIT  := $(LIBADDONS) $(LIBDIR)/libreddit.a
 
-# general-purpose flags
-LIBORCA_CFLAGS  := $(LIBDISCORD_CFLAGS) $(LIBGITHUB_CFLAGS) $(LIBREDDIT_CFLAGS)
-LIBORCA_LDFLAGS := $(LIBDISCORD_LDFLAGS) $(LIBGITHUB_LDFLAGS) $(LIBREDDIT_LDFLAGS)
-LIBORCA         := $(LIBDISCORD) $(LIBGITHUB) $(LIBREDDIT)
+# generated code src
+ACTOR_SRC := $(CEE_UTILS_DIR)/cee-utils.c   \
+				         $(CEE_UTILS_DIR)/json-actor.c  \
+				         $(CEE_UTILS_DIR)/ntl.c 			   \
+				         $(CEE_UTILS_DIR)/json-string.c \
+				         $(CEE_UTILS_DIR)/json-scanf.c  \
+				         $(CEE_UTILS_DIR)/json-struct.c \
+				         $(CEE_UTILS_DIR)/json-printf.c \
+				         $(CEE_UTILS_DIR)/log.c         \
+				         specs/specs-gen.c
+ACTOR_OBJS := $(ACTOR_SRC:%=$(ACTOR_OBJDIR)/%.o)
 
-LIBS_CFLAGS  += $(LIBORCA_CFLAGS) -I./mujs -I./sqlite3
-LIBS_LDFLAGS += -L./$(LIBDIR) $(LIBORCA_LDFLAGS) -lpthread
+BOTS_DIR   := bots
+BOTS_SRC   := $(wildcard $(BOTS_DIR)/bot-*.c)
+BOTS_EXES  := $(patsubst %.c, %.exe, $(BOTS_SRC))
+
+BOTX_DIR  := botx
+BOTX_SRC  := $(wildcard $(BOTX_DIR)/bot-*.c)
+BOTX_EXES := $(patsubst %.c, %.bx, $(BOTX_SRC))
+
+TEST_DIR  := test
+TEST_SRC  := $(wildcard $(TEST_DIR)/test-*.c)
+TEST_EXES := $(filter %.exe, $(TEST_SRC:.c=.exe))
+
+
+LIBS_CFLAGS  += -I./mujs -I./sqlite3
+LIBS_LDFLAGS += -L./$(LIBDIR) -lpthread -lm
 
 CFLAGS += -Wall -std=c11 -O0 -g \
 	-Wno-unused-function \
-	-I. -I./cee-utils -I./common -I./common/third-party -DLOG_USE_COLOR
+	-I. -I./$(CEE_UTILS_DIR) -I./$(COMMON_DIR) -I./$(COMMON_DIR)/third-party -DLOG_USE_COLOR
 
 ifeq ($(BEARSSL),1)
 	LIBS_LDFLAGS += -lbearssl -static
@@ -101,7 +90,7 @@ else ifeq ($(CC),sfc)
 	LIBS_LDFLAGS += -lcurl-bearssl -lbearssl -static
 	CFLAGS += -DBEARSSL
 else
-	LIBS_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcurl -lcrypto -lm
+	LIBS_LDFLAGS += $(pkg-config --libs --cflags libcurl) -lcurl -lcrypto
 	CFLAGS += -Wno-unused-but-set-variable
 endif
 
@@ -117,15 +106,12 @@ ifeq ($(addons),1)
 	# prepare addon flags
 	ADDONS_SRC := $(wildcard add-ons/*.c)
 	ADDONS_OBJS := $(ADDONS_SRC:%=$(OBJDIR)/%.o)
-	ADDONS_BOT_SRC := $(wildcard add-ons/*_bots/*.c)
-	LIBADDONS_LDFLAGS := -laddons
+	ADDONS_BOTS_SRC := $(wildcard add-ons/*_bots/*.c)
 	LIBADDONS := $(LIBDIR)/libaddons.a
 
 	# append addon flags
-	ORCA_OBJS += $(ADDONS_OBJS)
-	BOT_EXES += $(ADDONS_BOT_SRC:%.c=%.exe)
-	LIBORCA_LDFLAGS += $(LIBADDONS_LDFLAGS)
-	LIBORCA += $(LIBADDONS)
+	BOTS_EXES += $(ADDONS_BOTS_SRC:%.c=%.exe)
+	LIBS_LDFLAGS += -laddons
 	CFLAGS += -I./add-ons
 endif
 
@@ -144,29 +130,43 @@ else
 endif
 
 
-.PHONY : install clean purge mujs
+.PHONY : all install clean purge mujs
 .ONESHELL:
 
+#generic compilation
+$(ACTOR_OBJDIR)/%.c.o : %.c
+	$(ACC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
+$(OBJDIR)/%.c.o : %.c
+	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
+%.exe: %.c all_api_libs mujs
+	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBDISCORD_LDFLAGS) $(LIBREDDIT_LDFLAGS) $(LIBGITHUB_LDFLAGS) -lmujs -lsqlite3 $(LIBS_LDFLAGS)
+%.bx:%.c all_api_libs mujs
+	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBDISCORD_LDFLAGS) -lmujs -lsqlite3 $(LIBS_LDFLAGS)
+%.bz:%.c all_api_libs
+	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) 
 
-all : mkdir get_cee_utils $(ORCA_OBJS) | bots
 
-get_cee_utils:
-	if [[ ! -d cee-utils ]]; then \
-		./scripts/get-cee-utils.sh; \
-	fi
+all : cee_utils common discord reddit github bots
 
-cee_utils: mkdir get_cee_utils $(CEE_UTILS_OBJS)
-common: mkdir $(COMMON_OBJS)
-discord: mkdir $(DISCORD_OBJS) $(LIBDISCORD)
-reddit: mkdir $(REDDIT_OBJS) $(LIBREDDIT)
-github: mkdir $(GITHUB_OBJS)
-db: mkdir $(DB_OBJS)
+db: $(DB_OBJS) | $(OBJDIR)
 
-specs: mkdir $(SPECS_SRC) $(SPECS_OBJS)
+cee_utils: $(CEE_UTILS_OBJS) | $(CEE_UTILS_DIR)
+common: $(COMMON_OBJS)
+discord: $(DISCORD_OBJS) $(LIBDISCORD)
+reddit: $(REDDIT_OBJS) $(LIBREDDIT)
+github: $(GITHUB_OBJS)
+specs: $(SPECS_OBJS)
+
+$(CEE_UTILS_OBJS): | $(OBJDIR)
+$(COMMON_OBJS): | $(OBJDIR)
+$(DISCORD_OBJS): | $(OBJDIR)
+$(REDDIT_OBJS): | $(OBJDIR)
+$(GITHUB_OBJS): | $(OBJDIR)
+$(SPECS_OBJS): | $(OBJDIR)
+$(ACTOR_OBJS): | $(ACTOR_OBJDIR)
 
 echo:
-	@echo BOT_EXES:     $(BOT_EXES)
-	@echo ORCA_OBJS:   	$(ORCA_OBJS)
+	@echo BOTS_EXES:    $(BOTS_EXES)
 	@echo SPECS:        $(SPECS)
 	@echo SPECS_SRC:    $(SPECS_SRC)
 	@echo SPECS_OBJS:   $(SPECS_OBJS)
@@ -174,24 +174,33 @@ echo:
 	@echo DEST:         $(DEST)
 
 ##@todo should we split by categories (bot_discord, bot_github, etc)?
-bots: $(BOT_EXES)
-botx: mkdir cee_utils common discord | $(BOTX_EXES)
+bots: $(BOTS_EXES)
+botx: cee_utils common discord $(BOTX_EXES)
 
 ##@todo should we split by categories too ?
-test: cee_utils common discord github reddit $(TEST_EXES)
+test: cee_utils common discord reddit github $(TEST_EXES)
 
-mkdir :
-	mkdir -p $(OBJDIR)/cee-utils
-	mkdir -p $(ACTOR_OBJDIR)/cee-utils
-	mkdir -p $(ACTOR_OBJDIR)/common/third-party  $(ACTOR_OBJDIR)/specs
-	mkdir -p $(OBJDIR)/common/third-party $(LIBDIR)
+$(CEE_UTILS_DIR):
+	if [[ ! -d $@ ]]; then \
+		./scripts/get-cee-utils.sh; \
+	fi
+
+$(OBJDIR) :
+	mkdir -p $(OBJDIR)/$(CEE_UTILS_DIR)
+	mkdir -p $(OBJDIR)/$(COMMON_DIR)/third-party
 	mkdir -p $(addprefix $(SPECSDIR)/, $(SPECS_SUBDIR)) $(addprefix $(OBJDIR)/$(SPECSDIR)/, $(SPECS_SUBDIR))
-	mkdir -p $(OBJDIR)/test
+	mkdir -p $(OBJDIR)/$(TEST_DIR)
 	mkdir -p $(OBJDIR)/sqlite3 
 	mkdir -p $(OBJDIR)/add-ons
 
+$(ACTOR_OBJDIR) : | $(OBJDIR)
+	mkdir -p $(ACTOR_OBJDIR)/$(CEE_UTILS_DIR)
+	mkdir -p $(ACTOR_OBJDIR)/$(COMMON_DIR)/third-party  $(ACTOR_OBJDIR)/specs
 
-all_headers: $(SPECS)
+$(LIBDIR) :
+	mkdir -p $(LIBDIR)
+
+all_headers: actor-gen.exe
 	rm -rf $(SPECSDIR)/*/all_*
 	$(foreach var, $(SPECS),./bin/actor-gen.exe -S -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_structs.h) $(var);)
 	$(foreach var, $(SPECS),./bin/actor-gen.exe -E -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_enums.h) $(var);)
@@ -200,35 +209,21 @@ all_headers: $(SPECS)
 	$(foreach var, $(SPECS),./bin/actor-gen.exe -c -o $(patsubst specs/%, $(SPECSDIR)/%, $(var:%.json=%.c)) $(var);)
 	$(foreach var, $(SPECS),./bin/actor-gen.exe -d -o $(patsubst specs/%, $(SPECSDIR)/%, $(var:%.json=%.h)) $(var);)
 
-
-actor-gen.exe: mkdir $(ACTOR_GEN_OBJS)
-	$(ACC) -o $@ $(ACTOR_GEN_OBJS) -lm
+actor-gen.exe: $(ACTOR_OBJS) | $(ACTOR_OBJDIR)
+	$(ACC) -o $@ $(ACTOR_OBJS) -lm
 	mkdir -p bin
 	mv $@ ./bin
 
-#generic compilation
-$(ACTOR_OBJDIR)/%.c.o : %.c
-	$(ACC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
-$(OBJDIR)/%.c.o : %.c
-	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
-%.bx:%.c $(LIBORCA) mujs
-	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) -lmujs -lsqlite3
-%.bz:%.c $(LIBORCA) mujs 
-	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) 
-%.exe:%.c $(LIBORCA) mujs
-	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) -lmujs
-
-
-$(LIBORCA) : $(LIBDISCORD) $(LIBGITHUB) $(LIBREDDIT) $(LIBADDONS)
+all_api_libs : $(LIBDISCORD) $(LIBGITHUB) $(LIBREDDIT) $(LIBADDONS)
 
 # API libraries compilation
-$(LIBDISCORD) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(DISCORD_OBJS) $(SPECS_OBJS)
+$(LIBDISCORD) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(DISCORD_OBJS) | $(LIBDIR)
 	$(AR) -cvq $@ $^
-$(LIBGITHUB) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(GITHUB_OBJS) $(SPECS_OBJS)
+$(LIBGITHUB) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(GITHUB_OBJS) | $(LIBDIR)
 	$(AR) -cvq $@ $^
-$(LIBREDDIT) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(REDDIT_OBJS) $(SPECS_OBJS)
+$(LIBREDDIT) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(REDDIT_OBJS) | $(LIBDIR)
 	$(AR) -cvq $@ $^
-$(LIBADDONS) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(ADDONS_OBJS) $(SPECS_OBJS)
+$(LIBADDONS) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(ADDONS_OBJS) | $(LIBDIR)
 	$(AR) -cvq $@ $^
 
 mujs:
@@ -242,7 +237,7 @@ install :
 	install -d $(PREFIX)/lib/
 	install -m 644 $(LIBDISCORD) $(PREFIX)/lib/
 	install -d $(PREFIX)/include/orca/
-	install -m 644 *.h cee-utils/*.h common/*.h common/**/*.h $(PREFIX)/include/orca/
+	install -m 644 *.h $(CEE_UTILS_DIR)/*.h $(COMMON_DIR)/*.h $(COMMON_DIR)/**/*.h $(PREFIX)/include/orca/
 	install -d $(PREFIX)/include/orca/$(SPECSDIR)/discord/
 	install -m 644 $(SPECSDIR)/discord/*.h $(PREFIX)/include/orca/$(SPECSDIR)/discord/
 
@@ -251,10 +246,10 @@ specs_clean :
 clean_actor_gen:
 	rm -rf $(ACTOR_OBJDIR) bin/*
 clean : 
-	rm -rf $(OBJDIR) *.exe test/*.exe bots/*.exe
-	rm -rf botx/*.bx
+	rm -rf $(OBJDIR) *.exe $(TEST_DIR)/*.exe $(BOTS_DIR)/*.exe
+	rm -rf $(BOTX_DIR)/*.bx
 	rm -rf $(LIBDIR)
 purge : clean
 	rm -rf $(LIBDIR)
 	rm -rf $(ACTOR_OBJDIR)
-	rm -rf cee-utils
+	rm -rf $(CEE_UTILS_DIR)

@@ -85,10 +85,7 @@ CFLAGS += -std=c11 -O0 -g                                                       
 ifeq ($(BEARSSL),1)
 	LIBS_LDFLAGS += -lbearssl -static
 	CFLAGS += -DBEARSSL
-else ifeq ($(CC),stensal-c)
-	LIBS_LDFLAGS += -lcurl-bearssl -lbearssl -static
-	CFLAGS += -DBEARSSL
-else ifeq ($(CC),sfc)
+else ifneq (,$(findstring $(CC),stensal-c sfc)) # ifeq stensal-c OR sfc
 	LIBS_LDFLAGS += -lcurl-bearssl -lbearssl -static
 	CFLAGS += -DBEARSSL
 else
@@ -106,27 +103,22 @@ endif
 
 ifeq ($(addons),1)
 	# prepare addon flags
-	ADDONS_SRC := $(wildcard add-ons/*.c)
-	ADDONS_OBJS := $(ADDONS_SRC:%=$(OBJDIR)/%.o)
+	ADDONS_SRC      := $(wildcard add-ons/*.c)
+	ADDONS_OBJS     := $(ADDONS_SRC:%=$(OBJDIR)/%.o)
 	ADDONS_BOTS_SRC := $(wildcard add-ons/*_bots/*.c)
-	LIBADDONS := $(LIBDIR)/libaddons.a
+	LIBADDONS       := $(LIBDIR)/libaddons.a
 
-	# append addon flags
-	BOTS_EXES += $(ADDONS_BOTS_SRC:%.c=%.exe)
+	# include addon flags
+	BOTS_EXES    += $(ADDONS_BOTS_SRC:%.c=%.exe)
 	LIBS_LDFLAGS += -laddons
-	CFLAGS += -I./add-ons
+	CFLAGS       += -I./add-ons
 endif
 
-ifeq ($(CC),stensal-c)
+ifneq (,$(findstring $(CC),stensal-c sfc)) # ifeq stensal-c OR sfc
 	CFLAGS += -D_DEFAULT_SOURCE
-	D=$(shell dirname $(shell which stensal-c))
-	DEST=$(patsubst %/stensal/bin,%,$(D))
-	PREFIX=$(DEST)/usr
-else ifeq ($(CC),sfc)
-	CFLAGS += -D_DEFAULT_SOURCE
-	D=$(shell dirname $(shell which sfc))
-	DEST=$(patsubst %/stensal/bin,%,$(D))
-	PREFIX=$(DEST)/usr
+	__D    := $(shell dirname $(shell which $(CC)))
+	__DEST := $(patsubst %/stensal/bin,%,$(__D))
+	PREFIX := $(__DEST)/usr
 else
 	CFLAGS += -fPIC -D_XOPEN_SOURCE=700
 endif
@@ -151,6 +143,7 @@ $(BOTS_DIR)/%.exe: $(BOTS_DIR)/%.c all_api_libs
 
 
 all : cee_utils common discord reddit github bots
+test: cee_utils common discord reddit github $(TEST_EXES)
 
 db: $(DB_OBJS) | $(OBJDIR)
 cee_utils: $(CEE_UTILS_OBJS) | $(CEE_UTILS_DIR)
@@ -169,19 +162,16 @@ $(SPECS_OBJS): | $(OBJDIR)
 $(ACTOR_OBJS): | $(ACTOR_OBJDIR)
 
 echo:
-	@echo BOTS_EXES:    $(BOTS_EXES)
-	@echo SPECS:        $(SPECS)
-	@echo SPECS_SRC:    $(SPECS_SRC)
-	@echo SPECS_OBJS:   $(SPECS_OBJS)
+	@echo CC: $(CC)
+	@echo PREFIX: $(PREFIX)
+	@echo BOTS_EXES: $(BOTS_EXES)
+	@echo SPECS: $(SPECS)
+	@echo SPECS_SRC: $(SPECS_SRC)
+	@echo SPECS_OBJS: $(SPECS_OBJS)
 	@echo SPECS_SUBDIR: $(SPECS_SUBDIR)
-	@echo DEST:         $(DEST)
 
-##@todo should we split by categories (bot_discord, bot_github, etc)?
 bots: $(BOTS_EXES)
 botx: cee_utils common discord $(BOTX_EXES)
-
-##@todo should we split by categories too ?
-test: cee_utils common discord reddit github $(TEST_EXES)
 
 $(CEE_UTILS_DIR):
 	if [[ ! -d $@ ]]; then        \

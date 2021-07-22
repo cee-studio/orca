@@ -248,6 +248,7 @@ clean_actor_gen:
 clean : 
 	rm -rf $(OBJDIR) *.exe $(TEST_DIR)/*.exe $(BOTS_DIR)/*.exe
 	rm -rf $(BOTX_DIR)/*.bx
+	$(MAKE) -C mujs clean
 	rm -rf $(LIBDIR)
 purge : clean
 	rm -rf $(LIBDIR)

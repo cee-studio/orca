@@ -394,11 +394,6 @@ conn_init(struct user_agent *ua)
   ecode = curl_easy_setopt(new_ehandle, CURLOPT_HEADERDATA, &new_conn->info.resp_header);
   CURLE_CHECK(new_conn, ecode);
 
-#if defined(__stensal__)
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_TIMEOUT, 20L);
-  CURLE_CHECK(new_conn, ecode);
-#endif
-
   // execute user-defined curl_easy_setopts
   if (ua->setopt_cb) {
     (*ua->setopt_cb)(new_ehandle, ua->data);

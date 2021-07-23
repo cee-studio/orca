@@ -373,10 +373,10 @@ cws_close(CURL *easy, enum cws_close_reason reason, const char *reason_text, siz
         fprintf(stderr,"not CWS (no CURLINFO_PRIVATE): %p", easy);
         return false;
     }
-#if 0
-    curl_easy_setopt(easy, CURLOPT_TIMEOUT, 2L);
+#if defined(__stensal__)
+    curl_easy_setopt(easy, CURLOPT_TIMEOUT, 150L);
 #else
-    curl_easy_setopt(easy, CURLOPT_TIMEOUT, 15L); // greater timeout
+    curl_easy_setopt(easy, CURLOPT_TIMEOUT, 15L);
 #endif
     priv = (struct cws_data *)p;
 

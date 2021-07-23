@@ -142,16 +142,19 @@ $(BOTS_DIR)/%.exe: $(BOTS_DIR)/%.c all_api_libs
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) 
 
 
-all : cee_utils common discord reddit github bots
-test: cee_utils common discord reddit github $(TEST_EXES)
+all : discord reddit github bots
+test: discord reddit github $(TEST_EXES)
+
+discord: common $(DISCORD_OBJS) $(LIBDISCORD)
+reddit: common $(REDDIT_OBJS) $(LIBREDDIT)
+github: common $(GITHUB_OBJS)
+
+common: cee_utils $(COMMON_OBJS)
+cee_utils: $(CEE_UTILS_OBJS) | $(CEE_UTILS_DIR)
+
+specs: $(SPECS_OBJS)
 
 db: $(DB_OBJS) | $(OBJDIR)
-cee_utils: $(CEE_UTILS_OBJS) | $(CEE_UTILS_DIR)
-common: $(COMMON_OBJS)
-discord: $(DISCORD_OBJS) $(LIBDISCORD)
-reddit: $(REDDIT_OBJS) $(LIBREDDIT)
-github: $(GITHUB_OBJS)
-specs: $(SPECS_OBJS)
 
 $(CEE_UTILS_OBJS): | $(OBJDIR)
 $(COMMON_OBJS): | $(OBJDIR)

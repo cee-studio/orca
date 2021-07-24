@@ -11,7 +11,7 @@
 #include "mujs.h"
 #include "jsi.h"
 
-#include "jso.h"
+#include "js_user-agent.h"
 
 extern const char* g_config_file;
 
@@ -51,7 +51,7 @@ console_log(js_State *J)
 
 /** @todo move to default js bindings */
 static void
-jso_console_log(js_State *J)
+jsua_console_log(js_State *J)
 {
   js_getglobal(J, "Object");
   js_getproperty(J, -1, "prototype");
@@ -64,7 +64,7 @@ jso_console_log(js_State *J)
 }
 
 static void
-jso_logger(js_State *J)
+jsua_logger(js_State *J)
 {
   js_getglobal(J, "Object");
   js_getproperty(J, -1, "prototype");
@@ -77,7 +77,7 @@ jso_logger(js_State *J)
 }
 
 void 
-jso_log(char *fmt, ...)
+jsua_log(char *fmt, ...)
 {
   static FILE *logger = NULL;
   if (!logger) {
@@ -98,7 +98,7 @@ jso_log(char *fmt, ...)
 }
 
 static void 
-jso_print(js_State *J)
+jsua_print(js_State *J)
 {
   int top = js_gettop(J);
   for (int i=1; i < top; ++i) {
@@ -111,13 +111,13 @@ jso_print(js_State *J)
 }
 
 static void
-jso_ua_cleanup(js_State *J, void *p_ua) {
-  jso_log("jso_ua_cleanup is called\n");
+jsua_cleanup(js_State *J, void *p_ua) {
+  jsua_log("jsua_cleanup is called\n");
   if (p_ua) ua_cleanup((struct user_agent*)p_ua);
 }
 
 static void 
-new_Orca(js_State *J)
+new_UserAgent(js_State *J)
 {
   static struct logconf config={0};
   static _Bool first_run=0;
@@ -142,16 +142,16 @@ new_Orca(js_State *J)
 
   js_currentfunction(J);
   js_getproperty(J, -1, "prototype");
-  js_newuserdata(J, "Orca", ua, &jso_ua_cleanup);
+  js_newuserdata(J, "UserAgent", ua, &jsua_cleanup);
 }
 
 static void 
-Orca_prototype_run(js_State *J) 
+UserAgent_prototype_run(js_State *J) 
 {
   int nparam = 0;
-  struct user_agent *ua = js_touserdata(J, 0, "Orca");
+  struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info={0};
-  jso_ua_run(J, ua, &info, &nparam);
+  jsua_run(J, ua, &info, &nparam);
 
   js_newobject(J);
   {
@@ -174,89 +174,89 @@ Orca_prototype_run(js_State *J)
 }
 
 static void 
-Orca_prototype_string(js_State *J)
+UserAgent_prototype_string(js_State *J)
 {
   int nparam = 0;
-  struct user_agent *ua = js_touserdata(J, 0, "Orca");
+  struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info={0};
-  jso_ua_run(J, ua, &info, &nparam);
+  jsua_run(J, ua, &info, &nparam);
 
   struct sized_buffer resp_body = ua_info_get_resp_body(&info);
   struct sized_buffer new_resp_body={0};
 
-  jso_log("original response >>>:%.*s\n", (int)resp_body.size, resp_body.start);
+  jsua_log("original response >>>:%.*s\n", (int)resp_body.size, resp_body.start);
   json_string_unescape(&new_resp_body.start, &new_resp_body.size, resp_body.start, resp_body.size);
-  jso_log("unescaped response >>>:%.*s\n", (int)new_resp_body.size, new_resp_body.start);
+  jsua_log("unescaped response >>>:%.*s\n", (int)new_resp_body.size, new_resp_body.start);
   js_pushstring(J, new_resp_body.start); // this will make a new copy
 
   ua_info_cleanup(&info);
 }
 
 static void 
-Orca_prototype_addHeader(js_State *J)
+UserAgent_prototype_addHeader(js_State *J)
 {
   ASSERT_S(js_isstring(J, 1), "addHeader() field expect string");
   ASSERT_S(js_isstring(J, 2), "addHeader() value expect string");
 
-  struct user_agent *ua = js_touserdata(J, 0, "Orca");
+  struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   const char *field = js_tostring(J, 1), *value = js_tostring(J, 2);
   ua_reqheader_add(ua, field, value);
   js_pushundefined(J);
 }
 
 static void
-Orca_prototype_setUrl(js_State *J)
+UserAgent_prototype_setUrl(js_State *J)
 {
   ASSERT_S(js_isstring(J, 1), "setUrl() baseUrl expect string");
 
-  struct user_agent *ua = js_touserdata(J, 0, "Orca");
+  struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   const char *base_url = js_tostring(J, 1);
   ua_set_url(ua, base_url);
   js_pushundefined(J);
 }
 
 static void 
-Orca_init(js_State *J)
+UserAgent_init(js_State *J)
 {
   js_getglobal(J, "Object"); 
-  // Orca.prototype.[[Prototype]] = Object.prototype
+  // UserAgent.prototype.[[Prototype]] = Object.prototype
   js_getproperty(J, -1, "prototype");
-  // Orca.prototype.[[UserData]] = null
-  js_newuserdata(J, "Orca", NULL, NULL);
+  // UserAgent.prototype.[[UserData]] = null
+  js_newuserdata(J, "UserAgent", NULL, NULL);
   {
-    // Orca.prototype.run = function() { ... }
-    js_newcfunction(J, &Orca_prototype_run, "Orca.prototype.run", 1);
+    // UserAgent.prototype.run = function() { ... }
+    js_newcfunction(J, &UserAgent_prototype_run, "UserAgent.prototype.run", 1);
     js_defproperty(J, -2, "run", JS_DONTENUM);
 
-    // Orca.prototype.string = function() { ... }
-    js_newcfunction(J, &Orca_prototype_string, "Orca.prototype.string", 1);
+    // UserAgent.prototype.string = function() { ... }
+    js_newcfunction(J, &UserAgent_prototype_string, "UserAgent.prototype.string", 1);
     js_defproperty(J, -2, "string", JS_DONTENUM);
 
-    // Orca.prototype.addHeader = function() { ... }
-    js_newcfunction(J, &Orca_prototype_addHeader, "Orca.prototype.addHeader", 2);
+    // UserAgent.prototype.addHeader = function() { ... }
+    js_newcfunction(J, &UserAgent_prototype_addHeader, "UserAgent.prototype.addHeader", 2);
     js_defproperty(J, -2, "addHeader", JS_DONTENUM);
 
-    // Orca.prototype.setUrl = function() { ... }
-    js_newcfunction(J, &Orca_prototype_setUrl, "Orca.prototype.setUrl", 2);
+    // UserAgent.prototype.setUrl = function() { ... }
+    js_newcfunction(J, &UserAgent_prototype_setUrl, "UserAgent.prototype.setUrl", 2);
     js_defproperty(J, -2, "setUrl", JS_DONTENUM);
   }
-  js_newcconstructor(J, &new_Orca, &new_Orca, "Orca", 1);
-  js_defglobal(J, "Orca", JS_DONTENUM); 
+  js_newcconstructor(J, &new_UserAgent, &new_UserAgent, "UserAgent", 1);
+  js_defglobal(J, "UserAgent", JS_DONTENUM); 
 }
 
-void jso_init(js_State *J)
+void jsua_init(js_State *J)
 {
-  jso_logger(J);
+  jsua_logger(J);
 
   // declare common functions
-  js_newcfunction(J, jso_print, "print", 1);
+  js_newcfunction(J, jsua_print, "print", 1);
   js_setglobal(J, "print"); 
 #if 0
-  jso_console_log(J);
+  jsua_console_log(J);
 #endif
 
-  // declare Orca Object
-  Orca_init(J);
+  // declare UserAgent Object
+  UserAgent_init(J);
 
   // declare common Error prototypes
   js_dostring(J, stacktrace_js);
@@ -264,10 +264,10 @@ void jso_init(js_State *J)
   // declare from common files
   js_dofile(J, "set.js");
   js_dofile(J, "map.js");
-  js_dofile(J, "orca.js");
+  js_dofile(J, "user-agent.js");
 }
 
-ORCAcode jso_ua_run(
+ORCAcode jsua_run(
   js_State *J, 
   struct user_agent *ua, 
   struct ua_info *p_info,

@@ -4,8 +4,8 @@
 #include "user-agent.h"
 
 #include "mujs.h"
-#include "jso.h"
-#include "js-sqlite3.h"
+#include "js_user-agent.h"
+#include "js_sqlite3.h"
 
 const char *handle=NULL; /* handle to stowed away js function */
 const char *g_config_file;
@@ -31,7 +31,7 @@ void js_request(js_State *J)
 
   struct ua_info info={0};
   int nparam=0;
-  jso_ua_run(J, ua, &info, &nparam);
+  jsua_run(J, ua, &info, &nparam);
   struct sized_buffer resp_body = ua_info_get_resp_body(&info);
   fprintf(stderr, "%.*s\n", (int)resp_body.size, resp_body.start);
 
@@ -42,7 +42,7 @@ void js_request(js_State *J)
 int main(void)
 {
   js_State *J = js_newstate(NULL, NULL, JS_STRICT);
-  js_sqlite_init(J);
+  jssqlite_init(J);
 
   js_dostring(J, "var sqlite = new Sqlite();");
   js_dostring(J, "sqlite.open("DB_NAME");");

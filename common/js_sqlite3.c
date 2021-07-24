@@ -9,11 +9,11 @@
 #include "mujs.h"
 #include "jsi.h"
 
-#include "js-sqlite3.h"
+#include "js_sqlite3.h"
 
 
 static void
-js_sqlite_close(js_State *J, void *p_db) {
+jssqlite_close(js_State *J, void *p_db) {
   if (p_db) {
     sqlite3_close(*(sqlite3 **)p_db);
     free(p_db);
@@ -26,7 +26,7 @@ new_Sqlite(js_State *J)
   sqlite3 **db = malloc(sizeof(sqlite3*));
   js_currentfunction(J);
   js_getproperty(J, -1, "prototype");
-  js_newuserdata(J, "Sqlite", db, &js_sqlite_close);
+  js_newuserdata(J, "Sqlite", db, &jssqlite_close);
 }
 
 static void 
@@ -57,7 +57,7 @@ Sqlite_prototype_exec(js_State *J)
 }
 
 void 
-js_sqlite_init(js_State *J)
+jssqlite_init(js_State *J)
 {
   js_getglobal(J, "Object"); 
   // Orca.prototype.[[Prototype]] = Object.prototype

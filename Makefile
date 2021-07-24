@@ -82,6 +82,19 @@ CFLAGS += -std=c11 -O0 -g                                                       
           -I. -I./$(CEE_UTILS_DIR) -I./$(COMMON_DIR) -I./$(COMMON_DIR)/third-party \
           -DLOG_USE_COLOR
 
+ifeq ($(addons),1)
+	# prepare addon flags
+	ADDONS_SRC      := $(wildcard add-ons/*.c)
+	ADDONS_OBJS     := $(ADDONS_SRC:%=$(OBJDIR)/%.o)
+	ADDONS_BOTS_SRC := $(wildcard add-ons/*_bots/*.c)
+	LIBADDONS       := $(LIBDIR)/libaddons.a
+
+	# include addon flags
+	BOTS_EXES    += $(ADDONS_BOTS_SRC:%.c=%.exe)
+	LIBS_LDFLAGS += -laddons
+	CFLAGS       += -I./add-ons
+endif
+
 ifeq ($(BEARSSL),1)
 	LIBS_LDFLAGS += -lbearssl -static
 	CFLAGS += -DBEARSSL
@@ -99,19 +112,6 @@ else ifeq ($(static_debug),2)
 	CFLAGS +=  -D_STRICT_STATIC_DEBUG
 else ifeq ($(static_debug),3) 
 	CFLAGS +=  -D_STATIC_DEBUG -D_STRICT_STATIC_DEBUG
-endif
-
-ifeq ($(addons),1)
-	# prepare addon flags
-	ADDONS_SRC      := $(wildcard add-ons/*.c)
-	ADDONS_OBJS     := $(ADDONS_SRC:%=$(OBJDIR)/%.o)
-	ADDONS_BOTS_SRC := $(wildcard add-ons/*_bots/*.c)
-	LIBADDONS       := $(LIBDIR)/libaddons.a
-
-	# include addon flags
-	BOTS_EXES    += $(ADDONS_BOTS_SRC:%.c=%.exe)
-	LIBS_LDFLAGS += -laddons
-	CFLAGS       += -I./add-ons
 endif
 
 ifneq (,$(findstring $(CC),stensal-c sfc)) # ifeq stensal-c OR sfc

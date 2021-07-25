@@ -3,6 +3,6 @@
 
 #include "sqlite3.h"
 
-void jssqlite_init(js_State *J);
+void jssqlite3_init(js_State *J);
 
 #endif // JS_SQLITE3_H

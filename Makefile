@@ -224,7 +224,7 @@ $(LIBADDONS) : $(CEE_UTILS_OBJS) $(COMMON_OBJS) $(ADDONS_OBJS) | $(LIBDIR)
 	$(AR) -cvq $@ $^
 
 mujs:
-	$(MAKE) -C mujs
+	$(MAKE) -C mujs static
 	mkdir -p $(LIBDIR)
 	cp mujs/build/release/libmujs.a $(LIBDIR)
 

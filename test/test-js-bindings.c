@@ -19,36 +19,35 @@ void js_request(js_State *J)
 {
   struct logconf config={0};
   logconf_setup(&config, NULL);
+
   struct user_agent *ua = ua_init(&config);
   ua_set_url(ua, "http://www.example.com/");
 
-  struct ua_info info={0};
-  int nparam=0;
-  jsua_run(J, ua, &info, &nparam);
-  struct sized_buffer resp_body = ua_info_get_resp_body(&info);
-  fprintf(stderr, "%.*s\n", (int)resp_body.size, resp_body.start);
+  if (ORCA_OK == jsua_run(J, ua, NULL, &(int){0})) {
+    printf("Request was a success!\n");
+  }
 
-  ua_info_cleanup(&info);
   ua_cleanup(ua);
 }
 
 int main(void)
 {
-  js_State *J = js_newstate(NULL, NULL, JS_STRICT);
-  jssqlite3_init(J);
+  log_set_quiet(true);
 
+  js_State *J = js_newstate(NULL, NULL, JS_STRICT);
+
+  /* TEST SQLITE3 BINDING */
+  jssqlite3_init(J);
   js_dostring(J, "var db = new Database();");
   js_dostring(J, "db.open("DB_NAME");");
-
   js_dostring(J, "db.exec("SQL_EXEC_STMT");");
   js_dostring(J, "var stmt = db.prepare("SQL_PREPARE_STMT");");
   js_dostring(J, "stmt.run('Joey', 2);");
-
   js_dostring(J, "db.close();");
 
-  ABORT();
-
+  /* TEST USER-AGENT BINDING */
   js_newcfunction(J, &js_request, "request", 2);
+
   js_copy(J, 1);
   handle = js_ref(J);
 
@@ -59,7 +58,6 @@ int main(void)
     fprintf(stderr, "Error\n");
     return EXIT_FAILURE;
   }
-  js_pop(J, 1);
 
   return EXIT_SUCCESS;
 }

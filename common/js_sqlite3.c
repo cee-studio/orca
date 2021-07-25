@@ -177,9 +177,10 @@ Statement_prototype_run(js_State *J)
 
     while (1) {
       ret_code = sqlite3_step(stmt_cxt->stmt);
-      if (SQLITE_DONE == ret_code) {
+      if (SQLITE_ROW == ret_code)
+        continue;
+      else if (SQLITE_DONE == ret_code)
         break;
-      }
       else {
         sqlite3_finalize(stmt_cxt->stmt);
         js_error(J, "%s", sqlite3_errstr(ret_code));

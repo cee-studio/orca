@@ -262,9 +262,9 @@ void jsua_init(js_State *J)
   js_dostring(J, stacktrace_js);
 
   // declare from common files
-  js_dofile(J, "set.js");
-  js_dofile(J, "map.js");
-  js_dofile(J, "user-agent.js");
+#ifdef JSUA_IMPORT
+  js_dofile(J, JSUA_IMPORT);
+#endif
 }
 
 ORCAcode jsua_run(

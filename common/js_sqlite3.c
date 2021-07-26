@@ -161,25 +161,47 @@ new_Statement(js_State *J)
 }
 
 static int
-jssqlite3_bind(js_State *J, int idx, sqlite3_stmt *stmt)
+jssqlite3_bind(js_State *J, int idx, sqlite3_stmt *stmt, int iCol)
 {
   switch (js_type(J, idx)) {
   case JS_ISSTRING:
-      return sqlite3_bind_text(stmt, idx, js_tostring(J, idx), -1, SQLITE_STATIC);
+      return sqlite3_bind_text(stmt, iCol, js_tostring(J, idx), -1, SQLITE_STATIC);
   case JS_ISUNDEFINED:
   case JS_ISNULL:
-      return sqlite3_bind_null(stmt, idx);
+      return sqlite3_bind_null(stmt, iCol);
   case JS_ISBOOLEAN:
-      return sqlite3_bind_int(stmt, idx, js_toint32(J, idx));
+      return sqlite3_bind_int(stmt, iCol, js_toint32(J, idx));
   case JS_ISNUMBER:
-      return sqlite3_bind_double(stmt, idx, js_tonumber(J, idx));
+      return sqlite3_bind_double(stmt, iCol, js_tonumber(J, idx));
   default:
-      sqlite3_reset(stmt);
-      sqlite3_clear_bindings(stmt);
-      js_referenceerror(J, "Can't bind value of type '%s'", js_typeof(J, idx));
       break;
   }
   return -1;
+}
+
+static int
+jssqlite3_pushcolumn(js_State *J, int iCol, sqlite3_stmt *stmt)
+{
+  switch (sqlite3_column_type(stmt, iCol)) {
+  case SQLITE_TEXT:
+      js_pushstring(J, (const char*)sqlite3_column_text(stmt, iCol));
+      break;
+  case SQLITE_NULL:
+      js_pushnull(J);
+      break;
+  case SQLITE_INTEGER:
+      js_pushnumber(J, (double)sqlite3_column_int(stmt, iCol));
+      break;
+  case SQLITE_FLOAT:
+      js_pushnumber(J, sqlite3_column_double(stmt, iCol));
+      break;
+  case SQLITE_BLOB: /* @todo */
+      js_pushundefined(J);
+      break;
+  default:
+      return -1;
+  }
+  return SQLITE_OK;
 }
 
 static void 
@@ -204,7 +226,7 @@ Statement_prototype_run(js_State *J)
   }
 
   for (int i=1; i < nparam; ++i) {
-    status = jssqlite3_bind(J, i, cxt->stmt);
+    status = jssqlite3_bind(J, i, cxt->stmt, i);
     if (SQLITE_OK != status) {
       snprintf(errbuf, sizeof(errbuf), 
           "Failed to bind parameter No#%d of type '%s': %s", 
@@ -237,6 +259,69 @@ _end:
 }
 
 static void 
+Statement_prototype_get(js_State *J)
+{
+  if (!js_isstring(J, 1)) { 
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
+  }
+
+  struct stmt_cxt *cxt = js_touserdata(J, 0, "Statement");
+  int nparam = js_gettop(J), 
+      expect_nparam = sqlite3_bind_parameter_count(cxt->stmt);
+  int status;
+  int nrow=0;
+  char errbuf[512]="";
+
+  if (nparam-1 != expect_nparam) {
+    snprintf(errbuf, sizeof(errbuf), "Expect %d parameters, got %d instead", 
+        expect_nparam, nparam-1);
+    js_newreferenceerror(J, errbuf);
+    goto _end;
+  }
+
+  for (int i=1; i < nparam; ++i) {
+    status = jssqlite3_bind(J, i, cxt->stmt, i);
+    if (SQLITE_OK != status) {
+      snprintf(errbuf, sizeof(errbuf), 
+          "Failed to bind parameter No#%d of type '%s': %s", 
+          i, js_typeof(J, i), sqlite3_errstr(status));
+      js_newrangeerror(J, errbuf);
+      goto _end;
+    }
+  }
+
+  js_newobject(J); // create object with fetched values
+  {
+    while (SQLITE_ROW == (status = sqlite3_step(cxt->stmt))) {
+      status = jssqlite3_pushcolumn(J, nrow, cxt->stmt);
+      if (SQLITE_OK != status) {
+        js_pop(J, 1); // pop object from stack
+        snprintf(errbuf, sizeof(errbuf), 
+            "Failed to fetch column '%s': %s", 
+            sqlite3_column_name(cxt->stmt, nrow), 
+            sqlite3_errstr(status));
+        js_newrangeerror(J, errbuf);
+        goto _end;
+      }
+      js_setproperty(J, -2, sqlite3_column_name(cxt->stmt, nrow));
+      ++nrow;
+    }
+  }
+  if (SQLITE_DONE != status) {
+    js_pop(J, 1); // pop object from stack
+    snprintf(errbuf, sizeof(errbuf), 
+        "Failed to evaluate SQL statement: %s", sqlite3_errstr(status));
+    js_newevalerror(J, errbuf);
+    goto _end;
+  }
+
+_end:
+  sqlite3_reset(cxt->stmt);
+  sqlite3_clear_bindings(cxt->stmt);
+  if (*errbuf) js_throw(J);
+}
+
+static void 
 jssqlite3_stmt_init(js_State *J)
 {
   js_getglobal(J, "Object"); 
@@ -249,6 +334,10 @@ jssqlite3_stmt_init(js_State *J)
     // this should receive any amount of args
     js_newcfunction(J, &Statement_prototype_run, "Statement.prototype.run", 0);
     js_defproperty(J, -2, "run", JS_DONTENUM);
+    // Statement.prototype.run = function() { ... }
+    // this should receive any amount of args
+    js_newcfunction(J, &Statement_prototype_get, "Statement.prototype.get", 0);
+    js_defproperty(J, -2, "get", JS_DONTENUM);
   }
   js_newcconstructor(J, &new_Statement, &new_Statement, "Statement", 1);
   js_defglobal(J, "Statement", JS_DONTENUM); 

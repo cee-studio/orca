@@ -19,7 +19,8 @@ struct stmt_cxt {
 };
 
 static void
-destroy_Database(js_State *J, void *p_db) {
+destroy_Database(js_State *J, void *p_db) 
+{
   if (p_db) {
     sqlite3_close(*(sqlite3 **)p_db);
     free(p_db);
@@ -39,7 +40,7 @@ static void
 Database_prototype_open(js_State *J)
 {
   if (!js_isstring(J, 1)) { 
-    js_typeerror(J, "Expected 'first' argument to be 'a string'"); 
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
   }
 
   sqlite3 **db = js_touserdata(J, 0, "Database");
@@ -63,7 +64,7 @@ static void
 Database_prototype_exec(js_State *J)
 {
   if (!js_isstring(J, 1)) { 
-    js_typeerror(J, "Expected 'first' argument to be 'a string'"); 
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
   }
 
   sqlite3 **db = js_touserdata(J, 0, "Database");
@@ -94,7 +95,7 @@ static void
 Database_prototype_prepare(js_State *J)
 {
   if (!js_isstring(J, 1)) { 
-    js_typeerror(J, "Expected 'first' argument to be 'a string'"); 
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
   }
 
   sqlite3 **db = js_touserdata(J, 0, "Database");
@@ -173,6 +174,8 @@ jssqlite3_bind(js_State *J, int idx, sqlite3_stmt *stmt)
   case JS_ISNUMBER:
       return sqlite3_bind_double(stmt, idx, js_tonumber(J, idx));
   default:
+      sqlite3_reset(stmt);
+      sqlite3_clear_bindings(stmt);
       js_referenceerror(J, "Can't bind value of type '%s'", js_typeof(J, idx));
       break;
   }
@@ -183,7 +186,7 @@ static void
 Statement_prototype_run(js_State *J)
 {
   if (!js_isstring(J, 1)) { 
-    js_typeerror(J, "Expected 'first' argument to be 'a string'"); 
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
   }
 
   struct stmt_cxt *cxt = js_touserdata(J, 0, "Statement");
@@ -191,27 +194,23 @@ Statement_prototype_run(js_State *J)
       expect_nparam = sqlite3_bind_parameter_count(cxt->stmt);
   int status;
   int nrow=0;
-
-  if (js_try(J)) {
-    fprintf(stderr, "%s\n", js_tostring(J, -1));
-    sqlite3_reset(cxt->stmt);
-    sqlite3_clear_bindings(cxt->stmt);
-
-    js_pop(J, 1); // error object
-    js_pushundefined(J);
-    return;
-  }
+  char errbuf[512]="";
 
   if (nparam-1 != expect_nparam) {
-    js_referenceerror(J, "Expect %d parameters, got %d instead",
-      expect_nparam, nparam-1);
+    snprintf(errbuf, sizeof(errbuf), "Expect %d parameters, got %d instead", 
+        expect_nparam, nparam-1);
+    js_newreferenceerror(J, errbuf);
+    goto _end;
   }
 
   for (int i=1; i < nparam; ++i) {
     status = jssqlite3_bind(J, i, cxt->stmt);
     if (SQLITE_OK != status) {
-      js_rangeerror(J, "Failed to bind parameter No#%d of type '%s': %s",
+      snprintf(errbuf, sizeof(errbuf), 
+          "Failed to bind parameter No#%d of type '%s': %s", 
           i, js_typeof(J, i), sqlite3_errstr(status));
+      js_newrangeerror(J, errbuf);
+      goto _end;
     }
   }
 
@@ -219,10 +218,11 @@ Statement_prototype_run(js_State *J)
     ++nrow;
   }
   if (SQLITE_DONE != status) {
-    js_evalerror(J, "Failed to evaluate SQL statement: %s", sqlite3_errstr(status));
+    snprintf(errbuf, sizeof(errbuf), 
+        "Failed to evaluate SQL statement: %s", sqlite3_errstr(status));
+    js_newevalerror(J, errbuf);
+    goto _end;
   }
-  sqlite3_reset(cxt->stmt);
-  sqlite3_clear_bindings(cxt->stmt);
 
   js_newobject(J); // return info object
   {
@@ -230,7 +230,10 @@ Statement_prototype_run(js_State *J)
     js_setproperty(J, -2, "changes");
   }
 
-  js_endtry(J);
+_end:
+  sqlite3_reset(cxt->stmt);
+  sqlite3_clear_bindings(cxt->stmt);
+  if (*errbuf) js_throw(J);
 }
 
 static void 

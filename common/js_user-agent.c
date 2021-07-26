@@ -13,6 +13,7 @@
 
 #include "js_user-agent.h"
 
+// @todo shouldn't be a dependency
 extern const char* g_config_file;
 
 int debug_stack=0;
@@ -26,41 +27,6 @@ static const char *stacktrace_js =
 static void 
 enable_debug_track(js_State *J) {
   debug_stack = 1;
-}
-
-static void 
-copy_resp(char *start, size_t size, void *p)
-{
-  char *buf = (char*)malloc(size+1);
-  char **buf_p = (char**)p;
-
-  memcpy(buf, start, size);
-  buf[size] = 0;
-  *buf_p = buf;
-}
-
-/** @todo move to default js bindings */
-static void 
-console_log(js_State *J) 
-{
-  js_trap(J, 0);
-  printf("%s\n", js_tryrepr(J, 1, "Error"));
-  js_pushundefined(J);
-  js_trap(J, 0);
-}
-
-/** @todo move to default js bindings */
-static void
-jsua_console_log(js_State *J)
-{
-  js_getglobal(J, "Object");
-  js_getproperty(J, -1, "prototype");
-  js_newuserdata(J, "console", NULL, NULL);
-	{
-    js_newcfunction(J, console_log,  "console.prototype.log", 1);
-    js_defproperty(J, -2, "log", JS_READONLY|JS_DONTCONF|JS_DONTENUM);
-  }
-  js_defglobal(J, "console", JS_READONLY|JS_DONTCONF|JS_DONTENUM);
 }
 
 static void
@@ -148,10 +114,9 @@ new_UserAgent(js_State *J)
 static void 
 UserAgent_prototype_run(js_State *J) 
 {
-  int nparam = 0;
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info={0};
-  jsua_run(J, ua, &info, &nparam);
+  jsua_run(J, ua, &info);
 
   js_newobject(J);
   {
@@ -159,16 +124,16 @@ UserAgent_prototype_run(js_State *J)
     js_setproperty(J, -2, "httpcode");
 
     js_pushstring(J, info.req_url);
-    js_setproperty(J, -2, "reqUrl");
+    js_setproperty(J, -2, "requestUrl");
 
     char aux[64]; // convert timestamp to string
     snprintf(aux, sizeof(aux), "%"PRIu64, info.req_tstamp);
     js_pushstring(J, aux);
-    js_setproperty(J, -2, "reqTstamp");
+    js_setproperty(J, -2, "requestTimestamp");
 
     struct sized_buffer resp_body = ua_info_get_resp_body(&info);
     js_pushstring(J, resp_body.start);
-    js_setproperty(J, -2, "respBody");
+    js_setproperty(J, -2, "responseBody");
   }
   ua_info_cleanup(&info);
 }
@@ -176,10 +141,9 @@ UserAgent_prototype_run(js_State *J)
 static void 
 UserAgent_prototype_string(js_State *J)
 {
-  int nparam = 0;
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info={0};
-  jsua_run(J, ua, &info, &nparam);
+  jsua_run(J, ua, &info);
 
   struct sized_buffer resp_body = ua_info_get_resp_body(&info);
   struct sized_buffer new_resp_body={0};
@@ -195,23 +159,25 @@ UserAgent_prototype_string(js_State *J)
 static void 
 UserAgent_prototype_addHeader(js_State *J)
 {
-  ASSERT_S(js_isstring(J, 1), "addHeader() field expect string");
-  ASSERT_S(js_isstring(J, 2), "addHeader() value expect string");
+  if (!js_isstring(J, 1))
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
+  if (!js_isstring(J, 2))
+    js_typeerror(J, "Expected 'second' argument to be a 'string'"); 
 
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
-  const char *field = js_tostring(J, 1), *value = js_tostring(J, 2);
-  ua_reqheader_add(ua, field, value);
+  ua_reqheader_add(ua, js_tostring(J, 1), js_tostring(J, 2));
   js_pushundefined(J);
 }
 
 static void
 UserAgent_prototype_setUrl(js_State *J)
 {
-  ASSERT_S(js_isstring(J, 1), "setUrl() baseUrl expect string");
+  if (!js_isstring(J, 1)) { 
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
+  }
 
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
-  const char *base_url = js_tostring(J, 1);
-  ua_set_url(ua, base_url);
+  ua_set_url(ua, js_tostring(J, 1));
   js_pushundefined(J);
 }
 
@@ -251,9 +217,6 @@ void jsua_init(js_State *J)
   // declare common functions
   js_newcfunction(J, jsua_print, "print", 1);
   js_setglobal(J, "print"); 
-#if 0
-  jsua_console_log(J);
-#endif
 
   // declare UserAgent Object
   UserAgent_init(J);
@@ -267,41 +230,26 @@ void jsua_init(js_State *J)
 #endif
 }
 
-ORCAcode jsua_run(
-  js_State *J, 
-  struct user_agent *ua, 
-  struct ua_info *p_info,
-  int *p_nparam)
+ORCAcode 
+jsua_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
 {
-  int nparam = js_gettop(J);
-  *p_nparam = nparam;
-  log_debug("n# of parameters: %d", nparam);
+  if (!js_isstring(J, 1))
+    js_typeerror(J, "Expected 'first' argument to be a 'string'"); 
+  if (!js_isstring(J, 2))
+    js_typeerror(J, "Expected 'second' argument to be a 'string'"); 
 
-  if (!js_isstring(J, 1)) {
-    log_fatal("expect a METHOD string");
-    exit(1);
-  }
-  if (!js_isstring(J, 2)) {
-    log_fatal("expect a URL string");
-    exit(1);
-  }
-
-  char *strmethod = (char*)js_tostring(J, 1);
-  log_debug("method: %s", strmethod);
-  enum http_method method = http_method_eval(strmethod);
-
+  enum http_method method = http_method_eval((char*)js_tostring(J, 1));
   char *endpoint = (char*)js_tostring(J, 2);
-  log_debug("endpoint: %s", endpoint);
 
   struct sized_buffer req_body={0};
-  if (4 == nparam) { // has body
-    if (js_isobject(J, 3) || js_isstring(J, 3)) {
-      req_body.start = (char *)js_tostring(J, 3);
-      req_body.size = strlen(req_body.start);
-      log_debug("request body: %.*s", (int)req_body.size, req_body.start);
-    }
+  if (js_isobject(J, 3) || js_isstring(J, 3)) {
+    req_body = (struct sized_buffer){
+      .start = (char *)js_tostring(J, 3),
+      .size = strlen(req_body.start)
+    };
   }
 
+  // @todo map Error codes to JS Error objects
   return ua_run(
           ua, 
           p_info, 

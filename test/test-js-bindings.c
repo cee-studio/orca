@@ -24,7 +24,7 @@ void js_request(js_State *J)
   struct user_agent *ua = ua_init(&config);
   ua_set_url(ua, "http://www.example.com/");
 
-  if (ORCA_OK == jsua_run(J, ua, NULL, &(int){0})) {
+  if (ORCA_OK == jsua_run(J, ua, NULL)) {
     printf("Request was a success!\n");
   }
 

@@ -295,7 +295,7 @@ Statement_prototype_get(js_State *J)
     while (SQLITE_ROW == (status = sqlite3_step(cxt->stmt))) {
       status = jssqlite3_pushcolumn(J, nrow, cxt->stmt);
       if (SQLITE_OK != status) {
-        js_pop(J, 1); // pop object from stack
+        js_pop(J, 2); // pop object and column from stack
         snprintf(errbuf, sizeof(errbuf), 
             "Failed to fetch column '%s': %s", 
             sqlite3_column_name(cxt->stmt, nrow), 

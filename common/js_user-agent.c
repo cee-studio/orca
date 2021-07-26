@@ -182,7 +182,7 @@ UserAgent_prototype_setUrl(js_State *J)
 }
 
 static void 
-UserAgent_init(js_State *J)
+jsua_ua_init(js_State *J)
 {
   js_getglobal(J, "Object"); 
   // UserAgent.prototype.[[Prototype]] = Object.prototype
@@ -219,7 +219,7 @@ void jsua_init(js_State *J)
   js_setglobal(J, "print"); 
 
   // declare UserAgent Object
-  UserAgent_init(J);
+  jsua_ua_init(J);
 
   // declare common Error prototypes
   js_dostring(J, stacktrace_js);

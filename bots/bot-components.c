@@ -36,8 +36,8 @@ load_message_from_json(char filename[])
   size_t len;
   char *json_payload = cee_load_whole_file(filename, &len);
 
-  struct discord_message *new_msg = discord_message_alloc();
-  discord_message_from_json(json_payload, len, new_msg);
+  struct discord_message *new_msg=NULL;
+  discord_message_from_json(json_payload, len, &new_msg);
 
   free(json_payload);
 
@@ -69,6 +69,7 @@ int main(int argc, char *argv[])
   fgetc(stdin); // wait for input
 
   struct discord_message *loaded_msg = load_message_from_json(JSON_FILE);
+
   discord_set_data(client, loaded_msg);
 
   discord_run(client);

@@ -2,7 +2,7 @@
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
@@ -11,7 +11,7 @@
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
@@ -61,7 +61,7 @@ extern bool discord_audit_log_events_has(enum discord_audit_log_events, char*);
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
@@ -70,7 +70,7 @@ extern bool discord_audit_log_events_has(enum discord_audit_log_events, char*);
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
@@ -150,7 +150,7 @@ extern bool discord_message_types_has(enum discord_message_types, char*);
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see 
  */
@@ -159,7 +159,7 @@ extern bool discord_message_types_has(enum discord_message_types, char*);
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/emoji
  */
@@ -168,7 +168,7 @@ extern bool discord_message_types_has(enum discord_message_types, char*);
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/gateway
  */
@@ -292,7 +292,7 @@ extern bool discord_gateway_activity_types_has(enum discord_gateway_activity_typ
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
@@ -301,7 +301,7 @@ extern bool discord_gateway_activity_types_has(enum discord_gateway_activity_typ
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
@@ -310,7 +310,7 @@ extern bool discord_gateway_activity_types_has(enum discord_gateway_activity_typ
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
@@ -319,7 +319,7 @@ extern bool discord_gateway_activity_types_has(enum discord_gateway_activity_typ
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
@@ -419,7 +419,7 @@ extern bool discord_guild_integration_expire_behaviors_has(enum discord_guild_in
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
@@ -428,7 +428,7 @@ extern bool discord_guild_integration_expire_behaviors_has(enum discord_guild_in
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
@@ -445,7 +445,7 @@ extern bool discord_invite_target_user_types_has(enum discord_invite_target_user
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/interactions/message-components#message-components
  */
@@ -476,7 +476,7 @@ extern bool discord_button_styles_has(enum discord_button_styles, char*);
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/permissions
  */
@@ -524,7 +524,7 @@ extern bool discord_permissions_bitwise_flags_has(enum discord_permissions_bitwi
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/interactions/slash-commands#data-models-and-types
  */
@@ -588,7 +588,7 @@ extern bool discord_interaction_application_command_callback_data_flags_has(enum
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
@@ -597,7 +597,7 @@ extern bool discord_interaction_application_command_callback_data_flags_has(enum
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
@@ -644,7 +644,7 @@ extern bool discord_user_connection_visibility_types_has(enum discord_user_conne
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/voice-connections
  */
@@ -701,7 +701,7 @@ extern bool discord_voice_speaking_flags_has(enum discord_voice_speaking_flags, 
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/voice
  */
@@ -710,7 +710,7 @@ extern bool discord_voice_speaking_flags_has(enum discord_voice_speaking_flags, 
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
@@ -719,7 +719,7 @@ extern bool discord_voice_speaking_flags_has(enum discord_voice_speaking_flags, 
 /**
  * @file specs-code/discord/all_enums.h
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */

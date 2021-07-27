@@ -177,7 +177,6 @@
     {
       "title":"Message Structure",
       "comment":"https://discord.com/developers/docs/resources/channel#message-object",
-      "disable_methods": ["from_json"],
       "struct":"message",
       "fields": [
          {"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"},
@@ -238,7 +237,6 @@
     {
       "title":"Overwrite Structure",
       "namespace":["channel"],
-      "disable_methods":["from_json", "to_json"],
       "struct":"overwrite",
       "fields":
       [

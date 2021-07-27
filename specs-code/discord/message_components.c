@@ -2,23 +2,25 @@
 /**
  * @file specs-code/discord/message_components.c
  * @author cee-studio
- * @date 17 Jul 2021
+ * @date Jul 27 2021
  * @brief Specs generated file
  * @see https://discord.com/developers/docs/interactions/message-components#message-components
  */
 
 #include "specs.h"
 
-void discord_component_from_json(char *json, size_t len, struct discord_component *p)
+void discord_component_from_json(char *json, size_t len, struct discord_component **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_component *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
                 "(type):d,"
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
                 "(custom_id):s,"
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -36,16 +38,16 @@ void discord_component_from_json(char *json, size_t len, struct discord_componen
      '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
                 "(url):?s,"
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
                 "(options):F,"
   /* specs/discord/message_components.json:20:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 "(placeholder):s,"
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(min_values):d,"
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(max_values):d,"
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
@@ -54,10 +56,10 @@ void discord_component_from_json(char *json, size_t len, struct discord_componen
                 "@record_defined"
                 "@record_null",
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
                 &p->type,
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
                 p->custom_id,
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -70,21 +72,21 @@ void discord_component_from_json(char *json, size_t len, struct discord_componen
                 p->label,
   /* specs/discord/message_components.json:17:18
      '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
-                discord_emoji_from_json, p->emoji,
+                discord_emoji_from_json, &p->emoji,
   /* specs/discord/message_components.json:18:18
      '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
                 &p->url,
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
-                discord_select_menu_list_from_json, &p->options,
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+                discord_select_option_list_from_json, &p->options,
   /* specs/discord/message_components.json:20:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 p->placeholder,
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->min_values,
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->max_values,
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
@@ -99,12 +101,14 @@ static void discord_component_use_default_inject_settings(struct discord_compone
 {
   p->__M.enable_arg_switches = true;
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
-  p->__M.arg_switches[0] = &p->type;
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
+  if (p->type != 0)
+    p->__M.arg_switches[0] = &p->type;
 
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
-  p->__M.arg_switches[1] = p->custom_id;
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+  if (strlen(p->custom_id) != 0)
+    p->__M.arg_switches[1] = p->custom_id;
 
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -132,7 +136,7 @@ static void discord_component_use_default_inject_settings(struct discord_compone
     p->__M.arg_switches[6] = p->url;
 
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
   if (p->options != NULL)
     p->__M.arg_switches[7] = p->options;
 
@@ -142,12 +146,14 @@ static void discord_component_use_default_inject_settings(struct discord_compone
     p->__M.arg_switches[8] = p->placeholder;
 
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
-  p->__M.arg_switches[9] = &p->min_values;
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+  if (p->min_values != 0)
+    p->__M.arg_switches[9] = &p->min_values;
 
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
-  p->__M.arg_switches[10] = &p->max_values;
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+  if (p->max_values != 0)
+    p->__M.arg_switches[10] = &p->max_values;
 
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
@@ -162,10 +168,10 @@ size_t discord_component_to_json(char *json, size_t len, struct discord_componen
   discord_component_use_default_inject_settings(p);
   r=json_inject(json, len, 
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
                 "(type):d,"
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
                 "(custom_id):s,"
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -183,26 +189,26 @@ size_t discord_component_to_json(char *json, size_t len, struct discord_componen
      '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
                 "(url):s,"
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
                 "(options):F,"
   /* specs/discord/message_components.json:20:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 "(placeholder):s,"
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(min_values):d,"
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(max_values):d,"
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
                 "(components):F,"
                 "@arg_switches:b",
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
                 &p->type,
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
                 p->custom_id,
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -220,16 +226,16 @@ size_t discord_component_to_json(char *json, size_t len, struct discord_componen
      '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
                 p->url,
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
-                discord_select_menu_list_to_json, p->options,
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+                discord_select_option_list_to_json, p->options,
   /* specs/discord/message_components.json:20:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 p->placeholder,
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->min_values,
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->max_values,
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
@@ -254,8 +260,8 @@ void discord_component_free_v(void *p) {
  discord_component_free((struct discord_component *)p);
 };
 
-void discord_component_from_json_v(char *json, size_t len, void *p) {
- discord_component_from_json(json, len, (struct discord_component*)p);
+void discord_component_from_json_v(char *json, size_t len, void *pp) {
+ discord_component_from_json(json, len, (struct discord_component**)pp);
 }
 
 size_t discord_component_to_json_v(char *json, size_t len, void *p) {
@@ -277,10 +283,10 @@ size_t discord_component_list_to_json_v(char *str, size_t len, void *p){
 
 void discord_component_cleanup(struct discord_component *d) {
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
   // p->type is a scalar
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
   // p->custom_id is a scalar
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -300,17 +306,17 @@ void discord_component_cleanup(struct discord_component *d) {
   if (d->url)
     free(d->url);
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
   if (d->options)
-    discord_select_menu_list_free(d->options);
+    discord_select_option_list_free(d->options);
   /* specs/discord/message_components.json:20:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
   // p->placeholder is a scalar
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
   // p->min_values is a scalar
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
   // p->max_values is a scalar
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
@@ -321,10 +327,10 @@ void discord_component_cleanup(struct discord_component *d) {
 void discord_component_init(struct discord_component *p) {
   memset(p, 0, sizeof(struct discord_component));
   /* specs/discord/message_components.json:12:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
 
   /* specs/discord/message_components.json:13:18
-     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
 
   /* specs/discord/message_components.json:14:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
@@ -343,16 +349,16 @@ void discord_component_init(struct discord_component *p) {
      '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
 
   /* specs/discord/message_components.json:19:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
 
   /* specs/discord/message_components.json:20:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
 
   /* specs/discord/message_components.json:21:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
 
   /* specs/discord/message_components.json:22:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
 
   /* specs/discord/message_components.json:23:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
@@ -378,10 +384,10 @@ void discord_component_list_from_json(char *str, size_t len, struct discord_comp
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_component);
-  d.init_elem = discord_component_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_component_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_component_list_to_json(char *str, size_t len, struct discord_component **p)
@@ -412,16 +418,18 @@ bool discord_component_types_has(enum discord_component_types v, char *s) {
   return false;
 }
 
-void discord_button_from_json(char *json, size_t len, struct discord_button *p)
+void discord_button_from_json(char *json, size_t len, struct discord_button **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_button *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
                 "(type):d,"
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
                 "(style):d,"
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
@@ -442,17 +450,17 @@ void discord_button_from_json(char *json, size_t len, struct discord_button *p)
                 "@record_defined"
                 "@record_null",
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
                 &p->type,
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
                 &p->style,
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
                 p->label,
   /* specs/discord/message_components.json:47:18
      '{"name":"emoji", "type":{ "base":"struct discord_emoji", "dec":"*" }, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
-                discord_emoji_from_json, p->emoji,
+                discord_emoji_from_json, &p->emoji,
   /* specs/discord/message_components.json:48:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
                 p->custom_id,
@@ -472,12 +480,14 @@ static void discord_button_use_default_inject_settings(struct discord_button *p)
 {
   p->__M.enable_arg_switches = true;
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
-  p->__M.arg_switches[0] = &p->type;
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
+  if (p->type != 0)
+    p->__M.arg_switches[0] = &p->type;
 
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
-  p->__M.arg_switches[1] = &p->style;
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
+  if (p->style != 0)
+    p->__M.arg_switches[1] = &p->style;
 
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
@@ -512,10 +522,10 @@ size_t discord_button_to_json(char *json, size_t len, struct discord_button *p)
   discord_button_use_default_inject_settings(p);
   r=json_inject(json, len, 
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
                 "(type):d,"
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
                 "(style):d,"
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
@@ -534,10 +544,10 @@ size_t discord_button_to_json(char *json, size_t len, struct discord_button *p)
                 "(disabled):b,"
                 "@arg_switches:b",
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
                 &p->type,
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
                 &p->style,
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
@@ -574,8 +584,8 @@ void discord_button_free_v(void *p) {
  discord_button_free((struct discord_button *)p);
 };
 
-void discord_button_from_json_v(char *json, size_t len, void *p) {
- discord_button_from_json(json, len, (struct discord_button*)p);
+void discord_button_from_json_v(char *json, size_t len, void *pp) {
+ discord_button_from_json(json, len, (struct discord_button**)pp);
 }
 
 size_t discord_button_to_json_v(char *json, size_t len, void *p) {
@@ -597,10 +607,10 @@ size_t discord_button_list_to_json_v(char *str, size_t len, void *p){
 
 void discord_button_cleanup(struct discord_button *d) {
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
   // p->type is a scalar
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
   // p->style is a scalar
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
@@ -624,10 +634,10 @@ void discord_button_cleanup(struct discord_button *d) {
 void discord_button_init(struct discord_button *p) {
   memset(p, 0, sizeof(struct discord_button));
   /* specs/discord/message_components.json:44:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "2 for a button"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
 
   /* specs/discord/message_components.json:45:18
-     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "comment": "one of button styles"}' */
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
 
   /* specs/discord/message_components.json:46:18
      '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
@@ -666,10 +676,10 @@ void discord_button_list_from_json(char *str, size_t len, struct discord_button 
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_button);
-  d.init_elem = discord_button_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_button_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_button_list_to_json(char *str, size_t len, struct discord_button **p)
@@ -706,28 +716,30 @@ bool discord_button_styles_has(enum discord_button_styles v, char *s) {
   return false;
 }
 
-void discord_select_menu_from_json(char *json, size_t len, struct discord_select_menu *p)
+void discord_select_menu_from_json(char *json, size_t len, struct discord_select_menu **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_select_menu *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
                 "(type):d,"
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
                 "(custom_id):s,"
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
                 "(options):F,"
   /* specs/discord/message_components.json:76:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 "(placeholder):s,"
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(min_values):d,"
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(max_values):d,"
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
@@ -736,22 +748,22 @@ void discord_select_menu_from_json(char *json, size_t len, struct discord_select
                 "@record_defined"
                 "@record_null",
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
                 &p->type,
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
                 p->custom_id,
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
-                discord_select_menu_list_from_json, &p->options,
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+                discord_select_option_list_from_json, &p->options,
   /* specs/discord/message_components.json:76:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 p->placeholder,
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->min_values,
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->max_values,
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
@@ -766,8 +778,9 @@ static void discord_select_menu_use_default_inject_settings(struct discord_selec
 {
   p->__M.enable_arg_switches = true;
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
-  p->__M.arg_switches[0] = &p->type;
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
+  if (p->type != 0)
+    p->__M.arg_switches[0] = &p->type;
 
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
@@ -775,7 +788,7 @@ static void discord_select_menu_use_default_inject_settings(struct discord_selec
     p->__M.arg_switches[1] = p->custom_id;
 
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
   p->__M.arg_switches[2] = p->options;
 
   /* specs/discord/message_components.json:76:18
@@ -784,12 +797,14 @@ static void discord_select_menu_use_default_inject_settings(struct discord_selec
     p->__M.arg_switches[3] = p->placeholder;
 
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
-  p->__M.arg_switches[4] = &p->min_values;
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+  if (p->min_values != 0)
+    p->__M.arg_switches[4] = &p->min_values;
 
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
-  p->__M.arg_switches[5] = &p->max_values;
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+  if (p->max_values != 0)
+    p->__M.arg_switches[5] = &p->max_values;
 
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
@@ -804,44 +819,44 @@ size_t discord_select_menu_to_json(char *json, size_t len, struct discord_select
   discord_select_menu_use_default_inject_settings(p);
   r=json_inject(json, len, 
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
                 "(type):d,"
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
                 "(custom_id):s,"
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
                 "(options):F,"
   /* specs/discord/message_components.json:76:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 "(placeholder):s,"
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(min_values):d,"
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 "(max_values):d,"
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
                 "(disabled):b,"
                 "@arg_switches:b",
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
                 &p->type,
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
                 p->custom_id,
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
-                discord_select_menu_list_to_json, p->options,
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+                discord_select_option_list_to_json, p->options,
   /* specs/discord/message_components.json:76:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
                 p->placeholder,
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->min_values,
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
                 &p->max_values,
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
@@ -866,8 +881,8 @@ void discord_select_menu_free_v(void *p) {
  discord_select_menu_free((struct discord_select_menu *)p);
 };
 
-void discord_select_menu_from_json_v(char *json, size_t len, void *p) {
- discord_select_menu_from_json(json, len, (struct discord_select_menu*)p);
+void discord_select_menu_from_json_v(char *json, size_t len, void *pp) {
+ discord_select_menu_from_json(json, len, (struct discord_select_menu**)pp);
 }
 
 size_t discord_select_menu_to_json_v(char *json, size_t len, void *p) {
@@ -889,23 +904,23 @@ size_t discord_select_menu_list_to_json_v(char *str, size_t len, void *p){
 
 void discord_select_menu_cleanup(struct discord_select_menu *d) {
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
   // p->type is a scalar
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
   // p->custom_id is a scalar
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
   if (d->options)
-    discord_select_menu_list_free(d->options);
+    discord_select_option_list_free(d->options);
   /* specs/discord/message_components.json:76:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
   // p->placeholder is a scalar
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
   // p->min_values is a scalar
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
   // p->max_values is a scalar
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
@@ -915,22 +930,22 @@ void discord_select_menu_cleanup(struct discord_select_menu *d) {
 void discord_select_menu_init(struct discord_select_menu *p) {
   memset(p, 0, sizeof(struct discord_select_menu));
   /* specs/discord/message_components.json:73:18
-     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "comment": "3 for a select menu"}' */
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
 
   /* specs/discord/message_components.json:74:18
      '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
 
   /* specs/discord/message_components.json:75:18
-     '{"name":"options", "type":{"base":"struct discord_select_menu", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
 
   /* specs/discord/message_components.json:76:18
      '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
 
   /* specs/discord/message_components.json:77:18
-     '{"name":"min_values", "type":{"base":"int"}, "option":true, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
 
   /* specs/discord/message_components.json:78:18
-     '{"name":"max_values", "type":{"base":"int"}, "option":true, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
 
   /* specs/discord/message_components.json:79:18
      '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
@@ -956,10 +971,10 @@ void discord_select_menu_list_from_json(char *str, size_t len, struct discord_se
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_select_menu);
-  d.init_elem = discord_select_menu_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_select_menu_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_select_menu_list_to_json(char *str, size_t len, struct discord_select_menu **p)
@@ -968,22 +983,24 @@ size_t discord_select_menu_list_to_json(char *str, size_t len, struct discord_se
 }
 
 
-void discord_select_option_from_json(char *json, size_t len, struct discord_select_option *p)
+void discord_select_option_from_json(char *json, size_t len, struct discord_select_option **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_select_option *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
                 "(label):s,"
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
                 "(value):s,"
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
                 "(description):s,"
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
                 "(emoji):F,"
   /* specs/discord/message_components.json:92:18
      '{"name":"Default", "json_key":"default", "type":{"base":"bool"}, "option":true, "comment":"will render this option as selected by default"}' */
@@ -992,17 +1009,17 @@ void discord_select_option_from_json(char *json, size_t len, struct discord_sele
                 "@record_defined"
                 "@record_null",
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
                 p->label,
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
                 p->value,
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
                 p->description,
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
-                discord_emoji_from_json, p->emoji,
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
+                discord_emoji_from_json, &p->emoji,
   /* specs/discord/message_components.json:92:18
      '{"name":"Default", "json_key":"default", "type":{"base":"bool"}, "option":true, "comment":"will render this option as selected by default"}' */
                 &p->Default,
@@ -1016,20 +1033,22 @@ static void discord_select_option_use_default_inject_settings(struct discord_sel
 {
   p->__M.enable_arg_switches = true;
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
-  p->__M.arg_switches[0] = p->label;
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
+  if (strlen(p->label) != 0)
+    p->__M.arg_switches[0] = p->label;
 
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
-  p->__M.arg_switches[1] = p->value;
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
+  if (strlen(p->value) != 0)
+    p->__M.arg_switches[1] = p->value;
 
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
   if (strlen(p->description) != 0)
     p->__M.arg_switches[2] = p->description;
 
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
   if (p->emoji != NULL)
     p->__M.arg_switches[3] = p->emoji;
 
@@ -1045,32 +1064,32 @@ size_t discord_select_option_to_json(char *json, size_t len, struct discord_sele
   discord_select_option_use_default_inject_settings(p);
   r=json_inject(json, len, 
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
                 "(label):s,"
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
                 "(value):s,"
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
                 "(description):s,"
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
                 "(emoji):F,"
   /* specs/discord/message_components.json:92:18
      '{"name":"Default", "json_key":"default", "type":{"base":"bool"}, "option":true, "comment":"will render this option as selected by default"}' */
                 "(default):b,"
                 "@arg_switches:b",
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
                 p->label,
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
                 p->value,
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
                 p->description,
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
                 discord_emoji_to_json, p->emoji,
   /* specs/discord/message_components.json:92:18
      '{"name":"Default", "json_key":"default", "type":{"base":"bool"}, "option":true, "comment":"will render this option as selected by default"}' */
@@ -1095,8 +1114,8 @@ void discord_select_option_free_v(void *p) {
  discord_select_option_free((struct discord_select_option *)p);
 };
 
-void discord_select_option_from_json_v(char *json, size_t len, void *p) {
- discord_select_option_from_json(json, len, (struct discord_select_option*)p);
+void discord_select_option_from_json_v(char *json, size_t len, void *pp) {
+ discord_select_option_from_json(json, len, (struct discord_select_option**)pp);
 }
 
 size_t discord_select_option_to_json_v(char *json, size_t len, void *p) {
@@ -1118,16 +1137,16 @@ size_t discord_select_option_list_to_json_v(char *str, size_t len, void *p){
 
 void discord_select_option_cleanup(struct discord_select_option *d) {
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
   // p->label is a scalar
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
   // p->value is a scalar
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
   // p->description is a scalar
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
   if (d->emoji)
     discord_emoji_free(d->emoji);
   /* specs/discord/message_components.json:92:18
@@ -1138,16 +1157,16 @@ void discord_select_option_cleanup(struct discord_select_option *d) {
 void discord_select_option_init(struct discord_select_option *p) {
   memset(p, 0, sizeof(struct discord_select_option));
   /* specs/discord/message_components.json:88:18
-     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "comment":"the user-facing name of the option, max 25 characters"}' */
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
 
   /* specs/discord/message_components.json:89:18
-     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"the dev define value of the option, max 100 characters"}' */
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
 
   /* specs/discord/message_components.json:90:18
-     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "option":true, "comment":"a additional description of the option, max 50 characters", "inject_if_not":""}' */
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
 
   /* specs/discord/message_components.json:91:18
-     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
   p->emoji = discord_emoji_alloc();
 
   /* specs/discord/message_components.json:92:18
@@ -1174,10 +1193,10 @@ void discord_select_option_list_from_json(char *str, size_t len, struct discord_
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_select_option);
-  d.init_elem = discord_select_option_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_select_option_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_select_option_list_to_json(char *str, size_t len, struct discord_select_option **p)

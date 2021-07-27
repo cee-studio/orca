@@ -19,14 +19,12 @@ discord_get_channel(struct discord *client, const u64_snowflake_t channel_id, st
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = { 
-    .ok_cb = &discord_channel_from_json_v, 
-    .ok_obj = p_channel
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_channel_from_json_v,
+             .ok_obj = &p_channel
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64, channel_id);
@@ -48,20 +46,16 @@ discord_modify_channel(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
-    .ok_obj = p_channel
-  };
-
   char payload[DISCORD_MAX_PAYLOAD_LEN];
   size_t ret = discord_modify_channel_params_to_json(payload, sizeof(payload), params);
 
-  struct sized_buffer req_body = { payload, ret };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
-           &req_body,
+           &(struct ua_resp_handle){
+             .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
+             .ok_obj = &p_channel
+           },
+           &(struct sized_buffer){ payload, ret },
            HTTP_PATCH,
            "/channels/%"PRIu64, channel_id);
 }
@@ -74,14 +68,12 @@ discord_delete_channel(struct discord *client, const u64_snowflake_t channel_id,
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_channel ? discord_channel_from_json_v : NULL,
-    .ok_obj = p_channel,
-  };
-
   return discord_adapter_run( 
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
+             .ok_obj = &p_channel
+           },
            NULL,
            HTTP_DELETE,
            "/channels/%"PRIu64, channel_id);
@@ -128,14 +120,12 @@ discord_get_channel_messages(
     }
   }
 
-  struct ua_resp_handle resp_handle = { 
-    .ok_cb = &discord_message_list_from_json_v, 
-    .ok_obj = p_messages 
-  };
-
   return discord_adapter_run( 
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){ 
+             .ok_cb = &discord_message_list_from_json_v, 
+             .ok_obj = p_messages 
+           },
            NULL,
            HTTP_GET, 
            "/channels/%"PRIu64"/messages%s%s", 
@@ -162,14 +152,12 @@ discord_get_channel_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = { 
-    .ok_cb = &discord_message_from_json_v, 
-    .ok_obj = p_message 
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){ 
+             .ok_cb = &discord_message_from_json_v, 
+             .ok_obj = &p_message
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/messages/%"PRIu64, channel_id, message_id);
@@ -219,7 +207,7 @@ discord_create_message(
 
   struct ua_resp_handle resp_handle = {
     .ok_cb = p_message ? &discord_message_from_json_v : NULL,
-    .ok_obj = p_message
+    .ok_obj = &p_message
   };
 
   ORCAcode code;
@@ -283,12 +271,10 @@ discord_create_message(
       return ORCA_BAD_JSON;
     }
 
-    struct sized_buffer req_body = { payload, ret };
-
     code = discord_adapter_run( 
              &client->adapter,
              &resp_handle,
-             &req_body,
+             &(struct sized_buffer){ payload, ret },
              HTTP_POST, 
              "/channels/%"PRIu64"/messages", channel_id);
 
@@ -329,14 +315,12 @@ discord_crosspost_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_message ? &discord_message_from_json_v : NULL,
-    .ok_obj = p_message
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = p_message ? &discord_message_from_json_v : NULL,
+             .ok_obj = &p_message
+           },
            NULL,
            HTTP_POST,
            "/channels/%"PRIu64"/messages/%"PRIu64"/crosspost", 
@@ -494,11 +478,6 @@ discord_get_reactions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = { 
-    .ok_cb = &discord_user_list_from_json_v, 
-    .ok_obj = p_users 
-  };
-
   char query[1024]="";
   if (params) {
     if (params->limit <= 0 || params->limit > 100) {
@@ -535,7 +514,10 @@ discord_get_reactions(
   ORCAcode code;
   code = discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){ 
+             .ok_cb = &discord_user_list_from_json_v, 
+             .ok_obj = &p_users 
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/messages/%"PRIu64"/reactions/%s%s", 
@@ -632,11 +614,6 @@ discord_edit_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_message ? &discord_message_from_json_v : NULL,
-    .ok_obj = p_message
-  };
-
   void *A[4]={}; // pointer availability array
   A[0] = params->content;
   A[1] = params->embed;
@@ -661,13 +638,14 @@ discord_edit_message(
     return ORCA_BAD_JSON;
   }
 
-  struct sized_buffer req_body = { payload, ret };
-
   ORCAcode code;
   code = discord_adapter_run(
            &client->adapter,
-           &resp_handle,
-           &req_body,
+           &(struct ua_resp_handle){
+             .ok_cb = p_message ? &discord_message_from_json_v : NULL,
+             .ok_obj = &p_message
+           },
+           &(struct sized_buffer){ payload, ret },
            HTTP_PATCH,
            "/channels/%"PRIu64"/messages/%"PRIu64, 
            channel_id, message_id);
@@ -733,13 +711,11 @@ discord_bulk_delete_messages(struct discord *client, u64_snowflake_t channel_id,
     return ORCA_BAD_JSON;
   }
 
-  struct sized_buffer req_body = { payload, ret };
-
   ORCAcode code;
   code = discord_adapter_run(
            &client->adapter,
            NULL,
-           &req_body,
+           &(struct sized_buffer){ payload, ret },
            HTTP_POST,
            "/channels/%"PRIu64"/messages/bulk-delete", channel_id);
 
@@ -770,12 +746,11 @@ discord_edit_channel_permissions(
 
   char payload[DISCORD_MAX_PAYLOAD_LEN];
   size_t ret = discord_edit_channel_permissions_params_to_json(payload, sizeof(payload), params);
-  struct sized_buffer req_body = { payload, ret };
 
   return discord_adapter_run(
            &client->adapter,
            NULL,
-           &req_body,
+           &(struct sized_buffer){ payload, ret },
            HTTP_PUT,
            "/channels/%"PRIu64"/permissions/%"PRIu64, 
            channel_id, overwrite_id);
@@ -796,14 +771,12 @@ discord_get_channel_invites(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = &discord_invite_list_from_json_v,
-    .ok_obj = p_invites
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_invite_list_from_json_v,
+             .ok_obj = &p_invites
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/invites", channel_id);
@@ -821,23 +794,20 @@ discord_create_channel_invite(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_invite ? &discord_invite_from_json_v : NULL,
-    .ok_obj = p_invite
-  };
-
   char payload[DISCORD_MAX_PAYLOAD_LEN];
   size_t ret;
   if (params)
     ret = discord_create_channel_invite_params_to_json(payload, sizeof(payload), params);
   else
     ret = sprintf(payload, "{}");
-  struct sized_buffer req_body = { payload, ret };
 
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
-           &req_body,
+           &(struct ua_resp_handle){
+             .ok_cb = p_invite ? &discord_invite_from_json_v : NULL,
+             .ok_obj = &p_invite
+           },
+           &(struct sized_buffer){ payload, ret },
            HTTP_POST,
            "/channels/%"PRIu64"/invites", channel_id);
 }
@@ -884,17 +854,13 @@ discord_follow_news_channel(
   char payload[256]; // should be more than enough for this
   size_t ret = discord_follow_news_channel_params_to_json(payload, sizeof(payload), params);
 
-  struct sized_buffer req_body = { payload, ret };
-
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_followed_channel ? &discord_channel_from_json_v : NULL,
-    .ok_obj = p_followed_channel
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
-           &req_body,
+           &(struct ua_resp_handle){
+             .ok_cb = p_followed_channel ? &discord_channel_from_json_v : NULL,
+             .ok_obj = &p_followed_channel
+           },
+           &(struct sized_buffer){ payload, ret },
            HTTP_POST,
            "/channels/%"PRIu64"/followers", channel_id);
 }
@@ -930,14 +896,12 @@ discord_get_pinned_messages(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = { 
-    .ok_cb = &discord_message_list_from_json_v, 
-    .ok_obj = p_messages 
-  };
-
   return discord_adapter_run( 
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){ 
+             .ok_cb = &discord_message_list_from_json_v, 
+             .ok_obj = &p_messages 
+           },
            NULL,
            HTTP_GET, 
            "/channels/%"PRIu64"/pins", channel_id);
@@ -1011,12 +975,11 @@ discord_group_dm_add_recipient(
 
   char payload[DISCORD_MAX_PAYLOAD_LEN];
   size_t ret = discord_group_dm_add_recipient_params_to_json(payload, sizeof(payload), params);
-  struct sized_buffer req_body = { payload, ret };
 
   return discord_adapter_run(
            &client->adapter,
            NULL,
-           &req_body,
+           &(struct sized_buffer){ payload, ret },
            HTTP_PUT,
            "/channels/%"PRIu64"/recipients/%"PRIu64, 
            channel_id, user_id);
@@ -1067,19 +1030,16 @@ discord_start_thread_with_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
-    .ok_obj = p_channel
-  };
-
   char payload[DISCORD_MAX_PAYLOAD_LEN];
   size_t ret = discord_start_thread_with_message_params_to_json(payload, sizeof(payload), params);
-  struct sized_buffer req_body = { payload, ret };
 
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
-           &req_body,
+           &(struct ua_resp_handle){
+             .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
+             .ok_obj = &p_channel
+           },
+           &(struct sized_buffer){ payload, ret },
            HTTP_POST,
            "/channels/%"PRIu64"/messages/%"PRIu64"/threads", 
            channel_id, message_id);
@@ -1101,19 +1061,16 @@ discord_start_thread_without_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
-    .ok_obj = p_channel
-  };
-
   char payload[DISCORD_MAX_PAYLOAD_LEN];
   size_t ret = discord_start_thread_without_message_params_to_json(payload, sizeof(payload), params);
-  struct sized_buffer req_body = { payload, ret };
 
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
-           &req_body,
+           &(struct ua_resp_handle){
+             .ok_cb = p_channel ? &discord_channel_from_json_v : NULL,
+             .ok_obj = &p_channel
+           },
+           &(struct sized_buffer){ payload, ret },
            HTTP_POST,
            "/channels/%"PRIu64"/threads", channel_id);
 }
@@ -1213,14 +1170,12 @@ discord_list_thread_members(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = &discord_thread_member_list_from_json_v,
-    .ok_obj = p_thread_members
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_thread_member_list_from_json_v,
+             .ok_obj = &p_thread_members
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/thread-members", channel_id);
@@ -1241,14 +1196,12 @@ discord_list_active_threads(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = &discord_thread_response_body_from_json_v,
-    .ok_obj = body
-  };
-
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_thread_response_body_from_json_v,
+             .ok_obj = &body
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/threads/active", channel_id);
@@ -1271,11 +1224,6 @@ discord_list_public_archived_threads(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = &discord_thread_response_body_from_json_v,
-    .ok_obj = body
-  };
-
   char query[1024]="";
   size_t offset=0;
   if (before) {
@@ -1291,7 +1239,10 @@ discord_list_public_archived_threads(
 
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_thread_response_body_from_json_v,
+             .ok_obj = &body
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/threads/archived/public%s%s", 
@@ -1315,11 +1266,6 @@ discord_list_private_archived_threads(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = &discord_thread_response_body_from_json_v,
-    .ok_obj = body
-  };
-
   char query[1024]="";
   size_t offset=0;
   if (before) {
@@ -1335,7 +1281,10 @@ discord_list_private_archived_threads(
 
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_thread_response_body_from_json_v,
+             .ok_obj = &body
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/threads/archived/private%s%s", 
@@ -1359,11 +1308,6 @@ discord_list_joined_private_archived_threads(
     return ORCA_MISSING_PARAMETER;
   }
 
-  struct ua_resp_handle resp_handle = {
-    .ok_cb = &discord_thread_response_body_from_json_v,
-    .ok_obj = body
-  };
-
   char query[1024]="";
   size_t offset=0;
   if (before) {
@@ -1379,7 +1323,10 @@ discord_list_joined_private_archived_threads(
 
   return discord_adapter_run(
            &client->adapter,
-           &resp_handle,
+           &(struct ua_resp_handle){
+             .ok_cb = &discord_thread_response_body_from_json_v,
+             .ok_obj = &body
+           },
            NULL,
            HTTP_GET,
            "/channels/%"PRIu64"/users/@me/threads/archived/private%s%s", 

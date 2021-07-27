@@ -48,18 +48,18 @@ LIBGITHUB  := $(LIBADDONS) $(LIBDIR)/libgithub.a
 LIBREDDIT  := $(LIBADDONS) $(LIBDIR)/libreddit.a
 
 # Code generator
-ACTOR_CC     ?= gcc
-ACTOR_OBJDIR := actor_obj
-ACTOR_SRC    := $(CEE_UTILS_DIR)/cee-utils.c   \
-                $(CEE_UTILS_DIR)/json-actor.c  \
-                $(CEE_UTILS_DIR)/ntl.c         \
-                $(CEE_UTILS_DIR)/json-string.c \
-                $(CEE_UTILS_DIR)/json-scanf.c  \
-                $(CEE_UTILS_DIR)/json-struct.c \
-                $(CEE_UTILS_DIR)/json-printf.c \
-                $(CEE_UTILS_DIR)/log.c         \
-                specs/specs-gen.c
-ACTOR_OBJS   := $(ACTOR_SRC:%=$(ACTOR_OBJDIR)/%.o)
+SPECSGEN_CC     ?= gcc
+SPECSGEN_OBJDIR := specs_obj
+SPECSGEN_SRC    := $(CEE_UTILS_DIR)/cee-utils.c   \
+                   $(CEE_UTILS_DIR)/json-actor.c  \
+                   $(CEE_UTILS_DIR)/ntl.c         \
+                   $(CEE_UTILS_DIR)/json-string.c \
+                   $(CEE_UTILS_DIR)/json-scanf.c  \
+                   $(CEE_UTILS_DIR)/json-struct.c \
+                   $(CEE_UTILS_DIR)/json-printf.c \
+                   $(CEE_UTILS_DIR)/log.c         \
+                   specs/specs-gen.c
+SPECSGEN_OBJS   := $(SPECSGEN_SRC:%=$(SPECSGEN_OBJDIR)/%.o)
 
 BOTS_DIR   := bots
 BOTS_SRC   := $(wildcard $(BOTS_DIR)/bot-*.c)
@@ -128,8 +128,8 @@ endif
 .ONESHELL:
 
 #generic compilation
-$(ACTOR_OBJDIR)/%.c.o : %.c
-	$(ACTOR_CC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
+$(SPECSGEN_OBJDIR)/%.c.o : %.c
+	$(SPECSGEN_CC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
 $(OBJDIR)/%.c.o : %.c
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -c -o $@ $<
 $(BOTS_DIR)/%.exe: $(BOTS_DIR)/%.c all_api_libs
@@ -142,8 +142,9 @@ $(BOTS_DIR)/%.exe: $(BOTS_DIR)/%.c all_api_libs
 	$(CC) $(CFLAGS) $(LIBS_CFLAGS) -o $@ $< $(LIBS_LDFLAGS) 
 
 
-all : discord reddit github bots
+all: discord reddit github bots
 test: discord reddit github $(TEST_EXES)
+botx: discord $(BOTX_EXES)
 
 discord: common $(DISCORD_OBJS) $(LIBDISCORD)
 reddit: common $(REDDIT_OBJS) $(LIBREDDIT)
@@ -162,19 +163,21 @@ $(DISCORD_OBJS): | $(OBJDIR)
 $(REDDIT_OBJS): | $(OBJDIR)
 $(GITHUB_OBJS): | $(OBJDIR)
 $(SPECS_OBJS): | $(OBJDIR)
-$(ACTOR_OBJS): | $(ACTOR_OBJDIR)
+$(SPECSGEN_OBJS): | $(SPECSGEN_OBJDIR)
 
 echo:
-	@echo CC: $(CC)
-	@echo PREFIX: $(PREFIX)
-	@echo BOTS_EXES: $(BOTS_EXES)
-	@echo SPECS: $(SPECS)
-	@echo SPECS_SRC: $(SPECS_SRC)
-	@echo SPECS_OBJS: $(SPECS_OBJS)
-	@echo SPECS_SUBDIR: $(SPECS_SUBDIR)
+	@ echo CC: $(CC)
+	@ echo PREFIX: $(PREFIX)
+	@ echo BOTS_EXES: $(BOTS_EXES)
+	@ echo SPECS: $(SPECS)
+	@ echo SPECS_SRC: $(SPECS_SRC)
+	@ echo SPECS_OBJS: $(SPECS_OBJS)
+	@ echo SPECS_SUBDIR: $(SPECS_SUBDIR)
+
+specs_gen: cee_utils | $(SPECS_OBJS)
+	@ $(MAKE) clean specs_clean clean_specs_gen all_headers specs
 
 bots: $(BOTS_EXES)
-botx: cee_utils common discord $(BOTX_EXES)
 
 $(CEE_UTILS_DIR):
 	if [[ ! -d $@ ]]; then        \
@@ -189,25 +192,25 @@ $(OBJDIR) :
 	         $(OBJDIR)/$(DB_DIR)                                                                             \
 	         $(OBJDIR)/add-ons
 
-$(ACTOR_OBJDIR) : | $(OBJDIR)
-	mkdir -p $(ACTOR_OBJDIR)/$(CEE_UTILS_DIR)          \
-	         $(ACTOR_OBJDIR)/$(COMMON_DIR)/third-party \
-	         $(ACTOR_OBJDIR)/specs
+$(SPECSGEN_OBJDIR) : | $(OBJDIR)
+	mkdir -p $(SPECSGEN_OBJDIR)/$(CEE_UTILS_DIR)          \
+	         $(SPECSGEN_OBJDIR)/$(COMMON_DIR)/third-party \
+	         $(SPECSGEN_OBJDIR)/specs
 
 $(LIBDIR) :
 	mkdir -p $(LIBDIR)
 
-all_headers: actor-gen.exe
+all_headers: specs-gen.exe
 	rm -rf $(SPECSDIR)/*/all_*
-	$(foreach var, $(SPECS),./bin/actor-gen.exe -S -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_structs.h) $(var);)
-	$(foreach var, $(SPECS),./bin/actor-gen.exe -E -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_enums.h) $(var);)
-	$(foreach var, $(SPECS),./bin/actor-gen.exe -F -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_functions.h) $(var);)
-	$(foreach var, $(SPECS),./bin/actor-gen.exe -O -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_opaque_struct.h) $(var);)
-	$(foreach var, $(SPECS),./bin/actor-gen.exe -c -o $(patsubst specs/%, $(SPECSDIR)/%, $(var:%.json=%.c)) $(var);)
-	$(foreach var, $(SPECS),./bin/actor-gen.exe -d -o $(patsubst specs/%, $(SPECSDIR)/%, $(var:%.json=%.h)) $(var);)
+	$(foreach var, $(SPECS),./bin/specs-gen.exe -S -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_structs.h) $(var);)
+	$(foreach var, $(SPECS),./bin/specs-gen.exe -E -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_enums.h) $(var);)
+	$(foreach var, $(SPECS),./bin/specs-gen.exe -F -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_functions.h) $(var);)
+	$(foreach var, $(SPECS),./bin/specs-gen.exe -O -a -o $(patsubst specs/%, $(SPECSDIR)/%, $(dir $(var))all_opaque_struct.h) $(var);)
+	$(foreach var, $(SPECS),./bin/specs-gen.exe -c -o $(patsubst specs/%, $(SPECSDIR)/%, $(var:%.json=%.c)) $(var);)
+	$(foreach var, $(SPECS),./bin/specs-gen.exe -d -o $(patsubst specs/%, $(SPECSDIR)/%, $(var:%.json=%.h)) $(var);)
 
-actor-gen.exe: $(ACTOR_OBJS) | $(ACTOR_OBJDIR)
-	$(ACTOR_CC) -o $@ $(ACTOR_OBJS) -lm
+specs-gen.exe: $(SPECSGEN_OBJS) | $(SPECSGEN_OBJDIR)
+	$(SPECSGEN_CC) -o $@ $(SPECSGEN_OBJS) -lm
 	mkdir -p bin
 	mv $@ ./bin
 
@@ -240,8 +243,8 @@ install :
 
 specs_clean :
 	rm -rf $(SPECSDIR)
-clean_actor_gen:
-	rm -rf $(ACTOR_OBJDIR) bin/*
+clean_specs_gen:
+	rm -rf $(SPECSGEN_OBJDIR) bin/*
 clean : 
 	rm -rf $(OBJDIR) *.exe $(TEST_DIR)/*.exe $(BOTS_DIR)/*.exe
 	rm -rf $(BOTX_DIR)/*.bx
@@ -249,5 +252,5 @@ clean :
 	rm -rf $(LIBDIR)
 purge : clean
 	rm -rf $(LIBDIR)
-	rm -rf $(ACTOR_OBJDIR)
+	rm -rf $(SPECSGEN_OBJDIR)
 	rm -rf $(CEE_UTILS_DIR)

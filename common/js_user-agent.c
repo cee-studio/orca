@@ -19,10 +19,13 @@ extern const char* g_config_file;
 int debug_stack=0;
 
 static const char *stacktrace_js =
-  "Error.prototype.toString = function() {\n"
-    "if (this.stackTrace) return this.name + ': ' + this.message + this.stackTrace;\n"
-    "return this.name + ': ' + this.message;\n"
-    "};\n";
+	"Error.prototype.toString = function() {\n"
+	"var s = this.name;\n"
+	"if ('message' in this) s += ': ' + this.message;\n"
+	"if ('stackTrace' in this) s += this.stackTrace;\n"
+	"return s;\n"
+	"};\n"
+;
 
 static void 
 enable_debug_track(js_State *J) {

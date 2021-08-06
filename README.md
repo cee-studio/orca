@@ -100,7 +100,8 @@ int main() {
    about how to get your bot token and it to a server.
 2. Invite your bot to a testing server. We can invite your
    bot to our testing servers at our [Discord Server](https://discord.gg/2jfycwXVM3).
-3. Run `./bot-echo.exe` in the same folder as `bot.config`
+3. Run `make bots`
+4. Go to `bots/` folder and run `./bot-echo.exe`
 
 ### Test bot-echo
 Type a message in any channel the bot is part of.
@@ -122,13 +123,10 @@ valgrind ./your-bot.exe
 
 - [Documentation](https://cee-studio.github.io/orca/)
 - [How to make a bot](docs/BUILDING_A_BOT.md)
+- [Contributing](docs/CONTRIBUTING.md)
 - [Discord Server](https://discord.gg/2jfycwXVM3)
 
-## Contributions are welcome!
-Check our Discord API's development [Roadmap](docs/DISCORD_ROADMAP.md) and [Coding Guidelines](docs/CODING_GUIDELINES.md) to get started
+## Contributing
+Check our [Contributing Guidelines](docs/CONTRIBUTING.md) to get started! If you are here for the Discord API, please check our [Discord API Roadmap](docs/DISCORD_ROADMAP.md).
 
-If you are not familiar with git and are not comfortable with creating pull requests without introducing merge 
-commits, please check our [Commit Guidelines](docs/COMMIT_GUIDELINES.md).
-
-
-**Please give a star if you like this project!**
+**Give us a star if you like this project!**

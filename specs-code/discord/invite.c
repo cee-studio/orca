@@ -1,9 +1,6 @@
 /* This file is generated from specs/discord/invite.json, Please don't edit it. */
 /**
  * @file specs-code/discord/invite.c
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
 
@@ -25,10 +22,12 @@ bool discord_invite_target_user_types_has(enum discord_invite_target_user_types 
   return false;
 }
 
-void discord_invite_from_json(char *json, size_t len, struct discord_invite *p)
+void discord_invite_from_json(char *json, size_t len, struct discord_invite **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_invite *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/invite.json:22:20
      '{ "name": "code", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}' */
@@ -62,16 +61,16 @@ void discord_invite_from_json(char *json, size_t len, struct discord_invite *p)
                 &p->code,
   /* specs/discord/invite.json:23:20
      '{ "name": "guild", "type":{ "base":"struct discord_guild", "dec":"*"}, "comment":"partial guild object"}' */
-                discord_guild_from_json, p->guild,
+                discord_guild_from_json, &p->guild,
   /* specs/discord/invite.json:24:20
      '{ "name": "channel", "type":{ "base":"struct discord_channel", "dec":"*"}, "comment":"partial channel object"}' */
-                discord_channel_from_json, p->channel,
+                discord_channel_from_json, &p->channel,
   /* specs/discord/invite.json:25:20
      '{ "name": "inviter", "type":{ "base":"struct discord_user", "dec":"*"}}' */
-                discord_user_from_json, p->inviter,
+                discord_user_from_json, &p->inviter,
   /* specs/discord/invite.json:26:20
      '{ "name": "target_user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}' */
-                discord_user_from_json, p->target_user,
+                discord_user_from_json, &p->target_user,
   /* specs/discord/invite.json:27:20
      '{ "name": "target_user_type", "type":{ "base":"int", "int_alias":"enum discord_invite_target_user_types" }}' */
                 &p->target_user_type,
@@ -194,12 +193,8 @@ void discord_invite_init_v(void *p) {
   discord_invite_init((struct discord_invite *)p);
 }
 
-void discord_invite_free_v(void *p) {
- discord_invite_free((struct discord_invite *)p);
-};
-
-void discord_invite_from_json_v(char *json, size_t len, void *p) {
- discord_invite_from_json(json, len, (struct discord_invite*)p);
+void discord_invite_from_json_v(char *json, size_t len, void *pp) {
+ discord_invite_from_json(json, len, (struct discord_invite**)pp);
 }
 
 size_t discord_invite_to_json_v(char *json, size_t len, void *p) {
@@ -226,20 +221,28 @@ void discord_invite_cleanup(struct discord_invite *d) {
     free(d->code);
   /* specs/discord/invite.json:23:20
      '{ "name": "guild", "type":{ "base":"struct discord_guild", "dec":"*"}, "comment":"partial guild object"}' */
-  if (d->guild)
-    discord_guild_free(d->guild);
+  if (d->guild) {
+    discord_guild_cleanup(d->guild);
+    free(d->guild);
+  }
   /* specs/discord/invite.json:24:20
      '{ "name": "channel", "type":{ "base":"struct discord_channel", "dec":"*"}, "comment":"partial channel object"}' */
-  if (d->channel)
-    discord_channel_free(d->channel);
+  if (d->channel) {
+    discord_channel_cleanup(d->channel);
+    free(d->channel);
+  }
   /* specs/discord/invite.json:25:20
      '{ "name": "inviter", "type":{ "base":"struct discord_user", "dec":"*"}}' */
-  if (d->inviter)
-    discord_user_free(d->inviter);
+  if (d->inviter) {
+    discord_user_cleanup(d->inviter);
+    free(d->inviter);
+  }
   /* specs/discord/invite.json:26:20
      '{ "name": "target_user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}' */
-  if (d->target_user)
-    discord_user_free(d->target_user);
+  if (d->target_user) {
+    discord_user_cleanup(d->target_user);
+    free(d->target_user);
+  }
   /* specs/discord/invite.json:27:20
      '{ "name": "target_user_type", "type":{ "base":"int", "int_alias":"enum discord_invite_target_user_types" }}' */
   // p->target_user_type is a scalar
@@ -258,19 +261,23 @@ void discord_invite_init(struct discord_invite *p) {
 
   /* specs/discord/invite.json:23:20
      '{ "name": "guild", "type":{ "base":"struct discord_guild", "dec":"*"}, "comment":"partial guild object"}' */
-  p->guild = discord_guild_alloc();
+  p->guild = malloc(sizeof *p->guild);
+  discord_guild_init(p->guild);
 
   /* specs/discord/invite.json:24:20
      '{ "name": "channel", "type":{ "base":"struct discord_channel", "dec":"*"}, "comment":"partial channel object"}' */
-  p->channel = discord_channel_alloc();
+  p->channel = malloc(sizeof *p->channel);
+  discord_channel_init(p->channel);
 
   /* specs/discord/invite.json:25:20
      '{ "name": "inviter", "type":{ "base":"struct discord_user", "dec":"*"}}' */
-  p->inviter = discord_user_alloc();
+  p->inviter = malloc(sizeof *p->inviter);
+  discord_user_init(p->inviter);
 
   /* specs/discord/invite.json:26:20
      '{ "name": "target_user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}' */
-  p->target_user = discord_user_alloc();
+  p->target_user = malloc(sizeof *p->target_user);
+  discord_user_init(p->target_user);
 
   /* specs/discord/invite.json:27:20
      '{ "name": "target_user_type", "type":{ "base":"int", "int_alias":"enum discord_invite_target_user_types" }}' */
@@ -282,17 +289,6 @@ void discord_invite_init(struct discord_invite *p) {
      '{ "name": "approximate_member_count", "type":{ "base":"int" }}' */
 
 }
-struct discord_invite* discord_invite_alloc() {
-  struct discord_invite *p= malloc(sizeof(struct discord_invite));
-  discord_invite_init(p);
-  return p;
-}
-
-void discord_invite_free(struct discord_invite *p) {
-  discord_invite_cleanup(p);
-  free(p);
-}
-
 void discord_invite_list_free(struct discord_invite **p) {
   ntl_free((void**)p, (vfvp)discord_invite_cleanup);
 }
@@ -302,10 +298,10 @@ void discord_invite_list_from_json(char *str, size_t len, struct discord_invite 
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_invite);
-  d.init_elem = discord_invite_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_invite_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_invite_list_to_json(char *str, size_t len, struct discord_invite **p)
@@ -314,10 +310,12 @@ size_t discord_invite_list_to_json(char *str, size_t len, struct discord_invite 
 }
 
 
-void discord_invite_metadata_from_json(char *json, size_t len, struct discord_invite_metadata *p)
+void discord_invite_metadata_from_json(char *json, size_t len, struct discord_invite_metadata **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_invite_metadata *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/invite.json:39:20
      '{ "name": "user", "type":{ "base":"int" }}' */
@@ -435,12 +433,8 @@ void discord_invite_metadata_init_v(void *p) {
   discord_invite_metadata_init((struct discord_invite_metadata *)p);
 }
 
-void discord_invite_metadata_free_v(void *p) {
- discord_invite_metadata_free((struct discord_invite_metadata *)p);
-};
-
-void discord_invite_metadata_from_json_v(char *json, size_t len, void *p) {
- discord_invite_metadata_from_json(json, len, (struct discord_invite_metadata*)p);
+void discord_invite_metadata_from_json_v(char *json, size_t len, void *pp) {
+ discord_invite_metadata_from_json(json, len, (struct discord_invite_metadata**)pp);
 }
 
 size_t discord_invite_metadata_to_json_v(char *json, size_t len, void *p) {
@@ -496,17 +490,6 @@ void discord_invite_metadata_init(struct discord_invite_metadata *p) {
      '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}' */
 
 }
-struct discord_invite_metadata* discord_invite_metadata_alloc() {
-  struct discord_invite_metadata *p= malloc(sizeof(struct discord_invite_metadata));
-  discord_invite_metadata_init(p);
-  return p;
-}
-
-void discord_invite_metadata_free(struct discord_invite_metadata *p) {
-  discord_invite_metadata_cleanup(p);
-  free(p);
-}
-
 void discord_invite_metadata_list_free(struct discord_invite_metadata **p) {
   ntl_free((void**)p, (vfvp)discord_invite_metadata_cleanup);
 }
@@ -516,10 +499,10 @@ void discord_invite_metadata_list_from_json(char *str, size_t len, struct discor
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_invite_metadata);
-  d.init_elem = discord_invite_metadata_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_invite_metadata_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_invite_metadata_list_to_json(char *str, size_t len, struct discord_invite_metadata **p)

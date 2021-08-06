@@ -1,18 +1,17 @@
 /* This file is generated from specs/discord/invite.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/invite.endpoints-params.c
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
 
 #include "specs.h"
 
-void discord_get_invite_params_from_json(char *json, size_t len, struct discord_get_invite_params *p)
+void discord_get_invite_params_from_json(char *json, size_t len, struct discord_get_invite_params **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_get_invite_params *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/invite.endpoints-params.json:13:20
      '{ "name": "with_counts", "type":{ "base":"bool" }, "comment":"whether the invite should contain approximate member counts"}' */
@@ -82,12 +81,8 @@ void discord_get_invite_params_init_v(void *p) {
   discord_get_invite_params_init((struct discord_get_invite_params *)p);
 }
 
-void discord_get_invite_params_free_v(void *p) {
- discord_get_invite_params_free((struct discord_get_invite_params *)p);
-};
-
-void discord_get_invite_params_from_json_v(char *json, size_t len, void *p) {
- discord_get_invite_params_from_json(json, len, (struct discord_get_invite_params*)p);
+void discord_get_invite_params_from_json_v(char *json, size_t len, void *pp) {
+ discord_get_invite_params_from_json(json, len, (struct discord_get_invite_params**)pp);
 }
 
 size_t discord_get_invite_params_to_json_v(char *json, size_t len, void *p) {
@@ -125,17 +120,6 @@ void discord_get_invite_params_init(struct discord_get_invite_params *p) {
      '{ "name": "with_expiration", "type":{ "base":"bool" }, "comment":"whether the invite should contain the expiration date"}' */
 
 }
-struct discord_get_invite_params* discord_get_invite_params_alloc() {
-  struct discord_get_invite_params *p= malloc(sizeof(struct discord_get_invite_params));
-  discord_get_invite_params_init(p);
-  return p;
-}
-
-void discord_get_invite_params_free(struct discord_get_invite_params *p) {
-  discord_get_invite_params_cleanup(p);
-  free(p);
-}
-
 void discord_get_invite_params_list_free(struct discord_get_invite_params **p) {
   ntl_free((void**)p, (vfvp)discord_get_invite_params_cleanup);
 }
@@ -145,10 +129,10 @@ void discord_get_invite_params_list_from_json(char *str, size_t len, struct disc
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_get_invite_params);
-  d.init_elem = discord_get_invite_params_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_get_invite_params_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_get_invite_params_list_to_json(char *str, size_t len, struct discord_get_invite_params **p)

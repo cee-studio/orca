@@ -9,7 +9,7 @@
 
 
 void on_ready(struct discord *client, const struct discord_user *bot) {
-  fprintf(stderr, "\n\nManualDM-Bot succesfully connected to Discord as %s#%s!\n\n",
+  log_info("ManualDM-Bot succesfully connected to Discord as %s#%s!",
       bot->username, bot->discriminator);
 }
 
@@ -19,7 +19,7 @@ void on_dm_receive(
     const struct discord_message *msg)
 {
   if (msg->author->bot) return;
-  fprintf(stdout, "%s:%s\n", msg->author->username, msg->content);
+  printf("%s:%s\n", msg->author->username, msg->content);
 }
 
 void* read_input(void *p_client)
@@ -42,15 +42,18 @@ void* read_input(void *p_client)
     if (!recipient_id || !*msg) {
       sscanf(buf, "%[^\n]", msg);
       if (!*msg) {
-        fprintf(stderr, "Expected format: <*recipient_id>:<message>"); 
+        printf("Expected format: <*recipient_id>:<message>"); 
         continue;
       }
     }
     else { /* reset active chat */
-      struct discord_channel *dm_channel = discord_channel_alloc();
-      discord_create_dm(client, recipient_id, dm_channel);
-      dm_channel_id = dm_channel->id;
-      discord_channel_free(dm_channel);
+      struct discord_channel dm_channel;
+      discord_channel_init(&dm_channel);
+
+      discord_create_dm(client, recipient_id, &dm_channel);
+      dm_channel_id = dm_channel.id;
+
+      discord_channel_cleanup(&dm_channel);
     }
     struct discord_create_message_params params = { .content = msg };
     discord_create_message(client, dm_channel_id, &params, NULL);

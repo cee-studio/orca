@@ -1,16 +1,25 @@
 /* This file is generated from specs/discord/audit_log.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/audit_log.endpoints-params.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
 
 
+// defined at specs/discord/audit_log.endpoints-params.json:8:22
 /**
  * @see https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
- * @note defined at specs/discord/audit_log.endpoints-params.json:8:22
+ *
+ * - Initializer:
+ *   - <tt> discord_get_guild_audit_log_params_init(struct discord_get_guild_audit_log_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_get_guild_audit_log_params_cleanup(struct discord_get_guild_audit_log_params *) </tt>
+ *   - <tt> discord_get_guild_audit_log_params_list_free(struct discord_get_guild_audit_log_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_get_guild_audit_log_params_from_json(char *rbuf, size_t len, struct discord_get_guild_audit_log_params **) </tt>
+ *   - <tt> discord_get_guild_audit_log_params_list_from_json(char *rbuf, size_t len, struct discord_get_guild_audit_log_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_get_guild_audit_log_params_to_json(char *wbuf, size_t len, struct discord_get_guild_audit_log_params *) </tt>
+ *   - <tt> discord_get_guild_audit_log_params_list_to_json(char *wbuf, size_t len, struct discord_get_guild_audit_log_params **) </tt>
  */
 struct discord_get_guild_audit_log_params {
   /* specs/discord/audit_log.endpoints-params.json:11:20
@@ -48,11 +57,8 @@ extern void discord_get_guild_audit_log_params_cleanup_v(void *p);
 extern void discord_get_guild_audit_log_params_cleanup(struct discord_get_guild_audit_log_params *p);
 extern void discord_get_guild_audit_log_params_init_v(void *p);
 extern void discord_get_guild_audit_log_params_init(struct discord_get_guild_audit_log_params *p);
-extern struct discord_get_guild_audit_log_params * discord_get_guild_audit_log_params_alloc();
-extern void discord_get_guild_audit_log_params_free_v(void *p);
-extern void discord_get_guild_audit_log_params_free(struct discord_get_guild_audit_log_params *p);
-extern void discord_get_guild_audit_log_params_from_json_v(char *json, size_t len, void *p);
-extern void discord_get_guild_audit_log_params_from_json(char *json, size_t len, struct discord_get_guild_audit_log_params *p);
+extern void discord_get_guild_audit_log_params_from_json_v(char *json, size_t len, void *pp);
+extern void discord_get_guild_audit_log_params_from_json(char *json, size_t len, struct discord_get_guild_audit_log_params **pp);
 extern size_t discord_get_guild_audit_log_params_to_json_v(char *json, size_t len, void *p);
 extern size_t discord_get_guild_audit_log_params_to_json(char *json, size_t len, struct discord_get_guild_audit_log_params *p);
 extern size_t discord_get_guild_audit_log_params_to_query_v(char *json, size_t len, void *p);

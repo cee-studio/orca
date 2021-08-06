@@ -7,7 +7,7 @@
 
 
 void on_ready(struct discord *client, const struct discord_user *bot) {
-  fprintf(stderr, "\n\nChannel-Bot succesfully connected to Discord as %s#%s!\n\n",
+  log_info("Channel-Bot succesfully connected to Discord as %s#%s!",
       bot->username, bot->discriminator);
 }
 
@@ -94,18 +94,19 @@ void on_channel_create_invite(
 {
   if (msg->author->bot) return;
 
-  struct discord_invite *invite = discord_invite_alloc();
+  struct discord_invite invite;
+  discord_invite_init(&invite);
 
   char text[DISCORD_MAX_MESSAGE_LEN];
-  if (ORCA_OK == discord_create_channel_invite(client, msg->channel_id, NULL, invite))
-    sprintf(text, "https://discord.gg/%s", invite->code);
+  if (ORCA_OK == discord_create_channel_invite(client, msg->channel_id, NULL, &invite))
+    sprintf(text, "https://discord.gg/%s", invite.code);
   else
     sprintf(text, "Couldn't create invite.");
 
   struct discord_create_message_params params = { .content = text };
   discord_create_message(client, msg->channel_id, &params, NULL);
 
-  discord_invite_free(invite);
+  discord_invite_cleanup(&invite);
 }
 
 void on_channel_start_thread(
@@ -115,37 +116,41 @@ void on_channel_start_thread(
 {
   if (msg->author->bot) return;
 
-  struct discord_channel *channel = discord_channel_alloc();
+  struct discord_channel channel;
+  discord_channel_init(&channel);
 
   char text[DISCORD_MAX_MESSAGE_LEN];
   ORCAcode code;
-  if (msg->message_reference->message_id) {
-    struct discord_start_thread_with_message_params params = { .name = "new_thread" };
+  if (msg->message_reference) {
     code = discord_start_thread_with_message(
              client, 
              msg->channel_id, 
              msg->message_reference->message_id, 
-             &params, 
-             channel);
+             &(struct discord_start_thread_with_message_params){ 
+               .name = "new_thread"
+             },
+             &channel);
   }
   else {
-    struct discord_start_thread_without_message_params params = { .name = "new_thread" };
     code = discord_start_thread_without_message(
             client, 
             msg->channel_id, 
-            &params, 
-            channel);
+            &(struct discord_start_thread_without_message_params){
+              .name = "new_thread", 
+              .type = DISCORD_CHANNEL_GUILD_PUBLIC_THREAD
+            },
+            &channel);
   }
 
   if (ORCA_OK == code)
-    sprintf(text, "Created thread-channel <#%"PRIu64">", channel->id);
+    sprintf(text, "Created thread-channel <#%"PRIu64">", channel.id);
   else
     sprintf(text, "Couldn't create channel.");
 
   struct discord_create_message_params params = { .content = text };
   discord_create_message(client, msg->channel_id, &params, NULL);
 
-  discord_channel_free(channel);
+  discord_channel_cleanup(&channel);
 }
 
 int main(int argc, char *argv[])

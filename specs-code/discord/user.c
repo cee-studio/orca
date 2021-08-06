@@ -1,9 +1,6 @@
 /* This file is generated from specs/discord/user.json, Please don't edit it. */
 /**
  * @file specs-code/discord/user.c
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
 
@@ -80,10 +77,12 @@ bool discord_user_premium_types_has(enum discord_user_premium_types v, char *s) 
   return false;
 }
 
-void discord_user_from_json(char *json, size_t len, struct discord_user *p)
+void discord_user_from_json(char *json, size_t len, struct discord_user **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_user *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/user.json:45:24
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"} }' */
@@ -329,12 +328,8 @@ void discord_user_init_v(void *p) {
   discord_user_init((struct discord_user *)p);
 }
 
-void discord_user_free_v(void *p) {
- discord_user_free((struct discord_user *)p);
-};
-
-void discord_user_from_json_v(char *json, size_t len, void *p) {
- discord_user_from_json(json, len, (struct discord_user*)p);
+void discord_user_from_json_v(char *json, size_t len, void *pp) {
+ discord_user_from_json(json, len, (struct discord_user**)pp);
 }
 
 size_t discord_user_to_json_v(char *json, size_t len, void *p) {
@@ -438,17 +433,6 @@ void discord_user_init(struct discord_user *p) {
      '{ "name": "public_flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}' */
 
 }
-struct discord_user* discord_user_alloc() {
-  struct discord_user *p= malloc(sizeof(struct discord_user));
-  discord_user_init(p);
-  return p;
-}
-
-void discord_user_free(struct discord_user *p) {
-  discord_user_cleanup(p);
-  free(p);
-}
-
 void discord_user_list_free(struct discord_user **p) {
   ntl_free((void**)p, (vfvp)discord_user_cleanup);
 }
@@ -458,10 +442,10 @@ void discord_user_list_from_json(char *str, size_t len, struct discord_user ***p
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_user);
-  d.init_elem = discord_user_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_user_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_user_list_to_json(char *str, size_t len, struct discord_user **p)
@@ -489,10 +473,12 @@ bool discord_user_connection_visibility_types_has(enum discord_user_connection_v
   return false;
 }
 
-void discord_connection_from_json(char *json, size_t len, struct discord_connection *p)
+void discord_connection_from_json(char *json, size_t len, struct discord_connection **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_connection *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/user.json:77:24
      '{ "name": "id", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}' */
@@ -674,12 +660,8 @@ void discord_connection_init_v(void *p) {
   discord_connection_init((struct discord_connection *)p);
 }
 
-void discord_connection_free_v(void *p) {
- discord_connection_free((struct discord_connection *)p);
-};
-
-void discord_connection_from_json_v(char *json, size_t len, void *p) {
- discord_connection_from_json(json, len, (struct discord_connection*)p);
+void discord_connection_from_json_v(char *json, size_t len, void *pp) {
+ discord_connection_from_json(json, len, (struct discord_connection**)pp);
 }
 
 size_t discord_connection_to_json_v(char *json, size_t len, void *p) {
@@ -763,17 +745,6 @@ void discord_connection_init(struct discord_connection *p) {
      '{ "name": "visibility", "type":{ "base":"int", "int_alias":"enum discord_user_connection_visibility_types" }}' */
 
 }
-struct discord_connection* discord_connection_alloc() {
-  struct discord_connection *p= malloc(sizeof(struct discord_connection));
-  discord_connection_init(p);
-  return p;
-}
-
-void discord_connection_free(struct discord_connection *p) {
-  discord_connection_cleanup(p);
-  free(p);
-}
-
 void discord_connection_list_free(struct discord_connection **p) {
   ntl_free((void**)p, (vfvp)discord_connection_cleanup);
 }
@@ -783,10 +754,10 @@ void discord_connection_list_from_json(char *str, size_t len, struct discord_con
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_connection);
-  d.init_elem = discord_connection_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_connection_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_connection_list_to_json(char *str, size_t len, struct discord_connection **p)

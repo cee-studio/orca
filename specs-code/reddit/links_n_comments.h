@@ -1,18 +1,26 @@
 /* This file is generated from specs/reddit/links_n_comments.json, Please don't edit it. */
 /**
  * @file specs-code/reddit/links_n_comments.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see 
  */
 
 
+// Comment
+// defined at specs/reddit/links_n_comments.json:10:22
 /**
- * @brief Comment
- *
  * @see https://www.reddit.com/dev/api/#POST_api_comment
- * @note defined at specs/reddit/links_n_comments.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> reddit_comment_params_init(struct reddit_comment_params *) </tt>
+ * - Cleanup:
+ *   - <tt> reddit_comment_params_cleanup(struct reddit_comment_params *) </tt>
+ *   - <tt> reddit_comment_params_list_free(struct reddit_comment_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> reddit_comment_params_from_json(char *rbuf, size_t len, struct reddit_comment_params **) </tt>
+ *   - <tt> reddit_comment_params_list_from_json(char *rbuf, size_t len, struct reddit_comment_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> reddit_comment_params_to_json(char *wbuf, size_t len, struct reddit_comment_params *) </tt>
+ *   - <tt> reddit_comment_params_list_to_json(char *wbuf, size_t len, struct reddit_comment_params **) </tt>
  */
 struct reddit_comment_params {
   /* specs/reddit/links_n_comments.json:13:20
@@ -58,11 +66,8 @@ extern void reddit_comment_params_cleanup_v(void *p);
 extern void reddit_comment_params_cleanup(struct reddit_comment_params *p);
 extern void reddit_comment_params_init_v(void *p);
 extern void reddit_comment_params_init(struct reddit_comment_params *p);
-extern struct reddit_comment_params * reddit_comment_params_alloc();
-extern void reddit_comment_params_free_v(void *p);
-extern void reddit_comment_params_free(struct reddit_comment_params *p);
-extern void reddit_comment_params_from_json_v(char *json, size_t len, void *p);
-extern void reddit_comment_params_from_json(char *json, size_t len, struct reddit_comment_params *p);
+extern void reddit_comment_params_from_json_v(char *json, size_t len, void *pp);
+extern void reddit_comment_params_from_json(char *json, size_t len, struct reddit_comment_params **pp);
 extern size_t reddit_comment_params_to_json_v(char *json, size_t len, void *p);
 extern size_t reddit_comment_params_to_json(char *json, size_t len, struct reddit_comment_params *p);
 extern size_t reddit_comment_params_to_query_v(char *json, size_t len, void *p);

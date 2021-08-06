@@ -1,18 +1,26 @@
 /* This file is generated from specs/discord/webhook.json, Please don't edit it. */
 /**
  * @file specs-code/discord/webhook.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
 
 
+// Webhook Structure
+// defined at specs/discord/webhook.json:9:22
 /**
- * @brief Webhook Structure
- *
  * @see https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure
- * @note defined at specs/discord/webhook.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_webhook_init(struct discord_webhook *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_webhook_cleanup(struct discord_webhook *) </tt>
+ *   - <tt> discord_webhook_list_free(struct discord_webhook **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_webhook_from_json(char *rbuf, size_t len, struct discord_webhook **) </tt>
+ *   - <tt> discord_webhook_list_from_json(char *rbuf, size_t len, struct discord_webhook ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_webhook_to_json(char *wbuf, size_t len, struct discord_webhook *) </tt>
+ *   - <tt> discord_webhook_list_to_json(char *wbuf, size_t len, struct discord_webhook **) </tt>
  */
 struct discord_webhook {
   /* specs/discord/webhook.json:12:20
@@ -70,11 +78,8 @@ extern void discord_webhook_cleanup_v(void *p);
 extern void discord_webhook_cleanup(struct discord_webhook *p);
 extern void discord_webhook_init_v(void *p);
 extern void discord_webhook_init(struct discord_webhook *p);
-extern struct discord_webhook * discord_webhook_alloc();
-extern void discord_webhook_free_v(void *p);
-extern void discord_webhook_free(struct discord_webhook *p);
-extern void discord_webhook_from_json_v(char *json, size_t len, void *p);
-extern void discord_webhook_from_json(char *json, size_t len, struct discord_webhook *p);
+extern void discord_webhook_from_json_v(char *json, size_t len, void *pp);
+extern void discord_webhook_from_json(char *json, size_t len, struct discord_webhook **pp);
 extern size_t discord_webhook_to_json_v(char *json, size_t len, void *p);
 extern size_t discord_webhook_to_json(char *json, size_t len, struct discord_webhook *p);
 extern size_t discord_webhook_to_query_v(char *json, size_t len, void *p);

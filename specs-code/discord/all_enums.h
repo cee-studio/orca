@@ -1,18 +1,12 @@
 /* This file is generated from specs/discord/audit_log.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
 
 /* This file is generated from specs/discord/audit_log.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
 
@@ -60,18 +54,12 @@ extern bool discord_audit_log_events_has(enum discord_audit_log_events, char*);
 /* This file is generated from specs/discord/channel.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
 
 /* This file is generated from specs/discord/channel.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
 
@@ -85,6 +73,10 @@ enum discord_channel_types {
   DISCORD_CHANNEL_GUILD_CATEGORY = 4,
   DISCORD_CHANNEL_GUILD_NEWS = 5,
   DISCORD_CHANNEL_GUILD_STORE = 6,
+  DISCORD_CHANNEL_GUILD_NEWS_THREAD = 10,
+  DISCORD_CHANNEL_GUILD_PUBLIC_THREAD = 11,
+  DISCORD_CHANNEL_GUILD_PRIVATE_THREAD = 12,
+  DISCORD_CHANNEL_GUILD_STAGE_VOICE = 13,
 };
 extern char* discord_channel_types_to_string(enum discord_channel_types);
 extern enum discord_channel_types discord_channel_types_from_string(char*);
@@ -149,27 +141,18 @@ extern bool discord_message_types_has(enum discord_message_types, char*);
 /* This file is generated from specs/discord/emoji.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see 
  */
 
 /* This file is generated from specs/discord/emoji.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/emoji
  */
 
 /* This file is generated from specs/discord/gateway.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/gateway
  */
 
@@ -291,36 +274,24 @@ extern bool discord_gateway_activity_types_has(enum discord_gateway_activity_typ
 /* This file is generated from specs/discord/guild-template.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
 
 /* This file is generated from specs/discord/guild-template.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
 
 /* This file is generated from specs/discord/guild.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
 
 /* This file is generated from specs/discord/guild.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
 
@@ -418,18 +389,12 @@ extern bool discord_guild_integration_expire_behaviors_has(enum discord_guild_in
 /* This file is generated from specs/discord/invite.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
 
 /* This file is generated from specs/discord/invite.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
 
@@ -441,12 +406,37 @@ enum discord_invite_target_user_types {
 extern char* discord_invite_target_user_types_to_string(enum discord_invite_target_user_types);
 extern enum discord_invite_target_user_types discord_invite_target_user_types_from_string(char*);
 extern bool discord_invite_target_user_types_has(enum discord_invite_target_user_types, char*);
+/* This file is generated from specs/discord/message_components.json, Please don't edit it. */
+/**
+ * @file specs-code/discord/all_enums.h
+ * @see https://discord.com/developers/docs/interactions/message-components#message-components
+ */
+
+
+
+enum discord_component_types {
+  DISCORD_COMPONENT_ACTION_ROW = 1,
+  DISCORD_COMPONENT_BUTTON = 2,
+  DISCORD_COMPONENT_SELECT_MENU = 3,
+};
+extern char* discord_component_types_to_string(enum discord_component_types);
+extern enum discord_component_types discord_component_types_from_string(char*);
+extern bool discord_component_types_has(enum discord_component_types, char*);
+
+
+enum discord_button_styles {
+  DISCORD_BUTTON_PRIMARY = 1, // blurple, requires custom_id
+  DISCORD_BUTTON_SECONDARY = 2, // grey, requires custom_id
+  DISCORD_BUTTON_SUCCESS = 3, // green, requires custom_id
+  DISCORD_BUTTON_DANGER = 4, // red, requires custom_id
+  DISCORD_BUTTON_LINK = 5, // grey, requires url
+};
+extern char* discord_button_styles_to_string(enum discord_button_styles);
+extern enum discord_button_styles discord_button_styles_from_string(char*);
+extern bool discord_button_styles_has(enum discord_button_styles, char*);
 /* This file is generated from specs/discord/permissions.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/permissions
  */
 
@@ -489,21 +479,76 @@ enum discord_permissions_bitwise_flags {
 extern char* discord_permissions_bitwise_flags_to_string(enum discord_permissions_bitwise_flags);
 extern enum discord_permissions_bitwise_flags discord_permissions_bitwise_flags_from_string(char*);
 extern bool discord_permissions_bitwise_flags_has(enum discord_permissions_bitwise_flags, char*);
+/* This file is generated from specs/discord/slash_commands.json, Please don't edit it. */
+/**
+ * @file specs-code/discord/all_enums.h
+ * @see https://discord.com/developers/docs/interactions/slash-commands#data-models-and-types
+ */
+
+
+
+enum discord_application_command_option_types {
+  DISCORD_APPLICATION_COMMAND_OPTION_SUB_COMMAND = 1,
+  DISCORD_APPLICATION_COMMAND_OPTION_SUB_COMMAND_GROUP = 2,
+  DISCORD_APPLICATION_COMMAND_OPTION_STRING = 3,
+  DISCORD_APPLICATION_COMMAND_OPTION_INTEGER = 4,
+  DISCORD_APPLICATION_COMMAND_OPTION_BOOLEAN = 5,
+  DISCORD_APPLICATION_COMMAND_OPTION_USER = 6,
+  DISCORD_APPLICATION_COMMAND_OPTION_CHANNEL = 7,
+  DISCORD_APPLICATION_COMMAND_OPTION_ROLE = 8,
+  DISCORD_APPLICATION_COMMAND_OPTION_MENTIONABLE = 9,
+};
+extern char* discord_application_command_option_types_to_string(enum discord_application_command_option_types);
+extern enum discord_application_command_option_types discord_application_command_option_types_from_string(char*);
+extern bool discord_application_command_option_types_has(enum discord_application_command_option_types, char*);
+
+
+enum discord_application_command_permission_types {
+  DISCORD_APPLICATION_COMMAND_PERMISSION_ROLE = 1,
+  DISCORD_APPLICATION_COMMAND_PERMISSION_USER = 2,
+};
+extern char* discord_application_command_permission_types_to_string(enum discord_application_command_permission_types);
+extern enum discord_application_command_permission_types discord_application_command_permission_types_from_string(char*);
+extern bool discord_application_command_permission_types_has(enum discord_application_command_permission_types, char*);
+
+
+enum discord_interaction_request_types {
+  DISCORD_INTERACTION_PING = 1,
+  DISCORD_INTERACTION_APPLICATION_COMMAND = 2,
+  DISCORD_INTERACTION_MESSAGE_COMPONENT = 3,
+};
+extern char* discord_interaction_request_types_to_string(enum discord_interaction_request_types);
+extern enum discord_interaction_request_types discord_interaction_request_types_from_string(char*);
+extern bool discord_interaction_request_types_has(enum discord_interaction_request_types, char*);
+
+
+enum discord_interaction_callback_types {
+  DISCORD_INTERACTION_CALLBACK_PONG = 1, // ACK a Ping
+  DISCORD_INTERACTION_CALLBACK_CHANNEL_MESSAGE_WITH_SOURCE = 4, // respond to a interaction with a message
+  DISCORD_INTERACTION_CALLBACK_DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5, // ACK an interaction and edit a response later, the user sees a loading state
+  DISCORD_INTERACTION_CALLBACK_DEFERRED_UPDATE_MESSAGE = 6, // for components, ACK an interaction and edit the original message later; the user does not see a loading state
+  DISCORD_INTERACTION_CALLBACK_UPDATE_MESSAGE = 7, // for components, edit the message the component was attached to
+};
+extern char* discord_interaction_callback_types_to_string(enum discord_interaction_callback_types);
+extern enum discord_interaction_callback_types discord_interaction_callback_types_from_string(char*);
+extern bool discord_interaction_callback_types_has(enum discord_interaction_callback_types, char*);
+
+
+enum discord_interaction_application_command_callback_data_flags {
+  DISCORD_INTERACTION_APPLICATION_COMMAND_CALLBACK_DATA_EPHEMERAL = 64, // only the user receiving the message can see it
+};
+extern char* discord_interaction_application_command_callback_data_flags_to_string(enum discord_interaction_application_command_callback_data_flags);
+extern enum discord_interaction_application_command_callback_data_flags discord_interaction_application_command_callback_data_flags_from_string(char*);
+extern bool discord_interaction_application_command_callback_data_flags_has(enum discord_interaction_application_command_callback_data_flags, char*);
 /* This file is generated from specs/discord/user.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
 
 /* This file is generated from specs/discord/user.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
 
@@ -548,9 +593,6 @@ extern bool discord_user_connection_visibility_types_has(enum discord_user_conne
 /* This file is generated from specs/discord/voice-connections.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/voice-connections
  */
 
@@ -605,27 +647,18 @@ extern bool discord_voice_speaking_flags_has(enum discord_voice_speaking_flags, 
 /* This file is generated from specs/discord/voice.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/voice
  */
 
 /* This file is generated from specs/discord/webhook.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
 
 /* This file is generated from specs/discord/webhook.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_enums.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
 

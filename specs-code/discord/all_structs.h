@@ -1,16 +1,25 @@
 /* This file is generated from specs/discord/audit_log.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
 
 
+// defined at specs/discord/audit_log.endpoints-params.json:8:22
 /**
  * @see https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
- * @note defined at specs/discord/audit_log.endpoints-params.json:8:22
+ *
+ * - Initializer:
+ *   - <tt> discord_get_guild_audit_log_params_init(struct discord_get_guild_audit_log_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_get_guild_audit_log_params_cleanup(struct discord_get_guild_audit_log_params *) </tt>
+ *   - <tt> discord_get_guild_audit_log_params_list_free(struct discord_get_guild_audit_log_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_get_guild_audit_log_params_from_json(char *rbuf, size_t len, struct discord_get_guild_audit_log_params **) </tt>
+ *   - <tt> discord_get_guild_audit_log_params_list_from_json(char *rbuf, size_t len, struct discord_get_guild_audit_log_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_get_guild_audit_log_params_to_json(char *wbuf, size_t len, struct discord_get_guild_audit_log_params *) </tt>
+ *   - <tt> discord_get_guild_audit_log_params_list_to_json(char *wbuf, size_t len, struct discord_get_guild_audit_log_params **) </tt>
  */
 struct discord_get_guild_audit_log_params {
   /* specs/discord/audit_log.endpoints-params.json:11:20
@@ -47,18 +56,26 @@ struct discord_get_guild_audit_log_params {
 /* This file is generated from specs/discord/audit_log.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/audit-log
  */
 
 
+// Audit Log Structure
+// defined at specs/discord/audit_log.json:9:22
 /**
- * @brief Audit Log Structure
- *
  * @see https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure
- * @note defined at specs/discord/audit_log.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_audit_log_init(struct discord_audit_log *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_audit_log_cleanup(struct discord_audit_log *) </tt>
+ *   - <tt> discord_audit_log_list_free(struct discord_audit_log **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_audit_log_from_json(char *rbuf, size_t len, struct discord_audit_log **) </tt>
+ *   - <tt> discord_audit_log_list_from_json(char *rbuf, size_t len, struct discord_audit_log ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_audit_log_to_json(char *wbuf, size_t len, struct discord_audit_log *) </tt>
+ *   - <tt> discord_audit_log_list_to_json(char *wbuf, size_t len, struct discord_audit_log **) </tt>
  */
 struct discord_audit_log {
   /* specs/discord/audit_log.json:12:18
@@ -95,11 +112,22 @@ struct discord_audit_log {
 
 
 
+// Audit Log Entry Structure
+// defined at specs/discord/audit_log.json:65:22
 /**
- * @brief Audit Log Entry Structure
- *
  * @see https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-audit-log-entry-structure
- * @note defined at specs/discord/audit_log.json:65:22
+ *
+ * - Initializer:
+ *   - <tt> discord_audit_log_entry_init(struct discord_audit_log_entry *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_audit_log_entry_cleanup(struct discord_audit_log_entry *) </tt>
+ *   - <tt> discord_audit_log_entry_list_free(struct discord_audit_log_entry **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_audit_log_entry_from_json(char *rbuf, size_t len, struct discord_audit_log_entry **) </tt>
+ *   - <tt> discord_audit_log_entry_list_from_json(char *rbuf, size_t len, struct discord_audit_log_entry ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_audit_log_entry_to_json(char *wbuf, size_t len, struct discord_audit_log_entry *) </tt>
+ *   - <tt> discord_audit_log_entry_list_to_json(char *wbuf, size_t len, struct discord_audit_log_entry **) </tt>
  */
 struct discord_audit_log_entry {
   /* specs/discord/audit_log.json:68:18
@@ -146,11 +174,22 @@ struct discord_audit_log_entry {
 /// @endcond
 };
 
+// Optional Audit Entry Info Structure
+// defined at specs/discord/audit_log.json:81:22
 /**
- * @brief Optional Audit Entry Info Structure
- *
  * @see https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-optional-audit-entry-info
- * @note defined at specs/discord/audit_log.json:81:22
+ *
+ * - Initializer:
+ *   - <tt> discord_audit_log_entry_optional_info_init(struct discord_audit_log_entry_optional_info *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_audit_log_entry_optional_info_cleanup(struct discord_audit_log_entry_optional_info *) </tt>
+ *   - <tt> discord_audit_log_entry_optional_info_list_free(struct discord_audit_log_entry_optional_info **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_audit_log_entry_optional_info_from_json(char *rbuf, size_t len, struct discord_audit_log_entry_optional_info **) </tt>
+ *   - <tt> discord_audit_log_entry_optional_info_list_from_json(char *rbuf, size_t len, struct discord_audit_log_entry_optional_info ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_audit_log_entry_optional_info_to_json(char *wbuf, size_t len, struct discord_audit_log_entry_optional_info *) </tt>
+ *   - <tt> discord_audit_log_entry_optional_info_list_to_json(char *wbuf, size_t len, struct discord_audit_log_entry_optional_info **) </tt>
  */
 struct discord_audit_log_entry_optional_info {
   /* specs/discord/audit_log.json:84:20
@@ -201,11 +240,22 @@ struct discord_audit_log_entry_optional_info {
 /// @endcond
 };
 
+// Audit Log Change Structure
+// defined at specs/discord/audit_log.json:98:22
 /**
- * @brief Audit Log Change Structure
- *
  * @see https://discord.com/developers/docs/resources/audit-log#audit-log-change-object-audit-log-change-structure
- * @note defined at specs/discord/audit_log.json:98:22
+ *
+ * - Initializer:
+ *   - <tt> discord_audit_log_change_init(struct discord_audit_log_change *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_audit_log_change_cleanup(struct discord_audit_log_change *) </tt>
+ *   - <tt> discord_audit_log_change_list_free(struct discord_audit_log_change **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_audit_log_change_from_json(char *rbuf, size_t len, struct discord_audit_log_change **) </tt>
+ *   - <tt> discord_audit_log_change_list_from_json(char *rbuf, size_t len, struct discord_audit_log_change ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_audit_log_change_to_json(char *wbuf, size_t len, struct discord_audit_log_change *) </tt>
+ *   - <tt> discord_audit_log_change_list_to_json(char *wbuf, size_t len, struct discord_audit_log_change **) </tt>
  */
 struct discord_audit_log_change {
   /* specs/discord/audit_log.json:101:18
@@ -236,11 +286,22 @@ struct discord_audit_log_change {
 /// @endcond
 };
 
+// Audit Log Change Key
+// defined at specs/discord/audit_log.json:110:22
 /**
- * @brief Audit Log Change Key
- *
  * @see https://discord.com/developers/docs/resources/audit-log#audit-log-change-object-audit-log-change-key
- * @note defined at specs/discord/audit_log.json:110:22
+ *
+ * - Initializer:
+ *   - <tt> discord_audit_log_change_key_init(struct discord_audit_log_change_key *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_audit_log_change_key_cleanup(struct discord_audit_log_change_key *) </tt>
+ *   - <tt> discord_audit_log_change_key_list_free(struct discord_audit_log_change_key **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_audit_log_change_key_from_json(char *rbuf, size_t len, struct discord_audit_log_change_key **) </tt>
+ *   - <tt> discord_audit_log_change_key_list_from_json(char *rbuf, size_t len, struct discord_audit_log_change_key ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_audit_log_change_key_to_json(char *wbuf, size_t len, struct discord_audit_log_change_key *) </tt>
+ *   - <tt> discord_audit_log_change_key_list_to_json(char *wbuf, size_t len, struct discord_audit_log_change_key **) </tt>
  */
 struct discord_audit_log_change_key {
   /* specs/discord/audit_log.json:113:18
@@ -483,18 +544,26 @@ struct discord_audit_log_change_key {
 /* This file is generated from specs/discord/channel.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
 
 
+// Modify Channel
+// defined at specs/discord/channel.endpoints-params.json:10:22
 /**
- * @brief Modify Channel
- *
  * @see https://discord.com/developers/docs/resources/channel#modify-channel
- * @note defined at specs/discord/channel.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_channel_params_init(struct discord_modify_channel_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_channel_params_cleanup(struct discord_modify_channel_params *) </tt>
+ *   - <tt> discord_modify_channel_params_list_free(struct discord_modify_channel_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_channel_params_from_json(char *rbuf, size_t len, struct discord_modify_channel_params **) </tt>
+ *   - <tt> discord_modify_channel_params_list_from_json(char *rbuf, size_t len, struct discord_modify_channel_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_channel_params_to_json(char *wbuf, size_t len, struct discord_modify_channel_params *) </tt>
+ *   - <tt> discord_modify_channel_params_list_to_json(char *wbuf, size_t len, struct discord_modify_channel_params **) </tt>
  */
 struct discord_modify_channel_params {
   /* specs/discord/channel.endpoints-params.json:13:20
@@ -577,11 +646,22 @@ struct discord_modify_channel_params {
 /// @endcond
 };
 
+// Get Reactions
+// defined at specs/discord/channel.endpoints-params.json:35:22
 /**
- * @brief Get Reactions
- *
  * @see https://discord.com/developers/docs/resources/channel#get-reactions
- * @note defined at specs/discord/channel.endpoints-params.json:35:22
+ *
+ * - Initializer:
+ *   - <tt> discord_get_reactions_params_init(struct discord_get_reactions_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_get_reactions_params_cleanup(struct discord_get_reactions_params *) </tt>
+ *   - <tt> discord_get_reactions_params_list_free(struct discord_get_reactions_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_get_reactions_params_from_json(char *rbuf, size_t len, struct discord_get_reactions_params **) </tt>
+ *   - <tt> discord_get_reactions_params_list_from_json(char *rbuf, size_t len, struct discord_get_reactions_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_get_reactions_params_to_json(char *wbuf, size_t len, struct discord_get_reactions_params *) </tt>
+ *   - <tt> discord_get_reactions_params_list_to_json(char *wbuf, size_t len, struct discord_get_reactions_params **) </tt>
  */
 struct discord_get_reactions_params {
   /* specs/discord/channel.endpoints-params.json:38:20
@@ -608,11 +688,22 @@ struct discord_get_reactions_params {
 /// @endcond
 };
 
+// Edit Channel Permissions
+// defined at specs/discord/channel.endpoints-params.json:46:22
 /**
- * @brief Edit Channel Permissions
- *
  * @see https://discord.com/developers/docs/resources/channel#edit-channel-permissions
- * @note defined at specs/discord/channel.endpoints-params.json:46:22
+ *
+ * - Initializer:
+ *   - <tt> discord_edit_channel_permissions_params_init(struct discord_edit_channel_permissions_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_edit_channel_permissions_params_cleanup(struct discord_edit_channel_permissions_params *) </tt>
+ *   - <tt> discord_edit_channel_permissions_params_list_free(struct discord_edit_channel_permissions_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_edit_channel_permissions_params_from_json(char *rbuf, size_t len, struct discord_edit_channel_permissions_params **) </tt>
+ *   - <tt> discord_edit_channel_permissions_params_list_from_json(char *rbuf, size_t len, struct discord_edit_channel_permissions_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_edit_channel_permissions_params_to_json(char *wbuf, size_t len, struct discord_edit_channel_permissions_params *) </tt>
+ *   - <tt> discord_edit_channel_permissions_params_list_to_json(char *wbuf, size_t len, struct discord_edit_channel_permissions_params **) </tt>
  */
 struct discord_edit_channel_permissions_params {
   /* specs/discord/channel.endpoints-params.json:49:20
@@ -643,11 +734,22 @@ struct discord_edit_channel_permissions_params {
 /// @endcond
 };
 
+// Follow News Channel
+// defined at specs/discord/channel.endpoints-params.json:58:22
 /**
- * @brief Follow News Channel
- *
  * @see https://discord.com/developers/docs/resources/channel#follow-news-channel
- * @note defined at specs/discord/channel.endpoints-params.json:58:22
+ *
+ * - Initializer:
+ *   - <tt> discord_follow_news_channel_params_init(struct discord_follow_news_channel_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_follow_news_channel_params_cleanup(struct discord_follow_news_channel_params *) </tt>
+ *   - <tt> discord_follow_news_channel_params_list_free(struct discord_follow_news_channel_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_follow_news_channel_params_from_json(char *rbuf, size_t len, struct discord_follow_news_channel_params **) </tt>
+ *   - <tt> discord_follow_news_channel_params_list_from_json(char *rbuf, size_t len, struct discord_follow_news_channel_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_follow_news_channel_params_to_json(char *wbuf, size_t len, struct discord_follow_news_channel_params *) </tt>
+ *   - <tt> discord_follow_news_channel_params_list_to_json(char *wbuf, size_t len, struct discord_follow_news_channel_params **) </tt>
  */
 struct discord_follow_news_channel_params {
   /* specs/discord/channel.endpoints-params.json:61:20
@@ -670,11 +772,22 @@ struct discord_follow_news_channel_params {
 /// @endcond
 };
 
+// Create Channel Invite
+// defined at specs/discord/channel.endpoints-params.json:68:22
 /**
- * @brief Create Channel Invite
- *
  * @see https://discord.com/developers/docs/resources/channel#create-channel-invite
- * @note defined at specs/discord/channel.endpoints-params.json:68:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_channel_invite_params_init(struct discord_create_channel_invite_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_channel_invite_params_cleanup(struct discord_create_channel_invite_params *) </tt>
+ *   - <tt> discord_create_channel_invite_params_list_free(struct discord_create_channel_invite_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_channel_invite_params_from_json(char *rbuf, size_t len, struct discord_create_channel_invite_params **) </tt>
+ *   - <tt> discord_create_channel_invite_params_list_from_json(char *rbuf, size_t len, struct discord_create_channel_invite_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_channel_invite_params_to_json(char *wbuf, size_t len, struct discord_create_channel_invite_params *) </tt>
+ *   - <tt> discord_create_channel_invite_params_list_to_json(char *wbuf, size_t len, struct discord_create_channel_invite_params **) </tt>
  */
 struct discord_create_channel_invite_params {
   /* specs/discord/channel.endpoints-params.json:71:20
@@ -721,11 +834,22 @@ struct discord_create_channel_invite_params {
 /// @endcond
 };
 
+// Group DM Add Recipient
+// defined at specs/discord/channel.endpoints-params.json:84:22
 /**
- * @brief Group DM Add Recipient
- *
  * @see https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
- * @note defined at specs/discord/channel.endpoints-params.json:84:22
+ *
+ * - Initializer:
+ *   - <tt> discord_group_dm_add_recipient_params_init(struct discord_group_dm_add_recipient_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_group_dm_add_recipient_params_cleanup(struct discord_group_dm_add_recipient_params *) </tt>
+ *   - <tt> discord_group_dm_add_recipient_params_list_free(struct discord_group_dm_add_recipient_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_group_dm_add_recipient_params_from_json(char *rbuf, size_t len, struct discord_group_dm_add_recipient_params **) </tt>
+ *   - <tt> discord_group_dm_add_recipient_params_list_from_json(char *rbuf, size_t len, struct discord_group_dm_add_recipient_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_group_dm_add_recipient_params_to_json(char *wbuf, size_t len, struct discord_group_dm_add_recipient_params *) </tt>
+ *   - <tt> discord_group_dm_add_recipient_params_list_to_json(char *wbuf, size_t len, struct discord_group_dm_add_recipient_params **) </tt>
  */
 struct discord_group_dm_add_recipient_params {
   /* specs/discord/channel.endpoints-params.json:87:20
@@ -752,11 +876,22 @@ struct discord_group_dm_add_recipient_params {
 /// @endcond
 };
 
+// Start Thread with Message
+// defined at specs/discord/channel.endpoints-params.json:95:22
 /**
- * @brief Start Thread with Message
- *
  * @see https://discord.com/developers/docs/resources/channel#start-thread-with-message-json-params
- * @note defined at specs/discord/channel.endpoints-params.json:95:22
+ *
+ * - Initializer:
+ *   - <tt> discord_start_thread_with_message_params_init(struct discord_start_thread_with_message_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_start_thread_with_message_params_cleanup(struct discord_start_thread_with_message_params *) </tt>
+ *   - <tt> discord_start_thread_with_message_params_list_free(struct discord_start_thread_with_message_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_start_thread_with_message_params_from_json(char *rbuf, size_t len, struct discord_start_thread_with_message_params **) </tt>
+ *   - <tt> discord_start_thread_with_message_params_list_from_json(char *rbuf, size_t len, struct discord_start_thread_with_message_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_start_thread_with_message_params_to_json(char *wbuf, size_t len, struct discord_start_thread_with_message_params *) </tt>
+ *   - <tt> discord_start_thread_with_message_params_list_to_json(char *wbuf, size_t len, struct discord_start_thread_with_message_params **) </tt>
  */
 struct discord_start_thread_with_message_params {
   /* specs/discord/channel.endpoints-params.json:98:20
@@ -783,11 +918,22 @@ struct discord_start_thread_with_message_params {
 /// @endcond
 };
 
+// Start Thread without Message
+// defined at specs/discord/channel.endpoints-params.json:106:22
 /**
- * @brief Start Thread without Message
- *
  * @see https://discord.com/developers/docs/resources/channel#start-thread-without-message-json-params
- * @note defined at specs/discord/channel.endpoints-params.json:106:22
+ *
+ * - Initializer:
+ *   - <tt> discord_start_thread_without_message_params_init(struct discord_start_thread_without_message_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_start_thread_without_message_params_cleanup(struct discord_start_thread_without_message_params *) </tt>
+ *   - <tt> discord_start_thread_without_message_params_list_free(struct discord_start_thread_without_message_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_start_thread_without_message_params_from_json(char *rbuf, size_t len, struct discord_start_thread_without_message_params **) </tt>
+ *   - <tt> discord_start_thread_without_message_params_list_from_json(char *rbuf, size_t len, struct discord_start_thread_without_message_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_start_thread_without_message_params_to_json(char *wbuf, size_t len, struct discord_start_thread_without_message_params *) </tt>
+ *   - <tt> discord_start_thread_without_message_params_list_to_json(char *wbuf, size_t len, struct discord_start_thread_without_message_params **) </tt>
  */
 struct discord_start_thread_without_message_params {
   /* specs/discord/channel.endpoints-params.json:109:20
@@ -798,6 +944,10 @@ struct discord_start_thread_without_message_params {
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }, "inject_if_not":0 }' */
   int auto_archive_duration;
 
+  /* specs/discord/channel.endpoints-params.json:111:20
+     '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_channel_types" } }' */
+  enum discord_channel_types type;
+
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
   // 2. record which field is presented(defined) in JSON
@@ -807,29 +957,40 @@ struct discord_start_thread_without_message_params {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
+    void *arg_switches[3];
+    void *record_defined[3];
+    void *record_null[3];
   } __M; // metadata
 /// @endcond
 };
 
+// List Active Threads
+// defined at specs/discord/channel.endpoints-params.json:118:22
 /**
- * @brief List Active Threads
- *
  * @see https://discord.com/developers/docs/resources/channel#list-active-threads-response-body
- * @note defined at specs/discord/channel.endpoints-params.json:117:22
+ *
+ * - Initializer:
+ *   - <tt> discord_thread_response_body_init(struct discord_thread_response_body *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_thread_response_body_cleanup(struct discord_thread_response_body *) </tt>
+ *   - <tt> discord_thread_response_body_list_free(struct discord_thread_response_body **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_thread_response_body_from_json(char *rbuf, size_t len, struct discord_thread_response_body **) </tt>
+ *   - <tt> discord_thread_response_body_list_from_json(char *rbuf, size_t len, struct discord_thread_response_body ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_thread_response_body_to_json(char *wbuf, size_t len, struct discord_thread_response_body *) </tt>
+ *   - <tt> discord_thread_response_body_list_to_json(char *wbuf, size_t len, struct discord_thread_response_body **) </tt>
  */
 struct discord_thread_response_body {
-  /* specs/discord/channel.endpoints-params.json:120:20
+  /* specs/discord/channel.endpoints-params.json:121:20
      '{ "name": "threads", "type":{ "base":"struct discord_channel", "dec":"ntl" } }' */
   struct discord_channel **threads;
 
-  /* specs/discord/channel.endpoints-params.json:121:20
+  /* specs/discord/channel.endpoints-params.json:122:20
      '{ "name": "members", "type":{ "base":"struct discord_thread_member", "dec":"ntl" } }' */
   struct discord_thread_member **members;
 
-  /* specs/discord/channel.endpoints-params.json:122:20
+  /* specs/discord/channel.endpoints-params.json:123:20
      '{ "name": "has_more", "type":{ "base":"bool" } }' */
   bool has_more;
 
@@ -851,108 +1012,116 @@ struct discord_thread_response_body {
 /* This file is generated from specs/discord/channel.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/channel
  */
 
 
 
 
+// Channel Structure
+// defined at specs/discord/channel.json:29:22
 /**
- * @brief Channel Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#channel-object-channel-structure
- * @note defined at specs/discord/channel.json:25:22
+ *
+ * - Initializer:
+ *   - <tt> discord_channel_init(struct discord_channel *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_cleanup(struct discord_channel *) </tt>
+ *   - <tt> discord_channel_list_free(struct discord_channel **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_from_json(char *rbuf, size_t len, struct discord_channel **) </tt>
+ *   - <tt> discord_channel_list_from_json(char *rbuf, size_t len, struct discord_channel ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_to_json(char *wbuf, size_t len, struct discord_channel *) </tt>
+ *   - <tt> discord_channel_list_to_json(char *wbuf, size_t len, struct discord_channel **) </tt>
  */
 struct discord_channel {
-  /* specs/discord/channel.json:28:78
+  /* specs/discord/channel.json:32:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:29:83
+  /* specs/discord/channel.json:33:83
      '{"type":{"base":"int", "int_alias":"enum discord_channel_types"}, "name":"type"}' */
   enum discord_channel_types type;
 
-  /* specs/discord/channel.json:30:78
+  /* specs/discord/channel.json:34:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"guild_id",
          "option":true, "inject_if_not":0 }' */
   u64_snowflake_t guild_id;
 
-  /* specs/discord/channel.json:32:41
+  /* specs/discord/channel.json:36:41
      '{"type":{"base":"int"}, "name":"position",
          "option":true, "inject_if_not":0 }' */
   int position;
 
-  /* specs/discord/channel.json:34:83
+  /* specs/discord/channel.json:38:83
      '{"type":{"base":"struct discord_channel_overwrite", "dec":"ntl"}, "name":"permission_overwrites",
          "option":true, "inject_if_not":null }' */
   struct discord_channel_overwrite **permission_overwrites;
 
-  /* specs/discord/channel.json:36:74
+  /* specs/discord/channel.json:40:74
      '{"type":{"base":"char", "dec":"[DISCORD_MAX_NAME_LEN]"}, "name":"name", 
          "option":true, "inject_if_not":null}' */
   char name[DISCORD_MAX_NAME_LEN];
 
-  /* specs/discord/channel.json:38:75
+  /* specs/discord/channel.json:42:75
      '{"type":{"base":"char", "dec":"[DISCORD_MAX_TOPIC_LEN]"}, "name":"topic",
          "option":true, "inject_if_not":null }' */
   char topic[DISCORD_MAX_TOPIC_LEN];
 
-  /* specs/discord/channel.json:40:42
+  /* specs/discord/channel.json:44:42
      '{"type":{"base":"bool"}, "name":"nsfw", "option":true, "inject_if_not":false}' */
   bool nsfw;
 
-  /* specs/discord/channel.json:41:78
+  /* specs/discord/channel.json:45:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"last_message_id",
          "option":true, "inject_if_not":0}' */
   u64_snowflake_t last_message_id;
 
-  /* specs/discord/channel.json:43:41
+  /* specs/discord/channel.json:47:41
      '{"type":{"base":"int"}, "name":"bitrate", "option":true, "inject_if_not":0}' */
   int bitrate;
 
-  /* specs/discord/channel.json:44:41
+  /* specs/discord/channel.json:48:41
      '{"type":{"base":"int"}, "name":"user_limit", "option":true, "inject_if_not":0}' */
   int user_limit;
 
-  /* specs/discord/channel.json:45:41
+  /* specs/discord/channel.json:49:41
      '{"type":{"base":"int"}, "name":"rate_limit_per_user", 
          "option":true, "inject_if_not":0}' */
   int rate_limit_per_user;
 
-  /* specs/discord/channel.json:47:70
+  /* specs/discord/channel.json:51:70
      '{"type":{"base":"struct discord_user", "dec":"ntl"}, "name":"recipients",
          "option":true, "inject_if_not":null}' */
   struct discord_user **recipients;
 
-  /* specs/discord/channel.json:49:68
+  /* specs/discord/channel.json:53:68
      '{"type":{"base":"char", "dec":"[MAX_SHA256_LEN]"}, "name":"icon",
          "option":true, "inject_if_not":null}' */
   char icon[MAX_SHA256_LEN];
 
-  /* specs/discord/channel.json:51:78
+  /* specs/discord/channel.json:55:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id",
          "option":true, "inject_if_not":0}' */
   u64_snowflake_t owner_id;
 
-  /* specs/discord/channel.json:53:78
+  /* specs/discord/channel.json:57:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"application_id",
          "option":true, "inject_if_not":0}' */
   u64_snowflake_t application_id;
 
-  /* specs/discord/channel.json:55:95
+  /* specs/discord/channel.json:59:95
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"parent_id",
          "option":true, "inject_if_not":0}' */
   u64_snowflake_t parent_id;
 
-  /* specs/discord/channel.json:57:93
+  /* specs/discord/channel.json:61:93
      '{"type":{"base":"char", "dec":"*", "converter":"iso8601", "nullable":true}, "name":"last_pin_timestamp",
          "option":true, "inject_if_not":0}' */
   u64_unix_ms_t last_pin_timestamp;
 
-  /* specs/discord/channel.json:59:73
+  /* specs/discord/channel.json:63:73
      '{"type":{"base":"struct discord_message", "dec":"ntl"}, "name":"messages"}' */
   struct discord_message **messages;
 
@@ -974,43 +1143,54 @@ struct discord_channel {
 
 
 
+// Message Sticker Structure
+// defined at specs/discord/channel.json:82:22
 /**
- * @brief Message Sticker Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#message-object-message-sticker-structure
- * @note defined at specs/discord/channel.json:78:22
+ *
+ * - Initializer:
+ *   - <tt> discord_message_sticker_init(struct discord_message_sticker *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_message_sticker_cleanup(struct discord_message_sticker *) </tt>
+ *   - <tt> discord_message_sticker_list_free(struct discord_message_sticker **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_message_sticker_from_json(char *rbuf, size_t len, struct discord_message_sticker **) </tt>
+ *   - <tt> discord_message_sticker_list_from_json(char *rbuf, size_t len, struct discord_message_sticker ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_message_sticker_to_json(char *wbuf, size_t len, struct discord_message_sticker *) </tt>
+ *   - <tt> discord_message_sticker_list_to_json(char *wbuf, size_t len, struct discord_message_sticker **) </tt>
  */
 struct discord_message_sticker {
-  /* specs/discord/channel.json:80:18
+  /* specs/discord/channel.json:84:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:81:18
+  /* specs/discord/channel.json:85:18
      '{"name":"pack_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
   u64_snowflake_t pack_id;
 
-  /* specs/discord/channel.json:82:18
+  /* specs/discord/channel.json:86:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}}' */
   char *name;
 
-  /* specs/discord/channel.json:83:18
+  /* specs/discord/channel.json:87:18
      '{"name":"description", "type":{"base":"char", "dec":"*"}}' */
   char *description;
 
-  /* specs/discord/channel.json:84:18
+  /* specs/discord/channel.json:88:18
      '{"name":"tags", "type":{"base":"char", "dec":"*"}, "option":true, "inject_of_not":null}' */
   char *tags;
 
-  /* specs/discord/channel.json:85:18
+  /* specs/discord/channel.json:89:18
      '{"name":"asset","type":{"base":"char", "dec":"[MAX_SHA256_LEN]"}}' */
   char asset[MAX_SHA256_LEN];
 
-  /* specs/discord/channel.json:86:18
+  /* specs/discord/channel.json:90:18
      '{"name":"preview_asset", "type":{"base":"char", "dec":"[MAX_SHA256_LEN]"}, 
          "option":true, "inject_if_not":null}' */
   char preview_asset[MAX_SHA256_LEN];
 
-  /* specs/discord/channel.json:88:18
+  /* specs/discord/channel.json:92:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_message_sticker_format_types"}}' */
   enum discord_message_sticker_format_types type;
 
@@ -1032,26 +1212,37 @@ struct discord_message_sticker {
 
 
 
+// Message Reference Structure
+// defined at specs/discord/channel.json:112:22
 /**
- * @brief Message Reference Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#message-object-message-reference-structure
- * @note defined at specs/discord/channel.json:108:22
+ *
+ * - Initializer:
+ *   - <tt> discord_message_reference_init(struct discord_message_reference *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_message_reference_cleanup(struct discord_message_reference *) </tt>
+ *   - <tt> discord_message_reference_list_free(struct discord_message_reference **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_message_reference_from_json(char *rbuf, size_t len, struct discord_message_reference **) </tt>
+ *   - <tt> discord_message_reference_list_from_json(char *rbuf, size_t len, struct discord_message_reference ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_message_reference_to_json(char *wbuf, size_t len, struct discord_message_reference *) </tt>
+ *   - <tt> discord_message_reference_list_to_json(char *wbuf, size_t len, struct discord_message_reference **) </tt>
  */
 struct discord_message_reference {
-  /* specs/discord/channel.json:110:18
+  /* specs/discord/channel.json:114:18
      '{"name":"message_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0}' */
   u64_snowflake_t message_id;
 
-  /* specs/discord/channel.json:111:18
+  /* specs/discord/channel.json:115:18
      '{"name":"channel_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0}' */
   u64_snowflake_t channel_id;
 
-  /* specs/discord/channel.json:112:18
+  /* specs/discord/channel.json:116:18
      '{"name":"guild_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0}' */
   u64_snowflake_t guild_id;
 
-  /* specs/discord/channel.json:113:18
+  /* specs/discord/channel.json:117:18
      '{"name":"fail_if_not_exists", "type":{"base":"bool"}, "option":true, "inject_if_not":false}' */
   bool fail_if_not_exists;
 
@@ -1071,30 +1262,41 @@ struct discord_message_reference {
 /// @endcond
 };
 
+// Message Application Structure
+// defined at specs/discord/channel.json:124:22
 /**
- * @brief Message Application Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#message-object-message-application-structure
- * @note defined at specs/discord/channel.json:120:22
+ *
+ * - Initializer:
+ *   - <tt> discord_message_application_init(struct discord_message_application *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_message_application_cleanup(struct discord_message_application *) </tt>
+ *   - <tt> discord_message_application_list_free(struct discord_message_application **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_message_application_from_json(char *rbuf, size_t len, struct discord_message_application **) </tt>
+ *   - <tt> discord_message_application_list_from_json(char *rbuf, size_t len, struct discord_message_application ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_message_application_to_json(char *wbuf, size_t len, struct discord_message_application *) </tt>
+ *   - <tt> discord_message_application_list_to_json(char *wbuf, size_t len, struct discord_message_application **) </tt>
  */
 struct discord_message_application {
-  /* specs/discord/channel.json:122:18
+  /* specs/discord/channel.json:126:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:123:18
+  /* specs/discord/channel.json:127:18
      '{"name":"cover_image", "type":{"base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   char *cover_image;
 
-  /* specs/discord/channel.json:124:18
+  /* specs/discord/channel.json:128:18
      '{"name":"description", "type":{"base":"char", "dec":"*"}}' */
   char *description;
 
-  /* specs/discord/channel.json:125:18
+  /* specs/discord/channel.json:129:18
      '{"name":"icon", "type":{"base":"char", "dec":"*"}, "inject_if_not":null}' */
   char *icon;
 
-  /* specs/discord/channel.json:126:18
+  /* specs/discord/channel.json:130:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}}' */
   char *name;
 
@@ -1116,18 +1318,29 @@ struct discord_message_application {
 
 
 
+// Message Activity Structure
+// defined at specs/discord/channel.json:149:22
 /**
- * @brief Message Activity Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#message-object-message-activity-structure
- * @note defined at specs/discord/channel.json:145:22
+ *
+ * - Initializer:
+ *   - <tt> discord_message_activity_init(struct discord_message_activity *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_message_activity_cleanup(struct discord_message_activity *) </tt>
+ *   - <tt> discord_message_activity_list_free(struct discord_message_activity **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_message_activity_from_json(char *rbuf, size_t len, struct discord_message_activity **) </tt>
+ *   - <tt> discord_message_activity_list_from_json(char *rbuf, size_t len, struct discord_message_activity ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_message_activity_to_json(char *wbuf, size_t len, struct discord_message_activity *) </tt>
+ *   - <tt> discord_message_activity_list_to_json(char *wbuf, size_t len, struct discord_message_activity **) </tt>
  */
 struct discord_message_activity {
-  /* specs/discord/channel.json:147:18
+  /* specs/discord/channel.json:151:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_message_activity_types"}}' */
   enum discord_message_activity_types type;
 
-  /* specs/discord/channel.json:148:18
+  /* specs/discord/channel.json:152:18
      '{"name":"party_id", "type":{"base":"char", "dec":"*"},
          "option":true, "inject_if_not":null}' */
   char *party_id;
@@ -1150,118 +1363,143 @@ struct discord_message_activity {
 
 
 
+// Message Structure
+// defined at specs/discord/channel.json:184:22
 /**
- * @brief Message Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#message-object
- * @note defined at specs/discord/channel.json:181:22
+ *
+ * - Initializer:
+ *   - <tt> discord_message_init(struct discord_message *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_message_cleanup(struct discord_message *) </tt>
+ *   - <tt> discord_message_list_free(struct discord_message **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_message_from_json(char *rbuf, size_t len, struct discord_message **) </tt>
+ *   - <tt> discord_message_list_from_json(char *rbuf, size_t len, struct discord_message ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_message_to_json(char *wbuf, size_t len, struct discord_message *) </tt>
+ *   - <tt> discord_message_list_to_json(char *wbuf, size_t len, struct discord_message **) </tt>
  */
 struct discord_message {
-  /* specs/discord/channel.json:183:79
+  /* specs/discord/channel.json:186:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:184:79
+  /* specs/discord/channel.json:187:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"channel_id"}' */
   u64_snowflake_t channel_id;
 
-  /* specs/discord/channel.json:185:79
+  /* specs/discord/channel.json:188:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"guild_id", "option":true, "inject_if_not":0}' */
   u64_snowflake_t guild_id;
 
-  /* specs/discord/channel.json:186:69
+  /* specs/discord/channel.json:189:69
      '{"type":{"base":"struct discord_user", "dec":"*"}, "name":"author"}' */
   struct discord_user *author;
 
-  /* specs/discord/channel.json:187:77
+  /* specs/discord/channel.json:190:77
      '{"type":{"base":"struct discord_guild_member", "dec":"*"}, "name":"member", "option":true, "comment":"partial guild member object"}' */
   struct discord_guild_member *member; ///< partial guild member object
 
-  /* specs/discord/channel.json:188:54
+  /* specs/discord/channel.json:191:54
      '{"type":{"base":"char", "dec":"*"}, "name":"content"}' */
   char *content;
 
-  /* specs/discord/channel.json:189:76
+  /* specs/discord/channel.json:192:76
      '{"type":{"base":"char", "dec":"*", "converter":"iso8601"},"name":"timestamp"}' */
   u64_unix_ms_t timestamp;
 
-  /* specs/discord/channel.json:190:77
+  /* specs/discord/channel.json:193:77
      '{"type":{"base":"char", "dec":"*", "converter":"iso8601"}, "name":"edited_timestamp", "inject_if_not":0}' */
   u64_unix_ms_t edited_timestamp;
 
-  /* specs/discord/channel.json:191:43
+  /* specs/discord/channel.json:194:43
      '{"type":{"base":"bool"}, "name":"tts"}' */
   bool tts;
 
-  /* specs/discord/channel.json:192:43
+  /* specs/discord/channel.json:195:43
      '{"type":{"base":"bool"}, "name":"mention_everyone"}' */
   bool mention_everyone;
 
-  /* specs/discord/channel.json:193:71
+  /* specs/discord/channel.json:196:71
      '{"type":{"base":"struct discord_user", "dec":"ntl"}, "name":"mentions", "comment":"array of user objects, with an additional partial member field"}' */
   struct discord_user **mentions; ///< array of user objects, with an additional partial member field
 
-  /* specs/discord/channel.json:194:58
+  /* specs/discord/channel.json:197:58
      '{"type":{"base":"ja_u64", "dec":"ntl"}, "name":"mention_roles", "comment":"array of role object ids"}' */
   ja_u64 **mention_roles; ///< array of role object ids
 
-  /* specs/discord/channel.json:195:82
+  /* specs/discord/channel.json:198:82
      '{"type":{"base":"struct discord_channel_mention", "dec":"ntl"}, "name":"mention_channels", "option":true }' */
   struct discord_channel_mention **mention_channels;
 
-  /* specs/discord/channel.json:196:85
+  /* specs/discord/channel.json:199:85
      '{"type":{"base":"struct discord_channel_attachment", "dec":"ntl"}, "name":"attachments"}' */
   struct discord_channel_attachment **attachments;
 
-  /* specs/discord/channel.json:197:72
+  /* specs/discord/channel.json:200:72
      '{"type":{"base":"struct discord_embed", "dec":"ntl"}, "name":"embeds"}' */
   struct discord_embed **embeds;
 
-  /* specs/discord/channel.json:198:82
+  /* specs/discord/channel.json:201:82
      '{"type":{"base":"struct discord_channel_reaction","dec":"ntl"}, "name":"reactions", "option":true }' */
   struct discord_channel_reaction **reactions;
 
-  /* specs/discord/channel.json:199:54
+  /* specs/discord/channel.json:202:54
      '{"type":{"base":"char", "dec":"*"}, "name":"nonce", "comment":"integer or string", "option":true }' */
   char *nonce; ///< integer or string
 
-  /* specs/discord/channel.json:200:43
+  /* specs/discord/channel.json:203:43
      '{"type":{"base":"bool"}, "name":"pinned"}' */
   bool pinned;
 
-  /* specs/discord/channel.json:201:79
-     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"webhook_id",
-          "option":true }' */
+  /* specs/discord/channel.json:204:79
+     '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"webhook_id", "option":true }' */
   u64_snowflake_t webhook_id;
 
-  /* specs/discord/channel.json:203:84
+  /* specs/discord/channel.json:205:84
      '{"type":{"base":"int", "int_alias":"enum discord_message_types"}, "name":"type"}' */
   enum discord_message_types type;
 
-  /* specs/discord/channel.json:204:81
+  /* specs/discord/channel.json:206:81
      '{"type":{"base":"struct discord_message_activity", "dec":"*"}, "name":"activity", "option":true, "inject_if_not":null }' */
   struct discord_message_activity *activity;
 
-  /* specs/discord/channel.json:205:86
+  /* specs/discord/channel.json:207:86
      '{"type":{"base":"struct discord_message_application", "dec":"ntl"}, "name":"application", "option":true, "inject_if_not":null }' */
   struct discord_message_application **application;
 
-  /* specs/discord/channel.json:206:82
+  /* specs/discord/channel.json:208:82
      '{"type":{"base":"struct discord_message_reference", "dec":"*"}, "name":"message_reference", "option":true, "inject_if_not":null }' */
   struct discord_message_reference *message_reference;
 
-  /* specs/discord/channel.json:207:84
+  /* specs/discord/channel.json:209:84
      '{"type":{"base":"int", "int_alias":"enum discord_message_flags"}, "name":"flags", "option":true, "inject_if_not":0 }' */
   enum discord_message_flags flags;
 
-  /* specs/discord/channel.json:208:82
-     '{"type":{"base":"struct discord_message_sticker", "dec":"ntl"}, "name":"stickers", "option":true, "inject_if_not":null, "comment":"array of sticker objects"}' */
-  struct discord_message_sticker **stickers; ///< array of sticker objects
-
-  /* specs/discord/channel.json:209:72
-     '{"type":{"base":"struct discord_message", "dec":"*"}, "name":"referenced_message", "lazy_init":true, "option":true, "inject_if_not":null,
-          "comment":"this will cause recursive allocation if allocating as the parent"}' */
+  /* specs/discord/channel.json:210:72
+     '{"type":{"base":"struct discord_message", "dec":"*"}, "name":"referenced_message", "lazy_init":true, "option":true, "inject_if_not":null, "comment":"this will cause recursive allocation if allocating as the parent"}' */
   struct discord_message *referenced_message; ///< this will cause recursive allocation if allocating as the parent
+
+  /* specs/discord/channel.json:211:84
+     '{"type":{"base":"struct discord_message_interaction", "dec":"*"}, "name":"interaction", "option":true, "inject_if_not":null, "comment":"the message associated with the message_reference"}' */
+  struct discord_message_interaction *interaction; ///< the message associated with the message_reference
+
+  /* specs/discord/channel.json:212:72
+     '{"type":{"base":"struct discord_channel", "dec":"*"}, "name":"thread", "option":true, "inject_if_not":null, "comment":"the channel that was started from this message, includes thread member obejct"}' */
+  struct discord_channel *thread; ///< the channel that was started from this message, includes thread member obejct
+
+  /* specs/discord/channel.json:213:76
+     '{"type":{"base":"struct discord_component", "dec":"ntl"}, "name":"components", "option":true, "inject_if_not":null, "comment":"sent if the message contains components like buttons, actions rows, or other interactive components"}' */
+  struct discord_component **components; ///< sent if the message contains components like buttons, actions rows, or other interactive components
+
+  /* specs/discord/channel.json:214:82
+     '{"type":{"base":"struct discord_message_sticker", "dec":"ntl"}, "name":"sticker_items", "option":true, "inject_if_not":null, "comment":"sent if the message contains stickets"}' */
+  struct discord_message_sticker **sticker_items; ///< sent if the message contains stickets
+
+  /* specs/discord/channel.json:215:82
+     '{"type":{"base":"struct discord_message_sticker", "dec":"ntl"}, "name":"stickers", "option":true, "inject_if_not":null, "comment":"[DEPRECATED] array of sticker objects"}' */
+  struct discord_message_sticker **stickers; ///< [DEPRECATED] array of sticker objects
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -1272,25 +1510,36 @@ struct discord_message {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[26];
-    void *record_defined[26];
-    void *record_null[26];
+    void *arg_switches[30];
+    void *record_defined[30];
+    void *record_null[30];
   } __M; // metadata
 /// @endcond
 };
 
+// Followed Channel Structure
+// defined at specs/discord/channel.json:222:22
 /**
- * @brief Followed Channel Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#followed-channel-object-followed-channel-structure
- * @note defined at specs/discord/channel.json:217:22
+ *
+ * - Initializer:
+ *   - <tt> discord_channel_followed_channel_init(struct discord_channel_followed_channel *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_followed_channel_cleanup(struct discord_channel_followed_channel *) </tt>
+ *   - <tt> discord_channel_followed_channel_list_free(struct discord_channel_followed_channel **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_followed_channel_from_json(char *rbuf, size_t len, struct discord_channel_followed_channel **) </tt>
+ *   - <tt> discord_channel_followed_channel_list_from_json(char *rbuf, size_t len, struct discord_channel_followed_channel ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_followed_channel_to_json(char *wbuf, size_t len, struct discord_channel_followed_channel *) </tt>
+ *   - <tt> discord_channel_followed_channel_list_to_json(char *wbuf, size_t len, struct discord_channel_followed_channel **) </tt>
  */
 struct discord_channel_followed_channel {
-  /* specs/discord/channel.json:220:20
+  /* specs/discord/channel.json:225:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t channel_id;
 
-  /* specs/discord/channel.json:221:20
+  /* specs/discord/channel.json:226:20
      '{ "name": "webhook_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t webhook_id;
 
@@ -1310,22 +1559,33 @@ struct discord_channel_followed_channel {
 /// @endcond
 };
 
+// Reaction Structure
+// defined at specs/discord/channel.json:233:22
 /**
- * @brief Reaction Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#reaction-object-reaction-structure
- * @note defined at specs/discord/channel.json:228:22
+ *
+ * - Initializer:
+ *   - <tt> discord_channel_reaction_init(struct discord_channel_reaction *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_reaction_cleanup(struct discord_channel_reaction *) </tt>
+ *   - <tt> discord_channel_reaction_list_free(struct discord_channel_reaction **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_reaction_from_json(char *rbuf, size_t len, struct discord_channel_reaction **) </tt>
+ *   - <tt> discord_channel_reaction_list_from_json(char *rbuf, size_t len, struct discord_channel_reaction ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_reaction_to_json(char *wbuf, size_t len, struct discord_channel_reaction *) </tt>
+ *   - <tt> discord_channel_reaction_list_to_json(char *wbuf, size_t len, struct discord_channel_reaction **) </tt>
  */
 struct discord_channel_reaction {
-  /* specs/discord/channel.json:231:20
+  /* specs/discord/channel.json:236:20
      '{ "name": "count", "type":{ "base":"int" }}' */
   int count;
 
-  /* specs/discord/channel.json:232:20
+  /* specs/discord/channel.json:237:20
      '{ "name": "me", "type":{ "base":"bool" }}' */
   bool me;
 
-  /* specs/discord/channel.json:233:20
+  /* specs/discord/channel.json:238:20
      '{ "name": "emoji", "type":{ "base":"struct discord_emoji", "dec":"*" }, "comment":"partial emoji object"}' */
   struct discord_emoji *emoji; ///< partial emoji object
 
@@ -1345,26 +1605,36 @@ struct discord_channel_reaction {
 /// @endcond
 };
 
+// Overwrite Structure
+// defined at specs/discord/channel.json:244:22
 /**
- * @brief Overwrite Structure
- *
- * @note defined at specs/discord/channel.json:240:22
+ * - Initializer:
+ *   - <tt> discord_channel_overwrite_init(struct discord_channel_overwrite *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_overwrite_cleanup(struct discord_channel_overwrite *) </tt>
+ *   - <tt> discord_channel_overwrite_list_free(struct discord_channel_overwrite **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_overwrite_from_json(char *rbuf, size_t len, struct discord_channel_overwrite **) </tt>
+ *   - <tt> discord_channel_overwrite_list_from_json(char *rbuf, size_t len, struct discord_channel_overwrite ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_overwrite_to_json(char *wbuf, size_t len, struct discord_channel_overwrite *) </tt>
+ *   - <tt> discord_channel_overwrite_list_to_json(char *wbuf, size_t len, struct discord_channel_overwrite **) </tt>
  */
 struct discord_channel_overwrite {
-  /* specs/discord/channel.json:243:20
+  /* specs/discord/channel.json:247:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:244:20
+  /* specs/discord/channel.json:248:20
      '{ "name": "type", "type":{ "base":"int" }}' */
   int type;
 
-  /* specs/discord/channel.json:245:20
+  /* specs/discord/channel.json:249:20
      '{ "name": "allow", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_permissions_bitwise_flags"}, 
           "comment":"permission bit set"}' */
   enum discord_permissions_bitwise_flags allow; ///< permission bit set
 
-  /* specs/discord/channel.json:247:20
+  /* specs/discord/channel.json:251:20
      '{ "name": "deny", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_permissions_bitwise_flags"}, 
           "comment":"permission bit set"}' */
   enum discord_permissions_bitwise_flags deny; ///< permission bit set
@@ -1385,30 +1655,41 @@ struct discord_channel_overwrite {
 /// @endcond
 };
 
+// Thread Metadata Object
+// defined at specs/discord/channel.json:259:22
 /**
- * @brief Thread Metadata Object
- *
  * @see https://discord.com/developers/docs/resources/channel#thread-metadata-object
- * @note defined at specs/discord/channel.json:255:22
+ *
+ * - Initializer:
+ *   - <tt> discord_thread_metadata_init(struct discord_thread_metadata *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_thread_metadata_cleanup(struct discord_thread_metadata *) </tt>
+ *   - <tt> discord_thread_metadata_list_free(struct discord_thread_metadata **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_thread_metadata_from_json(char *rbuf, size_t len, struct discord_thread_metadata **) </tt>
+ *   - <tt> discord_thread_metadata_list_from_json(char *rbuf, size_t len, struct discord_thread_metadata ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_thread_metadata_to_json(char *wbuf, size_t len, struct discord_thread_metadata *) </tt>
+ *   - <tt> discord_thread_metadata_list_to_json(char *wbuf, size_t len, struct discord_thread_metadata **) </tt>
  */
 struct discord_thread_metadata {
-  /* specs/discord/channel.json:258:20
+  /* specs/discord/channel.json:262:20
      '{ "name": "archived", "type":{ "base":"bool" }}' */
   bool archived;
 
-  /* specs/discord/channel.json:259:20
+  /* specs/discord/channel.json:263:20
      '{ "name": "archiver_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t archiver_id;
 
-  /* specs/discord/channel.json:260:20
+  /* specs/discord/channel.json:264:20
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }}' */
   int auto_archive_duration;
 
-  /* specs/discord/channel.json:261:20
+  /* specs/discord/channel.json:265:20
      '{ "name": "archive_timestamp", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
   u64_unix_ms_t archive_timestamp;
 
-  /* specs/discord/channel.json:262:20
+  /* specs/discord/channel.json:266:20
      '{ "name": "locked", "type":{ "base":"bool" }}' */
   bool locked;
 
@@ -1428,26 +1709,37 @@ struct discord_thread_metadata {
 /// @endcond
 };
 
+// Thread Member Object
+// defined at specs/discord/channel.json:273:22
 /**
- * @brief Thread Member Object
- *
  * @see https://discord.com/developers/docs/resources/channel#thread-member-object
- * @note defined at specs/discord/channel.json:269:22
+ *
+ * - Initializer:
+ *   - <tt> discord_thread_member_init(struct discord_thread_member *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_thread_member_cleanup(struct discord_thread_member *) </tt>
+ *   - <tt> discord_thread_member_list_free(struct discord_thread_member **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_thread_member_from_json(char *rbuf, size_t len, struct discord_thread_member **) </tt>
+ *   - <tt> discord_thread_member_list_from_json(char *rbuf, size_t len, struct discord_thread_member ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_thread_member_to_json(char *wbuf, size_t len, struct discord_thread_member *) </tt>
+ *   - <tt> discord_thread_member_list_to_json(char *wbuf, size_t len, struct discord_thread_member **) </tt>
  */
 struct discord_thread_member {
-  /* specs/discord/channel.json:272:20
+  /* specs/discord/channel.json:276:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:273:20
+  /* specs/discord/channel.json:277:20
      '{ "name": "user_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t user_id;
 
-  /* specs/discord/channel.json:274:20
+  /* specs/discord/channel.json:278:20
      '{ "name": "join_timestamp", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
   u64_unix_ms_t join_timestamp;
 
-  /* specs/discord/channel.json:275:20
+  /* specs/discord/channel.json:279:20
      '{ "name": "flags", "type":{ "base":"int" }}' */
   int flags;
 
@@ -1467,38 +1759,49 @@ struct discord_thread_member {
 /// @endcond
 };
 
+// Attachment Strcture
+// defined at specs/discord/channel.json:286:22
 /**
- * @brief Attachment Strcture
- *
  * @see https://discord.com/developers/docs/resources/channel#attachment-object
- * @note defined at specs/discord/channel.json:282:22
+ *
+ * - Initializer:
+ *   - <tt> discord_channel_attachment_init(struct discord_channel_attachment *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_attachment_cleanup(struct discord_channel_attachment *) </tt>
+ *   - <tt> discord_channel_attachment_list_free(struct discord_channel_attachment **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_attachment_from_json(char *rbuf, size_t len, struct discord_channel_attachment **) </tt>
+ *   - <tt> discord_channel_attachment_list_from_json(char *rbuf, size_t len, struct discord_channel_attachment ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_attachment_to_json(char *wbuf, size_t len, struct discord_channel_attachment *) </tt>
+ *   - <tt> discord_channel_attachment_list_to_json(char *wbuf, size_t len, struct discord_channel_attachment **) </tt>
  */
 struct discord_channel_attachment {
-  /* specs/discord/channel.json:285:20
+  /* specs/discord/channel.json:289:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:286:20
+  /* specs/discord/channel.json:290:20
      '{ "name": "filename", "type":{ "base":"char", "dec":"[256]" }}' */
   char filename[256];
 
-  /* specs/discord/channel.json:287:20
+  /* specs/discord/channel.json:291:20
      '{ "name": "size", "type":{ "base":"int" }}' */
   int size;
 
-  /* specs/discord/channel.json:288:20
+  /* specs/discord/channel.json:292:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }}' */
   char *url;
 
-  /* specs/discord/channel.json:289:20
+  /* specs/discord/channel.json:293:20
      '{ "name": "proxy_url", "type":{ "base":"char", "dec":"*" }}' */
   char *proxy_url;
 
-  /* specs/discord/channel.json:290:20
+  /* specs/discord/channel.json:294:20
      '{ "name": "height", "type":{ "base":"int", "nullable":true }}' */
   int height;
 
-  /* specs/discord/channel.json:291:20
+  /* specs/discord/channel.json:295:20
      '{ "name": "width", "type":{ "base":"int", "nullable":true }}' */
   int width;
 
@@ -1518,26 +1821,37 @@ struct discord_channel_attachment {
 /// @endcond
 };
 
+// Channel Mention Structure
+// defined at specs/discord/channel.json:302:22
 /**
- * @brief Channel Mention Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#channel-mention-object-channel-mention-structure
- * @note defined at specs/discord/channel.json:298:22
+ *
+ * - Initializer:
+ *   - <tt> discord_channel_mention_init(struct discord_channel_mention *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_mention_cleanup(struct discord_channel_mention *) </tt>
+ *   - <tt> discord_channel_mention_list_free(struct discord_channel_mention **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_mention_from_json(char *rbuf, size_t len, struct discord_channel_mention **) </tt>
+ *   - <tt> discord_channel_mention_list_from_json(char *rbuf, size_t len, struct discord_channel_mention ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_mention_to_json(char *wbuf, size_t len, struct discord_channel_mention *) </tt>
+ *   - <tt> discord_channel_mention_list_to_json(char *wbuf, size_t len, struct discord_channel_mention **) </tt>
  */
 struct discord_channel_mention {
-  /* specs/discord/channel.json:301:20
+  /* specs/discord/channel.json:305:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t id;
 
-  /* specs/discord/channel.json:302:20
+  /* specs/discord/channel.json:306:20
      '{ "name": "guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t guild_id;
 
-  /* specs/discord/channel.json:303:20
+  /* specs/discord/channel.json:307:20
      '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_channel_types" }}' */
   enum discord_channel_types type;
 
-  /* specs/discord/channel.json:304:20
+  /* specs/discord/channel.json:308:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*" }}' */
   char *name;
 
@@ -1557,26 +1871,37 @@ struct discord_channel_mention {
 /// @endcond
 };
 
+// Allowed Mentions Structure
+// defined at specs/discord/channel.json:315:22
 /**
- * @brief Allowed Mentions Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#allowed-mentions-object-allowed-mentions-structure
- * @note defined at specs/discord/channel.json:311:22
+ *
+ * - Initializer:
+ *   - <tt> discord_channel_allowed_mentions_init(struct discord_channel_allowed_mentions *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_channel_allowed_mentions_cleanup(struct discord_channel_allowed_mentions *) </tt>
+ *   - <tt> discord_channel_allowed_mentions_list_free(struct discord_channel_allowed_mentions **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_channel_allowed_mentions_from_json(char *rbuf, size_t len, struct discord_channel_allowed_mentions **) </tt>
+ *   - <tt> discord_channel_allowed_mentions_list_from_json(char *rbuf, size_t len, struct discord_channel_allowed_mentions ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_channel_allowed_mentions_to_json(char *wbuf, size_t len, struct discord_channel_allowed_mentions *) </tt>
+ *   - <tt> discord_channel_allowed_mentions_list_to_json(char *wbuf, size_t len, struct discord_channel_allowed_mentions **) </tt>
  */
 struct discord_channel_allowed_mentions {
-  /* specs/discord/channel.json:314:20
+  /* specs/discord/channel.json:318:20
      '{ "name": "parse", "type":{ "base":"ja_str", "dec":"ntl" }}' */
   ja_str **parse;
 
-  /* specs/discord/channel.json:315:20
+  /* specs/discord/channel.json:319:20
      '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"list of snowflakes"}' */
   ja_u64 **roles; ///< list of snowflakes
 
-  /* specs/discord/channel.json:316:20
+  /* specs/discord/channel.json:320:20
      '{ "name": "users", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"list of snowflakes"}' */
   ja_u64 **users; ///< list of snowflakes
 
-  /* specs/discord/channel.json:317:20
+  /* specs/discord/channel.json:321:20
      '{ "name": "replied_user", "type":{ "base":"bool" }}' */
   bool replied_user;
 
@@ -1596,62 +1921,73 @@ struct discord_channel_allowed_mentions {
 /// @endcond
 };
 
+// Embed Structure
+// defined at specs/discord/channel.json:327:22
 /**
- * @brief Embed Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-structure
- * @note defined at specs/discord/channel.json:323:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_init(struct discord_embed *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_cleanup(struct discord_embed *) </tt>
+ *   - <tt> discord_embed_list_free(struct discord_embed **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_from_json(char *rbuf, size_t len, struct discord_embed **) </tt>
+ *   - <tt> discord_embed_list_from_json(char *rbuf, size_t len, struct discord_embed ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_to_json(char *wbuf, size_t len, struct discord_embed *) </tt>
+ *   - <tt> discord_embed_list_to_json(char *wbuf, size_t len, struct discord_embed **) </tt>
  */
 struct discord_embed {
-  /* specs/discord/channel.json:326:20
+  /* specs/discord/channel.json:330:20
      '{ "name": "title", "type":{ "base":"char", "dec":"[DISCORD_EMBED_TITLE_LEN]" }, "option":true, "inject_if_not":null}' */
   char title[DISCORD_EMBED_TITLE_LEN];
 
-  /* specs/discord/channel.json:327:20
+  /* specs/discord/channel.json:331:20
      '{ "name": "type", "type":{ "base":"char", "dec":"[32]" }, "option":true, "inject_if_not":null}' */
   char type[32];
 
-  /* specs/discord/channel.json:328:20
+  /* specs/discord/channel.json:332:20
      '{ "name": "description", "type":{ "base":"char", "dec":"[DISCORD_EMBED_DESCRIPTION_LEN]"}, "option":true, "inject_if_not":null}' */
   char description[DISCORD_EMBED_DESCRIPTION_LEN];
 
-  /* specs/discord/channel.json:329:20
+  /* specs/discord/channel.json:333:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   char *url;
 
-  /* specs/discord/channel.json:330:20
+  /* specs/discord/channel.json:334:20
      '{ "name": "timestamp", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }, "option":true, "inject_if_not":0}' */
   u64_unix_ms_t timestamp;
 
-  /* specs/discord/channel.json:331:20
+  /* specs/discord/channel.json:335:20
      '{ "name": "color", "type":{ "base":"int" }, "option":true, "inject_if_not":0}' */
   int color;
 
-  /* specs/discord/channel.json:332:20
+  /* specs/discord/channel.json:336:20
      '{ "name": "footer", "type":{ "base":"struct discord_embed_footer", "dec":"*"}, "option":true, "inject_if_not":null}' */
   struct discord_embed_footer *footer;
 
-  /* specs/discord/channel.json:333:20
+  /* specs/discord/channel.json:337:20
      '{ "name": "image", "type":{ "base":"struct discord_embed_image", "dec":"*"}, "inject_if_not":null}' */
   struct discord_embed_image *image;
 
-  /* specs/discord/channel.json:334:20
+  /* specs/discord/channel.json:338:20
      '{ "name": "thumbnail", "type":{ "base":"struct discord_embed_thumbnail", "dec":"*"}, "inject_if_not":null}' */
   struct discord_embed_thumbnail *thumbnail;
 
-  /* specs/discord/channel.json:335:20
+  /* specs/discord/channel.json:339:20
      '{ "name": "video", "type":{ "base":"struct discord_embed_video", "dec":"*"}, "inject_if_not":null}' */
   struct discord_embed_video *video;
 
-  /* specs/discord/channel.json:336:20
+  /* specs/discord/channel.json:340:20
      '{ "name": "provider", "type":{ "base":"struct discord_embed_provider", "dec":"*"}, "inject_if_not":null}' */
   struct discord_embed_provider *provider;
 
-  /* specs/discord/channel.json:337:20
+  /* specs/discord/channel.json:341:20
      '{ "name": "author", "type":{ "base":"struct discord_embed_author", "dec":"*"}, "inject_if_not":null}' */
   struct discord_embed_author *author;
 
-  /* specs/discord/channel.json:338:20
+  /* specs/discord/channel.json:342:20
      '{ "name": "fields", "type":{ "base":"struct discord_embed_field", "dec":"ntl"}, "option":true, "inject_if_not":null}' */
   struct discord_embed_field **fields;
 
@@ -1671,26 +2007,37 @@ struct discord_embed {
 /// @endcond
 };
 
+// Embed Thumbnail Structure
+// defined at specs/discord/channel.json:349:22
 /**
- * @brief Embed Thumbnail Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure
- * @note defined at specs/discord/channel.json:345:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_thumbnail_init(struct discord_embed_thumbnail *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_thumbnail_cleanup(struct discord_embed_thumbnail *) </tt>
+ *   - <tt> discord_embed_thumbnail_list_free(struct discord_embed_thumbnail **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_thumbnail_from_json(char *rbuf, size_t len, struct discord_embed_thumbnail **) </tt>
+ *   - <tt> discord_embed_thumbnail_list_from_json(char *rbuf, size_t len, struct discord_embed_thumbnail ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_thumbnail_to_json(char *wbuf, size_t len, struct discord_embed_thumbnail *) </tt>
+ *   - <tt> discord_embed_thumbnail_list_to_json(char *wbuf, size_t len, struct discord_embed_thumbnail **) </tt>
  */
 struct discord_embed_thumbnail {
-  /* specs/discord/channel.json:347:20
+  /* specs/discord/channel.json:351:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *url;
 
-  /* specs/discord/channel.json:348:20
+  /* specs/discord/channel.json:352:20
      '{ "name": "proxy_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *proxy_url;
 
-  /* specs/discord/channel.json:349:20
+  /* specs/discord/channel.json:353:20
      '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
   int height;
 
-  /* specs/discord/channel.json:350:20
+  /* specs/discord/channel.json:354:20
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
   int width;
 
@@ -1710,26 +2057,37 @@ struct discord_embed_thumbnail {
 /// @endcond
 };
 
+// Embed Video Structure
+// defined at specs/discord/channel.json:361:22
 /**
- * @brief Embed Video Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-video-structure
- * @note defined at specs/discord/channel.json:357:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_video_init(struct discord_embed_video *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_video_cleanup(struct discord_embed_video *) </tt>
+ *   - <tt> discord_embed_video_list_free(struct discord_embed_video **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_video_from_json(char *rbuf, size_t len, struct discord_embed_video **) </tt>
+ *   - <tt> discord_embed_video_list_from_json(char *rbuf, size_t len, struct discord_embed_video ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_video_to_json(char *wbuf, size_t len, struct discord_embed_video *) </tt>
+ *   - <tt> discord_embed_video_list_to_json(char *wbuf, size_t len, struct discord_embed_video **) </tt>
  */
 struct discord_embed_video {
-  /* specs/discord/channel.json:359:20
+  /* specs/discord/channel.json:363:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *url;
 
-  /* specs/discord/channel.json:360:20
+  /* specs/discord/channel.json:364:20
      '{ "name": "proxy_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *proxy_url;
 
-  /* specs/discord/channel.json:361:20
+  /* specs/discord/channel.json:365:20
      '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
   int height;
 
-  /* specs/discord/channel.json:362:20
+  /* specs/discord/channel.json:366:20
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
   int width;
 
@@ -1749,26 +2107,37 @@ struct discord_embed_video {
 /// @endcond
 };
 
+// Embed Image Structure
+// defined at specs/discord/channel.json:373:22
 /**
- * @brief Embed Image Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-image-structure
- * @note defined at specs/discord/channel.json:369:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_image_init(struct discord_embed_image *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_image_cleanup(struct discord_embed_image *) </tt>
+ *   - <tt> discord_embed_image_list_free(struct discord_embed_image **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_image_from_json(char *rbuf, size_t len, struct discord_embed_image **) </tt>
+ *   - <tt> discord_embed_image_list_from_json(char *rbuf, size_t len, struct discord_embed_image ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_image_to_json(char *wbuf, size_t len, struct discord_embed_image *) </tt>
+ *   - <tt> discord_embed_image_list_to_json(char *wbuf, size_t len, struct discord_embed_image **) </tt>
  */
 struct discord_embed_image {
-  /* specs/discord/channel.json:371:20
+  /* specs/discord/channel.json:375:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *url;
 
-  /* specs/discord/channel.json:372:20
+  /* specs/discord/channel.json:376:20
      '{ "name": "proxy_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *proxy_url;
 
-  /* specs/discord/channel.json:373:20
+  /* specs/discord/channel.json:377:20
      '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
   int height;
 
-  /* specs/discord/channel.json:374:20
+  /* specs/discord/channel.json:378:20
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
   int width;
 
@@ -1788,18 +2157,29 @@ struct discord_embed_image {
 /// @endcond
 };
 
+// Embed Provider Structure
+// defined at specs/discord/channel.json:385:22
 /**
- * @brief Embed Provider Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-provider-structure
- * @note defined at specs/discord/channel.json:381:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_provider_init(struct discord_embed_provider *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_provider_cleanup(struct discord_embed_provider *) </tt>
+ *   - <tt> discord_embed_provider_list_free(struct discord_embed_provider **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_provider_from_json(char *rbuf, size_t len, struct discord_embed_provider **) </tt>
+ *   - <tt> discord_embed_provider_list_from_json(char *rbuf, size_t len, struct discord_embed_provider ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_provider_to_json(char *wbuf, size_t len, struct discord_embed_provider *) </tt>
+ *   - <tt> discord_embed_provider_list_to_json(char *wbuf, size_t len, struct discord_embed_provider **) </tt>
  */
 struct discord_embed_provider {
-  /* specs/discord/channel.json:383:20
+  /* specs/discord/channel.json:387:20
      '{ "name": "name", "type":{"base":"char", "dec":"*"}, "inject_if_not":null}' */
   char *name;
 
-  /* specs/discord/channel.json:384:20
+  /* specs/discord/channel.json:388:20
      '{ "name": "url", "type":{"base":"char", "dec":"*"}, "inject_if_not":null}' */
   char *url;
 
@@ -1819,26 +2199,37 @@ struct discord_embed_provider {
 /// @endcond
 };
 
+// Embed Author Structure
+// defined at specs/discord/channel.json:395:22
 /**
- * @brief Embed Author Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-author-structure
- * @note defined at specs/discord/channel.json:391:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_author_init(struct discord_embed_author *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_author_cleanup(struct discord_embed_author *) </tt>
+ *   - <tt> discord_embed_author_list_free(struct discord_embed_author **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_author_from_json(char *rbuf, size_t len, struct discord_embed_author **) </tt>
+ *   - <tt> discord_embed_author_list_from_json(char *rbuf, size_t len, struct discord_embed_author ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_author_to_json(char *wbuf, size_t len, struct discord_embed_author *) </tt>
+ *   - <tt> discord_embed_author_list_to_json(char *wbuf, size_t len, struct discord_embed_author **) </tt>
  */
 struct discord_embed_author {
-  /* specs/discord/channel.json:393:20
+  /* specs/discord/channel.json:397:20
      '{ "name": "name", "type":{ "base":"char", "dec":"[DISCORD_EMBED_AUTHOR_NAME_LEN]" }, "inject_if_not":null}' */
   char name[DISCORD_EMBED_AUTHOR_NAME_LEN];
 
-  /* specs/discord/channel.json:394:20
+  /* specs/discord/channel.json:398:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *url;
 
-  /* specs/discord/channel.json:395:20
+  /* specs/discord/channel.json:399:20
      '{ "name": "icon_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *icon_url;
 
-  /* specs/discord/channel.json:396:20
+  /* specs/discord/channel.json:400:20
      '{ "name": "proxy_icon_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *proxy_icon_url;
 
@@ -1858,22 +2249,33 @@ struct discord_embed_author {
 /// @endcond
 };
 
+// Embed Footer Structure
+// defined at specs/discord/channel.json:407:22
 /**
- * @brief Embed Footer Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-footer-structure
- * @note defined at specs/discord/channel.json:403:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_footer_init(struct discord_embed_footer *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_footer_cleanup(struct discord_embed_footer *) </tt>
+ *   - <tt> discord_embed_footer_list_free(struct discord_embed_footer **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_footer_from_json(char *rbuf, size_t len, struct discord_embed_footer **) </tt>
+ *   - <tt> discord_embed_footer_list_from_json(char *rbuf, size_t len, struct discord_embed_footer ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_footer_to_json(char *wbuf, size_t len, struct discord_embed_footer *) </tt>
+ *   - <tt> discord_embed_footer_list_to_json(char *wbuf, size_t len, struct discord_embed_footer **) </tt>
  */
 struct discord_embed_footer {
-  /* specs/discord/channel.json:405:20
+  /* specs/discord/channel.json:409:20
      '{ "name": "text", "type": {"base":"char", "dec":"[DISCORD_EMBED_FOOTER_TEXT_LEN]"}, "inject_if_not":null}' */
   char text[DISCORD_EMBED_FOOTER_TEXT_LEN];
 
-  /* specs/discord/channel.json:406:20
+  /* specs/discord/channel.json:410:20
      '{ "name": "icon_url", "type": {"base":"char", "dec":"*" }, "option":true, "inject_if_not":null}' */
   char *icon_url;
 
-  /* specs/discord/channel.json:407:20
+  /* specs/discord/channel.json:411:20
      '{ "name": "proxy_icon_url", "type": {"base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   char *proxy_icon_url;
 
@@ -1893,22 +2295,33 @@ struct discord_embed_footer {
 /// @endcond
 };
 
+// Embed Field Structure
+// defined at specs/discord/channel.json:418:22
 /**
- * @brief Embed Field Structure
- *
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-field-structure
- * @note defined at specs/discord/channel.json:414:22
+ *
+ * - Initializer:
+ *   - <tt> discord_embed_field_init(struct discord_embed_field *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_embed_field_cleanup(struct discord_embed_field *) </tt>
+ *   - <tt> discord_embed_field_list_free(struct discord_embed_field **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_embed_field_from_json(char *rbuf, size_t len, struct discord_embed_field **) </tt>
+ *   - <tt> discord_embed_field_list_from_json(char *rbuf, size_t len, struct discord_embed_field ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_embed_field_to_json(char *wbuf, size_t len, struct discord_embed_field *) </tt>
+ *   - <tt> discord_embed_field_list_to_json(char *wbuf, size_t len, struct discord_embed_field **) </tt>
  */
 struct discord_embed_field {
-  /* specs/discord/channel.json:416:20
+  /* specs/discord/channel.json:420:20
      '{ "name": "name", "type": { "base":"char", "dec":"[DISCORD_EMBED_FIELD_NAME_LEN]" }, "inject_if_not":null}' */
   char name[DISCORD_EMBED_FIELD_NAME_LEN];
 
-  /* specs/discord/channel.json:417:20
+  /* specs/discord/channel.json:421:20
      '{ "name": "value", "type": { "base":"char", "dec":"[DISCORD_EMBED_FIELD_VALUE_LEN]" }, "inject_if_not":null}' */
   char value[DISCORD_EMBED_FIELD_VALUE_LEN];
 
-  /* specs/discord/channel.json:418:20
+  /* specs/discord/channel.json:422:20
      '{ "name": "Inline", "json_key":"inline", "type": { "base":"bool" }, "option":true}' */
   bool Inline;
 
@@ -1930,18 +2343,26 @@ struct discord_embed_field {
 /* This file is generated from specs/discord/emoji.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see 
  */
 
 
+// Create Guild Emoji
+// defined at specs/discord/emoji.endpoints-params.json:10:22
 /**
- * @brief Create Guild Emoji
- *
  * @see https://discord.com/developers/docs/resources/emoji#create-guild-emoji
- * @note defined at specs/discord/emoji.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_guild_emoji_params_init(struct discord_create_guild_emoji_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_guild_emoji_params_cleanup(struct discord_create_guild_emoji_params *) </tt>
+ *   - <tt> discord_create_guild_emoji_params_list_free(struct discord_create_guild_emoji_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_guild_emoji_params_from_json(char *rbuf, size_t len, struct discord_create_guild_emoji_params **) </tt>
+ *   - <tt> discord_create_guild_emoji_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_emoji_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_guild_emoji_params_to_json(char *wbuf, size_t len, struct discord_create_guild_emoji_params *) </tt>
+ *   - <tt> discord_create_guild_emoji_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_emoji_params **) </tt>
  */
 struct discord_create_guild_emoji_params {
   /* specs/discord/emoji.endpoints-params.json:13:20
@@ -1972,11 +2393,22 @@ struct discord_create_guild_emoji_params {
 /// @endcond
 };
 
+// Modify Guild Emoji
+// defined at specs/discord/emoji.endpoints-params.json:22:22
 /**
- * @brief Modify Guild Emoji
- *
  * @see https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
- * @note defined at specs/discord/emoji.endpoints-params.json:22:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_emoji_params_init(struct discord_modify_guild_emoji_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_emoji_params_cleanup(struct discord_modify_guild_emoji_params *) </tt>
+ *   - <tt> discord_modify_guild_emoji_params_list_free(struct discord_modify_guild_emoji_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_emoji_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_emoji_params **) </tt>
+ *   - <tt> discord_modify_guild_emoji_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_emoji_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_emoji_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_emoji_params *) </tt>
+ *   - <tt> discord_modify_guild_emoji_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_emoji_params **) </tt>
  */
 struct discord_modify_guild_emoji_params {
   /* specs/discord/emoji.endpoints-params.json:25:20
@@ -2005,18 +2437,26 @@ struct discord_modify_guild_emoji_params {
 /* This file is generated from specs/discord/emoji.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/emoji
  */
 
 
+// Emoji Structure
+// defined at specs/discord/emoji.json:9:22
 /**
- * @brief Emoji Structure
- *
  * @see https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
- * @note defined at specs/discord/emoji.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_emoji_init(struct discord_emoji *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_emoji_cleanup(struct discord_emoji *) </tt>
+ *   - <tt> discord_emoji_list_free(struct discord_emoji **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_emoji_from_json(char *rbuf, size_t len, struct discord_emoji **) </tt>
+ *   - <tt> discord_emoji_list_from_json(char *rbuf, size_t len, struct discord_emoji ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_emoji_to_json(char *wbuf, size_t len, struct discord_emoji *) </tt>
+ *   - <tt> discord_emoji_list_to_json(char *wbuf, size_t len, struct discord_emoji **) </tt>
  */
 struct discord_emoji {
   /* specs/discord/emoji.json:12:20
@@ -2070,9 +2510,6 @@ struct discord_emoji {
 /* This file is generated from specs/discord/gateway.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/gateway
  */
 
@@ -2085,11 +2522,22 @@ struct discord_emoji {
 
 
 
+// Identify Structure
+// defined at specs/discord/gateway.json:116:22
 /**
- * @brief Identify Structure
- *
  * @see https://discord.com/developers/docs/topics/gateway#identify-identify-structure
- * @note defined at specs/discord/gateway.json:116:22
+ *
+ * - Initializer:
+ *   - <tt> discord_gateway_identify_init(struct discord_gateway_identify *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_gateway_identify_cleanup(struct discord_gateway_identify *) </tt>
+ *   - <tt> discord_gateway_identify_list_free(struct discord_gateway_identify **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_gateway_identify_from_json(char *rbuf, size_t len, struct discord_gateway_identify **) </tt>
+ *   - <tt> discord_gateway_identify_list_from_json(char *rbuf, size_t len, struct discord_gateway_identify ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_gateway_identify_to_json(char *wbuf, size_t len, struct discord_gateway_identify *) </tt>
+ *   - <tt> discord_gateway_identify_list_to_json(char *wbuf, size_t len, struct discord_gateway_identify **) </tt>
  */
 struct discord_gateway_identify {
   /* specs/discord/gateway.json:119:19
@@ -2140,11 +2588,22 @@ struct discord_gateway_identify {
 /// @endcond
 };
 
+// Gateway Status Update Structure
+// defined at specs/discord/gateway.json:132:22
 /**
- * @brief Gateway Status Update Structure
- *
  * @see https://discord.com/developers/docs/topics/gateway#update-status-gateway-status-update-structure
- * @note defined at specs/discord/gateway.json:132:22
+ *
+ * - Initializer:
+ *   - <tt> discord_gateway_status_update_init(struct discord_gateway_status_update *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_gateway_status_update_cleanup(struct discord_gateway_status_update *) </tt>
+ *   - <tt> discord_gateway_status_update_list_free(struct discord_gateway_status_update **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_gateway_status_update_from_json(char *rbuf, size_t len, struct discord_gateway_status_update **) </tt>
+ *   - <tt> discord_gateway_status_update_list_from_json(char *rbuf, size_t len, struct discord_gateway_status_update ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_gateway_status_update_to_json(char *wbuf, size_t len, struct discord_gateway_status_update *) </tt>
+ *   - <tt> discord_gateway_status_update_list_to_json(char *wbuf, size_t len, struct discord_gateway_status_update **) </tt>
  */
 struct discord_gateway_status_update {
   /* specs/discord/gateway.json:135:19
@@ -2181,24 +2640,35 @@ struct discord_gateway_status_update {
 /// @endcond
 };
 
+// Identify Connection Properties
+// defined at specs/discord/gateway.json:147:22
 /**
- * @brief Identify Connection Properties
- *
  * @see https://discord.com/developers/docs/topics/gateway#identify-identify-connection-properties
- * @note defined at specs/discord/gateway.json:147:22
+ *
+ * - Initializer:
+ *   - <tt> discord_gateway_identify_connection_init(struct discord_gateway_identify_connection *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_gateway_identify_connection_cleanup(struct discord_gateway_identify_connection *) </tt>
+ *   - <tt> discord_gateway_identify_connection_list_free(struct discord_gateway_identify_connection **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_gateway_identify_connection_from_json(char *rbuf, size_t len, struct discord_gateway_identify_connection **) </tt>
+ *   - <tt> discord_gateway_identify_connection_list_from_json(char *rbuf, size_t len, struct discord_gateway_identify_connection ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_gateway_identify_connection_to_json(char *wbuf, size_t len, struct discord_gateway_identify_connection *) </tt>
+ *   - <tt> discord_gateway_identify_connection_list_to_json(char *wbuf, size_t len, struct discord_gateway_identify_connection **) </tt>
  */
 struct discord_gateway_identify_connection {
   /* specs/discord/gateway.json:150:19
-     '{ "name":"$os", "type":{"base":"char", "dec":"*"}}' */
-  char *$os;
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+  char *os;
 
   /* specs/discord/gateway.json:151:19
-     '{ "name":"$browser", "type":{"base":"char", "dec":"*"}}' */
-  char *$browser;
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+  char *browser;
 
   /* specs/discord/gateway.json:152:19
-     '{ "name":"$device", "type":{"base":"char", "dec":"*"}}' */
-  char *$device;
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+  char *device;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -2216,11 +2686,22 @@ struct discord_gateway_identify_connection {
 /// @endcond
 };
 
+// Activity Structure
+// defined at specs/discord/gateway.json:158:22
 /**
- * @brief Activity Structure
- *
  * @see https://discord.com/developers/docs/topics/gateway#activity-object-activity-structure
- * @note defined at specs/discord/gateway.json:158:22
+ *
+ * - Initializer:
+ *   - <tt> discord_gateway_activity_init(struct discord_gateway_activity *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_gateway_activity_cleanup(struct discord_gateway_activity *) </tt>
+ *   - <tt> discord_gateway_activity_list_free(struct discord_gateway_activity **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_gateway_activity_from_json(char *rbuf, size_t len, struct discord_gateway_activity **) </tt>
+ *   - <tt> discord_gateway_activity_list_from_json(char *rbuf, size_t len, struct discord_gateway_activity ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_gateway_activity_to_json(char *wbuf, size_t len, struct discord_gateway_activity *) </tt>
+ *   - <tt> discord_gateway_activity_list_to_json(char *wbuf, size_t len, struct discord_gateway_activity **) </tt>
  */
 struct discord_gateway_activity {
   /* specs/discord/gateway.json:161:19
@@ -2281,18 +2762,26 @@ struct discord_gateway_activity {
 /* This file is generated from specs/discord/guild-template.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
 
 
+// Create Guild From Guild Template
+// defined at specs/discord/guild-template.endpoints-params.json:10:22
 /**
- * @brief Create Guild From Guild Template
- *
  * @see https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template-json-params
- * @note defined at specs/discord/guild-template.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_guild_from_guild_template_params_init(struct discord_create_guild_from_guild_template_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_guild_from_guild_template_params_cleanup(struct discord_create_guild_from_guild_template_params *) </tt>
+ *   - <tt> discord_create_guild_from_guild_template_params_list_free(struct discord_create_guild_from_guild_template_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_guild_from_guild_template_params_from_json(char *rbuf, size_t len, struct discord_create_guild_from_guild_template_params **) </tt>
+ *   - <tt> discord_create_guild_from_guild_template_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_from_guild_template_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_guild_from_guild_template_params_to_json(char *wbuf, size_t len, struct discord_create_guild_from_guild_template_params *) </tt>
+ *   - <tt> discord_create_guild_from_guild_template_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_from_guild_template_params **) </tt>
  */
 struct discord_create_guild_from_guild_template_params {
   /* specs/discord/guild-template.endpoints-params.json:13:20
@@ -2319,11 +2808,22 @@ struct discord_create_guild_from_guild_template_params {
 /// @endcond
 };
 
+// Create Guild Template
+// defined at specs/discord/guild-template.endpoints-params.json:21:22
 /**
- * @brief Create Guild Template
- *
  * @see https://discord.com/developers/docs/resources/guild-template#create-guild-template-json-params
- * @note defined at specs/discord/guild-template.endpoints-params.json:21:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_guild_template_params_init(struct discord_create_guild_template_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_guild_template_params_cleanup(struct discord_create_guild_template_params *) </tt>
+ *   - <tt> discord_create_guild_template_params_list_free(struct discord_create_guild_template_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_guild_template_params_from_json(char *rbuf, size_t len, struct discord_create_guild_template_params **) </tt>
+ *   - <tt> discord_create_guild_template_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_template_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_guild_template_params_to_json(char *wbuf, size_t len, struct discord_create_guild_template_params *) </tt>
+ *   - <tt> discord_create_guild_template_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_template_params **) </tt>
  */
 struct discord_create_guild_template_params {
   /* specs/discord/guild-template.endpoints-params.json:24:20
@@ -2350,11 +2850,22 @@ struct discord_create_guild_template_params {
 /// @endcond
 };
 
+// Modify Guild Template
+// defined at specs/discord/guild-template.endpoints-params.json:32:22
 /**
- * @brief Modify Guild Template
- *
  * @see https://discord.com/developers/docs/resources/guild-template#modify-guild-template-json-params
- * @note defined at specs/discord/guild-template.endpoints-params.json:32:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_template_params_init(struct discord_modify_guild_template_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_template_params_cleanup(struct discord_modify_guild_template_params *) </tt>
+ *   - <tt> discord_modify_guild_template_params_list_free(struct discord_modify_guild_template_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_template_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_template_params **) </tt>
+ *   - <tt> discord_modify_guild_template_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_template_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_template_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_template_params *) </tt>
+ *   - <tt> discord_modify_guild_template_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_template_params **) </tt>
  */
 struct discord_modify_guild_template_params {
   /* specs/discord/guild-template.endpoints-params.json:35:20
@@ -2383,18 +2894,26 @@ struct discord_modify_guild_template_params {
 /* This file is generated from specs/discord/guild-template.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
 
 
+// Guild Template Structure
+// defined at specs/discord/guild-template.json:9:22
 /**
- * @brief Guild Template Structure
- *
  * @see https://discord.com/developers/docs/resources/guild-template#guild-template-object-guild-template-structure
- * @note defined at specs/discord/guild-template.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_template_init(struct discord_guild_template *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_template_cleanup(struct discord_guild_template *) </tt>
+ *   - <tt> discord_guild_template_list_free(struct discord_guild_template **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_template_from_json(char *rbuf, size_t len, struct discord_guild_template **) </tt>
+ *   - <tt> discord_guild_template_list_from_json(char *rbuf, size_t len, struct discord_guild_template ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_template_to_json(char *wbuf, size_t len, struct discord_guild_template *) </tt>
+ *   - <tt> discord_guild_template_list_to_json(char *wbuf, size_t len, struct discord_guild_template **) </tt>
  */
 struct discord_guild_template {
   /* specs/discord/guild-template.json:12:20
@@ -2459,18 +2978,26 @@ struct discord_guild_template {
 /* This file is generated from specs/discord/guild.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
 
 
+// Create Guild
+// defined at specs/discord/guild.endpoints-params.json:10:22
 /**
- * @brief Create Guild
- *
  * @see https://discord.com/developers/docs/resources/guild#create-guild
- * @note defined at specs/discord/guild.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_guild_params_init(struct discord_create_guild_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_guild_params_cleanup(struct discord_create_guild_params *) </tt>
+ *   - <tt> discord_create_guild_params_list_free(struct discord_create_guild_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_guild_params_from_json(char *rbuf, size_t len, struct discord_create_guild_params **) </tt>
+ *   - <tt> discord_create_guild_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_guild_params_to_json(char *wbuf, size_t len, struct discord_create_guild_params *) </tt>
+ *   - <tt> discord_create_guild_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_params **) </tt>
  */
 struct discord_create_guild_params {
   /* specs/discord/guild.endpoints-params.json:13:20
@@ -2533,11 +3060,22 @@ struct discord_create_guild_params {
 /// @endcond
 };
 
+// Modify Guild
+// defined at specs/discord/guild.endpoints-params.json:30:22
 /**
- * @brief Modify Guild
- *
  * @see https://discord.com/developers/docs/resources/guild#modify-guild-json-params
- * @note defined at specs/discord/guild.endpoints-params.json:30:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_params_init(struct discord_modify_guild_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_params_cleanup(struct discord_modify_guild_params *) </tt>
+ *   - <tt> discord_modify_guild_params_list_free(struct discord_modify_guild_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_params **) </tt>
+ *   - <tt> discord_modify_guild_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_params *) </tt>
+ *   - <tt> discord_modify_guild_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_params **) </tt>
  */
 struct discord_modify_guild_params {
   /* specs/discord/guild.endpoints-params.json:33:20
@@ -2632,11 +3170,22 @@ struct discord_modify_guild_params {
 /// @endcond
 };
 
+// Create Guild Channel
+// defined at specs/discord/guild.endpoints-params.json:58:22
 /**
- * @brief Create Guild Channel
- *
  * @see https://discord.com/developers/docs/resources/guild#create-guild-channel
- * @note defined at specs/discord/guild.endpoints-params.json:58:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_guild_channel_params_init(struct discord_create_guild_channel_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_guild_channel_params_cleanup(struct discord_create_guild_channel_params *) </tt>
+ *   - <tt> discord_create_guild_channel_params_list_free(struct discord_create_guild_channel_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_guild_channel_params_from_json(char *rbuf, size_t len, struct discord_create_guild_channel_params **) </tt>
+ *   - <tt> discord_create_guild_channel_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_channel_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_guild_channel_params_to_json(char *wbuf, size_t len, struct discord_create_guild_channel_params *) </tt>
+ *   - <tt> discord_create_guild_channel_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_channel_params **) </tt>
  */
 struct discord_create_guild_channel_params {
   /* specs/discord/guild.endpoints-params.json:61:20
@@ -2695,11 +3244,22 @@ struct discord_create_guild_channel_params {
 /// @endcond
 };
 
+// Modify Guild Channel Positions
+// defined at specs/discord/guild.endpoints-params.json:77:22
 /**
- * @brief Modify Guild Channel Positions
- *
  * @see https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions-json-params
- * @note defined at specs/discord/guild.endpoints-params.json:77:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_channel_positions_params_init(struct discord_modify_guild_channel_positions_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_channel_positions_params_cleanup(struct discord_modify_guild_channel_positions_params *) </tt>
+ *   - <tt> discord_modify_guild_channel_positions_params_list_free(struct discord_modify_guild_channel_positions_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_channel_positions_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_channel_positions_params **) </tt>
+ *   - <tt> discord_modify_guild_channel_positions_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_channel_positions_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_channel_positions_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_channel_positions_params *) </tt>
+ *   - <tt> discord_modify_guild_channel_positions_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_channel_positions_params **) </tt>
  */
 struct discord_modify_guild_channel_positions_params {
   /* specs/discord/guild.endpoints-params.json:80:20
@@ -2734,11 +3294,22 @@ struct discord_modify_guild_channel_positions_params {
 /// @endcond
 };
 
+// Search Guild Members
+// defined at specs/discord/guild.endpoints-params.json:90:22
 /**
- * @brief Search Guild Members
- *
  * @see https://discord.com/developers/docs/resources/guild#search-guild-members-query-string-params
- * @note defined at specs/discord/guild.endpoints-params.json:90:22
+ *
+ * - Initializer:
+ *   - <tt> discord_search_guild_members_params_init(struct discord_search_guild_members_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_search_guild_members_params_cleanup(struct discord_search_guild_members_params *) </tt>
+ *   - <tt> discord_search_guild_members_params_list_free(struct discord_search_guild_members_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_search_guild_members_params_from_json(char *rbuf, size_t len, struct discord_search_guild_members_params **) </tt>
+ *   - <tt> discord_search_guild_members_params_list_from_json(char *rbuf, size_t len, struct discord_search_guild_members_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_search_guild_members_params_to_json(char *wbuf, size_t len, struct discord_search_guild_members_params *) </tt>
+ *   - <tt> discord_search_guild_members_params_list_to_json(char *wbuf, size_t len, struct discord_search_guild_members_params **) </tt>
  */
 struct discord_search_guild_members_params {
   /* specs/discord/guild.endpoints-params.json:93:20
@@ -2765,11 +3336,22 @@ struct discord_search_guild_members_params {
 /// @endcond
 };
 
+// Add Guild Member
+// defined at specs/discord/guild.endpoints-params.json:101:22
 /**
- * @brief Add Guild Member
- *
  * @see https://discord.com/developers/docs/resources/guild#add-guild-member-json-params
- * @note defined at specs/discord/guild.endpoints-params.json:101:22
+ *
+ * - Initializer:
+ *   - <tt> discord_add_guild_member_params_init(struct discord_add_guild_member_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_add_guild_member_params_cleanup(struct discord_add_guild_member_params *) </tt>
+ *   - <tt> discord_add_guild_member_params_list_free(struct discord_add_guild_member_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_add_guild_member_params_from_json(char *rbuf, size_t len, struct discord_add_guild_member_params **) </tt>
+ *   - <tt> discord_add_guild_member_params_list_from_json(char *rbuf, size_t len, struct discord_add_guild_member_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_add_guild_member_params_to_json(char *wbuf, size_t len, struct discord_add_guild_member_params *) </tt>
+ *   - <tt> discord_add_guild_member_params_list_to_json(char *wbuf, size_t len, struct discord_add_guild_member_params **) </tt>
  */
 struct discord_add_guild_member_params {
   /* specs/discord/guild.endpoints-params.json:104:20
@@ -2808,11 +3390,22 @@ struct discord_add_guild_member_params {
 /// @endcond
 };
 
+// Modify Guild Member
+// defined at specs/discord/guild.endpoints-params.json:115:22
 /**
- * @brief Modify Guild Member
- *
  * @see https://discord.com/developers/docs/resources/guild#modify-guild-member
- * @note defined at specs/discord/guild.endpoints-params.json:115:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_member_params_init(struct discord_modify_guild_member_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_member_params_cleanup(struct discord_modify_guild_member_params *) </tt>
+ *   - <tt> discord_modify_guild_member_params_list_free(struct discord_modify_guild_member_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_member_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_member_params **) </tt>
+ *   - <tt> discord_modify_guild_member_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_member_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_member_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_member_params *) </tt>
+ *   - <tt> discord_modify_guild_member_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_member_params **) </tt>
  */
 struct discord_modify_guild_member_params {
   /* specs/discord/guild.endpoints-params.json:118:20
@@ -2851,11 +3444,22 @@ struct discord_modify_guild_member_params {
 /// @endcond
 };
 
+// Create Guild Role
+// defined at specs/discord/guild.endpoints-params.json:129:22
 /**
- * @brief Create Guild Role
- *
  * @see https://discord.com/developers/docs/resources/guild#create-guild-role
- * @note defined at specs/discord/guild.endpoints-params.json:129:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_guild_role_params_init(struct discord_create_guild_role_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_guild_role_params_cleanup(struct discord_create_guild_role_params *) </tt>
+ *   - <tt> discord_create_guild_role_params_list_free(struct discord_create_guild_role_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_guild_role_params_from_json(char *rbuf, size_t len, struct discord_create_guild_role_params **) </tt>
+ *   - <tt> discord_create_guild_role_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_role_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_guild_role_params_to_json(char *wbuf, size_t len, struct discord_create_guild_role_params *) </tt>
+ *   - <tt> discord_create_guild_role_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_role_params **) </tt>
  */
 struct discord_create_guild_role_params {
   /* specs/discord/guild.endpoints-params.json:132:20
@@ -2894,11 +3498,22 @@ struct discord_create_guild_role_params {
 /// @endcond
 };
 
+// Modify Guild Role Positions
+// defined at specs/discord/guild.endpoints-params.json:143:22
 /**
- * @brief Modify Guild Role Positions
- *
  * @see https://discord.com/developers/docs/resources/guild#modify-guild-role-positions-json-params
- * @note defined at specs/discord/guild.endpoints-params.json:143:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_role_positions_params_init(struct discord_modify_guild_role_positions_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_role_positions_params_cleanup(struct discord_modify_guild_role_positions_params *) </tt>
+ *   - <tt> discord_modify_guild_role_positions_params_list_free(struct discord_modify_guild_role_positions_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_role_positions_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_role_positions_params **) </tt>
+ *   - <tt> discord_modify_guild_role_positions_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_role_positions_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_role_positions_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_role_positions_params *) </tt>
+ *   - <tt> discord_modify_guild_role_positions_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_role_positions_params **) </tt>
  */
 struct discord_modify_guild_role_positions_params {
   /* specs/discord/guild.endpoints-params.json:146:20
@@ -2925,11 +3540,22 @@ struct discord_modify_guild_role_positions_params {
 /// @endcond
 };
 
+// Modify Guild Role
+// defined at specs/discord/guild.endpoints-params.json:154:22
 /**
- * @brief Modify Guild Role
- *
  * @see https://discord.com/developers/docs/resources/guild#modify-guild-role-json-params
- * @note defined at specs/discord/guild.endpoints-params.json:154:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_guild_role_params_init(struct discord_modify_guild_role_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_guild_role_params_cleanup(struct discord_modify_guild_role_params *) </tt>
+ *   - <tt> discord_modify_guild_role_params_list_free(struct discord_modify_guild_role_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_guild_role_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_role_params **) </tt>
+ *   - <tt> discord_modify_guild_role_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_role_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_guild_role_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_role_params *) </tt>
+ *   - <tt> discord_modify_guild_role_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_role_params **) </tt>
  */
 struct discord_modify_guild_role_params {
   /* specs/discord/guild.endpoints-params.json:157:20
@@ -2968,11 +3594,22 @@ struct discord_modify_guild_role_params {
 /// @endcond
 };
 
+// Get Guild Prune Count
+// defined at specs/discord/guild.endpoints-params.json:168:22
 /**
- * @brief Get Guild Prune Count
- *
  * @see https://discord.com/developers/docs/resources/guild#get-guild-prune-count-query-string-params
- * @note defined at specs/discord/guild.endpoints-params.json:168:22
+ *
+ * - Initializer:
+ *   - <tt> discord_get_guild_prune_count_params_init(struct discord_get_guild_prune_count_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_get_guild_prune_count_params_cleanup(struct discord_get_guild_prune_count_params *) </tt>
+ *   - <tt> discord_get_guild_prune_count_params_list_free(struct discord_get_guild_prune_count_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_get_guild_prune_count_params_from_json(char *rbuf, size_t len, struct discord_get_guild_prune_count_params **) </tt>
+ *   - <tt> discord_get_guild_prune_count_params_list_from_json(char *rbuf, size_t len, struct discord_get_guild_prune_count_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_get_guild_prune_count_params_to_json(char *wbuf, size_t len, struct discord_get_guild_prune_count_params *) </tt>
+ *   - <tt> discord_get_guild_prune_count_params_list_to_json(char *wbuf, size_t len, struct discord_get_guild_prune_count_params **) </tt>
  */
 struct discord_get_guild_prune_count_params {
   /* specs/discord/guild.endpoints-params.json:171:20
@@ -2999,11 +3636,22 @@ struct discord_get_guild_prune_count_params {
 /// @endcond
 };
 
+// Begin Guild Prune
+// defined at specs/discord/guild.endpoints-params.json:179:22
 /**
- * @brief Begin Guild Prune
- *
  * @see https://discord.com/developers/docs/resources/guild#begin-guild-prune-json-params
- * @note defined at specs/discord/guild.endpoints-params.json:179:22
+ *
+ * - Initializer:
+ *   - <tt> discord_begin_guild_prune_params_init(struct discord_begin_guild_prune_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_begin_guild_prune_params_cleanup(struct discord_begin_guild_prune_params *) </tt>
+ *   - <tt> discord_begin_guild_prune_params_list_free(struct discord_begin_guild_prune_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_begin_guild_prune_params_from_json(char *rbuf, size_t len, struct discord_begin_guild_prune_params **) </tt>
+ *   - <tt> discord_begin_guild_prune_params_list_from_json(char *rbuf, size_t len, struct discord_begin_guild_prune_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_begin_guild_prune_params_to_json(char *wbuf, size_t len, struct discord_begin_guild_prune_params *) </tt>
+ *   - <tt> discord_begin_guild_prune_params_list_to_json(char *wbuf, size_t len, struct discord_begin_guild_prune_params **) </tt>
  */
 struct discord_begin_guild_prune_params {
   /* specs/discord/guild.endpoints-params.json:182:20
@@ -3040,18 +3688,26 @@ struct discord_begin_guild_prune_params {
 /* This file is generated from specs/discord/guild.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild
  */
 
 
+// Guild Structure
+// defined at specs/discord/guild.json:9:22
 /**
- * @brief Guild Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
- * @note defined at specs/discord/guild.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_init(struct discord_guild *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_cleanup(struct discord_guild *) </tt>
+ *   - <tt> discord_guild_list_free(struct discord_guild **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_from_json(char *rbuf, size_t len, struct discord_guild **) </tt>
+ *   - <tt> discord_guild_list_from_json(char *rbuf, size_t len, struct discord_guild ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_to_json(char *wbuf, size_t len, struct discord_guild *) </tt>
+ *   - <tt> discord_guild_list_to_json(char *wbuf, size_t len, struct discord_guild **) </tt>
  */
 struct discord_guild {
   /* specs/discord/guild.json:12:78
@@ -3276,11 +3932,22 @@ struct discord_guild {
 
 
 
+// Unavailable Guild Object
+// defined at specs/discord/guild.json:161:23
 /**
- * @brief Unavailable Guild Object
- *
  * @see https://discord.com/developers/docs/resources/guild#unavailable-guild-object
- * @note defined at specs/discord/guild.json:161:23
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_unavailable_init(struct discord_guild_unavailable *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_unavailable_cleanup(struct discord_guild_unavailable *) </tt>
+ *   - <tt> discord_guild_unavailable_list_free(struct discord_guild_unavailable **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_unavailable_from_json(char *rbuf, size_t len, struct discord_guild_unavailable **) </tt>
+ *   - <tt> discord_guild_unavailable_list_from_json(char *rbuf, size_t len, struct discord_guild_unavailable ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_unavailable_to_json(char *wbuf, size_t len, struct discord_guild_unavailable *) </tt>
+ *   - <tt> discord_guild_unavailable_list_to_json(char *wbuf, size_t len, struct discord_guild_unavailable **) </tt>
  */
 struct discord_guild_unavailable {
   /* specs/discord/guild.json:163:18
@@ -3307,11 +3974,22 @@ struct discord_guild_unavailable {
 /// @endcond
 };
 
+// Guild Preview Object
+// defined at specs/discord/guild.json:171:23
 /**
- * @brief Guild Preview Object
- *
  * @see https://discord.com/developers/docs/resources/guild#guild-preview-object
- * @note defined at specs/discord/guild.json:171:23
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_preview_init(struct discord_guild_preview *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_preview_cleanup(struct discord_guild_preview *) </tt>
+ *   - <tt> discord_guild_preview_list_free(struct discord_guild_preview **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_preview_from_json(char *rbuf, size_t len, struct discord_guild_preview **) </tt>
+ *   - <tt> discord_guild_preview_list_from_json(char *rbuf, size_t len, struct discord_guild_preview ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_preview_to_json(char *wbuf, size_t len, struct discord_guild_preview *) </tt>
+ *   - <tt> discord_guild_preview_list_to_json(char *wbuf, size_t len, struct discord_guild_preview **) </tt>
  */
 struct discord_guild_preview {
   /* specs/discord/guild.json:173:18
@@ -3370,11 +4048,22 @@ struct discord_guild_preview {
 /// @endcond
 };
 
+// Guild Widget Object
+// defined at specs/discord/guild.json:189:23
 /**
- * @brief Guild Widget Object
- *
  * @see https://discord.com/developers/docs/resources/guild#guild-widget-object
- * @note defined at specs/discord/guild.json:189:23
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_widget_init(struct discord_guild_widget *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_widget_cleanup(struct discord_guild_widget *) </tt>
+ *   - <tt> discord_guild_widget_list_free(struct discord_guild_widget **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_widget_from_json(char *rbuf, size_t len, struct discord_guild_widget **) </tt>
+ *   - <tt> discord_guild_widget_list_from_json(char *rbuf, size_t len, struct discord_guild_widget ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_widget_to_json(char *wbuf, size_t len, struct discord_guild_widget *) </tt>
+ *   - <tt> discord_guild_widget_list_to_json(char *wbuf, size_t len, struct discord_guild_widget **) </tt>
  */
 struct discord_guild_widget {
   /* specs/discord/guild.json:191:18
@@ -3401,11 +4090,22 @@ struct discord_guild_widget {
 /// @endcond
 };
 
+// Guild Member Structure
+// defined at specs/discord/guild.json:199:22
 /**
- * @brief Guild Member Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#guild-member-object
- * @note defined at specs/discord/guild.json:199:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_member_init(struct discord_guild_member *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_member_cleanup(struct discord_guild_member *) </tt>
+ *   - <tt> discord_guild_member_list_free(struct discord_guild_member **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_member_from_json(char *rbuf, size_t len, struct discord_guild_member **) </tt>
+ *   - <tt> discord_guild_member_list_from_json(char *rbuf, size_t len, struct discord_guild_member ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_member_to_json(char *wbuf, size_t len, struct discord_guild_member *) </tt>
+ *   - <tt> discord_guild_member_list_to_json(char *wbuf, size_t len, struct discord_guild_member **) </tt>
  */
 struct discord_guild_member {
   /* specs/discord/guild.json:202:20
@@ -3460,11 +4160,22 @@ struct discord_guild_member {
 /// @endcond
 };
 
+// Integration Structure
+// defined at specs/discord/guild.json:217:22
 /**
- * @brief Integration Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#integration-object-integration-structure
- * @note defined at specs/discord/guild.json:217:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_integration_init(struct discord_guild_integration *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_integration_cleanup(struct discord_guild_integration *) </tt>
+ *   - <tt> discord_guild_integration_list_free(struct discord_guild_integration **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_integration_from_json(char *rbuf, size_t len, struct discord_guild_integration **) </tt>
+ *   - <tt> discord_guild_integration_list_from_json(char *rbuf, size_t len, struct discord_guild_integration ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_integration_to_json(char *wbuf, size_t len, struct discord_guild_integration *) </tt>
+ *   - <tt> discord_guild_integration_list_to_json(char *wbuf, size_t len, struct discord_guild_integration **) </tt>
  */
 struct discord_guild_integration {
   /* specs/discord/guild.json:220:20
@@ -3545,11 +4256,22 @@ struct discord_guild_integration {
 
 
 
+// Integration Account Structure
+// defined at specs/discord/guild.json:251:22
 /**
- * @brief Integration Account Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#integration-account-object-integration-account-structure
- * @note defined at specs/discord/guild.json:251:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_integration_account_init(struct discord_guild_integration_account *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_integration_account_cleanup(struct discord_guild_integration_account *) </tt>
+ *   - <tt> discord_guild_integration_account_list_free(struct discord_guild_integration_account **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_integration_account_from_json(char *rbuf, size_t len, struct discord_guild_integration_account **) </tt>
+ *   - <tt> discord_guild_integration_account_list_from_json(char *rbuf, size_t len, struct discord_guild_integration_account ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_integration_account_to_json(char *wbuf, size_t len, struct discord_guild_integration_account *) </tt>
+ *   - <tt> discord_guild_integration_account_list_to_json(char *wbuf, size_t len, struct discord_guild_integration_account **) </tt>
  */
 struct discord_guild_integration_account {
   /* specs/discord/guild.json:253:19
@@ -3576,11 +4298,22 @@ struct discord_guild_integration_account {
 /// @endcond
 };
 
+// Integration Application Object
+// defined at specs/discord/guild.json:261:22
 /**
- * @brief Integration Application Object
- *
  * @see https://discord.com/developers/docs/resources/guild#integration-application-object-integration-application-structure
- * @note defined at specs/discord/guild.json:261:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_integration_application_init(struct discord_guild_integration_application *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_integration_application_cleanup(struct discord_guild_integration_application *) </tt>
+ *   - <tt> discord_guild_integration_application_list_free(struct discord_guild_integration_application **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_integration_application_from_json(char *rbuf, size_t len, struct discord_guild_integration_application **) </tt>
+ *   - <tt> discord_guild_integration_application_list_from_json(char *rbuf, size_t len, struct discord_guild_integration_application ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_integration_application_to_json(char *wbuf, size_t len, struct discord_guild_integration_application *) </tt>
+ *   - <tt> discord_guild_integration_application_list_to_json(char *wbuf, size_t len, struct discord_guild_integration_application **) </tt>
  */
 struct discord_guild_integration_application {
   /* specs/discord/guild.json:263:19
@@ -3623,11 +4356,22 @@ struct discord_guild_integration_application {
 /// @endcond
 };
 
+// Ban Structure
+// defined at specs/discord/guild.json:275:22
 /**
- * @brief Ban Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#ban-object
- * @note defined at specs/discord/guild.json:275:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_ban_init(struct discord_guild_ban *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_ban_cleanup(struct discord_guild_ban *) </tt>
+ *   - <tt> discord_guild_ban_list_free(struct discord_guild_ban **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_ban_from_json(char *rbuf, size_t len, struct discord_guild_ban **) </tt>
+ *   - <tt> discord_guild_ban_list_from_json(char *rbuf, size_t len, struct discord_guild_ban ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_ban_to_json(char *wbuf, size_t len, struct discord_guild_ban *) </tt>
+ *   - <tt> discord_guild_ban_list_to_json(char *wbuf, size_t len, struct discord_guild_ban **) </tt>
  */
 struct discord_guild_ban {
   /* specs/discord/guild.json:278:20
@@ -3654,11 +4398,22 @@ struct discord_guild_ban {
 /// @endcond
 };
 
+// Welcome Screen Structure
+// defined at specs/discord/guild.json:286:22
 /**
- * @brief Welcome Screen Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#welcome-screen-object-welcome-screen-structure
- * @note defined at specs/discord/guild.json:286:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_welcome_screen_init(struct discord_guild_welcome_screen *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_welcome_screen_cleanup(struct discord_guild_welcome_screen *) </tt>
+ *   - <tt> discord_guild_welcome_screen_list_free(struct discord_guild_welcome_screen **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_welcome_screen_from_json(char *rbuf, size_t len, struct discord_guild_welcome_screen **) </tt>
+ *   - <tt> discord_guild_welcome_screen_list_from_json(char *rbuf, size_t len, struct discord_guild_welcome_screen ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_welcome_screen_to_json(char *wbuf, size_t len, struct discord_guild_welcome_screen *) </tt>
+ *   - <tt> discord_guild_welcome_screen_list_to_json(char *wbuf, size_t len, struct discord_guild_welcome_screen **) </tt>
  */
 struct discord_guild_welcome_screen {
   /* specs/discord/guild.json:289:20
@@ -3685,11 +4440,22 @@ struct discord_guild_welcome_screen {
 /// @endcond
 };
 
+// Welcome Screen Channel Structure
+// defined at specs/discord/guild.json:297:22
 /**
- * @brief Welcome Screen Channel Structure
- *
  * @see https://discord.com/developers/docs/resources/guild#welcome-screen-object-welcome-screen-channel-structure
- * @note defined at specs/discord/guild.json:297:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_welcome_screen_channel_init(struct discord_guild_welcome_screen_channel *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_welcome_screen_channel_cleanup(struct discord_guild_welcome_screen_channel *) </tt>
+ *   - <tt> discord_guild_welcome_screen_channel_list_free(struct discord_guild_welcome_screen_channel **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_welcome_screen_channel_from_json(char *rbuf, size_t len, struct discord_guild_welcome_screen_channel **) </tt>
+ *   - <tt> discord_guild_welcome_screen_channel_list_from_json(char *rbuf, size_t len, struct discord_guild_welcome_screen_channel ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_welcome_screen_channel_to_json(char *wbuf, size_t len, struct discord_guild_welcome_screen_channel *) </tt>
+ *   - <tt> discord_guild_welcome_screen_channel_list_to_json(char *wbuf, size_t len, struct discord_guild_welcome_screen_channel **) </tt>
  */
 struct discord_guild_welcome_screen_channel {
   /* specs/discord/guild.json:300:20
@@ -3726,18 +4492,26 @@ struct discord_guild_welcome_screen_channel {
 /* This file is generated from specs/discord/invite.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
 
 
+// Get Invite
+// defined at specs/discord/invite.endpoints-params.json:10:22
 /**
- * @brief Get Invite
- *
  * @see https://discord.com/developers/docs/resources/invite#get-invite-query-string-params
- * @note defined at specs/discord/invite.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_get_invite_params_init(struct discord_get_invite_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_get_invite_params_cleanup(struct discord_get_invite_params *) </tt>
+ *   - <tt> discord_get_invite_params_list_free(struct discord_get_invite_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_get_invite_params_from_json(char *rbuf, size_t len, struct discord_get_invite_params **) </tt>
+ *   - <tt> discord_get_invite_params_list_from_json(char *rbuf, size_t len, struct discord_get_invite_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_get_invite_params_to_json(char *wbuf, size_t len, struct discord_get_invite_params *) </tt>
+ *   - <tt> discord_get_invite_params_list_to_json(char *wbuf, size_t len, struct discord_get_invite_params **) </tt>
  */
 struct discord_get_invite_params {
   /* specs/discord/invite.endpoints-params.json:13:20
@@ -3766,20 +4540,28 @@ struct discord_get_invite_params {
 /* This file is generated from specs/discord/invite.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/invite
  */
 
 
 
 
+// Invite Structure
+// defined at specs/discord/invite.json:19:22
 /**
- * @brief Invite Structure
- *
  * @see https://discord.com/developers/docs/resources/invite#invite-object-invite-structure
- * @note defined at specs/discord/invite.json:19:22
+ *
+ * - Initializer:
+ *   - <tt> discord_invite_init(struct discord_invite *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_invite_cleanup(struct discord_invite *) </tt>
+ *   - <tt> discord_invite_list_free(struct discord_invite **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_invite_from_json(char *rbuf, size_t len, struct discord_invite **) </tt>
+ *   - <tt> discord_invite_list_from_json(char *rbuf, size_t len, struct discord_invite ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_invite_to_json(char *wbuf, size_t len, struct discord_invite *) </tt>
+ *   - <tt> discord_invite_list_to_json(char *wbuf, size_t len, struct discord_invite **) </tt>
  */
 struct discord_invite {
   /* specs/discord/invite.json:22:20
@@ -3830,11 +4612,22 @@ struct discord_invite {
 /// @endcond
 };
 
+// Invite Metadata Structure
+// defined at specs/discord/invite.json:36:22
 /**
- * @brief Invite Metadata Structure
- *
  * @see https://discord.com/developers/docs/resources/invite#invite-metadata-object
- * @note defined at specs/discord/invite.json:36:22
+ *
+ * - Initializer:
+ *   - <tt> discord_invite_metadata_init(struct discord_invite_metadata *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_invite_metadata_cleanup(struct discord_invite_metadata *) </tt>
+ *   - <tt> discord_invite_metadata_list_free(struct discord_invite_metadata **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_invite_metadata_from_json(char *rbuf, size_t len, struct discord_invite_metadata **) </tt>
+ *   - <tt> discord_invite_metadata_list_from_json(char *rbuf, size_t len, struct discord_invite_metadata ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_invite_metadata_to_json(char *wbuf, size_t len, struct discord_invite_metadata *) </tt>
+ *   - <tt> discord_invite_metadata_list_to_json(char *wbuf, size_t len, struct discord_invite_metadata **) </tt>
  */
 struct discord_invite_metadata {
   /* specs/discord/invite.json:39:20
@@ -3872,23 +4665,301 @@ struct discord_invite_metadata {
   } __M; // metadata
 /// @endcond
 };
+/* This file is generated from specs/discord/message_components.json, Please don't edit it. */
+/**
+ * @file specs-code/discord/all_structs.h
+ * @see https://discord.com/developers/docs/interactions/message-components#message-components
+ */
+
+
+// Component Structure
+// defined at specs/discord/message_components.json:9:22
+/**
+ * @see https://discord.com/developers/docs/interactions/message-components#component-object-component-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_component_init(struct discord_component *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_component_cleanup(struct discord_component *) </tt>
+ *   - <tt> discord_component_list_free(struct discord_component **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_component_from_json(char *rbuf, size_t len, struct discord_component **) </tt>
+ *   - <tt> discord_component_list_from_json(char *rbuf, size_t len, struct discord_component ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_component_to_json(char *wbuf, size_t len, struct discord_component *) </tt>
+ *   - <tt> discord_component_list_to_json(char *wbuf, size_t len, struct discord_component **) </tt>
+ */
+struct discord_component {
+  /* specs/discord/message_components.json:12:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment":"component type"}' */
+  enum discord_component_types type; ///< component type
+
+  /* specs/discord/message_components.json:13:18
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+  char custom_id[100+1]; ///< a developer-defined identifier for the component, max 100 characters
+
+  /* specs/discord/message_components.json:14:18
+     '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
+  bool disabled; ///< whether the component is disabled, default false
+
+  /* specs/discord/message_components.json:15:18
+     '{"name":"style", "type":{"base":"int", "int_alias":"enum discord_button_styles"}, "option":true, "inject_if_not":0, "comment":"one of button styles"}' */
+  enum discord_button_styles style; ///< one of button styles
+
+  /* specs/discord/message_components.json:16:18
+     '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
+  char label[80+1]; ///< text that appears on the button, max 80 characters
+
+  /* specs/discord/message_components.json:17:18
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+  struct discord_emoji *emoji; ///< name, id and animated
+
+  /* specs/discord/message_components.json:18:18
+     '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
+  char *url; ///< a url for link-style buttons
+
+  /* specs/discord/message_components.json:19:18
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "option":true, "comment":"the choices in the select, max 25", "inject_if_not":null}' */
+  struct discord_select_option **options; ///< the choices in the select, max 25
+
+  /* specs/discord/message_components.json:20:18
+     '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
+  char placeholder[100+1]; ///< custom placeholder text if nothing is selected, max 100 characters
+
+  /* specs/discord/message_components.json:21:18
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+  int min_values; ///< the minimum number of items that must be chosen; default 1, min 0, max 25
+
+  /* specs/discord/message_components.json:22:18
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+  int max_values; ///< the maximum number of items that must be chosen; default 1, min 0, max 25
+
+  /* specs/discord/message_components.json:23:18
+     '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"a list of child components", "inject_if_not":null}' */
+  struct discord_component **components; ///< a list of child components
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[12];
+    void *record_defined[12];
+    void *record_null[12];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Button Structure
+// defined at specs/discord/message_components.json:41:22
+/**
+ * @see https://discord.com/developers/docs/interactions/message-components#button-object-button-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_button_init(struct discord_button *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_button_cleanup(struct discord_button *) </tt>
+ *   - <tt> discord_button_list_free(struct discord_button **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_button_from_json(char *rbuf, size_t len, struct discord_button **) </tt>
+ *   - <tt> discord_button_list_from_json(char *rbuf, size_t len, struct discord_button ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_button_to_json(char *wbuf, size_t len, struct discord_button *) </tt>
+ *   - <tt> discord_button_list_to_json(char *wbuf, size_t len, struct discord_button **) </tt>
+ */
+struct discord_button {
+  /* specs/discord/message_components.json:44:18
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "2 for a button"}' */
+  enum discord_component_types type; ///< 2 for a button
+
+  /* specs/discord/message_components.json:45:18
+     '{"name":"style", "type": {"base":"int", "int_alias":"enum discord_button_styles"}, "inject_if_not":0, "comment": "one of button styles"}' */
+  enum discord_button_styles style; ///< one of button styles
+
+  /* specs/discord/message_components.json:46:18
+     '{"name":"label", "type":{"base":"char", "dec":"[80+1]"}, "option":true, "comment":"text that appears on the button, max 80 characters", "inject_if_not":""}' */
+  char label[80+1]; ///< text that appears on the button, max 80 characters
+
+  /* specs/discord/message_components.json:47:18
+     '{"name":"emoji", "type":{ "base":"struct discord_emoji", "dec":"*" }, "option":true, "comment":"name, id and animated", "inject_if_not":null}' */
+  struct discord_emoji *emoji; ///< name, id and animated
+
+  /* specs/discord/message_components.json:48:18
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
+  char custom_id[100+1]; ///< a developer-defined identifier for the component, max 100 characters
+
+  /* specs/discord/message_components.json:49:18
+     '{"name":"url", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a url for link-style buttons", "inject_if_not":null}' */
+  char *url; ///< a url for link-style buttons
+
+  /* specs/discord/message_components.json:50:18
+     '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"whether the component is disabled, default false"}' */
+  bool disabled; ///< whether the component is disabled, default false
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[7];
+    void *record_defined[7];
+    void *record_null[7];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Select Menu Structure
+// defined at specs/discord/message_components.json:70:22
+/**
+ * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_select_menu_init(struct discord_select_menu *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_select_menu_cleanup(struct discord_select_menu *) </tt>
+ *   - <tt> discord_select_menu_list_free(struct discord_select_menu **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_select_menu_from_json(char *rbuf, size_t len, struct discord_select_menu **) </tt>
+ *   - <tt> discord_select_menu_list_from_json(char *rbuf, size_t len, struct discord_select_menu ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_select_menu_to_json(char *wbuf, size_t len, struct discord_select_menu *) </tt>
+ *   - <tt> discord_select_menu_list_to_json(char *wbuf, size_t len, struct discord_select_menu **) </tt>
+ */
+struct discord_select_menu {
+  /* specs/discord/message_components.json:73:18
+     '{"name":"type", "type": {"base":"int", "int_alias":"enum discord_component_types"}, "inject_if_not":0, "comment": "3 for a select menu"}' */
+  enum discord_component_types type; ///< 3 for a select menu
+
+  /* specs/discord/message_components.json:74:18
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters", "inject_if_not":""}' */
+  char custom_id[100+1]; ///< a developer-defined identifier for the component, max 100 characters
+
+  /* specs/discord/message_components.json:75:18
+     '{"name":"options", "type":{"base":"struct discord_select_option", "dec":"ntl"}, "comment":"the choices in the select, max 25"}' */
+  struct discord_select_option **options; ///< the choices in the select, max 25
+
+  /* specs/discord/message_components.json:76:18
+     '{"name":"placeholder", "type":{"base":"char", "dec":"[100+1]"}, "option":true, "comment":"custom placeholder text if nothing is selected, max 100 characters", "inject_if_not":""}' */
+  char placeholder[100+1]; ///< custom placeholder text if nothing is selected, max 100 characters
+
+  /* specs/discord/message_components.json:77:18
+     '{"name":"min_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the minimum number of items that must be chosen; default 1, min 0, max 25"}' */
+  int min_values; ///< the minimum number of items that must be chosen; default 1, min 0, max 25
+
+  /* specs/discord/message_components.json:78:18
+     '{"name":"max_values", "type":{"base":"int"}, "option":true, "inject_if_not":0, "comment":"the maximum number of items that must be chosen; default 1, min 0, max 25"}' */
+  int max_values; ///< the maximum number of items that must be chosen; default 1, min 0, max 25
+
+  /* specs/discord/message_components.json:79:18
+     '{"name":"disabled", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"disable the select, default false"}' */
+  bool disabled; ///< disable the select, default false
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[7];
+    void *record_defined[7];
+    void *record_null[7];
+  } __M; // metadata
+/// @endcond
+};
+
+// Select Option Structure
+// defined at specs/discord/message_components.json:85:22
+/**
+ * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-option-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_select_option_init(struct discord_select_option *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_select_option_cleanup(struct discord_select_option *) </tt>
+ *   - <tt> discord_select_option_list_free(struct discord_select_option **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_select_option_from_json(char *rbuf, size_t len, struct discord_select_option **) </tt>
+ *   - <tt> discord_select_option_list_from_json(char *rbuf, size_t len, struct discord_select_option ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_select_option_to_json(char *wbuf, size_t len, struct discord_select_option *) </tt>
+ *   - <tt> discord_select_option_list_to_json(char *wbuf, size_t len, struct discord_select_option **) </tt>
+ */
+struct discord_select_option {
+  /* specs/discord/message_components.json:88:18
+     '{"name":"label", "type":{"base":"char", "dec":"[25+1]"}, "inject_if_not":"", "comment":"the user-facing name of the option, max 25 characters"}' */
+  char label[25+1]; ///< the user-facing name of the option, max 25 characters
+
+  /* specs/discord/message_components.json:89:18
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "inject_if_not":"", "comment":"the dev define value of the option, max 100 characters"}' */
+  char value[100+1]; ///< the dev define value of the option, max 100 characters
+
+  /* specs/discord/message_components.json:90:18
+     '{"name":"description", "type":{"base":"char", "dec":"[50+1]"}, "inject_if_not":"", "option":true, "comment":"a additional description of the option, max 50 characters"}' */
+  char description[50+1]; ///< a additional description of the option, max 50 characters
+
+  /* specs/discord/message_components.json:91:18
+     '{"name":"emoji", "type":{"base":"struct discord_emoji", "dec":"*"}, "inject_if_not":null, "option":true, "comment":"name, id and animated"}' */
+  struct discord_emoji *emoji; ///< name, id and animated
+
+  /* specs/discord/message_components.json:92:18
+     '{"name":"Default", "json_key":"default", "type":{"base":"bool"}, "option":true, "comment":"will render this option as selected by default"}' */
+  bool Default; ///< will render this option as selected by default
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[5];
+    void *record_defined[5];
+    void *record_null[5];
+  } __M; // metadata
+/// @endcond
+};
 /* This file is generated from specs/discord/permissions.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/permissions
  */
 
 
 
 
+// Role Structure
+// defined at specs/discord/permissions.json:49:22
 /**
- * @brief Role Structure
- *
  * @see https://discord.com/developers/docs/topics/permissions#role-object-role-structure
- * @note defined at specs/discord/permissions.json:49:22
+ *
+ * - Initializer:
+ *   - <tt> discord_permissions_role_init(struct discord_permissions_role *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_permissions_role_cleanup(struct discord_permissions_role *) </tt>
+ *   - <tt> discord_permissions_role_list_free(struct discord_permissions_role **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_permissions_role_from_json(char *rbuf, size_t len, struct discord_permissions_role **) </tt>
+ *   - <tt> discord_permissions_role_list_from_json(char *rbuf, size_t len, struct discord_permissions_role ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_permissions_role_to_json(char *wbuf, size_t len, struct discord_permissions_role *) </tt>
+ *   - <tt> discord_permissions_role_list_to_json(char *wbuf, size_t len, struct discord_permissions_role **) </tt>
  */
 struct discord_permissions_role {
   /* specs/discord/permissions.json:52:20
@@ -3943,11 +5014,22 @@ struct discord_permissions_role {
 /// @endcond
 };
 
+// Role Tags Structure
+// defined at specs/discord/permissions.json:67:22
 /**
- * @brief Role Tags Structure
- *
  * @see https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
- * @note defined at specs/discord/permissions.json:67:22
+ *
+ * - Initializer:
+ *   - <tt> discord_permissions_role_tags_init(struct discord_permissions_role_tags *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_permissions_role_tags_cleanup(struct discord_permissions_role_tags *) </tt>
+ *   - <tt> discord_permissions_role_tags_list_free(struct discord_permissions_role_tags **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_permissions_role_tags_from_json(char *rbuf, size_t len, struct discord_permissions_role_tags **) </tt>
+ *   - <tt> discord_permissions_role_tags_list_from_json(char *rbuf, size_t len, struct discord_permissions_role_tags ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_permissions_role_tags_to_json(char *wbuf, size_t len, struct discord_permissions_role_tags *) </tt>
+ *   - <tt> discord_permissions_role_tags_list_to_json(char *wbuf, size_t len, struct discord_permissions_role_tags **) </tt>
  */
 struct discord_permissions_role_tags {
   /* specs/discord/permissions.json:70:20
@@ -3977,21 +5059,681 @@ struct discord_permissions_role_tags {
   } __M; // metadata
 /// @endcond
 };
+/* This file is generated from specs/discord/slash_commands.json, Please don't edit it. */
+/**
+ * @file specs-code/discord/all_structs.h
+ * @see https://discord.com/developers/docs/interactions/slash-commands#data-models-and-types
+ */
+
+
+// Application Command Structure
+// defined at specs/discord/slash_commands.json:9:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_init(struct discord_application_command *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_cleanup(struct discord_application_command *) </tt>
+ *   - <tt> discord_application_command_list_free(struct discord_application_command **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_from_json(char *rbuf, size_t len, struct discord_application_command **) </tt>
+ *   - <tt> discord_application_command_list_from_json(char *rbuf, size_t len, struct discord_application_command ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_to_json(char *wbuf, size_t len, struct discord_application_command *) </tt>
+ *   - <tt> discord_application_command_list_to_json(char *wbuf, size_t len, struct discord_application_command **) </tt>
+ */
+struct discord_application_command {
+  /* specs/discord/slash_commands.json:12:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"unique id of the command"}' */
+  u64_snowflake_t id; ///< unique id of the command
+
+  /* specs/discord/slash_commands.json:13:18
+     '{"name":"application_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"unique id of the parent application"}' */
+  u64_snowflake_t application_id; ///< unique id of the parent application
+
+  /* specs/discord/slash_commands.json:14:18
+     '{"name":"guild_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "comment":"unique id of the command, if not global","inject_if_not":0}' */
+  u64_snowflake_t guild_id; ///< unique id of the command, if not global
+
+  /* specs/discord/slash_commands.json:15:18
+     '{"name":"name", "type":{"base":"char", "dec":"[32+1]"}, "comment":"1-32 lowercase character"}' */
+  char name[32+1]; ///< 1-32 lowercase character
+
+  /* specs/discord/slash_commands.json:16:18
+     '{"name":"description", "type":{"base":"char", "dec":"[100+1]"}, "comment":"1-100 character description"}' */
+  char description[100+1]; ///< 1-100 character description
+
+  /* specs/discord/slash_commands.json:17:18
+     '{"name":"options", "type":{"base":"struct discord_application_command_option", "dec":"ntl"}, "option":true, "comment":"the parameters for the command", "inject_if_not":null}' */
+  struct discord_application_command_option **options; ///< the parameters for the command
+
+  /* specs/discord/slash_commands.json:18:18
+     '{"name":"default_permission", "type":{"base":"bool"}, "option":true, "inject_if_not":true, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
+  bool default_permission; ///< whether the command is enabled by default when the app is added to a guild
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[7];
+    void *record_defined[7];
+    void *record_null[7];
+  } __M; // metadata
+/// @endcond
+};
+
+// Application Command Option Structure
+// defined at specs/discord/slash_commands.json:25:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_option_init(struct discord_application_command_option *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_option_cleanup(struct discord_application_command_option *) </tt>
+ *   - <tt> discord_application_command_option_list_free(struct discord_application_command_option **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_option_from_json(char *rbuf, size_t len, struct discord_application_command_option **) </tt>
+ *   - <tt> discord_application_command_option_list_from_json(char *rbuf, size_t len, struct discord_application_command_option ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_option_to_json(char *wbuf, size_t len, struct discord_application_command_option *) </tt>
+ *   - <tt> discord_application_command_option_list_to_json(char *wbuf, size_t len, struct discord_application_command_option **) </tt>
+ */
+struct discord_application_command_option {
+  /* specs/discord/slash_commands.json:28:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types"}, "comment":"value of application command option type"}' */
+  enum discord_application_command_option_types type; ///< value of application command option type
+
+  /* specs/discord/slash_commands.json:29:18
+     '{"name":"name", "type":{"base":"char", "dec":"[32+1]"}, "comment":"1-32 lowercase character"}' */
+  char name[32+1]; ///< 1-32 lowercase character
+
+  /* specs/discord/slash_commands.json:30:18
+     '{"name":"description", "type":{"base":"char", "dec":"[100+1]"}, "comment":"1-100 character description"}' */
+  char description[100+1]; ///< 1-100 character description
+
+  /* specs/discord/slash_commands.json:31:18
+     '{"name":"required", "type":{"base":"bool"}, "option":true, "inject_if_not":false, "comment":"if the paramter is required or optional -- default false"}' */
+  bool required; ///< if the paramter is required or optional -- default false
+
+  /* specs/discord/slash_commands.json:32:18
+     '{"name":"choices", "type":{"base":"struct discord_application_command_option_choice", "dec":"ntl"}, "option":true, "comment":"choices for string and int types for the user to pick from", "inject_if_not":null}' */
+  struct discord_application_command_option_choice **choices; ///< choices for string and int types for the user to pick from
+
+  /* specs/discord/slash_commands.json:33:18
+     '{"name":"options", "type":{"base":"struct discord_application_command_option", "dec":"ntl"}, "option":true, "comment":"if the option is a subcommand or subcommand group type, this nested options will be the parameters", "inject_if_not":null}' */
+  struct discord_application_command_option **options; ///< if the option is a subcommand or subcommand group type, this nested options will be the parameters
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[6];
+    void *record_defined[6];
+    void *record_null[6];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Application Command Option Choice Structure
+// defined at specs/discord/slash_commands.json:58:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-choice-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_option_choice_init(struct discord_application_command_option_choice *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_option_choice_cleanup(struct discord_application_command_option_choice *) </tt>
+ *   - <tt> discord_application_command_option_choice_list_free(struct discord_application_command_option_choice **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_option_choice_from_json(char *rbuf, size_t len, struct discord_application_command_option_choice **) </tt>
+ *   - <tt> discord_application_command_option_choice_list_from_json(char *rbuf, size_t len, struct discord_application_command_option_choice ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_option_choice_to_json(char *wbuf, size_t len, struct discord_application_command_option_choice *) </tt>
+ *   - <tt> discord_application_command_option_choice_list_to_json(char *wbuf, size_t len, struct discord_application_command_option_choice **) </tt>
+ */
+struct discord_application_command_option_choice {
+  /* specs/discord/slash_commands.json:61:18
+     '{"name":"name", "type":{"base":"char", "dec":"[100+1]"}, "comment":"1-100 character choice name"}' */
+  char name[100+1]; ///< 1-100 character choice name
+
+  /* specs/discord/slash_commands.json:62:18
+     '{"name":"value", "type":{"base":"char", "dec":"[100+1]"}, "comment":"value of choice, up to 100 characters"}' */
+  char value[100+1]; ///< value of choice, up to 100 characters
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+/// @endcond
+};
+
+// Guild Application Command Permissions Structure
+// defined at specs/discord/slash_commands.json:69:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_application_command_permissions_init(struct discord_guild_application_command_permissions *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_application_command_permissions_cleanup(struct discord_guild_application_command_permissions *) </tt>
+ *   - <tt> discord_guild_application_command_permissions_list_free(struct discord_guild_application_command_permissions **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_application_command_permissions_from_json(char *rbuf, size_t len, struct discord_guild_application_command_permissions **) </tt>
+ *   - <tt> discord_guild_application_command_permissions_list_from_json(char *rbuf, size_t len, struct discord_guild_application_command_permissions ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_application_command_permissions_to_json(char *wbuf, size_t len, struct discord_guild_application_command_permissions *) </tt>
+ *   - <tt> discord_guild_application_command_permissions_list_to_json(char *wbuf, size_t len, struct discord_guild_application_command_permissions **) </tt>
+ */
+struct discord_guild_application_command_permissions {
+  /* specs/discord/slash_commands.json:72:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the id of the command"}' */
+  u64_snowflake_t id; ///< the id of the command
+
+  /* specs/discord/slash_commands.json:73:18
+     '{"name":"application_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the id of the parent application the command belongs to"}' */
+  u64_snowflake_t application_id; ///< the id of the parent application the command belongs to
+
+  /* specs/discord/slash_commands.json:74:18
+     '{"name":"guild_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the id of the guild"}' */
+  u64_snowflake_t guild_id; ///< the id of the guild
+
+  /* specs/discord/slash_commands.json:75:18
+     '{"name":"permissions", "type":{"base":"struct discord_application_command_permissions", "dec":"ntl"}, "comment":"the permissions for the command in the guild"}' */
+  struct discord_application_command_permissions **permissions; ///< the permissions for the command in the guild
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[4];
+    void *record_defined[4];
+    void *record_null[4];
+  } __M; // metadata
+/// @endcond
+};
+
+// Application Command Permissions Structure
+// defined at specs/discord/slash_commands.json:82:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_permissions_init(struct discord_application_command_permissions *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_permissions_cleanup(struct discord_application_command_permissions *) </tt>
+ *   - <tt> discord_application_command_permissions_list_free(struct discord_application_command_permissions **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_permissions_from_json(char *rbuf, size_t len, struct discord_application_command_permissions **) </tt>
+ *   - <tt> discord_application_command_permissions_list_from_json(char *rbuf, size_t len, struct discord_application_command_permissions ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_permissions_to_json(char *wbuf, size_t len, struct discord_application_command_permissions *) </tt>
+ *   - <tt> discord_application_command_permissions_list_to_json(char *wbuf, size_t len, struct discord_application_command_permissions **) </tt>
+ */
+struct discord_application_command_permissions {
+  /* specs/discord/slash_commands.json:85:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the id of the command"}' */
+  u64_snowflake_t id; ///< the id of the command
+
+  /* specs/discord/slash_commands.json:86:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_application_command_permission_types"}, "comment":"role or user"}' */
+  enum discord_application_command_permission_types type; ///< role or user
+
+  /* specs/discord/slash_commands.json:87:18
+     '{"name":"permission", "type":{"base":"bool"}, "comment":"true to allow, false, to disallow"}' */
+  bool permission; ///< true to allow, false, to disallow
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[3];
+    void *record_defined[3];
+    void *record_null[3];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Interaction Structure
+// defined at specs/discord/slash_commands.json:104:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-interaction-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_interaction_init(struct discord_interaction *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_interaction_cleanup(struct discord_interaction *) </tt>
+ *   - <tt> discord_interaction_list_free(struct discord_interaction **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_interaction_from_json(char *rbuf, size_t len, struct discord_interaction **) </tt>
+ *   - <tt> discord_interaction_list_from_json(char *rbuf, size_t len, struct discord_interaction ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_interaction_to_json(char *wbuf, size_t len, struct discord_interaction *) </tt>
+ *   - <tt> discord_interaction_list_to_json(char *wbuf, size_t len, struct discord_interaction **) </tt>
+ */
+struct discord_interaction {
+  /* specs/discord/slash_commands.json:107:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the interaction"}' */
+  u64_snowflake_t id; ///< id of the interaction
+
+  /* specs/discord/slash_commands.json:108:18
+     '{"name":"application_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the application this iteraction is for"}' */
+  u64_snowflake_t application_id; ///< id of the application this iteraction is for
+
+  /* specs/discord/slash_commands.json:109:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_interaction_request_types"}, "comment":"the request type of the interaction"}' */
+  enum discord_interaction_request_types type; ///< the request type of the interaction
+
+  /* specs/discord/slash_commands.json:110:18
+     '{"name":"data", "type":{"base":"struct discord_application_command_interaction_data", "dec":"*"}, "option":true, "comment":"the command data payload", "inject_if_not":null}' */
+  struct discord_application_command_interaction_data *data; ///< the command data payload
+
+  /* specs/discord/slash_commands.json:111:18
+     '{"name":"guild_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "comment":"the guild it was sent from","inject_if_not":0}' */
+  u64_snowflake_t guild_id; ///< the guild it was sent from
+
+  /* specs/discord/slash_commands.json:112:18
+     '{"name":"channel_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "comment":"the channel it was sent from","inject_if_not":0}' */
+  u64_snowflake_t channel_id; ///< the channel it was sent from
+
+  /* specs/discord/slash_commands.json:113:18
+     '{"name":"member", "type":{"base":"struct discord_guild_member", "dec":"*"}, "option":true, "comment":"guild member data for the invoking user, including permissions", "inject_if_not":null}' */
+  struct discord_guild_member *member; ///< guild member data for the invoking user, including permissions
+
+  /* specs/discord/slash_commands.json:114:18
+     '{"name":"user", "type":{"base":"struct discord_user", "dec":"*"}, "option":true, "comment":"user object for the invoking user, if invoked in a DM", "inject_if_not":null}' */
+  struct discord_user *user; ///< user object for the invoking user, if invoked in a DM
+
+  /* specs/discord/slash_commands.json:115:18
+     '{"name":"token", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"a continuation token for responding to the interaction", "inject_if_not":null}' */
+  char *token; ///< a continuation token for responding to the interaction
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[9];
+    void *record_defined[9];
+    void *record_null[9];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Application Command Interaction Data Structure
+// defined at specs/discord/slash_commands.json:134:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-application-command-interaction-data-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_interaction_data_init(struct discord_application_command_interaction_data *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_interaction_data_cleanup(struct discord_application_command_interaction_data *) </tt>
+ *   - <tt> discord_application_command_interaction_data_list_free(struct discord_application_command_interaction_data **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_interaction_data_from_json(char *rbuf, size_t len, struct discord_application_command_interaction_data **) </tt>
+ *   - <tt> discord_application_command_interaction_data_list_from_json(char *rbuf, size_t len, struct discord_application_command_interaction_data ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_interaction_data_to_json(char *wbuf, size_t len, struct discord_application_command_interaction_data *) </tt>
+ *   - <tt> discord_application_command_interaction_data_list_to_json(char *wbuf, size_t len, struct discord_application_command_interaction_data **) </tt>
+ */
+struct discord_application_command_interaction_data {
+  /* specs/discord/slash_commands.json:137:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the ID of the invoked command"}' */
+  u64_snowflake_t id; ///< the ID of the invoked command
+
+  /* specs/discord/slash_commands.json:138:18
+     '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"the name of the invoked command"}' */
+  char *name; ///< the name of the invoked command
+
+  /* specs/discord/slash_commands.json:139:18
+     '{"name":"resolved", "type":{"base":"struct discord_application_command_interaction_data_resolved", "dec":"*"}, "option":true, "comment":"converted users + roles + channels", "inject_if_not":null}' */
+  struct discord_application_command_interaction_data_resolved *resolved; ///< converted users + roles + channels
+
+  /* specs/discord/slash_commands.json:140:18
+     '{"name":"options", "type":{"base":"struct discord_application_command_interaction_data_option", "dec":"ntl"}, "option":true, "comment":"the params + values from the user", "inject_if_not":null}' */
+  struct discord_application_command_interaction_data_option **options; ///< the params + values from the user
+
+  /* specs/discord/slash_commands.json:141:18
+     '{"name":"custom_id", "type":{"base":"char", "dec":"[100+1]"}, "comment":"a developer-defined identifier for the component, max 100 characters"}' */
+  char custom_id[100+1]; ///< a developer-defined identifier for the component, max 100 characters
+
+  /* specs/discord/slash_commands.json:142:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_component_types"}, "comment":"component type"}' */
+  enum discord_component_types type; ///< component type
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[6];
+    void *record_defined[6];
+    void *record_null[6];
+  } __M; // metadata
+/// @endcond
+};
+
+// Application Command Interaction Data Resolved Structure
+// defined at specs/discord/slash_commands.json:149:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-application-command-interaction-data-resolved-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_interaction_data_resolved_init(struct discord_application_command_interaction_data_resolved *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_interaction_data_resolved_cleanup(struct discord_application_command_interaction_data_resolved *) </tt>
+ *   - <tt> discord_application_command_interaction_data_resolved_list_free(struct discord_application_command_interaction_data_resolved **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_interaction_data_resolved_from_json(char *rbuf, size_t len, struct discord_application_command_interaction_data_resolved **) </tt>
+ *   - <tt> discord_application_command_interaction_data_resolved_list_from_json(char *rbuf, size_t len, struct discord_application_command_interaction_data_resolved ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_interaction_data_resolved_to_json(char *wbuf, size_t len, struct discord_application_command_interaction_data_resolved *) </tt>
+ *   - <tt> discord_application_command_interaction_data_resolved_list_to_json(char *wbuf, size_t len, struct discord_application_command_interaction_data_resolved **) </tt>
+ */
+struct discord_application_command_interaction_data_resolved {
+  /* specs/discord/slash_commands.json:152:18
+     '{"name":"users", "type":{"base":"ja_str", "dec":"ntl"}, "option":true, "comment":"the ids and User objects", "inject_if_not":null}' */
+  ja_str **users; ///< the ids and User objects
+
+  /* specs/discord/slash_commands.json:153:18
+     '{"name":"members", "type":{"base":"ja_str", "dec":"ntl"}, "option":true, "comment":"the ids and partial Member objects", "inject_if_not":null}' */
+  ja_str **members; ///< the ids and partial Member objects
+
+  /* specs/discord/slash_commands.json:154:18
+     '{"name":"roles", "type":{"base":"ja_str", "dec":"ntl"}, "option":true, "comment":"the ids and Role objects", "inject_if_not":null}' */
+  ja_str **roles; ///< the ids and Role objects
+
+  /* specs/discord/slash_commands.json:155:18
+     '{"name":"channels", "type":{"base":"ja_str", "dec":"ntl"}, "option":true, "comment":"the ids and partial Channel objects", "inject_if_not":null}' */
+  ja_str **channels; ///< the ids and partial Channel objects
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[4];
+    void *record_defined[4];
+    void *record_null[4];
+  } __M; // metadata
+/// @endcond
+};
+
+// Application Command Interaction Data Option Structure
+// defined at specs/discord/slash_commands.json:162:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-application-command-interaction-data-option-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_application_command_interaction_data_option_init(struct discord_application_command_interaction_data_option *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_application_command_interaction_data_option_cleanup(struct discord_application_command_interaction_data_option *) </tt>
+ *   - <tt> discord_application_command_interaction_data_option_list_free(struct discord_application_command_interaction_data_option **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_application_command_interaction_data_option_from_json(char *rbuf, size_t len, struct discord_application_command_interaction_data_option **) </tt>
+ *   - <tt> discord_application_command_interaction_data_option_list_from_json(char *rbuf, size_t len, struct discord_application_command_interaction_data_option ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_application_command_interaction_data_option_to_json(char *wbuf, size_t len, struct discord_application_command_interaction_data_option *) </tt>
+ *   - <tt> discord_application_command_interaction_data_option_list_to_json(char *wbuf, size_t len, struct discord_application_command_interaction_data_option **) </tt>
+ */
+struct discord_application_command_interaction_data_option {
+  /* specs/discord/slash_commands.json:165:18
+     '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"the name of the parameter"}' */
+  char *name; ///< the name of the parameter
+
+  /* specs/discord/slash_commands.json:166:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types"}, "comment":"value of application command option type"}' */
+  enum discord_application_command_option_types type; ///< value of application command option type
+
+  /* specs/discord/slash_commands.json:167:18
+     '{"name":"value", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types"}, "comment":"the value of the pair"}' */
+  enum discord_application_command_option_types value; ///< the value of the pair
+
+  /* specs/discord/slash_commands.json:168:18
+     '{"name":"options", "type":{"base":"struct discord_application_command_interaction_data_option", "dec":"ntl"}, "option":true, "comment":"present if this option is a group or subcommand", "inject_if_not":null}' */
+  struct discord_application_command_interaction_data_option **options; ///< present if this option is a group or subcommand
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[4];
+    void *record_defined[4];
+    void *record_null[4];
+  } __M; // metadata
+/// @endcond
+};
+
+// Interaction Response Structure
+// defined at specs/discord/slash_commands.json:175:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-response-object-interaction-response-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_interaction_response_init(struct discord_interaction_response *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_interaction_response_cleanup(struct discord_interaction_response *) </tt>
+ *   - <tt> discord_interaction_response_list_free(struct discord_interaction_response **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_interaction_response_from_json(char *rbuf, size_t len, struct discord_interaction_response **) </tt>
+ *   - <tt> discord_interaction_response_list_from_json(char *rbuf, size_t len, struct discord_interaction_response ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_interaction_response_to_json(char *wbuf, size_t len, struct discord_interaction_response *) </tt>
+ *   - <tt> discord_interaction_response_list_to_json(char *wbuf, size_t len, struct discord_interaction_response **) </tt>
+ */
+struct discord_interaction_response {
+  /* specs/discord/slash_commands.json:178:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_interaction_callback_types"}, "comment":"the type of response"}' */
+  enum discord_interaction_callback_types type; ///< the type of response
+
+  /* specs/discord/slash_commands.json:179:18
+     '{"name":"data", "type":{"base":"struct discord_interaction_application_command_callback_data", "dec":"*"}, "option":true, "comment":"an optional response message", "inject_if_not":null}' */
+  struct discord_interaction_application_command_callback_data *data; ///< an optional response message
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Interaction Application Command Callback Data Structure
+// defined at specs/discord/slash_commands.json:200:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-response-object-interaction-application-command-callback-data-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_interaction_application_command_callback_data_init(struct discord_interaction_application_command_callback_data *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_interaction_application_command_callback_data_cleanup(struct discord_interaction_application_command_callback_data *) </tt>
+ *   - <tt> discord_interaction_application_command_callback_data_list_free(struct discord_interaction_application_command_callback_data **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_interaction_application_command_callback_data_from_json(char *rbuf, size_t len, struct discord_interaction_application_command_callback_data **) </tt>
+ *   - <tt> discord_interaction_application_command_callback_data_list_from_json(char *rbuf, size_t len, struct discord_interaction_application_command_callback_data ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_interaction_application_command_callback_data_to_json(char *wbuf, size_t len, struct discord_interaction_application_command_callback_data *) </tt>
+ *   - <tt> discord_interaction_application_command_callback_data_list_to_json(char *wbuf, size_t len, struct discord_interaction_application_command_callback_data **) </tt>
+ */
+struct discord_interaction_application_command_callback_data {
+  /* specs/discord/slash_commands.json:203:18
+     '{"name":"tts", "type":{"base":"bool"}, "option":true, "comment":"is the response TTS"}' */
+  bool tts; ///< is the response TTS
+
+  /* specs/discord/slash_commands.json:204:18
+     '{"name":"content", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"message content", "inject_if_not":null}' */
+  char *content; ///< message content
+
+  /* specs/discord/slash_commands.json:205:18
+     '{"name":"embeds", "type":{"base":"struct discord_embed", "dec":"ntl"}, "option":true, "comment":"support up to 10 embeds", "inject_if_not":null}' */
+  struct discord_embed **embeds; ///< support up to 10 embeds
+
+  /* specs/discord/slash_commands.json:206:18
+     '{"name":"allowed_mentions", "type":{"base":"struct discord_allowed_mentions", "dec":"*"}, "option":true, "comment":"allowed mentions object", "inject_if_not":null, "todo": true}' */
+  // @todo allowed_mentions allowed mentions object;
+
+  /* specs/discord/slash_commands.json:207:18
+     '{"name":"flags", "type":{"base":"int", "int_alias":"enum discord_interaction_application_command_callback_data_flags"}, "option":true, "comment":"interaction application command callback data flags", "inject_if_not":0}' */
+  enum discord_interaction_application_command_callback_data_flags flags; ///< interaction application command callback data flags
+
+  /* specs/discord/slash_commands.json:208:18
+     '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"message components", "inject_if_not":null}' */
+  struct discord_component **components; ///< message components
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[6];
+    void *record_defined[6];
+    void *record_null[6];
+  } __M; // metadata
+/// @endcond
+};
+
+
+
+// Message Interaction Structure
+// defined at specs/discord/slash_commands.json:225:22
+/**
+ * @see https://discord.com/developers/docs/interactions/slash-commands#message-interaction-object-message-interaction-structure
+ *
+ * - Initializer:
+ *   - <tt> discord_message_interaction_init(struct discord_message_interaction *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_message_interaction_cleanup(struct discord_message_interaction *) </tt>
+ *   - <tt> discord_message_interaction_list_free(struct discord_message_interaction **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_message_interaction_from_json(char *rbuf, size_t len, struct discord_message_interaction **) </tt>
+ *   - <tt> discord_message_interaction_list_from_json(char *rbuf, size_t len, struct discord_message_interaction ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_message_interaction_to_json(char *wbuf, size_t len, struct discord_message_interaction *) </tt>
+ *   - <tt> discord_message_interaction_list_to_json(char *wbuf, size_t len, struct discord_message_interaction **) </tt>
+ */
+struct discord_message_interaction {
+  /* specs/discord/slash_commands.json:228:18
+     '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the interaction"}' */
+  u64_snowflake_t id; ///< id of the interaction
+
+  /* specs/discord/slash_commands.json:229:18
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_interaction_request_types"}, "comment":"the request type of the interaction"}' */
+  enum discord_interaction_request_types type; ///< the request type of the interaction
+
+  /* specs/discord/slash_commands.json:230:18
+     '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"the name of the application command"}' */
+  char *name; ///< the name of the application command
+
+  /* specs/discord/slash_commands.json:231:18
+     '{"name":"user", "type":{"base":"struct discord_user", "dec":"*"}, "comment":"the user who invoked the interaction"}' */
+  struct discord_user *user; ///< the user who invoked the interaction
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[4];
+    void *record_defined[4];
+    void *record_null[4];
+  } __M; // metadata
+/// @endcond
+};
 /* This file is generated from specs/discord/user.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
 
 
+// Modify Current User
+// defined at specs/discord/user.endpoints-params.json:10:22
 /**
- * @brief Modify Current User
- *
  * @see https://discord.com/developers/docs/resources/user#modify-current-user-json-params
- * @note defined at specs/discord/user.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_current_user_params_init(struct discord_modify_current_user_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_current_user_params_cleanup(struct discord_modify_current_user_params *) </tt>
+ *   - <tt> discord_modify_current_user_params_list_free(struct discord_modify_current_user_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_current_user_params_from_json(char *rbuf, size_t len, struct discord_modify_current_user_params **) </tt>
+ *   - <tt> discord_modify_current_user_params_list_from_json(char *rbuf, size_t len, struct discord_modify_current_user_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_current_user_params_to_json(char *wbuf, size_t len, struct discord_modify_current_user_params *) </tt>
+ *   - <tt> discord_modify_current_user_params_list_to_json(char *wbuf, size_t len, struct discord_modify_current_user_params **) </tt>
  */
 struct discord_modify_current_user_params {
   /* specs/discord/user.endpoints-params.json:13:20
@@ -4018,11 +5760,22 @@ struct discord_modify_current_user_params {
 /// @endcond
 };
 
+// Create Group DM
+// defined at specs/discord/user.endpoints-params.json:21:22
 /**
- * @brief Create Group DM
- *
  * @see https://discord.com/developers/docs/resources/user#create-group-dm-json-params
- * @note defined at specs/discord/user.endpoints-params.json:21:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_group_dm_params_init(struct discord_create_group_dm_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_group_dm_params_cleanup(struct discord_create_group_dm_params *) </tt>
+ *   - <tt> discord_create_group_dm_params_list_free(struct discord_create_group_dm_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_group_dm_params_from_json(char *rbuf, size_t len, struct discord_create_group_dm_params **) </tt>
+ *   - <tt> discord_create_group_dm_params_list_from_json(char *rbuf, size_t len, struct discord_create_group_dm_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_group_dm_params_to_json(char *wbuf, size_t len, struct discord_create_group_dm_params *) </tt>
+ *   - <tt> discord_create_group_dm_params_list_to_json(char *wbuf, size_t len, struct discord_create_group_dm_params **) </tt>
  */
 struct discord_create_group_dm_params {
   /* specs/discord/user.endpoints-params.json:24:20
@@ -4053,9 +5806,6 @@ struct discord_create_group_dm_params {
 /* This file is generated from specs/discord/user.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
 
@@ -4064,10 +5814,20 @@ struct discord_create_group_dm_params {
 
 
 
+// User Structure
+// defined at specs/discord/user.json:42:28
 /**
- * @brief User Structure
- *
- * @note defined at specs/discord/user.json:42:28
+ * - Initializer:
+ *   - <tt> discord_user_init(struct discord_user *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_user_cleanup(struct discord_user *) </tt>
+ *   - <tt> discord_user_list_free(struct discord_user **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_user_from_json(char *rbuf, size_t len, struct discord_user **) </tt>
+ *   - <tt> discord_user_list_from_json(char *rbuf, size_t len, struct discord_user ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_user_to_json(char *wbuf, size_t len, struct discord_user *) </tt>
+ *   - <tt> discord_user_list_to_json(char *wbuf, size_t len, struct discord_user **) </tt>
  */
 struct discord_user {
   /* specs/discord/user.json:45:24
@@ -4140,11 +5900,22 @@ struct discord_user {
 
 
 
+// Connection Structure
+// defined at specs/discord/user.json:74:28
 /**
- * @brief Connection Structure
- *
  * @see https://discord.com/developers/docs/resources/user#connection-object-connection-structure
- * @note defined at specs/discord/user.json:74:28
+ *
+ * - Initializer:
+ *   - <tt> discord_connection_init(struct discord_connection *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_connection_cleanup(struct discord_connection *) </tt>
+ *   - <tt> discord_connection_list_free(struct discord_connection **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_connection_from_json(char *rbuf, size_t len, struct discord_connection **) </tt>
+ *   - <tt> discord_connection_list_from_json(char *rbuf, size_t len, struct discord_connection ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_connection_to_json(char *wbuf, size_t len, struct discord_connection *) </tt>
+ *   - <tt> discord_connection_list_to_json(char *wbuf, size_t len, struct discord_connection **) </tt>
  */
 struct discord_connection {
   /* specs/discord/user.json:77:24
@@ -4201,9 +5972,6 @@ struct discord_connection {
 /* This file is generated from specs/discord/voice-connections.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/voice-connections
  */
 
@@ -4216,18 +5984,26 @@ struct discord_connection {
 /* This file is generated from specs/discord/voice.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/voice
  */
 
 
+// Voice State Structure
+// defined at specs/discord/voice.json:9:22
 /**
- * @brief Voice State Structure
- *
  * @see https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure
- * @note defined at specs/discord/voice.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_voice_state_init(struct discord_voice_state *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_voice_state_cleanup(struct discord_voice_state *) </tt>
+ *   - <tt> discord_voice_state_list_free(struct discord_voice_state **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_voice_state_from_json(char *rbuf, size_t len, struct discord_voice_state **) </tt>
+ *   - <tt> discord_voice_state_list_from_json(char *rbuf, size_t len, struct discord_voice_state ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_voice_state_to_json(char *wbuf, size_t len, struct discord_voice_state *) </tt>
+ *   - <tt> discord_voice_state_list_to_json(char *wbuf, size_t len, struct discord_voice_state **) </tt>
  */
 struct discord_voice_state {
   /* specs/discord/voice.json:12:20
@@ -4294,11 +6070,22 @@ struct discord_voice_state {
 /// @endcond
 };
 
+// Voice Region Structure
+// defined at specs/discord/voice.json:29:22
 /**
- * @brief Voice Region Structure
- *
  * @see https://discord.com/developers/docs/resources/voice#voice-region-object-voice-region-structure
- * @note defined at specs/discord/voice.json:29:22
+ *
+ * - Initializer:
+ *   - <tt> discord_voice_region_init(struct discord_voice_region *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_voice_region_cleanup(struct discord_voice_region *) </tt>
+ *   - <tt> discord_voice_region_list_free(struct discord_voice_region **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_voice_region_from_json(char *rbuf, size_t len, struct discord_voice_region **) </tt>
+ *   - <tt> discord_voice_region_list_from_json(char *rbuf, size_t len, struct discord_voice_region ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_voice_region_to_json(char *wbuf, size_t len, struct discord_voice_region *) </tt>
+ *   - <tt> discord_voice_region_list_to_json(char *wbuf, size_t len, struct discord_voice_region **) </tt>
  */
 struct discord_voice_region {
   /* specs/discord/voice.json:32:20
@@ -4343,18 +6130,26 @@ struct discord_voice_region {
 /* This file is generated from specs/discord/webhook.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
 
 
+// Create Webhook
+// defined at specs/discord/webhook.endpoints-params.json:10:22
 /**
- * @brief Create Webhook
- *
  * @see https://discord.com/developers/docs/resources/webhook#create-webhook
- * @note defined at specs/discord/webhook.endpoints-params.json:10:22
+ *
+ * - Initializer:
+ *   - <tt> discord_create_webhook_params_init(struct discord_create_webhook_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_create_webhook_params_cleanup(struct discord_create_webhook_params *) </tt>
+ *   - <tt> discord_create_webhook_params_list_free(struct discord_create_webhook_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_create_webhook_params_from_json(char *rbuf, size_t len, struct discord_create_webhook_params **) </tt>
+ *   - <tt> discord_create_webhook_params_list_from_json(char *rbuf, size_t len, struct discord_create_webhook_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_create_webhook_params_to_json(char *wbuf, size_t len, struct discord_create_webhook_params *) </tt>
+ *   - <tt> discord_create_webhook_params_list_to_json(char *wbuf, size_t len, struct discord_create_webhook_params **) </tt>
  */
 struct discord_create_webhook_params {
   /* specs/discord/webhook.endpoints-params.json:13:20
@@ -4381,11 +6176,22 @@ struct discord_create_webhook_params {
 /// @endcond
 };
 
+// Modify Webhook
+// defined at specs/discord/webhook.endpoints-params.json:21:22
 /**
- * @brief Modify Webhook
- *
  * @see https://discord.com/developers/docs/resources/webhook#modify-webhook
- * @note defined at specs/discord/webhook.endpoints-params.json:21:22
+ *
+ * - Initializer:
+ *   - <tt> discord_modify_webhook_params_init(struct discord_modify_webhook_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_modify_webhook_params_cleanup(struct discord_modify_webhook_params *) </tt>
+ *   - <tt> discord_modify_webhook_params_list_free(struct discord_modify_webhook_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_modify_webhook_params_from_json(char *rbuf, size_t len, struct discord_modify_webhook_params **) </tt>
+ *   - <tt> discord_modify_webhook_params_list_from_json(char *rbuf, size_t len, struct discord_modify_webhook_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_modify_webhook_params_to_json(char *wbuf, size_t len, struct discord_modify_webhook_params *) </tt>
+ *   - <tt> discord_modify_webhook_params_list_to_json(char *wbuf, size_t len, struct discord_modify_webhook_params **) </tt>
  */
 struct discord_modify_webhook_params {
   /* specs/discord/webhook.endpoints-params.json:24:20
@@ -4416,11 +6222,22 @@ struct discord_modify_webhook_params {
 /// @endcond
 };
 
+// Execute Webhook
+// defined at specs/discord/webhook.endpoints-params.json:33:22
 /**
- * @brief Execute Webhook
- *
  * @see https://discord.com/developers/docs/resources/webhook#execute-webhook
- * @note defined at specs/discord/webhook.endpoints-params.json:33:22
+ *
+ * - Initializer:
+ *   - <tt> discord_execute_webhook_params_init(struct discord_execute_webhook_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_execute_webhook_params_cleanup(struct discord_execute_webhook_params *) </tt>
+ *   - <tt> discord_execute_webhook_params_list_free(struct discord_execute_webhook_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_execute_webhook_params_from_json(char *rbuf, size_t len, struct discord_execute_webhook_params **) </tt>
+ *   - <tt> discord_execute_webhook_params_list_from_json(char *rbuf, size_t len, struct discord_execute_webhook_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_execute_webhook_params_to_json(char *wbuf, size_t len, struct discord_execute_webhook_params *) </tt>
+ *   - <tt> discord_execute_webhook_params_list_to_json(char *wbuf, size_t len, struct discord_execute_webhook_params **) </tt>
  */
 struct discord_execute_webhook_params {
   /* specs/discord/webhook.endpoints-params.json:37:20
@@ -4501,11 +6318,22 @@ struct discord_execute_webhook_params {
 /// @endcond
 };
 
+// Edit Webhook Message
+// defined at specs/discord/webhook.endpoints-params.json:78:22
 /**
- * @brief Edit Webhook Message
- *
  * @see https://discord.com/developers/docs/resources/webhook#edit-webhook-message
- * @note defined at specs/discord/webhook.endpoints-params.json:78:22
+ *
+ * - Initializer:
+ *   - <tt> discord_edit_webhook_message_params_init(struct discord_edit_webhook_message_params *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_edit_webhook_message_params_cleanup(struct discord_edit_webhook_message_params *) </tt>
+ *   - <tt> discord_edit_webhook_message_params_list_free(struct discord_edit_webhook_message_params **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_edit_webhook_message_params_from_json(char *rbuf, size_t len, struct discord_edit_webhook_message_params **) </tt>
+ *   - <tt> discord_edit_webhook_message_params_list_from_json(char *rbuf, size_t len, struct discord_edit_webhook_message_params ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_edit_webhook_message_params_to_json(char *wbuf, size_t len, struct discord_edit_webhook_message_params *) </tt>
+ *   - <tt> discord_edit_webhook_message_params_list_to_json(char *wbuf, size_t len, struct discord_edit_webhook_message_params **) </tt>
  */
 struct discord_edit_webhook_message_params {
   /* specs/discord/webhook.endpoints-params.json:81:20
@@ -4538,18 +6366,26 @@ struct discord_edit_webhook_message_params {
 /* This file is generated from specs/discord/webhook.json, Please don't edit it. */
 /**
  * @file specs-code/discord/all_structs.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/webhook
  */
 
 
+// Webhook Structure
+// defined at specs/discord/webhook.json:9:22
 /**
- * @brief Webhook Structure
- *
  * @see https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure
- * @note defined at specs/discord/webhook.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_webhook_init(struct discord_webhook *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_webhook_cleanup(struct discord_webhook *) </tt>
+ *   - <tt> discord_webhook_list_free(struct discord_webhook **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_webhook_from_json(char *rbuf, size_t len, struct discord_webhook **) </tt>
+ *   - <tt> discord_webhook_list_from_json(char *rbuf, size_t len, struct discord_webhook ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_webhook_to_json(char *wbuf, size_t len, struct discord_webhook *) </tt>
+ *   - <tt> discord_webhook_list_to_json(char *wbuf, size_t len, struct discord_webhook **) </tt>
  */
 struct discord_webhook {
   /* specs/discord/webhook.json:12:20

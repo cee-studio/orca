@@ -1,18 +1,26 @@
 /* This file is generated from specs/discord/emoji.json, Please don't edit it. */
 /**
  * @file specs-code/discord/emoji.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/emoji
  */
 
 
+// Emoji Structure
+// defined at specs/discord/emoji.json:9:22
 /**
- * @brief Emoji Structure
- *
  * @see https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure
- * @note defined at specs/discord/emoji.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_emoji_init(struct discord_emoji *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_emoji_cleanup(struct discord_emoji *) </tt>
+ *   - <tt> discord_emoji_list_free(struct discord_emoji **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_emoji_from_json(char *rbuf, size_t len, struct discord_emoji **) </tt>
+ *   - <tt> discord_emoji_list_from_json(char *rbuf, size_t len, struct discord_emoji ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_emoji_to_json(char *wbuf, size_t len, struct discord_emoji *) </tt>
+ *   - <tt> discord_emoji_list_to_json(char *wbuf, size_t len, struct discord_emoji **) </tt>
  */
 struct discord_emoji {
   /* specs/discord/emoji.json:12:20
@@ -67,11 +75,8 @@ extern void discord_emoji_cleanup_v(void *p);
 extern void discord_emoji_cleanup(struct discord_emoji *p);
 extern void discord_emoji_init_v(void *p);
 extern void discord_emoji_init(struct discord_emoji *p);
-extern struct discord_emoji * discord_emoji_alloc();
-extern void discord_emoji_free_v(void *p);
-extern void discord_emoji_free(struct discord_emoji *p);
-extern void discord_emoji_from_json_v(char *json, size_t len, void *p);
-extern void discord_emoji_from_json(char *json, size_t len, struct discord_emoji *p);
+extern void discord_emoji_from_json_v(char *json, size_t len, void *pp);
+extern void discord_emoji_from_json(char *json, size_t len, struct discord_emoji **pp);
 extern size_t discord_emoji_to_json_v(char *json, size_t len, void *p);
 extern size_t discord_emoji_to_json(char *json, size_t len, struct discord_emoji *p);
 extern size_t discord_emoji_to_query_v(char *json, size_t len, void *p);

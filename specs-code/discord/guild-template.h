@@ -1,18 +1,26 @@
 /* This file is generated from specs/discord/guild-template.json, Please don't edit it. */
 /**
  * @file specs-code/discord/guild-template.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/guild-template
  */
 
 
+// Guild Template Structure
+// defined at specs/discord/guild-template.json:9:22
 /**
- * @brief Guild Template Structure
- *
  * @see https://discord.com/developers/docs/resources/guild-template#guild-template-object-guild-template-structure
- * @note defined at specs/discord/guild-template.json:9:22
+ *
+ * - Initializer:
+ *   - <tt> discord_guild_template_init(struct discord_guild_template *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_guild_template_cleanup(struct discord_guild_template *) </tt>
+ *   - <tt> discord_guild_template_list_free(struct discord_guild_template **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_guild_template_from_json(char *rbuf, size_t len, struct discord_guild_template **) </tt>
+ *   - <tt> discord_guild_template_list_from_json(char *rbuf, size_t len, struct discord_guild_template ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_guild_template_to_json(char *wbuf, size_t len, struct discord_guild_template *) </tt>
+ *   - <tt> discord_guild_template_list_to_json(char *wbuf, size_t len, struct discord_guild_template **) </tt>
  */
 struct discord_guild_template {
   /* specs/discord/guild-template.json:12:20
@@ -78,11 +86,8 @@ extern void discord_guild_template_cleanup_v(void *p);
 extern void discord_guild_template_cleanup(struct discord_guild_template *p);
 extern void discord_guild_template_init_v(void *p);
 extern void discord_guild_template_init(struct discord_guild_template *p);
-extern struct discord_guild_template * discord_guild_template_alloc();
-extern void discord_guild_template_free_v(void *p);
-extern void discord_guild_template_free(struct discord_guild_template *p);
-extern void discord_guild_template_from_json_v(char *json, size_t len, void *p);
-extern void discord_guild_template_from_json(char *json, size_t len, struct discord_guild_template *p);
+extern void discord_guild_template_from_json_v(char *json, size_t len, void *pp);
+extern void discord_guild_template_from_json(char *json, size_t len, struct discord_guild_template **pp);
 extern size_t discord_guild_template_to_json_v(char *json, size_t len, void *p);
 extern size_t discord_guild_template_to_json(char *json, size_t len, struct discord_guild_template *p);
 extern size_t discord_guild_template_to_query_v(char *json, size_t len, void *p);

@@ -1,18 +1,17 @@
 /* This file is generated from specs/discord/user.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/user.endpoints-params.c
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/resources/user
  */
 
 #include "specs.h"
 
-void discord_modify_current_user_params_from_json(char *json, size_t len, struct discord_modify_current_user_params *p)
+void discord_modify_current_user_params_from_json(char *json, size_t len, struct discord_modify_current_user_params **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_modify_current_user_params *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/user.endpoints-params.json:13:20
      '{ "name": "username", "type":{ "base":"char", "dec":"*" }}' */
@@ -82,12 +81,8 @@ void discord_modify_current_user_params_init_v(void *p) {
   discord_modify_current_user_params_init((struct discord_modify_current_user_params *)p);
 }
 
-void discord_modify_current_user_params_free_v(void *p) {
- discord_modify_current_user_params_free((struct discord_modify_current_user_params *)p);
-};
-
-void discord_modify_current_user_params_from_json_v(char *json, size_t len, void *p) {
- discord_modify_current_user_params_from_json(json, len, (struct discord_modify_current_user_params*)p);
+void discord_modify_current_user_params_from_json_v(char *json, size_t len, void *pp) {
+ discord_modify_current_user_params_from_json(json, len, (struct discord_modify_current_user_params**)pp);
 }
 
 size_t discord_modify_current_user_params_to_json_v(char *json, size_t len, void *p) {
@@ -127,17 +122,6 @@ void discord_modify_current_user_params_init(struct discord_modify_current_user_
      '{ "name": "avatar", "type":{ "base":"char", "dec":"*"}, "comment":"base64 encoded image data"}' */
 
 }
-struct discord_modify_current_user_params* discord_modify_current_user_params_alloc() {
-  struct discord_modify_current_user_params *p= malloc(sizeof(struct discord_modify_current_user_params));
-  discord_modify_current_user_params_init(p);
-  return p;
-}
-
-void discord_modify_current_user_params_free(struct discord_modify_current_user_params *p) {
-  discord_modify_current_user_params_cleanup(p);
-  free(p);
-}
-
 void discord_modify_current_user_params_list_free(struct discord_modify_current_user_params **p) {
   ntl_free((void**)p, (vfvp)discord_modify_current_user_params_cleanup);
 }
@@ -147,10 +131,10 @@ void discord_modify_current_user_params_list_from_json(char *str, size_t len, st
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_modify_current_user_params);
-  d.init_elem = discord_modify_current_user_params_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_modify_current_user_params_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_modify_current_user_params_list_to_json(char *str, size_t len, struct discord_modify_current_user_params **p)
@@ -159,10 +143,12 @@ size_t discord_modify_current_user_params_list_to_json(char *str, size_t len, st
 }
 
 
-void discord_create_group_dm_params_from_json(char *json, size_t len, struct discord_create_group_dm_params *p)
+void discord_create_group_dm_params_from_json(char *json, size_t len, struct discord_create_group_dm_params **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_create_group_dm_params *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/user.endpoints-params.json:24:20
      '{ "name": "access_tokens", "type":{ "base":"ja_str", "dec":"ntl" }, 
@@ -242,12 +228,8 @@ void discord_create_group_dm_params_init_v(void *p) {
   discord_create_group_dm_params_init((struct discord_create_group_dm_params *)p);
 }
 
-void discord_create_group_dm_params_free_v(void *p) {
- discord_create_group_dm_params_free((struct discord_create_group_dm_params *)p);
-};
-
-void discord_create_group_dm_params_from_json_v(char *json, size_t len, void *p) {
- discord_create_group_dm_params_from_json(json, len, (struct discord_create_group_dm_params*)p);
+void discord_create_group_dm_params_from_json_v(char *json, size_t len, void *pp) {
+ discord_create_group_dm_params_from_json(json, len, (struct discord_create_group_dm_params**)pp);
 }
 
 size_t discord_create_group_dm_params_to_json_v(char *json, size_t len, void *p) {
@@ -291,17 +273,6 @@ void discord_create_group_dm_params_init(struct discord_create_group_dm_params *
           "comment":"ia dictionary of user ids to their respective nicknames"}' */
 
 }
-struct discord_create_group_dm_params* discord_create_group_dm_params_alloc() {
-  struct discord_create_group_dm_params *p= malloc(sizeof(struct discord_create_group_dm_params));
-  discord_create_group_dm_params_init(p);
-  return p;
-}
-
-void discord_create_group_dm_params_free(struct discord_create_group_dm_params *p) {
-  discord_create_group_dm_params_cleanup(p);
-  free(p);
-}
-
 void discord_create_group_dm_params_list_free(struct discord_create_group_dm_params **p) {
   ntl_free((void**)p, (vfvp)discord_create_group_dm_params_cleanup);
 }
@@ -311,10 +282,10 @@ void discord_create_group_dm_params_list_from_json(char *str, size_t len, struct
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_create_group_dm_params);
-  d.init_elem = discord_create_group_dm_params_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_create_group_dm_params_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_create_group_dm_params_list_to_json(char *str, size_t len, struct discord_create_group_dm_params **p)

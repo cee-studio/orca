@@ -1,9 +1,6 @@
 /* This file is generated from specs/discord/permissions.json, Please don't edit it. */
 /**
  * @file specs-code/discord/permissions.h
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see https://discord.com/developers/docs/topics/permissions
  */
 
@@ -47,11 +44,22 @@ extern char* discord_permissions_bitwise_flags_to_string(enum discord_permission
 extern enum discord_permissions_bitwise_flags discord_permissions_bitwise_flags_from_string(char*);
 extern bool discord_permissions_bitwise_flags_has(enum discord_permissions_bitwise_flags, char*);
 
+// Role Structure
+// defined at specs/discord/permissions.json:49:22
 /**
- * @brief Role Structure
- *
  * @see https://discord.com/developers/docs/topics/permissions#role-object-role-structure
- * @note defined at specs/discord/permissions.json:49:22
+ *
+ * - Initializer:
+ *   - <tt> discord_permissions_role_init(struct discord_permissions_role *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_permissions_role_cleanup(struct discord_permissions_role *) </tt>
+ *   - <tt> discord_permissions_role_list_free(struct discord_permissions_role **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_permissions_role_from_json(char *rbuf, size_t len, struct discord_permissions_role **) </tt>
+ *   - <tt> discord_permissions_role_list_from_json(char *rbuf, size_t len, struct discord_permissions_role ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_permissions_role_to_json(char *wbuf, size_t len, struct discord_permissions_role *) </tt>
+ *   - <tt> discord_permissions_role_list_to_json(char *wbuf, size_t len, struct discord_permissions_role **) </tt>
  */
 struct discord_permissions_role {
   /* specs/discord/permissions.json:52:20
@@ -109,11 +117,8 @@ extern void discord_permissions_role_cleanup_v(void *p);
 extern void discord_permissions_role_cleanup(struct discord_permissions_role *p);
 extern void discord_permissions_role_init_v(void *p);
 extern void discord_permissions_role_init(struct discord_permissions_role *p);
-extern struct discord_permissions_role * discord_permissions_role_alloc();
-extern void discord_permissions_role_free_v(void *p);
-extern void discord_permissions_role_free(struct discord_permissions_role *p);
-extern void discord_permissions_role_from_json_v(char *json, size_t len, void *p);
-extern void discord_permissions_role_from_json(char *json, size_t len, struct discord_permissions_role *p);
+extern void discord_permissions_role_from_json_v(char *json, size_t len, void *pp);
+extern void discord_permissions_role_from_json(char *json, size_t len, struct discord_permissions_role **pp);
 extern size_t discord_permissions_role_to_json_v(char *json, size_t len, void *p);
 extern size_t discord_permissions_role_to_json(char *json, size_t len, struct discord_permissions_role *p);
 extern size_t discord_permissions_role_to_query_v(char *json, size_t len, void *p);
@@ -125,11 +130,22 @@ extern void discord_permissions_role_list_from_json(char *str, size_t len, struc
 extern size_t discord_permissions_role_list_to_json_v(char *str, size_t len, void *p);
 extern size_t discord_permissions_role_list_to_json(char *str, size_t len, struct discord_permissions_role **p);
 
+// Role Tags Structure
+// defined at specs/discord/permissions.json:67:22
 /**
- * @brief Role Tags Structure
- *
  * @see https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure
- * @note defined at specs/discord/permissions.json:67:22
+ *
+ * - Initializer:
+ *   - <tt> discord_permissions_role_tags_init(struct discord_permissions_role_tags *) </tt>
+ * - Cleanup:
+ *   - <tt> discord_permissions_role_tags_cleanup(struct discord_permissions_role_tags *) </tt>
+ *   - <tt> discord_permissions_role_tags_list_free(struct discord_permissions_role_tags **) </tt>
+ * - JSON Decoder:
+ *   - <tt> discord_permissions_role_tags_from_json(char *rbuf, size_t len, struct discord_permissions_role_tags **) </tt>
+ *   - <tt> discord_permissions_role_tags_list_from_json(char *rbuf, size_t len, struct discord_permissions_role_tags ***) </tt>
+ * - JSON Encoder:
+ *   - <tt> discord_permissions_role_tags_to_json(char *wbuf, size_t len, struct discord_permissions_role_tags *) </tt>
+ *   - <tt> discord_permissions_role_tags_list_to_json(char *wbuf, size_t len, struct discord_permissions_role_tags **) </tt>
  */
 struct discord_permissions_role_tags {
   /* specs/discord/permissions.json:70:20
@@ -163,11 +179,8 @@ extern void discord_permissions_role_tags_cleanup_v(void *p);
 extern void discord_permissions_role_tags_cleanup(struct discord_permissions_role_tags *p);
 extern void discord_permissions_role_tags_init_v(void *p);
 extern void discord_permissions_role_tags_init(struct discord_permissions_role_tags *p);
-extern struct discord_permissions_role_tags * discord_permissions_role_tags_alloc();
-extern void discord_permissions_role_tags_free_v(void *p);
-extern void discord_permissions_role_tags_free(struct discord_permissions_role_tags *p);
-extern void discord_permissions_role_tags_from_json_v(char *json, size_t len, void *p);
-extern void discord_permissions_role_tags_from_json(char *json, size_t len, struct discord_permissions_role_tags *p);
+extern void discord_permissions_role_tags_from_json_v(char *json, size_t len, void *pp);
+extern void discord_permissions_role_tags_from_json(char *json, size_t len, struct discord_permissions_role_tags **pp);
 extern size_t discord_permissions_role_tags_to_json_v(char *json, size_t len, void *p);
 extern size_t discord_permissions_role_tags_to_json(char *json, size_t len, struct discord_permissions_role_tags *p);
 extern size_t discord_permissions_role_tags_to_query_v(char *json, size_t len, void *p);

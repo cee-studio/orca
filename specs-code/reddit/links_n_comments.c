@@ -1,18 +1,17 @@
 /* This file is generated from specs/reddit/links_n_comments.json, Please don't edit it. */
 /**
  * @file specs-code/reddit/links_n_comments.c
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see 
  */
 
 #include "specs.h"
 
-void reddit_comment_params_from_json(char *json, size_t len, struct reddit_comment_params *p)
+void reddit_comment_params_from_json(char *json, size_t len, struct reddit_comment_params **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct reddit_comment_params *p = *pp;
   r=json_extract(json, len, 
   /* specs/reddit/links_n_comments.json:13:20
      '{ "name": "api_type", "type":{ "base":"char", "dec":"*" }, "comment":"the string json" }' */
@@ -146,12 +145,8 @@ void reddit_comment_params_init_v(void *p) {
   reddit_comment_params_init((struct reddit_comment_params *)p);
 }
 
-void reddit_comment_params_free_v(void *p) {
- reddit_comment_params_free((struct reddit_comment_params *)p);
-};
-
-void reddit_comment_params_from_json_v(char *json, size_t len, void *p) {
- reddit_comment_params_from_json(json, len, (struct reddit_comment_params*)p);
+void reddit_comment_params_from_json_v(char *json, size_t len, void *pp) {
+ reddit_comment_params_from_json(json, len, (struct reddit_comment_params**)pp);
 }
 
 size_t reddit_comment_params_to_json_v(char *json, size_t len, void *p) {
@@ -218,17 +213,6 @@ void reddit_comment_params_init(struct reddit_comment_params *p) {
      '{ "name": "uh", "type":{ "base":"char", "dec":"*" }, "comment":"a modhash" }' */
 
 }
-struct reddit_comment_params* reddit_comment_params_alloc() {
-  struct reddit_comment_params *p= malloc(sizeof(struct reddit_comment_params));
-  reddit_comment_params_init(p);
-  return p;
-}
-
-void reddit_comment_params_free(struct reddit_comment_params *p) {
-  reddit_comment_params_cleanup(p);
-  free(p);
-}
-
 void reddit_comment_params_list_free(struct reddit_comment_params **p) {
   ntl_free((void**)p, (vfvp)reddit_comment_params_cleanup);
 }
@@ -238,10 +222,10 @@ void reddit_comment_params_list_from_json(char *str, size_t len, struct reddit_c
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct reddit_comment_params);
-  d.init_elem = reddit_comment_params_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = reddit_comment_params_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t reddit_comment_params_list_to_json(char *str, size_t len, struct reddit_comment_params **p)

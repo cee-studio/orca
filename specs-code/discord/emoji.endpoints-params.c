@@ -1,18 +1,17 @@
 /* This file is generated from specs/discord/emoji.endpoints-params.json, Please don't edit it. */
 /**
  * @file specs-code/discord/emoji.endpoints-params.c
- * @author cee-studio
- * @date 01 Jul 2021
- * @brief Specs generated file
  * @see 
  */
 
 #include "specs.h"
 
-void discord_create_guild_emoji_params_from_json(char *json, size_t len, struct discord_create_guild_emoji_params *p)
+void discord_create_guild_emoji_params_from_json(char *json, size_t len, struct discord_create_guild_emoji_params **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_create_guild_emoji_params *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/emoji.endpoints-params.json:13:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*"}}' */
@@ -98,12 +97,8 @@ void discord_create_guild_emoji_params_init_v(void *p) {
   discord_create_guild_emoji_params_init((struct discord_create_guild_emoji_params *)p);
 }
 
-void discord_create_guild_emoji_params_free_v(void *p) {
- discord_create_guild_emoji_params_free((struct discord_create_guild_emoji_params *)p);
-};
-
-void discord_create_guild_emoji_params_from_json_v(char *json, size_t len, void *p) {
- discord_create_guild_emoji_params_from_json(json, len, (struct discord_create_guild_emoji_params*)p);
+void discord_create_guild_emoji_params_from_json_v(char *json, size_t len, void *pp) {
+ discord_create_guild_emoji_params_from_json(json, len, (struct discord_create_guild_emoji_params**)pp);
 }
 
 size_t discord_create_guild_emoji_params_to_json_v(char *json, size_t len, void *p) {
@@ -150,17 +145,6 @@ void discord_create_guild_emoji_params_init(struct discord_create_guild_emoji_pa
      '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"roles for which this emoji will be whitelisted"}' */
 
 }
-struct discord_create_guild_emoji_params* discord_create_guild_emoji_params_alloc() {
-  struct discord_create_guild_emoji_params *p= malloc(sizeof(struct discord_create_guild_emoji_params));
-  discord_create_guild_emoji_params_init(p);
-  return p;
-}
-
-void discord_create_guild_emoji_params_free(struct discord_create_guild_emoji_params *p) {
-  discord_create_guild_emoji_params_cleanup(p);
-  free(p);
-}
-
 void discord_create_guild_emoji_params_list_free(struct discord_create_guild_emoji_params **p) {
   ntl_free((void**)p, (vfvp)discord_create_guild_emoji_params_cleanup);
 }
@@ -170,10 +154,10 @@ void discord_create_guild_emoji_params_list_from_json(char *str, size_t len, str
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_create_guild_emoji_params);
-  d.init_elem = discord_create_guild_emoji_params_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_create_guild_emoji_params_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_create_guild_emoji_params_list_to_json(char *str, size_t len, struct discord_create_guild_emoji_params **p)
@@ -182,10 +166,12 @@ size_t discord_create_guild_emoji_params_list_to_json(char *str, size_t len, str
 }
 
 
-void discord_modify_guild_emoji_params_from_json(char *json, size_t len, struct discord_modify_guild_emoji_params *p)
+void discord_modify_guild_emoji_params_from_json(char *json, size_t len, struct discord_modify_guild_emoji_params **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct discord_modify_guild_emoji_params *p = *pp;
   r=json_extract(json, len, 
   /* specs/discord/emoji.endpoints-params.json:25:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*"}}' */
@@ -255,12 +241,8 @@ void discord_modify_guild_emoji_params_init_v(void *p) {
   discord_modify_guild_emoji_params_init((struct discord_modify_guild_emoji_params *)p);
 }
 
-void discord_modify_guild_emoji_params_free_v(void *p) {
- discord_modify_guild_emoji_params_free((struct discord_modify_guild_emoji_params *)p);
-};
-
-void discord_modify_guild_emoji_params_from_json_v(char *json, size_t len, void *p) {
- discord_modify_guild_emoji_params_from_json(json, len, (struct discord_modify_guild_emoji_params*)p);
+void discord_modify_guild_emoji_params_from_json_v(char *json, size_t len, void *pp) {
+ discord_modify_guild_emoji_params_from_json(json, len, (struct discord_modify_guild_emoji_params**)pp);
 }
 
 size_t discord_modify_guild_emoji_params_to_json_v(char *json, size_t len, void *p) {
@@ -300,17 +282,6 @@ void discord_modify_guild_emoji_params_init(struct discord_modify_guild_emoji_pa
      '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"roles for which this emoji will be whitelisted"}' */
 
 }
-struct discord_modify_guild_emoji_params* discord_modify_guild_emoji_params_alloc() {
-  struct discord_modify_guild_emoji_params *p= malloc(sizeof(struct discord_modify_guild_emoji_params));
-  discord_modify_guild_emoji_params_init(p);
-  return p;
-}
-
-void discord_modify_guild_emoji_params_free(struct discord_modify_guild_emoji_params *p) {
-  discord_modify_guild_emoji_params_cleanup(p);
-  free(p);
-}
-
 void discord_modify_guild_emoji_params_list_free(struct discord_modify_guild_emoji_params **p) {
   ntl_free((void**)p, (vfvp)discord_modify_guild_emoji_params_cleanup);
 }
@@ -320,10 +291,10 @@ void discord_modify_guild_emoji_params_list_from_json(char *str, size_t len, str
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
   d.elem_size = sizeof(struct discord_modify_guild_emoji_params);
-  d.init_elem = discord_modify_guild_emoji_params_init_v;
+  d.init_elem = NULL;
   d.elem_from_buf = discord_modify_guild_emoji_params_from_json_v;
   d.ntl_recipient_p= (void***)p;
-  extract_ntl_from_json(str, len, &d);
+  extract_ntl_from_json2(str, len, &d);
 }
 
 size_t discord_modify_guild_emoji_params_list_to_json(char *str, size_t len, struct discord_modify_guild_emoji_params **p)

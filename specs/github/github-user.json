@@ -1,0 +1,12 @@
+{
+    "title":"User Object",
+    "namespace": ["github"],
+    "comment": "https://docs.github.com/en/rest/reference/users#get-a-user",
+    "defs":
+    [
+        {
+
+        }
+    ]
+}
+

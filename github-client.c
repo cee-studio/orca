@@ -428,3 +428,13 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
            client->presets.owner, 
            client->presets.repo);
 }
+
+ORCAcode
+github_get_user(struct github *client, char *username) {
+  log_info("===get-user===")
+
+  if (!username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+}

@@ -25,6 +25,10 @@ typedef int ORCAcode;
 #define MAX_EMAIL_LEN         254 + 1
 #define MAX_REGION_LEN        16 + 1
 
+/* Github error codes */
+#define ORCAGITHUB_JSON     1
+#define ORCAGITHUB_BAD_AUTH 2
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

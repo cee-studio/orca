@@ -5,7 +5,12 @@
     "defs":
     [
         {
-
+            "title": "User Structure",
+            "struct": "user",
+            "fields":
+            [
+                { "name": "login", "type":{ "char":"long", "dec":"*", "converter":"snowflake"}}
+            ]
         }
     ]
 }

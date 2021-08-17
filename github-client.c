@@ -431,10 +431,15 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
 
 ORCAcode
 github_get_user(struct github *client, char *username) {
-  log_info("===get-user===")
+  log_info("===get-user===");
 
   if (!username) {
     log_error("Missing 'username'");
     return ORCA_MISSING_PARAMETER;
   }
+
+  char payload[4096];
+  size_t ret;
+
+  return ORCA_OK;
 }

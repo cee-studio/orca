@@ -6,6 +6,11 @@
 #include "types.h"
 #include "logconf.h"
 
+#include "specs-code/github/all_opaque_struct.h"
+#include "specs-code/github/all_enums.h"
+#include "specs-code/github/all_structs.h"
+#include "specs-code/github/all_functions.h"
+
 struct github_file {
   char *path;
   char *sha;

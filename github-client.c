@@ -18,16 +18,48 @@ _github_presets_init(
   char *token, 
   const char *repo_config)
 {
-  size_t len = 0;
-  char *json = cee_load_whole_file(repo_config, &len);
-  json_extract(json, len, 
-    "(owner):?s,(repo):?s,(default_branch):?s",
-    &presets->owner, &presets->repo, &presets->default_branch);
+
+  presets->owner = NULL;
+  presets->repo = NULL;
+  presets->default_branch = NULL;
+
+  /* Optionally fill in the repo_config. Can be
+   * done later with github_fill_repo_config. */
+  if(repo_config) {
+    size_t len = 0;
+    char *json = cee_load_whole_file(repo_config, &len);
+
+    json_extract(json, len, 
+        "(owner):?s,(repo):?s,(default_branch):?s",
+        &presets->owner, &presets->repo, &presets->default_branch);
+
+    free(json);
+  }
 
   presets->username = username;
   presets->token = token;
 
-  free(json);
+}
+
+ORCAcode
+github_fill_repo_config(struct github *client, const char repo_config[]) {
+    log_info("===github-fill-repo-config===");
+
+    if(!repo_config) {
+        log_error("repo_config is NULL.");
+        return ORCA_MISSING_PARAMETER;
+    }
+
+    size_t len = 0;
+    char *json = cee_load_whole_file(repo_config, &len);
+
+    json_extract(json, len, 
+        "(owner):?s,(repo):?s,(default_branch):?s",
+        &client->presets.owner, &client->presets.repo, &client->presets.default_branch);
+
+    free(json);
+
+    return ORCA_OK;
 }
 
 static void
@@ -111,7 +143,7 @@ github_update_my_fork(struct github *client, char **p_sha)
     log_error("Couldn't fetch sha");
     return code;
   }
-  
+
   char payload[2048];
   size_t ret = json_inject(payload, sizeof(payload), "(sha):s", sha);
 
@@ -408,6 +440,7 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
     return ORCA_MISSING_PARAMETER;
   }
 
+
   char payload[4096];
   size_t ret;
   ret = json_inject(payload, sizeof(payload),
@@ -420,6 +453,8 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
           client->presets.username, branch, 
           client->presets.default_branch);
 
+  printf("create_a_pull_request payload: %s\n", payload);
+
   return github_adapter_run(
            &client->adapter, 
            &(struct ua_resp_handle){ .ok_cb = &__log_trace },
@@ -430,7 +465,7 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
 }
 
 ORCAcode
-github_get_user(struct github *client, char *username) {
+github_get_user(struct github *client, struct github_user user, char *username) {
   log_info("===get-user===");
 
   if (!username) {
@@ -439,7 +474,6 @@ github_get_user(struct github *client, char *username) {
   }
 
   char payload[4096];
-  size_t ret;
 
   return ORCA_OK;
 }

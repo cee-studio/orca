@@ -564,8 +564,3 @@ github_get_user(struct github *client, struct github_user* user, char *username)
           "/users/%s",
           username);
 }
-
-ORCAcode
-github_get_repository(struct github *client struct github_repo *repo, char *name) {
-
-}

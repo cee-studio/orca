@@ -543,36 +543,66 @@ github_get_user(struct github *client, struct github_user* user, char *username)
     log_error("Missing 'username'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!user) {
+    log_error("Missing 'user'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
-  char payload[4096];
-  size_t ret;
-  ret = json_inject(payload, sizeof(payload),
-          "(login):s"
-          "(id):d"
-          "(node_id):s"
-          "(avatar_url):s"
-          "(gravatar_url):s"
-          "(html_url):s"
-          "(type):s"
-          "(site_admin):b"
-          "(name):s"
-          "(company):s"
-          "(blog):s"
-          "(location):s"
-          "(email):s"
-          "(hireable):s"
-          "(bio):s"
-          "(public_repos):d"
-          "(public_gists):d"
-          "(followers):d"
-          "(following):d"
-          "(created_at):s"
-          "(updated_at):s");
+  char* payload = NULL;
+  size_t ret = 0;
+
+  ret = json_ainject(&payload,
+                "(login):s,"
+                "(id):i64,"
+                "(node_id):s,"
+                "(avatar_url):s,"
+                "(gravatar_id):s,"
+                "(html_url):s,"
+                "(type):s,"
+                "(site_admin):b,"
+                "(name):s,"
+                "(company):s,"
+                "(blog):s,"
+                "(location):s,"
+                "(email):s,"
+                "(hireable):s,"
+                "(bio):s,"
+                "(public_repos):d,"
+                "(public_gists):d,"
+                "(followers):d,"
+                "(following):d,"
+                "(created_at):s,"
+                "(updated_at):s,"
+                "@arg_switches:b",
+                user->login,
+                &user->id,
+                user->node_id,
+                user->avatar_url,
+                user->gravatar_id,
+                user->html_url,
+                user->type,
+                &user->site_admin,
+                user->name,
+                user->company,
+                user->blog,
+                user->location,
+                user->email,
+                user->hireable,
+                user->bio,
+                &user->public_repos,
+                &user->public_gists,
+                &user->followers,
+                &user->following,
+                user->created_at,
+                user->updated_at,
+                user->__M.arg_switches, sizeof(user->__M.arg_switches), user->__M.enable_arg_switches);
+
+
 
   return github_adapter_run(
           &client->adapter,
           &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-          &(struct sized_buffer){ payload, ret},
+          &(struct sized_buffer){ payload, ret },
           HTTP_GET, "/users/%s",
           username);
 }

@@ -42,7 +42,7 @@ _github_presets_init(
 }
 
 ORCAcode
-github_fill_repo_config(struct github *client, const char repo_config[]) {
+github_fill_repo_config(struct github *client, char *repo_config) {
     log_info("===github-fill-repo-config===");
 
     if(!repo_config) {
@@ -563,4 +563,9 @@ github_get_user(struct github *client, struct github_user* user, char *username)
           HTTP_GET,
           "/users/%s",
           username);
+}
+
+ORCAcode
+github_get_repository(struct github *client struct github_repo *repo, char *name) {
+
 }

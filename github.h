@@ -29,6 +29,7 @@ ORCAcode github_create_a_branch(struct github *client, char *head_commit_sha, ch
 ORCAcode github_update_a_commit(struct github *client, char *branch, char *commit_sha);
 ORCAcode github_create_a_pull_request(struct github *client, char *branch, char *pull_msg);
 ORCAcode github_get_user(struct github *client, struct github_user* user, char *username);
-ORCAcode github_fill_repo_config(struct github *client, const char repo_config[]);
+ORCAcode github_fill_repo_config(struct github *client, char *repo_config);
+ORCAcode github_get_repository(struct github *client, struct github_repo *repo, char *name);
 
 #endif // GITHUB_V3_H

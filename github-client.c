@@ -555,8 +555,12 @@ github_get_user(struct github *client, struct github_user* user, char *username)
 
   return github_adapter_run(
           &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-          &(struct sized_buffer){ payload, ret },
-          HTTP_GET, "/users/%s",
+          &(struct ua_resp_handle){
+            .ok_cb = &github_user_from_json_v,
+            .ok_obj = &user
+          },
+          NULL,
+          HTTP_GET,
+          "/users/%s",
           username);
 }

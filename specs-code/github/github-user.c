@@ -17,8 +17,8 @@ void github_user_from_json(char *json, size_t len, struct github_user **pp)
      '{ "name": "login", "type":{ "base":"char", "dec":"*"}}' */
                 "(login):?s,"
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
-                "(id):i64,"
+     '{ "name": "id", "type":{ "base":"int"}}' */
+                "(id):d,"
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */
                 "(node_id):?s,"
@@ -83,7 +83,7 @@ void github_user_from_json(char *json, size_t len, struct github_user **pp)
      '{ "name": "login", "type":{ "base":"char", "dec":"*"}}' */
                 &p->login,
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
+     '{ "name": "id", "type":{ "base":"int"}}' */
                 &p->id,
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */
@@ -156,7 +156,7 @@ static void github_user_use_default_inject_settings(struct github_user *p)
   p->__M.arg_switches[0] = p->login;
 
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
+     '{ "name": "id", "type":{ "base":"int"}}' */
   p->__M.arg_switches[1] = &p->id;
 
   /* specs/github/github-user.json:14:28
@@ -246,8 +246,8 @@ size_t github_user_to_json(char *json, size_t len, struct github_user *p)
      '{ "name": "login", "type":{ "base":"char", "dec":"*"}}' */
                 "(login):s,"
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
-                "(id):i64,"
+     '{ "name": "id", "type":{ "base":"int"}}' */
+                "(id):d,"
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */
                 "(node_id):s,"
@@ -310,7 +310,7 @@ size_t github_user_to_json(char *json, size_t len, struct github_user *p)
      '{ "name": "login", "type":{ "base":"char", "dec":"*"}}' */
                 p->login,
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
+     '{ "name": "id", "type":{ "base":"int"}}' */
                 &p->id,
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */
@@ -412,7 +412,7 @@ void github_user_cleanup(struct github_user *d) {
   if (d->login)
     free(d->login);
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
+     '{ "name": "id", "type":{ "base":"int"}}' */
   // p->id is a scalar
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */
@@ -493,7 +493,7 @@ void github_user_init(struct github_user *p) {
      '{ "name": "login", "type":{ "base":"char", "dec":"*"}}' */
 
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
+     '{ "name": "id", "type":{ "base":"int"}}' */
 
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */

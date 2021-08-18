@@ -10,7 +10,7 @@
             "fields":
             [
                 { "name": "login", "type":{ "base":"char", "dec":"*"}},
-                { "name": "id", "type":{ "base":"int64_t"}},
+                { "name": "id", "type":{ "base":"int"}},
                 { "name": "node_id", "type":{ "base":"char", "dec":"*"}},
                 { "name": "avatar_url", "type":{ "base":"char", "dec":"*"}},
                 { "name": "gravatar_id", "type":{ "base":"char", "dec":"*"}},

@@ -125,6 +125,16 @@ ORCAcode
 github_update_my_fork(struct github *client, char **p_sha)
 {
   log_info("===update-my-fork===");
+
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.default_branch) {
+    log_error("Missing 'default_branch'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
   char *sha=NULL;
   ORCAcode code;
   code = github_adapter_run(
@@ -170,6 +180,14 @@ github_get_head_commit(struct github *client, char **p_sha)
     log_error("Missing 'p_sha'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.default_branch) {
+    log_error("Missing 'default_branch'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   return github_adapter_run(
            &client->adapter, 
@@ -197,6 +215,14 @@ github_get_tree_sha(struct github *client, char *commit_sha, char **p_sha)
     log_error("Missing 'p_sha'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.repo) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   return github_adapter_run(
            &client->adapter, 
@@ -216,6 +242,14 @@ github_create_blobs(struct github *client, NTL_T(struct github_file) files)
 {
   if (!files) {
     log_error("Missing 'files'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.repo) {
+    log_error("Missing 'repo'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -298,6 +332,14 @@ github_create_tree(
     log_error("Missing 'files'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.repo) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   char payload[2048];
   size_t ret;
@@ -341,6 +383,14 @@ github_create_a_commit(
     log_error("Missing 'commit_msg'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.repo) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   char payload[4096];
   size_t ret;
@@ -380,6 +430,14 @@ github_create_a_branch(
     log_error("Missing 'branch'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.repo) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   char payload[4096];
   size_t ret;
@@ -411,6 +469,14 @@ github_update_a_commit(struct github *client, char *branch, char *commit_sha)
     log_error("Missing 'commit_sha'");
     return ORCA_MISSING_PARAMETER;
   }
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.repo) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   char payload[512];
   size_t ret;
@@ -439,7 +505,14 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
     log_error("Missing 'pull_msg'");
     return ORCA_MISSING_PARAMETER;
   }
-
+  if (!client->presets.username) {
+    log_error("Missing 'username'");
+    return ORCA_MISSING_PARAMETER;
+  }
+  if (!client->presets.default_branch) {
+    log_error("Missing 'default_branch'");
+    return ORCA_MISSING_PARAMETER;
+  }
 
   char payload[4096];
   size_t ret;
@@ -453,8 +526,6 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
           client->presets.username, branch, 
           client->presets.default_branch);
 
-  printf("create_a_pull_request payload: %s\n", payload);
-
   return github_adapter_run(
            &client->adapter, 
            &(struct ua_resp_handle){ .ok_cb = &__log_trace },
@@ -465,7 +536,7 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
 }
 
 ORCAcode
-github_get_user(struct github *client, struct github_user user, char *username) {
+github_get_user(struct github *client, struct github_user* user, char *username) {
   log_info("===get-user===");
 
   if (!username) {
@@ -474,6 +545,34 @@ github_get_user(struct github *client, struct github_user user, char *username) 
   }
 
   char payload[4096];
+  size_t ret;
+  ret = json_inject(payload, sizeof(payload),
+          "(login):s"
+          "(id):d"
+          "(node_id):s"
+          "(avatar_url):s"
+          "(gravatar_url):s"
+          "(html_url):s"
+          "(type):s"
+          "(site_admin):b"
+          "(name):s"
+          "(company):s"
+          "(blog):s"
+          "(location):s"
+          "(email):s"
+          "(hireable):s"
+          "(bio):s"
+          "(public_repos):d"
+          "(public_gists):d"
+          "(followers):d"
+          "(following):d"
+          "(created_at):s"
+          "(updated_at):s");
 
-  return ORCA_OK;
+  return github_adapter_run(
+          &client->adapter,
+          &(struct ua_resp_handle){ .ok_cb = &__log_trace },
+          &(struct sized_buffer){ payload, ret},
+          HTTP_GET, "/users/%s",
+          username);
 }

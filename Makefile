@@ -38,7 +38,7 @@ SPECSDEPS_OBJS    := $(SPECSDEPS_SRC:%=$(SPECSDEPS_OBJDIR)/%.o)
 # APIs objs
 DISCORD_SRC  = $(wildcard discord-*.c $(SPECS_WDIR)/discord/*.c)
 DISCORD_OBJS = $(DISCORD_SRC:%=$(OBJDIR)/%.o)
-GITHUB_SRC   = $(wildcard github-*.c)
+GITHUB_SRC   = $(wildcard github-*.c) $(SPECS_WDIR)/github/*.c
 GITHUB_OBJS  = $(GITHUB_SRC:%=$(OBJDIR)/%.o)
 REDDIT_SRC   = $(wildcard reddit-*.c $(SPECS_WDIR)/reddit/*.c)
 REDDIT_OBJS  = $(REDDIT_SRC:%=$(OBJDIR)/%.o)

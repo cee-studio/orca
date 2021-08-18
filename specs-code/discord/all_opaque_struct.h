@@ -1020,30 +1020,3 @@ struct discord_edit_webhook_message_params;
 struct discord_webhook;
 
 
-/* This file is generated from specs/discord/user.json, Please don't edit it. */
-/**
- * @file specs-code/discord/all_opaque_struct.h
- * @see https://discord.com/developers/docs/resources/user
- */
-
-
-
-
-
-
-// defined at specs/discord/user.json:42:28
-/**
- * @brief User Structure
- *
- */
-struct discord_user;
-
-
-
-// defined at specs/discord/user.json:74:28
-/**
- * @brief Connection Structure
- *
- * @see https://discord.com/developers/docs/resources/user#connection-object-connection-structure
- */
-struct discord_connection;

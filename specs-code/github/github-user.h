@@ -26,8 +26,8 @@ struct github_user {
   char *login;
 
   /* specs/github/github-user.json:13:28
-     '{ "name": "id", "type":{ "base":"int64_t"}}' */
-  int64_t id;
+     '{ "name": "id", "type":{ "base":"int"}}' */
+  int id;
 
   /* specs/github/github-user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */

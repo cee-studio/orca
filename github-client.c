@@ -548,56 +548,10 @@ github_get_user(struct github *client, struct github_user* user, char *username)
     return ORCA_MISSING_PARAMETER;
   }
 
-  char* payload = NULL;
+  char payload[4096];
   size_t ret = 0;
 
-  ret = json_ainject(&payload,
-                "(login):s,"
-                "(id):i64,"
-                "(node_id):s,"
-                "(avatar_url):s,"
-                "(gravatar_id):s,"
-                "(html_url):s,"
-                "(type):s,"
-                "(site_admin):b,"
-                "(name):s,"
-                "(company):s,"
-                "(blog):s,"
-                "(location):s,"
-                "(email):s,"
-                "(hireable):s,"
-                "(bio):s,"
-                "(public_repos):d,"
-                "(public_gists):d,"
-                "(followers):d,"
-                "(following):d,"
-                "(created_at):s,"
-                "(updated_at):s,"
-                "@arg_switches:b",
-                user->login,
-                &user->id,
-                user->node_id,
-                user->avatar_url,
-                user->gravatar_id,
-                user->html_url,
-                user->type,
-                &user->site_admin,
-                user->name,
-                user->company,
-                user->blog,
-                user->location,
-                user->email,
-                user->hireable,
-                user->bio,
-                &user->public_repos,
-                &user->public_gists,
-                &user->followers,
-                &user->following,
-                user->created_at,
-                user->updated_at,
-                user->__M.arg_switches, sizeof(user->__M.arg_switches), user->__M.enable_arg_switches);
-
-
+  ret = github_user_to_json(payload, sizeof(payload), user);
 
   return github_adapter_run(
           &client->adapter,

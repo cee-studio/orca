@@ -1,0 +1,38 @@
+/*
+ * A bot that retrieves public information about a GitHub user.
+*/
+
+#include <stdio.h>
+#include <orca/github.h>
+
+void print_usage() {
+  printf("bot-github-user.c - retrieve some information about a github user through their username\n\n");
+  printf("parameters:\n");
+  printf("  username - the username to lookup:\n");
+}
+
+void print_too_many() {
+  printf("bot-github-user.c only accepts one username.\n");
+}
+
+int main(int argc, char *argv[]) {
+  switch(argc) {
+    case 1: print_usage();
+    case 2: break;
+    default: print_too_many();
+  }
+
+  struct github *client = github_config_init("bot.config", NULL);
+  struct github_user user = {0};
+
+  github_get_user(client, &user, argv[1]);
+
+  printf("Information for '%s'\n", argv[1]);
+  printf("Name: %s\n", user.login);
+  printf("Biography: %s\n", user.bio);
+  printf("Followers: %i\n", user.followers);
+  printf("Following: %i\n", user.following);
+
+  return 0;
+}
+

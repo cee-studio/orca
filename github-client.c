@@ -548,11 +548,6 @@ github_get_user(struct github *client, struct github_user* user, char *username)
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[4096];
-  size_t ret = 0;
-
-  ret = github_user_to_json(payload, sizeof(payload), user);
-
   return github_adapter_run(
           &client->adapter,
           &(struct ua_resp_handle){

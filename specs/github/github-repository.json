@@ -34,6 +34,11 @@
                 { "name": "archived", "type":{ "base":"bool"}},
                 { "name": "disabled", "type":{ "base":"bool"}},
                 { "name": "open_issues_count", "type":{ "base": "int"}},
+                { "type": {"base":"struct github_license", "dec":"*"}, "name":"license"},
+                { "name": "forks", "type":{ "base": "int"}},
+                { "name": "open_issues", "type":{ "base": "int"}},
+                { "name": "watchers", "type":{ "base": "int"}},
+                { "name": "default_branch", "type":{ "base":"char", "dec":"*"}},
             ]
         }
     ]

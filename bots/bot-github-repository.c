@@ -6,5 +6,5 @@
 #include <orca/github.h>
 
 int main() {
-    struct github_user;
+    struct github_repository repo;
 }

@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "cee-utils.h"
+#include "cee-utils/ntl.h"
 #include "json-actor.h"
 
 #include "github.h"
@@ -41,20 +42,11 @@ _github_presets_init(
 
 }
 
-size_t github_write_json(char *json, size_t len, void *user_obj) {
-  int written = 0;
-  char* output = user_obj;
-
-  for(int cursor = 0; cursor < len; cursor++) {
-      if(json[cursor] == '\0')
-          break;
-
-      output[cursor] = json[cursor];
-      written++;
-  }
-
-  return written;
+void github_write_json(char *json, size_t len, void *user_obj) {
+    struct sized_buffer *new_user_obj = user_obj;
+    new_user_obj->size = asprintf(&new_user_obj->start, "%.*s", (int) len, json);
 }
+
 
 ORCAcode
 github_fill_repo_config(struct github *client, char *repo_config) {
@@ -551,7 +543,7 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
 }
 
 ORCAcode
-github_get_user(struct github *client, struct github_user* user, char *username) {
+github_get_user(struct github *client, char *username, struct github_user* user) {
   log_info("===get-user===");
 
   if (!username) {
@@ -577,7 +569,7 @@ github_get_user(struct github *client, struct github_user* user, char *username)
 
 
 ORCAcode
-github_get_repository(struct github *client, char* owner, char* repo, char* output) {
+github_get_repository(struct github *client, char* owner, char* repo, struct sized_buffer* output) {
   log_info("===get-repository===");
 
   if (!repo) {
@@ -590,18 +582,17 @@ github_get_repository(struct github *client, char* owner, char* repo, char* outp
     return ORCA_MISSING_PARAMETER;
   }
 
-  size_t ret;
 
   return github_adapter_run(
           &client->adapter,
           &(struct ua_resp_handle){
-            .ok_cb = &output,
-            .ok_obj = &ret
+            .ok_cb = &github_write_json,
+            .ok_obj = output
           },
           NULL,
           HTTP_GET,
           "/repos/%s/%s",
-          repo,
-          output
+          owner,
+          repo
   );
 }

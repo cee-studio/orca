@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   struct github *client = github_config_init("bot.config", NULL);
   struct github_user user = {0};
 
-  github_get_user(client, &user, argv[1]);
+  github_get_user(client, argv[1], &user);
 
   printf("Information for '%s'\n", argv[1]);
   printf("Login: %s\n", user.login);

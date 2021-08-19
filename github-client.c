@@ -41,6 +41,21 @@ _github_presets_init(
 
 }
 
+size_t github_write_json(char *json, size_t len, void *user_obj) {
+  int written = 0;
+  char* output = user_obj;
+
+  for(int cursor = 0; cursor < len; cursor++) {
+      if(json[cursor] == '\0')
+          break;
+
+      output[cursor] = json[cursor];
+      written++;
+  }
+
+  return written;
+}
+
 ORCAcode
 github_fill_repo_config(struct github *client, char *repo_config) {
     log_info("===github-fill-repo-config===");
@@ -558,4 +573,35 @@ github_get_user(struct github *client, struct github_user* user, char *username)
           HTTP_GET,
           "/users/%s",
           username);
+}
+
+
+ORCAcode
+github_get_repository(struct github *client, char* owner, char* repo, char* output) {
+  log_info("===get-repository===");
+
+  if (!repo) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  if (!output) {
+    log_error("Missing 'repo'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  size_t ret;
+
+  return github_adapter_run(
+          &client->adapter,
+          &(struct ua_resp_handle){
+            .ok_cb = &output,
+            .ok_obj = &ret
+          },
+          NULL,
+          HTTP_GET,
+          "/repos/%s/%s",
+          repo,
+          output
+  );
 }

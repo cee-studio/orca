@@ -3,7 +3,7 @@
 */
 
 #include <stdio.h>
-#include <orca/github.h>
+#include "github.h"
 
 void print_usage() {
   printf("bot-github-user.c - retrieve some information about a github user through their username\n\n");

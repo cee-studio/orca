@@ -6,5 +6,10 @@
 #include <orca/github.h>
 
 int main() {
-    struct github_repository repo;
+    struct github* client = github_config_init("bot.config", NULL);
+
+    char payload[4096] = {0};
+
+    github_get_repository(client, "antropez", "orca", payload);
+
 }

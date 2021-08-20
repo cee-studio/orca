@@ -4,7 +4,8 @@
  * @see https://docs.github.com/en/rest/reference/repos#get-a-repository
  */
 
-#include "specs.h"
+#include "specs-deps.h"
+#include "github.h"
 
 void github_repository_from_json(char *json, size_t len, struct github_repository **pp)
 {

@@ -4,7 +4,14 @@
  * @see https://discord.com/developers/docs/resources/emoji
  */
 
-#include "specs.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <strings.h>
+#include "json-actor.h"
+#include "json-actor-boxed.h"
+#include "cee-utils.h"
+#include "discord.h"
 
 void discord_emoji_from_json(char *json, size_t len, struct discord_emoji **pp)
 {

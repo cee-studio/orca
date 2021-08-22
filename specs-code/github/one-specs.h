@@ -1,9 +1,18 @@
 /* This file is generated from specs/github/github-user.json, Please don't edit it. */
 /**
- * @file specs-code/github/github-user.h
+ * @file specs-code/github/one-specs.h
  * @see https://docs.github.com/en/rest/reference/users#get-a-user
  */
 
+
+// defined at specs/github/github-user.json:9:33
+/**
+ * @brief User Structure
+ *
+ */
+struct github_user;
+/* This file is generated from specs/github/github-user.json, Please don't edit it. */
+/* This file is generated from specs/github/github-user.json, Please don't edit it. */
 
 // User Structure
 // defined at specs/github/github-user.json:9:33
@@ -120,6 +129,8 @@ struct github_user {
   } __M; // metadata
 /// @endcond
 };
+/* This file is generated from specs/github/github-user.json, Please don't edit it. */
+
 extern void github_user_cleanup_v(void *p);
 extern void github_user_cleanup(struct github_user *p);
 extern void github_user_init_v(void *p);

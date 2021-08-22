@@ -543,7 +543,8 @@ github_create_a_pull_request(struct github *client, char *branch, char *pull_msg
 }
 
 ORCAcode
-github_get_user(struct github *client, char *username, struct github_user* user) {
+github_get_user(struct github *client, char *username, struct github_user* user)
+{
   log_info("===get-user===");
 
   if (!username) {
@@ -569,7 +570,8 @@ github_get_user(struct github *client, char *username, struct github_user* user)
 
 
 ORCAcode
-github_get_repository(struct github *client, char* owner, char* repo, struct sized_buffer* output) {
+github_get_repository(struct github *client, char* owner, char* repo, struct sized_buffer* output)
+{
   log_info("===get-repository===");
 
   if (!repo) {

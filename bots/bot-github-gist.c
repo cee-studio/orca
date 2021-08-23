@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     }
 
     struct github_gist gist_info;
-    struct github_gist_create_params params = {.title = argv[1], .description = argv[2], .contents = argv[3]};
+    struct github_gist_create_params params = {.title = argv[1], .description = argv[2], .contents = argv[3], .public = "false"};
 
     github_create_gist(client, &params, &gist_info);
     printf("Created gist \"%s\" at URL: %s\n", argv[1], gist_info.html_url);

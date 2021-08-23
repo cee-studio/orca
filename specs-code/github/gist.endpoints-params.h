@@ -35,6 +35,10 @@ struct github_gist_create_params {
      '{ "name": "contents", "type":{ "base":"char", "dec":"*" }}' */
   char *contents;
 
+  /* specs/github/gist.endpoints-params.json:16:28
+     '{ "name": "public", "type":{ "base":"char", "dec":"*" }}' */
+  char *public;
+
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
   // 2. record which field is presented(defined) in JSON
@@ -44,9 +48,9 @@ struct github_gist_create_params {
     bool enable_arg_switches;
     bool enable_record_defined;
     bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
+    void *arg_switches[4];
+    void *record_defined[4];
+    void *record_null[4];
   } __M; // metadata
 /// @endcond
 };

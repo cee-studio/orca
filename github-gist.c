@@ -27,12 +27,18 @@ github_create_gist(struct github *client, struct github_gist_create_params *para
   }
 
   char payload[4096];
-  char fmt[1024];
+  char fmt[2048];
 
-  /* Create the format string for the payload */
-  snprintf(fmt, sizeof(fmt), "(description): \"%s\", (files): { (%s): { (content): \"%s\" }}", params->description,
-                                                                                               params->title,
-                                                                                               params->contents);
+  /* Create the format string for the payload
+   * TODO:
+   * Allocate buffer big enough, then free it after the request is made
+   * */
+  snprintf(fmt, sizeof(fmt), "(public): \"%s\", (description): \"%s\", (files): { (%s): { (content): \"%s\" }}", params->public,
+                                                                                                                 params->description,
+                                                                                                                 params->title,
+                                                                                                                 params->contents);
+  printf("%s\n", fmt);
+
   size_t ret = json_inject(payload, sizeof(payload), fmt);
 
   return github_adapter_run(

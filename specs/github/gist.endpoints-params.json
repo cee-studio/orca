@@ -12,7 +12,8 @@
             [
                 { "name": "description", "type":{ "base":"char", "dec":"*" }},
                 { "name": "title", "type":{ "base":"char", "dec":"*" }},
-                { "name": "contents", "type":{ "base":"char", "dec":"*" }}
+                { "name": "contents", "type":{ "base":"char", "dec":"*" }},
+                { "name": "public", "type":{ "base":"char", "dec":"*" }}
             ]
         }
     ]

@@ -16,13 +16,13 @@ github_create_gist(struct github *client, struct github_gist_create_params *para
 {
   log_info("===create-gist===");
 
-  if(!params->description) {
+  if (!params->description) {
     log_error("Missing 'description'");
   }
-  if(!params->title) {
+  if (!params->title) {
     log_error("Missing 'title'");
   }
-  if(!params->contents) {
+  if (!params->contents) {
     log_error("Missing 'contents'");
   }
 
@@ -33,7 +33,6 @@ github_create_gist(struct github *client, struct github_gist_create_params *para
   snprintf(fmt, sizeof(fmt), "(description): \"%s\", (files): { (%s): { (content): \"%s\" }}", params->description,
                                                                                                params->title,
                                                                                                params->contents);
-
   size_t ret = json_inject(payload, sizeof(payload), fmt);
 
   return github_adapter_run(

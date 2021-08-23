@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
     else if (argc < 3) {
-        printf("bot-github-gist expects 2 arguments. owner, and repo\n");
+        printf("bot-github-create-fork expects 2 arguments. owner, and repo\n");
         exit(1);
     }
 

@@ -12,7 +12,7 @@
 #include "github-internal.h"
 
 ORCAcode
-github_create_gist(struct github *client, struct github_gist_create_params* params, struct github_gist* gist)
+github_create_gist(struct github *client, struct github_gist_create_params *params, struct github_gist *gist)
 {
   log_info("===create-gist===");
 

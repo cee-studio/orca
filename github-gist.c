@@ -18,12 +18,15 @@ github_create_gist(struct github *client, struct github_gist_create_params *para
 
   if (!params->description) {
     log_error("Missing 'description'");
+    return ORCA_MISSING_PARAMETER;
   }
   if (!params->title) {
     log_error("Missing 'title'");
+    return ORCA_MISSING_PARAMETER;
   }
   if (!params->contents) {
     log_error("Missing 'contents'");
+    return ORCA_MISSING_PARAMETER;
   }
 
   char payload[4096];
@@ -35,10 +38,6 @@ github_create_gist(struct github *client, struct github_gist_create_params *para
    * */
   snprintf(fmt, sizeof(fmt), "(public): \"%s\", (description): \"%s\", (files): { (%s): { (content): \"%s\" }}", params->public,
                                                                                                                  params->description,
-                                                                                                                 params->title,
-                                                                                                                 params->contents);
-  printf("%s\n", fmt);
-
   size_t ret = json_inject(payload, sizeof(payload), fmt);
 
   return github_adapter_run(

@@ -12,17 +12,17 @@
 #include "github-internal.h"
 
 ORCAcode
-github_create_gist(struct github *client, char* description, char* title, char* contents, struct github_gist* gist)
+github_create_gist(struct github *client, struct github_gist_create_params* params, struct github_gist* gist)
 {
   log_info("===create-gist===");
 
-  if(!description) {
+  if(!params->description) {
     log_error("Missing 'description'");
   }
-  if(!title) {
+  if(!params->title) {
     log_error("Missing 'title'");
   }
-  if(!contents) {
+  if(!params->contents) {
     log_error("Missing 'contents'");
   }
 
@@ -30,7 +30,9 @@ github_create_gist(struct github *client, char* description, char* title, char* 
   char fmt[1024];
 
   /* Create the format string for the payload */
-  snprintf(fmt, sizeof(fmt), "(files): { (%s): { (content): \"%s\" }}", title, contents);
+  snprintf(fmt, sizeof(fmt), "(description): \"%s\", (files): { (%s): { (content): \"%s\" }}", params->description,
+                                                                                               params->title,
+                                                                                               params->contents);
 
   size_t ret = json_inject(payload, sizeof(payload), fmt);
 

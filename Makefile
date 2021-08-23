@@ -180,10 +180,11 @@ echo:
 	@ echo SPECS_APIS: $(SPECS_APIS)
 	@ echo DISCORD_OBJS: $(DISCORD_OBJS)
 
-specs_gen: cee_utils | $(SPECSDEPS_OBJS)
-	@ $(MAKE) clean specsdeps_clean specs_clean specs_code
+specs_gen: $(CEE_UTILS_DIR) | $(SPECSDEPS_OBJS)
+	@ $(MAKE) clean specsdeps_clean specs_clean
+	@ $(MAKE) specs_code
 
-specs_code: specs-gen.exe
+specs_code: | specs-gen.exe
 	@ rm -rf $(SPECS_WDIR)/*/one-specs.h
 	# Generate header files (specs-code/%/*.h)
 	$(foreach var, $(SPECS_JSON), \
@@ -282,6 +283,7 @@ install :
 	install -d $(PREFIX)/include/orca/
 	install -m 644 *.h $(CEE_UTILS_DIR)/*.h $(COMMON_DIR)/*.h $(COMMON_DIR)/**/*.h $(PREFIX)/include/orca/
 	install -d $(PREFIX)/include/orca/$(SPECS_WDIR)/discord/
+	install -m 644 $(SPECS_WDIR)/discord/*.h $(PREFIX)/include/orca/$(SPECS_WDIR)/discord/
 	install -d $(PREFIX)/include/orca/$(SPECS_WDIR)/github/
 	install -m 644 $(SPECS_WDIR)/github/*.h $(PREFIX)/include/orca/$(SPECS_WDIR)/github/
 

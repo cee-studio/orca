@@ -3,7 +3,7 @@
 */
 
 #include <stdio.h>
-#include "orca/github.h"
+#include "github.h"
 
 void print_usage()
 {

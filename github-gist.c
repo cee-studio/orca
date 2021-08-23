@@ -38,6 +38,9 @@ github_create_gist(struct github *client, struct github_gist_create_params *para
    * */
   snprintf(fmt, sizeof(fmt), "(public): \"%s\", (description): \"%s\", (files): { (%s): { (content): \"%s\" }}", params->public,
                                                                                                                  params->description,
+                                                                                                                 params->title,
+                                                                                                                 params->contents);
+
   size_t ret = json_inject(payload, sizeof(payload), fmt);
 
   return github_adapter_run(

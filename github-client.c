@@ -584,7 +584,6 @@ github_get_repository(struct github *client, char* owner, char* repo, struct siz
     return ORCA_MISSING_PARAMETER;
   }
 
-
   return github_adapter_run(
           &client->adapter,
           &(struct ua_resp_handle){

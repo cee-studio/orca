@@ -42,6 +42,7 @@ typedef int ORCAcode;             ///< the error code datatype
 /* Github error codes */
 #define ORCAGITHUB_JSON     1
 #define ORCAGITHUB_BAD_AUTH 2
+#define ORCA_GITHUB_NOT_STARRED 404
 
 #ifdef __cplusplus
 }

@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <orca/github.h>
+#include "github.h"
 
 void print_usage() {
     printf("bot-github-gist-starred - a bot to check if a gist is starred\n");

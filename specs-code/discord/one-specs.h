@@ -50,7 +50,7 @@ struct discord_edit_application_command_permissions_params;
 /**
  * @brief Application Command Structure
  *
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure
  */
 struct discord_application_command;
 
@@ -60,7 +60,7 @@ struct discord_application_command;
 /**
  * @brief Application Command Option Structure
  *
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
  */
 struct discord_application_command_option;
 
@@ -70,7 +70,7 @@ struct discord_application_command_option;
 /**
  * @brief Application Command Option Choice Structure
  *
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-choice-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
  */
 struct discord_application_command_option_choice;
 
@@ -78,7 +78,7 @@ struct discord_application_command_option_choice;
 /**
  * @brief Guild Application Command Permissions Structure
  *
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure
  */
 struct discord_guild_application_command_permissions;
 
@@ -86,7 +86,7 @@ struct discord_guild_application_command_permissions;
 /**
  * @brief Application Command Permissions Structure
  *
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-structure
  */
 struct discord_application_command_permissions;
 
@@ -122,7 +122,7 @@ struct discord_application_command_interaction_data_resolved;
 /**
  * @brief Application Command Interaction Data Option Structure
  *
- * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-application-command-interaction-data-option-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-interaction-data-option-structure
  */
 struct discord_application_command_interaction_data_option;
 
@@ -958,7 +958,7 @@ extern bool discord_application_command_types_cmp(enum discord_application_comma
 // Application Command Option Type
 // defined at specs/discord/application_commands.json:48:5
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-type
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -992,7 +992,7 @@ extern bool discord_application_command_option_types_cmp(enum discord_applicatio
 // Application Command Permission Type
 // defined at specs/discord/application_commands.json:103:5
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-application-command-permission-type
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permission-type
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -2169,8 +2169,8 @@ struct discord_create_global_application_command_params {
   char *description; ///< 1-100 character description
 
   /* specs/discord/application_commands.endpoints-params.json:15:20
-     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command"}' */
-  enum discord_application_command_option_types **options; ///< the parameters for the command
+     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command", "todo":true}' */
+  // @todo options the parameters for the command;
 
   /* specs/discord/application_commands.endpoints-params.json:16:20
      '{ "name": "default_permission", "type":{"base":"bool"}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
@@ -2235,8 +2235,8 @@ struct discord_edit_global_application_command_params {
   char *description; ///< 1-100 character description
 
   /* specs/discord/application_commands.endpoints-params.json:29:20
-     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command"}' */
-  enum discord_application_command_option_types **options; ///< the parameters for the command
+     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command", "todo":true}' */
+  // @todo options the parameters for the command;
 
   /* specs/discord/application_commands.endpoints-params.json:30:20
      '{ "name": "default_permission", "type":{"base":"bool"}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
@@ -2297,8 +2297,8 @@ struct discord_create_guild_application_command_params {
   char *description; ///< 1-100 character description
 
   /* specs/discord/application_commands.endpoints-params.json:42:20
-     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command"}' */
-  enum discord_application_command_option_types **options; ///< the parameters for the command
+     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command", "todo":true}' */
+  // @todo options the parameters for the command;
 
   /* specs/discord/application_commands.endpoints-params.json:43:20
      '{ "name": "default_permission", "type":{"base":"bool"}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
@@ -2363,8 +2363,8 @@ struct discord_edit_guild_application_command_params {
   char *description; ///< 1-100 character description
 
   /* specs/discord/application_commands.endpoints-params.json:56:20
-     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command"}' */
-  enum discord_application_command_option_types **options; ///< the parameters for the command
+     '{ "name": "options", "type":{"base":"int", "int_alias":"enum discord_application_command_option_types", "dec":"ntl"}, "comment":"the parameters for the command", "todo":true}' */
+  // @todo options the parameters for the command;
 
   /* specs/discord/application_commands.endpoints-params.json:57:20
      '{ "name": "default_permission", "type":{"base":"bool"}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
@@ -2440,7 +2440,7 @@ struct discord_edit_application_command_permissions_params {
 // Application Command Structure
 // defined at specs/discord/application_commands.json:9:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -2516,7 +2516,7 @@ struct discord_application_command {
 // Application Command Option Structure
 // defined at specs/discord/application_commands.json:37:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -2588,7 +2588,7 @@ struct discord_application_command_option {
 // Application Command Option Choice Structure
 // defined at specs/discord/application_commands.json:71:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-choice-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -2642,7 +2642,7 @@ struct discord_application_command_option_choice {
 // Guild Application Command Permissions Structure
 // defined at specs/discord/application_commands.json:82:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -2704,7 +2704,7 @@ struct discord_guild_application_command_permissions {
 // Application Command Permissions Structure
 // defined at specs/discord/application_commands.json:95:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -2980,7 +2980,7 @@ struct discord_application_command_interaction_data_resolved {
 // Application Command Interaction Data Option Structure
 // defined at specs/discord/application_commands.json:175:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-application-command-interaction-data-option-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-interaction-data-option-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle

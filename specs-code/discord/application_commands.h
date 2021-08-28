@@ -8,7 +8,7 @@
 // Application Command Structure
 // defined at specs/discord/application_commands.json:9:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -125,7 +125,7 @@ extern bool discord_application_command_types_cmp(enum discord_application_comma
 // Application Command Option Structure
 // defined at specs/discord/application_commands.json:37:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -212,7 +212,7 @@ extern size_t discord_application_command_option_list_to_json(char *str, size_t 
 // Application Command Option Type
 // defined at specs/discord/application_commands.json:48:5
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-type
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -245,7 +245,7 @@ extern bool discord_application_command_option_types_cmp(enum discord_applicatio
 // Application Command Option Choice Structure
 // defined at specs/discord/application_commands.json:71:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-choice-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -315,7 +315,7 @@ extern size_t discord_application_command_option_choice_list_to_json(char *str, 
 // Guild Application Command Permissions Structure
 // defined at specs/discord/application_commands.json:82:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -393,7 +393,7 @@ extern size_t discord_guild_application_command_permissions_list_to_json(char *s
 // Application Command Permissions Structure
 // defined at specs/discord/application_commands.json:95:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-guild-application-command-permissions-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -468,7 +468,7 @@ extern size_t discord_application_command_permissions_list_to_json(char *str, si
 // Application Command Permission Type
 // defined at specs/discord/application_commands.json:103:5
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#application-command-permissions-object-application-command-permission-type
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permission-type
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -782,7 +782,7 @@ extern size_t discord_application_command_interaction_data_resolved_list_to_json
 // Application Command Interaction Data Option Structure
 // defined at specs/discord/application_commands.json:175:22
 /**
- * @see https://discord.com/developers/docs/interactions/slash-commands#interaction-object-application-command-interaction-data-option-structure
+ * @see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-interaction-data-option-structure
  *
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle

@@ -486,7 +486,7 @@ struct discord_emoji;
 
 
 
-// defined at specs/discord/gateway.json:116:22
+// defined at specs/discord/gateway.json:135:22
 /**
  * @brief Identify Structure
  *
@@ -494,7 +494,7 @@ struct discord_emoji;
  */
 struct discord_gateway_identify;
 
-// defined at specs/discord/gateway.json:132:22
+// defined at specs/discord/gateway.json:151:22
 /**
  * @brief Gateway Status Update Structure
  *
@@ -502,7 +502,7 @@ struct discord_gateway_identify;
  */
 struct discord_gateway_status_update;
 
-// defined at specs/discord/gateway.json:147:22
+// defined at specs/discord/gateway.json:166:22
 /**
  * @brief Identify Connection Properties
  *
@@ -510,7 +510,7 @@ struct discord_gateway_status_update;
  */
 struct discord_gateway_identify_connection;
 
-// defined at specs/discord/gateway.json:158:22
+// defined at specs/discord/gateway.json:177:22
 /**
  * @brief Activity Structure
  *
@@ -1452,40 +1452,59 @@ extern bool discord_gateway_opcodes_cmp(enum discord_gateway_opcodes, char*);
  */
 enum discord_gateway_events {
   DISCORD_GATEWAY_EVENTS_NONE = 0,
-  DISCORD_GATEWAY_EVENTS_GUILD_CREATE = 1,
-  DISCORD_GATEWAY_EVENTS_GUILD_UPDATE = 2,
-  DISCORD_GATEWAY_EVENTS_GUILD_DELETE = 3,
-  DISCORD_GATEWAY_EVENTS_GUILD_ROLE_CREATE = 4,
-  DISCORD_GATEWAY_EVENTS_GUILD_ROLE_UPDATE = 5,
-  DISCORD_GATEWAY_EVENTS_GUILD_ROLE_DELETE = 6,
-  DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_ADD = 7,
-  DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_UPDATE = 8,
-  DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_REMOVE = 9,
-  DISCORD_GATEWAY_EVENTS_GUILD_BAN_ADD = 10,
-  DISCORD_GATEWAY_EVENTS_GUILD_BAN_REMOVE = 11,
-  DISCORD_GATEWAY_EVENTS_GUILD_EMOJIS_UPDATE = 12,
-  DISCORD_GATEWAY_EVENTS_GUILD_INTEGRATIONS_UPDATE = 13,
-  DISCORD_GATEWAY_EVENTS_CHANNEL_CREATE = 14,
-  DISCORD_GATEWAY_EVENTS_CHANNEL_UPDATE = 15,
-  DISCORD_GATEWAY_EVENTS_CHANNEL_DELETE = 16,
-  DISCORD_GATEWAY_EVENTS_CHANNEL_PINS_UPDATE = 17,
-  DISCORD_GATEWAY_EVENTS_INVITE_CREATE = 18,
-  DISCORD_GATEWAY_EVENTS_INVITE_DELETE = 19,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_CREATE = 20,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_UPDATE = 21,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE = 22,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE_BULK = 23,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_ADD = 24,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE = 25,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE_ALL = 26,
-  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE_EMOJI = 27,
-  DISCORD_GATEWAY_EVENTS_WEBHOOKS_UPDATE = 28,
-  DISCORD_GATEWAY_EVENTS_VOICE_STATE_UPDATE = 29,
-  DISCORD_GATEWAY_EVENTS_VOICE_SERVER_UPDATE = 30,
-  DISCORD_GATEWAY_EVENTS_PRESENCE_UPDATE = 31,
-  DISCORD_GATEWAY_EVENTS_TYPING_START = 32,
-  DISCORD_GATEWAY_EVENTS_READY = 33,
-  DISCORD_GATEWAY_EVENTS_RESUMED = 34,
+  DISCORD_GATEWAY_EVENTS_READY = 1,
+  DISCORD_GATEWAY_EVENTS_RESUMED = 2,
+  DISCORD_GATEWAY_EVENTS_APPLICATION_COMMAND_CREATE = 3,
+  DISCORD_GATEWAY_EVENTS_APPLICATION_COMMAND_UPDATE = 4,
+  DISCORD_GATEWAY_EVENTS_APPLICATION_COMMAND_DELETE = 5,
+  DISCORD_GATEWAY_EVENTS_CHANNEL_CREATE = 6,
+  DISCORD_GATEWAY_EVENTS_CHANNEL_UPDATE = 7,
+  DISCORD_GATEWAY_EVENTS_CHANNEL_DELETE = 8,
+  DISCORD_GATEWAY_EVENTS_CHANNEL_PINS_UPDATE = 9,
+  DISCORD_GATEWAY_EVENTS_THREAD_CREATE = 10,
+  DISCORD_GATEWAY_EVENTS_THREAD_UPDATE = 11,
+  DISCORD_GATEWAY_EVENTS_THREAD_DELETE = 12,
+  DISCORD_GATEWAY_EVENTS_THREAD_LIST_SYNC = 13,
+  DISCORD_GATEWAY_EVENTS_THREAD_MEMBER_UPDATE = 14,
+  DISCORD_GATEWAY_EVENTS_THREAD_MEMBERS_UPDATE = 15,
+  DISCORD_GATEWAY_EVENTS_GUILD_CREATE = 16,
+  DISCORD_GATEWAY_EVENTS_GUILD_UPDATE = 17,
+  DISCORD_GATEWAY_EVENTS_GUILD_DELETE = 18,
+  DISCORD_GATEWAY_EVENTS_GUILD_BAN_ADD = 19,
+  DISCORD_GATEWAY_EVENTS_GUILD_BAN_REMOVE = 20,
+  DISCORD_GATEWAY_EVENTS_GUILD_EMOJIS_UPDATE = 21,
+  DISCORD_GATEWAY_EVENTS_GUILD_STICKERS_UPDATE = 22,
+  DISCORD_GATEWAY_EVENTS_GUILD_INTEGRATIONS_UPDATE = 23,
+  DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_ADD = 24,
+  DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_REMOVE = 25,
+  DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_UPDATE = 26,
+  DISCORD_GATEWAY_EVENTS_GUILD_MEMBERS_CHUNK = 27,
+  DISCORD_GATEWAY_EVENTS_GUILD_ROLE_CREATE = 28,
+  DISCORD_GATEWAY_EVENTS_GUILD_ROLE_UPDATE = 29,
+  DISCORD_GATEWAY_EVENTS_GUILD_ROLE_DELETE = 30,
+  DISCORD_GATEWAY_EVENTS_INTEGRATION_CREATE = 31,
+  DISCORD_GATEWAY_EVENTS_INTEGRATION_UPDATE = 32,
+  DISCORD_GATEWAY_EVENTS_INTEGRATION_DELETE = 33,
+  DISCORD_GATEWAY_EVENTS_INTERACTION_CREATE = 34,
+  DISCORD_GATEWAY_EVENTS_INVITE_CREATE = 35,
+  DISCORD_GATEWAY_EVENTS_INVITE_DELETE = 36,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_CREATE = 37,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_UPDATE = 38,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE = 39,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE_BULK = 40,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_ADD = 41,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE = 42,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE_ALL = 43,
+  DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE_EMOJI = 44,
+  DISCORD_GATEWAY_EVENTS_PRESENCE_UPDATE = 45,
+  DISCORD_GATEWAY_EVENTS_STAGE_INSTANCE_CREATE = 46,
+  DISCORD_GATEWAY_EVENTS_STAGE_INSTANCE_DELETE = 47,
+  DISCORD_GATEWAY_EVENTS_STAGE_INSTANCE_UPDATE = 48,
+  DISCORD_GATEWAY_EVENTS_TYPING_START = 49,
+  DISCORD_GATEWAY_EVENTS_USER_UPDATE = 50,
+  DISCORD_GATEWAY_EVENTS_VOICE_STATE_UPDATE = 51,
+  DISCORD_GATEWAY_EVENTS_VOICE_SERVER_UPDATE = 52,
+  DISCORD_GATEWAY_EVENTS_WEBHOOKS_UPDATE = 53,
 };
 extern char* discord_gateway_events_print(enum discord_gateway_events);
 extern enum discord_gateway_events discord_gateway_events_eval(char*);
@@ -1493,7 +1512,7 @@ extern bool discord_gateway_events_cmp(enum discord_gateway_events, char*);
 
 
 // Activity Types
-// defined at specs/discord/gateway.json:177:5
+// defined at specs/discord/gateway.json:196:5
 /**
  * @see https://discord.com/developers/docs/topics/gateway#activity-object-activity-types
  *
@@ -5316,8 +5335,8 @@ struct discord_channel_attachment {
 /// @endcond
 };
 
-// Channel Mention Structure
-// defined at specs/discord/channel.json:302:22
+// Identify Structure
+// defined at specs/discord/gateway.json:135:22
 /**
  * @see https://discord.com/developers/docs/resources/channel#channel-mention-object-channel-mention-structure
  *
@@ -5345,22 +5364,38 @@ struct discord_channel_attachment {
  *     * :code:`void discord_channel_mention_list_to_json(char *wbuf, size_t len, struct discord_channel_mention **)`
  * @endverbatim
  */
-struct discord_channel_mention {
-  /* specs/discord/channel.json:305:20
-     '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  u64_snowflake_t id;
+struct discord_gateway_identify {
+  /* specs/discord/gateway.json:138:19
+     '{ "name":"token","type":{"base":"char", "dec":"*"}}' */
+  char *token;
 
-  /* specs/discord/channel.json:306:20
-     '{ "name": "guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  u64_snowflake_t guild_id;
+  /* specs/discord/gateway.json:139:19
+     '{ "name":"properties","type":{"base":"struct discord_gateway_identify_connection", "dec":"*"}}' */
+  struct discord_gateway_identify_connection *properties;
 
-  /* specs/discord/channel.json:307:20
-     '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_channel_types" }}' */
-  enum discord_channel_types type;
+  /* specs/discord/gateway.json:140:19
+     '{ "name":"compress","type":{"base":"bool"}}' */
+  bool compress;
 
-  /* specs/discord/channel.json:308:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*" }}' */
-  char *name;
+  /* specs/discord/gateway.json:141:19
+     '{ "name":"large_threshold","type":{"base":"int"}}' */
+  int large_threshold;
+
+  /* specs/discord/gateway.json:142:19
+     '{ "name":"guild_subscriptions","type":{"base":"bool"}}' */
+  bool guild_subscriptions;
+
+  /* specs/discord/gateway.json:143:19
+     '{ "name":"shard","type":{"base":"int", "dec":"*"}, "todo":true}' */
+  // @todo shard (null);
+
+  /* specs/discord/gateway.json:144:19
+     '{ "name":"presence","type":{"base":"struct discord_gateway_status_update", "dec":"*"}}' */
+  struct discord_gateway_status_update *presence;
+
+  /* specs/discord/gateway.json:145:19
+     '{ "name":"intents","type":{"base":"int"}}' */
+  int intents;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -5378,8 +5413,8 @@ struct discord_channel_mention {
 /// @endcond
 };
 
-// Allowed Mentions Structure
-// defined at specs/discord/channel.json:315:22
+// Gateway Status Update Structure
+// defined at specs/discord/gateway.json:151:22
 /**
  * @see https://discord.com/developers/docs/resources/channel#allowed-mentions-object-allowed-mentions-structure
  *
@@ -5407,22 +5442,24 @@ struct discord_channel_mention {
  *     * :code:`void discord_channel_allowed_mentions_list_to_json(char *wbuf, size_t len, struct discord_channel_allowed_mentions **)`
  * @endverbatim
  */
-struct discord_channel_allowed_mentions {
-  /* specs/discord/channel.json:318:20
-     '{ "name": "parse", "type":{ "base":"ja_str", "dec":"ntl" }}' */
-  ja_str **parse;
+struct discord_gateway_status_update {
+  /* specs/discord/gateway.json:154:19
+     '{ "name":"since","type":{"base":"char", "dec":"*", "converter":"iso8601"},
+          "option":true, "inject_if_not":0 }' */
+  u64_unix_ms_t since;
 
-  /* specs/discord/channel.json:319:20
-     '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"list of snowflakes"}' */
-  ja_u64 **roles; ///< list of snowflakes
+  /* specs/discord/gateway.json:156:19
+     '{ "name":"activities","type":{"base":"struct discord_gateway_activity", "dec":"ntl"}, 
+          "option":true, "inject_if_not":null}' */
+  struct discord_gateway_activity **activities;
 
-  /* specs/discord/channel.json:320:20
-     '{ "name": "users", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"list of snowflakes"}' */
-  ja_u64 **users; ///< list of snowflakes
+  /* specs/discord/gateway.json:158:19
+     '{ "name":"status","type":{"base":"char", "dec":"[16]"}}' */
+  char status[16];
 
-  /* specs/discord/channel.json:321:20
-     '{ "name": "replied_user", "type":{ "base":"bool" }}' */
-  bool replied_user;
+  /* specs/discord/gateway.json:159:19
+     '{ "name":"afk","type":{"base":"bool"}}' */
+  bool afk;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -5440,8 +5477,8 @@ struct discord_channel_allowed_mentions {
 /// @endcond
 };
 
-// Embed Structure
-// defined at specs/discord/channel.json:327:22
+// Identify Connection Properties
+// defined at specs/discord/gateway.json:166:22
 /**
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-structure
  *
@@ -5510,17 +5547,23 @@ struct discord_embed {
      '{ "name": "video", "type":{ "base":"struct discord_embed_video", "dec":"*"}, "inject_if_not":null}' */
   struct discord_embed_video *video;
 
-  /* specs/discord/channel.json:340:20
-     '{ "name": "provider", "type":{ "base":"struct discord_embed_provider", "dec":"*"}, "inject_if_not":null}' */
-  struct discord_embed_provider *provider;
+ /*
+ *     * :code:`void discord_gateway_identify_connection_to_json(char *wbuf, size_t len, struct discord_gateway_identify_connection *)`
+ *     * :code:`void discord_gateway_identify_connection_list_to_json(char *wbuf, size_t len, struct discord_gateway_identify_connection **)`
+ * @endverbatim
+ */
+struct discord_gateway_identify_connection {
+  /* specs/discord/gateway.json:169:19
+     '{ "name":"os", "json_key":"$os", "type":{"base":"char", "dec":"*"}}' */
+  char *os;
 
-  /* specs/discord/channel.json:341:20
-     '{ "name": "author", "type":{ "base":"struct discord_embed_author", "dec":"*"}, "inject_if_not":null}' */
-  struct discord_embed_author *author;
+  /* specs/discord/gateway.json:170:19
+     '{ "name":"browser", "json_key":"$browser", "type":{"base":"char", "dec":"*"}}' */
+  char *browser;
 
-  /* specs/discord/channel.json:342:20
-     '{ "name": "fields", "type":{ "base":"struct discord_embed_field", "dec":"ntl"}, "option":true, "inject_if_not":null}' */
-  struct discord_embed_field **fields;
+  /* specs/discord/gateway.json:171:19
+     '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}}' */
+  char *device;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected
@@ -5538,8 +5581,8 @@ struct discord_embed {
 /// @endcond
 };
 
-// Embed Thumbnail Structure
-// defined at specs/discord/channel.json:349:22
+// Activity Structure
+// defined at specs/discord/gateway.json:177:22
 /**
  * @see https://discord.com/developers/docs/resources/channel#embed-object-embed-thumbnail-structure
  *
@@ -5567,22 +5610,44 @@ struct discord_embed {
  *     * :code:`void discord_embed_thumbnail_list_to_json(char *wbuf, size_t len, struct discord_embed_thumbnail **)`
  * @endverbatim
  */
-struct discord_embed_thumbnail {
-  /* specs/discord/channel.json:351:20
-     '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
+struct discord_gateway_activity {
+  /* specs/discord/gateway.json:180:19
+     '{ "name":"name","type":{"base":"char", "dec":"[512]"}}' */
+  char name[512];
+
+  /* specs/discord/gateway.json:181:19
+     '{ "name":"type","type":{"base":"int"}}' */
+  int type;
+
+  /* specs/discord/gateway.json:182:19
+     '{ "name":"url","type":{"base":"char", "dec":"*"},
+          "option":true, "inject_if_not":""}' */
   char *url;
 
-  /* specs/discord/channel.json:352:20
-     '{ "name": "proxy_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
-  char *proxy_url;
+  /* specs/discord/gateway.json:184:19
+     '{ "name":"created_at","type":{"base":"char", "dec":"*", "converter":"iso8601"},
+          "option":true, "inject_if_not":0 }' */
+  u64_unix_ms_t created_at;
 
-  /* specs/discord/channel.json:353:20
-     '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
-  int height;
+  /* specs/discord/gateway.json:186:19
+     '{ "name":"application_id","type":{"base":"char", "dec":"*", "converter":"snowflake" },
+          "option":true, "inject_if_not":0 }' */
+  u64_snowflake_t application_id;
 
-  /* specs/discord/channel.json:354:20
-     '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
-  int width;
+  /* specs/discord/gateway.json:188:19
+     '{ "name":"details","type":{"base":"char", "dec":"*"},
+          "option":true, "inject_if_not":null}' */
+  char *details;
+
+  /* specs/discord/gateway.json:190:19
+     '{ "name":"state","type":{"base":"char", "dec":"*"},
+          "option":true, "inject_if_not":null}' */
+  char *state;
+
+  /* specs/discord/gateway.json:192:19
+     '{ "name":"instance","type":{"base":"bool"},
+          "option":true, "inject_if_not":false}' */
+  bool instance;
 
   // The following is metadata used to 
   // 1. control which field should be extracted/injected

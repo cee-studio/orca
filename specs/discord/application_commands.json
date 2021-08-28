@@ -19,6 +19,18 @@
       ]
     },
     {
+      "title":"Application Command Type",
+      "comment":"https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types",
+      "namespace":["application_command"],
+      "enum":"types",
+      "items":
+      [
+        {"name":"CHAT_INPUT", "value":1},
+        {"name":"USER","value":2},
+        {"name":"MESSAGE","value":3}
+      ]
+    },
+    {
       "title":"Application Command Option Structure",
       "comment":"https://discord.com/developers/docs/interactions/slash-commands#application-command-object-application-command-option-structure",
       "namespace":["application_command"],
@@ -48,7 +60,8 @@
         {"name":"USER","value":6},
         {"name":"CHANNEL","value":7},
         {"name":"ROLE","value":8},
-        {"name":"MENTIONABLE","value":9}
+        {"name":"MENTIONABLE","value":9},
+        {"name":"NUMBER","value":10}
       ]
     },
     {

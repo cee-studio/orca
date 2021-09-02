@@ -12,8 +12,7 @@
 #include "github-internal.h"
 
 ORCAcode
-github_create_gist(struct github *client, struct github_gist_create_params *params, struct github_gist *gist)
-{
+github_create_gist(struct github *client, struct github_gist_create_params *params, struct github_gist *gist) {
   log_info("===create-gist===");
 
   if (!params->description) {
@@ -94,4 +93,29 @@ github_gist_is_starred(struct github *client, char *id) {
           NULL,
           HTTP_GET,
           "/gists/%s/star", id);
+}
+
+ORCAcode
+github_list_public_gists(struct github *client, struct github_list_public_gists_params *params, char *output) {
+  log_info("===gist-is-starred===");
+
+  if (!params) {
+    log_error("Missing 'params'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  if (!output) {
+    log_error("Missing 'output'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  return github_adapter_run(
+          &client->adapter,
+          &(struct ua_resp_handle){
+            .ok_cb = github_write_json,
+            .ok_obj = output,
+          },
+          NULL,
+          HTTP_GET,
+          "/gists/public");
 }

@@ -104,6 +104,22 @@ typedef void (*discord_event_raw_cb)(
     struct sized_buffer *event_data);
 /** @} DiscordCallbacksGeneral */
 
+/** @defgroup DiscordCallbacksApplicationCommand
+ *  @brief Application Command event callbacks
+ *  @see https://discord.com/developers/docs/topics/gateway#commands 
+ *  @{ */
+/**
+ * @brief Application Command Create/Update/Delete callback
+ *
+ * @see discord_set_on_application_command_create() 
+ *      discord_set_on_application_command_update() 
+ *      discord_set_on_application_command_delete() 
+ */
+typedef void (*discord_application_command_cb)(
+    struct discord *client, const struct discord_user *bot,
+    const struct discord_application_command *app_cmd);
+/** @} DiscordCallbacksApplicationCommand */
+
 /** @defgroup DiscordCallbacksChannel
  *  @brief Channel-event callbacks
  *  @see https://discord.com/developers/docs/topics/gateway#channels 
@@ -597,6 +613,27 @@ void discord_set_on_guild_ban_add(struct discord *client, discord_guild_ban_cb c
  */
 void discord_set_on_guild_ban_remove(struct discord *client, discord_guild_ban_cb callback);
 /**
+ * @brief Set a callback that triggers when a applicat command is created
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ */
+void discord_set_on_application_command_create(struct discord *client, discord_application_command_cb callback);
+/**
+ * @brief Set a callback that triggers when a applicat command is updated
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ */
+void discord_set_on_application_command_update(struct discord *client, discord_application_command_cb callback);
+/**
+ * @brief Set a callback that triggers when a applicat command is deleted
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ */
+void discord_set_on_application_command_delete(struct discord *client, discord_application_command_cb callback);
+/**
  * @brief Set a callback that triggers when a channel is created
  *
  * @param client the client created with discord_init()
@@ -803,6 +840,24 @@ void discord_set_presence(struct discord *client, struct discord_gateway_activit
 
  /* * * * * * * * * * * * * * * * */
 /* * * * ENDPOINT FUNCTIONS * * * */
+
+/** @defgroup DiscordCreateGlobalApplicationCommand 
+ * @brief @b POST /applications/{application.id}/commands
+ *
+ * Create a new global command. New global commands will be available in all guilds after 1 hour.
+ * @see https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
+ *  @{ */
+/**
+ * @param client the client created with discord_init()
+ * @param application_id the unique id of the parent application
+ * @param params request parameters
+ * @param p_app_cmd the application command object if succesful
+ * @return ORCAcode for how the transfer went, ORCA_OK means a succesful request
+ */
+ORCAcode discord_create_global_application_command(struct discord *client, const u64_snowflake_t application_id, struct discord_create_global_application_command_params *params, struct discord_application_command *p_app_cmd);
+/// @struct discord_create_global_application_command_params
+/** @} DiscordCreateGlobalApplicationCommand */
+
 
 /** @defgroup DiscordGetGuildAuditLog 
  * @brief @b GET /guilds/{guild.id}/audit-logs

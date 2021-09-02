@@ -15,6 +15,18 @@
                 { "name": "contents", "type":{ "base":"char", "dec":"*" }},
                 { "name": "public", "type":{ "base":"char", "dec":"*" }}
             ]
+        },
+        {
+            "title": "List Public Gists",
+            "comment":"https://docs.github.com/en/rest/reference/gists#list-public-gists",
+            "namespace":["list_public_gists"],
+            "struct":"params",
+            "fields":
+            [
+                { "name": "since", "type":{ "base":"char", "dec":"*" }},
+                { "name": "per_page", "type":{ "base":"int"}},
+                { "name": "page", "type":{ "base":"int"}}
+            ]
         }
     ]
 }

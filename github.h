@@ -40,5 +40,8 @@ ORCAcode github_get_repository(struct github *client, char* owner, char* repo, s
 ORCAcode github_get_gist(struct github *client, char *id, struct github_gist *gist);
 ORCAcode github_create_gist(struct github *client, struct github_gist_create_params *params, struct github_gist *gist);
 ORCAcode github_gist_is_starred(struct github *client, char *id);
+ORCAcode github_list_public_gists(struct github *client, struct github_list_public_gists_params *params, char *output);
+
+void github_write_json(char* json, size_t len, void *user_obj);
 
 #endif // GITHUB_V3_H

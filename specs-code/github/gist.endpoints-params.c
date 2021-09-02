@@ -195,3 +195,161 @@ size_t github_gist_create_params_list_to_json(char *str, size_t len, struct gith
   return ntl_to_buf(str, len, (void **)p, NULL, github_gist_create_params_to_json_v);
 }
 
+
+void github_list_public_gists_params_from_json(char *json, size_t len, struct github_list_public_gists_params **pp)
+{
+  static size_t ret=0; // used for debugging
+  size_t r=0;
+  if (!*pp) *pp = calloc(1, sizeof **pp);
+  struct github_list_public_gists_params *p = *pp;
+  r=json_extract(json, len, 
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+                "(since):?s,"
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+                "(per_page):d,"
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+                "(page):d,"
+                "@arg_switches:b"
+                "@record_defined"
+                "@record_null",
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+                &p->since,
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+                &p->per_page,
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+                &p->page,
+                p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches,
+                p->__M.record_defined, sizeof(p->__M.record_defined),
+                p->__M.record_null, sizeof(p->__M.record_null));
+  ret = r;
+}
+
+static void github_list_public_gists_params_use_default_inject_settings(struct github_list_public_gists_params *p)
+{
+  p->__M.enable_arg_switches = true;
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+  p->__M.arg_switches[0] = p->since;
+
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+  p->__M.arg_switches[1] = &p->per_page;
+
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+  p->__M.arg_switches[2] = &p->page;
+
+}
+
+size_t github_list_public_gists_params_to_json(char *json, size_t len, struct github_list_public_gists_params *p)
+{
+  size_t r;
+  github_list_public_gists_params_use_default_inject_settings(p);
+  r=json_inject(json, len, 
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+                "(since):s,"
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+                "(per_page):d,"
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+                "(page):d,"
+                "@arg_switches:b",
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+                p->since,
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+                &p->per_page,
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+                &p->page,
+                p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches);
+  return r;
+}
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void github_list_public_gists_params_cleanup_v(void *p) {
+  github_list_public_gists_params_cleanup((struct github_list_public_gists_params *)p);
+}
+
+void github_list_public_gists_params_init_v(void *p) {
+  github_list_public_gists_params_init((struct github_list_public_gists_params *)p);
+}
+
+void github_list_public_gists_params_from_json_v(char *json, size_t len, void *pp) {
+ github_list_public_gists_params_from_json(json, len, (struct github_list_public_gists_params**)pp);
+}
+
+size_t github_list_public_gists_params_to_json_v(char *json, size_t len, void *p) {
+  return github_list_public_gists_params_to_json(json, len, (struct github_list_public_gists_params*)p);
+}
+
+void github_list_public_gists_params_list_free_v(void **p) {
+  github_list_public_gists_params_list_free((struct github_list_public_gists_params**)p);
+}
+
+void github_list_public_gists_params_list_from_json_v(char *str, size_t len, void *p) {
+  github_list_public_gists_params_list_from_json(str, len, (struct github_list_public_gists_params ***)p);
+}
+
+size_t github_list_public_gists_params_list_to_json_v(char *str, size_t len, void *p){
+  return github_list_public_gists_params_list_to_json(str, len, (struct github_list_public_gists_params **)p);
+}
+
+
+void github_list_public_gists_params_cleanup(struct github_list_public_gists_params *d) {
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+  if (d->since)
+    free(d->since);
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+  // p->per_page is a scalar
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+  // p->page is a scalar
+}
+
+void github_list_public_gists_params_init(struct github_list_public_gists_params *p) {
+  memset(p, 0, sizeof(struct github_list_public_gists_params));
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+
+}
+void github_list_public_gists_params_list_free(struct github_list_public_gists_params **p) {
+  ntl_free((void**)p, (vfvp)github_list_public_gists_params_cleanup);
+}
+
+void github_list_public_gists_params_list_from_json(char *str, size_t len, struct github_list_public_gists_params ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(struct github_list_public_gists_params);
+  d.init_elem = NULL;
+  d.elem_from_buf = github_list_public_gists_params_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t github_list_public_gists_params_list_to_json(char *str, size_t len, struct github_list_public_gists_params **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, github_list_public_gists_params_to_json_v);
+}
+

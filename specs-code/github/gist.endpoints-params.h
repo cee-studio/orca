@@ -82,3 +82,77 @@ extern void github_gist_create_params_list_from_json_v(char *str, size_t len, vo
 extern void github_gist_create_params_list_from_json(char *str, size_t len, struct github_gist_create_params ***p);
 extern size_t github_gist_create_params_list_to_json_v(char *str, size_t len, void *p);
 extern size_t github_gist_create_params_list_to_json(char *str, size_t len, struct github_gist_create_params **p);
+
+// List Public Gists
+// defined at specs/github/gist.endpoints-params.json:23:32
+/**
+ * @see https://docs.github.com/en/rest/reference/gists#list-public-gists
+ *
+ * @verbatim embed:rst:leading-asterisk
+ * .. container:: toggle
+
+ *   .. container:: header
+
+ *     **Methods**
+
+ *   * Initializer:
+
+ *     * :code:`void github_list_public_gists_params_init(struct github_list_public_gists_params *)`
+ *   * Cleanup:
+
+ *     * :code:`void github_list_public_gists_params_cleanup(struct github_list_public_gists_params *)`
+ *     * :code:`void github_list_public_gists_params_list_free(struct github_list_public_gists_params **)`
+ *   * JSON Decoder:
+
+ *     * :code:`void github_list_public_gists_params_from_json(char *rbuf, size_t len, struct github_list_public_gists_params **)`
+ *     * :code:`void github_list_public_gists_params_list_from_json(char *rbuf, size_t len, struct github_list_public_gists_params ***)`
+ *   * JSON Encoder:
+
+ *     * :code:`void github_list_public_gists_params_to_json(char *wbuf, size_t len, struct github_list_public_gists_params *)`
+ *     * :code:`void github_list_public_gists_params_list_to_json(char *wbuf, size_t len, struct github_list_public_gists_params **)`
+ * @endverbatim
+ */
+struct github_list_public_gists_params {
+  /* specs/github/gist.endpoints-params.json:26:28
+     '{ "name": "since", "type":{ "base":"char", "dec":"*" }}' */
+  char *since;
+
+  /* specs/github/gist.endpoints-params.json:27:28
+     '{ "name": "per_page", "type":{ "base":"int"}}' */
+  int per_page;
+
+  /* specs/github/gist.endpoints-params.json:28:28
+     '{ "name": "page", "type":{ "base":"int"}}' */
+  int page;
+
+  // The following is metadata used to 
+  // 1. control which field should be extracted/injected
+  // 2. record which field is presented(defined) in JSON
+  // 3. record which field is null in JSON
+/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[3];
+    void *record_defined[3];
+    void *record_null[3];
+  } __M; // metadata
+/// @endcond
+};
+extern void github_list_public_gists_params_cleanup_v(void *p);
+extern void github_list_public_gists_params_cleanup(struct github_list_public_gists_params *p);
+extern void github_list_public_gists_params_init_v(void *p);
+extern void github_list_public_gists_params_init(struct github_list_public_gists_params *p);
+extern void github_list_public_gists_params_from_json_v(char *json, size_t len, void *pp);
+extern void github_list_public_gists_params_from_json(char *json, size_t len, struct github_list_public_gists_params **pp);
+extern size_t github_list_public_gists_params_to_json_v(char *json, size_t len, void *p);
+extern size_t github_list_public_gists_params_to_json(char *json, size_t len, struct github_list_public_gists_params *p);
+extern size_t github_list_public_gists_params_to_query_v(char *json, size_t len, void *p);
+extern size_t github_list_public_gists_params_to_query(char *json, size_t len, struct github_list_public_gists_params *p);
+extern void github_list_public_gists_params_list_free_v(void **p);
+extern void github_list_public_gists_params_list_free(struct github_list_public_gists_params **p);
+extern void github_list_public_gists_params_list_from_json_v(char *str, size_t len, void *p);
+extern void github_list_public_gists_params_list_from_json(char *str, size_t len, struct github_list_public_gists_params ***p);
+extern size_t github_list_public_gists_params_list_to_json_v(char *str, size_t len, void *p);
+extern size_t github_list_public_gists_params_list_to_json(char *str, size_t len, struct github_list_public_gists_params **p);

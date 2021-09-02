@@ -117,5 +117,6 @@ github_list_public_gists(struct github *client, struct github_list_public_gists_
           },
           NULL,
           HTTP_GET,
-          "/gists/public");
+          "/gists/public?since=%s&per_page=%i&page=%i",
+          params->since, params->per_page, params->page);
 }

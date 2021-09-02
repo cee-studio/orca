@@ -95,3 +95,30 @@ github_gist_is_starred(struct github *client, char *id) {
           HTTP_GET,
           "/gists/%s/star", id);
 }
+
+
+ORCAcode
+github_list_public_gists(struct github *client, struct github_list_public_gists_params *params, struct sized_buffer *output) {
+  log_info("===list-public-gists===");
+
+  if (!output) {
+    log_error("Missing 'output'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  if (!params) {
+    log_error("Missing 'params'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  return github_adapter_run(
+          &client->adapter,
+          &(struct ua_resp_handle){
+            .ok_cb = github_write_json,
+            .ok_obj = output,
+          },
+          NULL,
+          HTTP_GET,
+          "/gists/public?since=%s&per_page=%i&page=%i",
+          params->since, params->per_page, params->page);
+}

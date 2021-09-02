@@ -481,6 +481,18 @@ on_thread_delete(struct discord_gateway *gw, struct sized_buffer *data)
 }
 
 static void
+on_interaction_create(struct discord_gateway *gw, struct sized_buffer *data)
+{
+  struct discord_interaction *interaction=NULL;
+  discord_interaction_from_json(data->start, data->size, &interaction);
+
+  (*gw->cbs.on_interaction_create)(gw->p_client, gw->bot, interaction);
+
+  discord_interaction_cleanup(interaction);
+  free(interaction);
+}
+
+static void
 on_message_create(struct discord_gateway *gw, struct sized_buffer *data)
 {
   struct discord_message *msg=NULL;
@@ -908,7 +920,8 @@ on_dispatch(struct discord_gateway *gw)
       /// @todo implement
       break;
   case DISCORD_GATEWAY_EVENTS_INTERACTION_CREATE:
-      /// @todo implement
+      if (gw->cbs.on_interaction_create)
+        on_event = &on_interaction_create;
       break;
   case DISCORD_GATEWAY_EVENTS_INVITE_CREATE:
       /// @todo implement
@@ -1204,14 +1217,20 @@ discord_gateway_init(struct discord_gateway *gw, struct logconf *config, struct 
   }
   ASSERT_S(NULL != token->start, "Missing bot token");
 
-  gw->id = malloc(sizeof *gw->id);
-  discord_gateway_identify_init(gw->id);
-  asprintf(&gw->id->token, "%.*s", (int)token->size, token->start);
-
-  gw->id->properties->os = strdup("POSIX");
-  gw->id->properties->browser = strdup("orca");
-  gw->id->properties->device = strdup("orca");
-  gw->id->presence->since = cee_timestamp_ms();
+  gw->id = malloc(sizeof(struct discord_gateway_identify));
+  *gw->id = (struct discord_gateway_identify){
+    .token      = strndup(token->start, token->size),
+    .properties = malloc(sizeof(struct discord_gateway_identify_connection)),
+    .presence   = malloc(sizeof(struct discord_gateway_status_update))
+  };
+  *gw->id->properties = (struct discord_gateway_identify_connection){
+    .os      = "POSIX", 
+    .browser = "orca", 
+    .device  = "orca"
+  };
+  *gw->id->presence = (struct discord_gateway_status_update){
+    .since = cee_timestamp_ms()
+  };
 
   gw->cbs.on_idle = &noop_idle_cb;
   gw->cbs.on_event_raw = &noop_event_raw_cb;
@@ -1252,7 +1271,14 @@ discord_gateway_cleanup(struct discord_gateway *gw)
 
   free(gw->sb_bot.start);
 
+  // @todo Add a bitfield in generated structures to ignore freeing strings unless set ( useful for structures created via xxx_from_json() )
+#if 0
   discord_gateway_identify_cleanup(gw->id);
+#else
+  free(gw->id->token);
+  free(gw->id->properties);
+  free(gw->id->presence);
+#endif
   free(gw->id);
 
   if (gw->on_cmd) free(gw->on_cmd);

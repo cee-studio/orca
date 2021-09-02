@@ -17,8 +17,9 @@ void discord_guild_from_json(char *json, size_t len, struct discord_guild **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild *p = *pp;
+  discord_guild_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:12:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}' */
@@ -1142,8 +1143,6 @@ void discord_guild_init(struct discord_guild *p) {
 
   /* specs/discord/guild.json:65:84
      '{"type":{"base":"struct discord_guild_welcome_screen", "dec":"*"}, "name":"welcome_screen", "option":true}' */
-  p->welcome_screen = malloc(sizeof *p->welcome_screen);
-  discord_guild_welcome_screen_init(p->welcome_screen);
 
 }
 void discord_guild_list_free(struct discord_guild **p) {
@@ -1168,11 +1167,27 @@ size_t discord_guild_list_to_json(char *str, size_t len, struct discord_guild **
 
 
 
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_default_message_notification_level_list_free_v(void **p) {
+  discord_guild_default_message_notification_level_list_free((enum discord_guild_default_message_notification_level**)p);
+}
+
+void discord_guild_default_message_notification_level_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_default_message_notification_level_list_from_json(str, len, (enum discord_guild_default_message_notification_level ***)p);
+}
+
+size_t discord_guild_default_message_notification_level_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_default_message_notification_level_list_to_json(str, len, (enum discord_guild_default_message_notification_level **)p);
+}
+
 enum discord_guild_default_message_notification_level discord_guild_default_message_notification_level_eval(char *s){
   if(strcasecmp("ALL_MESSAGES", s) == 0) return DISCORD_GUILD_ALL_MESSAGES;
   if(strcasecmp("ONLY_MENTIONS", s) == 0) return DISCORD_GUILD_ONLY_MENTIONS;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_default_message_notification_level_print(enum discord_guild_default_message_notification_level v){
 
   switch (v) {
@@ -1183,6 +1198,42 @@ char* discord_guild_default_message_notification_level_print(enum discord_guild_
   return NULL;
 }
 
+void discord_guild_default_message_notification_level_list_free(enum discord_guild_default_message_notification_level **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_default_message_notification_level_list_from_json(char *str, size_t len, enum discord_guild_default_message_notification_level ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_default_message_notification_level);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_default_message_notification_level_list_to_json(char *str, size_t len, enum discord_guild_default_message_notification_level **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_explicit_content_filter_level_list_free_v(void **p) {
+  discord_guild_explicit_content_filter_level_list_free((enum discord_guild_explicit_content_filter_level**)p);
+}
+
+void discord_guild_explicit_content_filter_level_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_explicit_content_filter_level_list_from_json(str, len, (enum discord_guild_explicit_content_filter_level ***)p);
+}
+
+size_t discord_guild_explicit_content_filter_level_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_explicit_content_filter_level_list_to_json(str, len, (enum discord_guild_explicit_content_filter_level **)p);
+}
 
 enum discord_guild_explicit_content_filter_level discord_guild_explicit_content_filter_level_eval(char *s){
   if(strcasecmp("DISABLED", s) == 0) return DISCORD_GUILD_DISABLED;
@@ -1190,6 +1241,7 @@ enum discord_guild_explicit_content_filter_level discord_guild_explicit_content_
   if(strcasecmp("ALL_MEMBERS", s) == 0) return DISCORD_GUILD_ALL_MEMBERS;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_explicit_content_filter_level_print(enum discord_guild_explicit_content_filter_level v){
 
   switch (v) {
@@ -1201,12 +1253,49 @@ char* discord_guild_explicit_content_filter_level_print(enum discord_guild_expli
   return NULL;
 }
 
+void discord_guild_explicit_content_filter_level_list_free(enum discord_guild_explicit_content_filter_level **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_explicit_content_filter_level_list_from_json(char *str, size_t len, enum discord_guild_explicit_content_filter_level ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_explicit_content_filter_level);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_explicit_content_filter_level_list_to_json(char *str, size_t len, enum discord_guild_explicit_content_filter_level **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_mfa_level_list_free_v(void **p) {
+  discord_guild_mfa_level_list_free((enum discord_guild_mfa_level**)p);
+}
+
+void discord_guild_mfa_level_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_mfa_level_list_from_json(str, len, (enum discord_guild_mfa_level ***)p);
+}
+
+size_t discord_guild_mfa_level_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_mfa_level_list_to_json(str, len, (enum discord_guild_mfa_level **)p);
+}
 
 enum discord_guild_mfa_level discord_guild_mfa_level_eval(char *s){
   if(strcasecmp("DISCORD_MFA_NONE", s) == 0) return DISCORD_GUILD_DISCORD_MFA_NONE;
   if(strcasecmp("ELEVATED", s) == 0) return DISCORD_GUILD_ELEVATED;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_mfa_level_print(enum discord_guild_mfa_level v){
 
   switch (v) {
@@ -1217,6 +1306,42 @@ char* discord_guild_mfa_level_print(enum discord_guild_mfa_level v){
   return NULL;
 }
 
+void discord_guild_mfa_level_list_free(enum discord_guild_mfa_level **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_mfa_level_list_from_json(char *str, size_t len, enum discord_guild_mfa_level ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_mfa_level);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_mfa_level_list_to_json(char *str, size_t len, enum discord_guild_mfa_level **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_verification_level_list_free_v(void **p) {
+  discord_guild_verification_level_list_free((enum discord_guild_verification_level**)p);
+}
+
+void discord_guild_verification_level_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_verification_level_list_from_json(str, len, (enum discord_guild_verification_level ***)p);
+}
+
+size_t discord_guild_verification_level_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_verification_level_list_to_json(str, len, (enum discord_guild_verification_level **)p);
+}
 
 enum discord_guild_verification_level discord_guild_verification_level_eval(char *s){
   if(strcasecmp("DISCORD_VL_NONE", s) == 0) return DISCORD_GUILD_DISCORD_VL_NONE;
@@ -1226,6 +1351,7 @@ enum discord_guild_verification_level discord_guild_verification_level_eval(char
   if(strcasecmp("VERY_HIGH", s) == 0) return DISCORD_GUILD_VERY_HIGH;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_verification_level_print(enum discord_guild_verification_level v){
 
   switch (v) {
@@ -1239,6 +1365,42 @@ char* discord_guild_verification_level_print(enum discord_guild_verification_lev
   return NULL;
 }
 
+void discord_guild_verification_level_list_free(enum discord_guild_verification_level **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_verification_level_list_from_json(char *str, size_t len, enum discord_guild_verification_level ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_verification_level);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_verification_level_list_to_json(char *str, size_t len, enum discord_guild_verification_level **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_premium_tier_list_free_v(void **p) {
+  discord_guild_premium_tier_list_free((enum discord_guild_premium_tier**)p);
+}
+
+void discord_guild_premium_tier_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_premium_tier_list_from_json(str, len, (enum discord_guild_premium_tier ***)p);
+}
+
+size_t discord_guild_premium_tier_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_premium_tier_list_to_json(str, len, (enum discord_guild_premium_tier **)p);
+}
 
 enum discord_guild_premium_tier discord_guild_premium_tier_eval(char *s){
   if(strcasecmp("DISCORD_PREMIUM_NONE", s) == 0) return DISCORD_GUILD_DISCORD_PREMIUM_NONE;
@@ -1247,6 +1409,7 @@ enum discord_guild_premium_tier discord_guild_premium_tier_eval(char *s){
   if(strcasecmp("TIER_3", s) == 0) return DISCORD_GUILD_TIER_3;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_premium_tier_print(enum discord_guild_premium_tier v){
 
   switch (v) {
@@ -1259,12 +1422,49 @@ char* discord_guild_premium_tier_print(enum discord_guild_premium_tier v){
   return NULL;
 }
 
+void discord_guild_premium_tier_list_free(enum discord_guild_premium_tier **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_premium_tier_list_from_json(char *str, size_t len, enum discord_guild_premium_tier ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_premium_tier);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_premium_tier_list_to_json(char *str, size_t len, enum discord_guild_premium_tier **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_system_channel_flags_list_free_v(void **p) {
+  discord_guild_system_channel_flags_list_free((enum discord_guild_system_channel_flags**)p);
+}
+
+void discord_guild_system_channel_flags_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_system_channel_flags_list_from_json(str, len, (enum discord_guild_system_channel_flags ***)p);
+}
+
+size_t discord_guild_system_channel_flags_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_system_channel_flags_list_to_json(str, len, (enum discord_guild_system_channel_flags **)p);
+}
 
 enum discord_guild_system_channel_flags discord_guild_system_channel_flags_eval(char *s){
   if(strcasecmp("SUPRESS_JOIN_NOTIFICATIONS", s) == 0) return DISCORD_GUILD_SUPRESS_JOIN_NOTIFICATIONS;
   if(strcasecmp("SUPRESS_PREMIUM_SUBSCRIPTIONS", s) == 0) return DISCORD_GUILD_SUPRESS_PREMIUM_SUBSCRIPTIONS;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_system_channel_flags_print(enum discord_guild_system_channel_flags v){
 
   switch (v) {
@@ -1275,6 +1475,42 @@ char* discord_guild_system_channel_flags_print(enum discord_guild_system_channel
   return NULL;
 }
 
+void discord_guild_system_channel_flags_list_free(enum discord_guild_system_channel_flags **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_system_channel_flags_list_from_json(char *str, size_t len, enum discord_guild_system_channel_flags ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_system_channel_flags);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_system_channel_flags_list_to_json(char *str, size_t len, enum discord_guild_system_channel_flags **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
+
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_features_list_free_v(void **p) {
+  discord_guild_features_list_free((enum discord_guild_features**)p);
+}
+
+void discord_guild_features_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_features_list_from_json(str, len, (enum discord_guild_features ***)p);
+}
+
+size_t discord_guild_features_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_features_list_to_json(str, len, (enum discord_guild_features **)p);
+}
 
 enum discord_guild_features discord_guild_features_eval(char *s){
   if(strcasecmp("INVITE_SPLASH", s) == 0) return DISCORD_GUILD_INVITE_SPLASH;
@@ -1294,6 +1530,7 @@ enum discord_guild_features discord_guild_features_eval(char *s){
   if(strcasecmp("PREVIEW_ENABLED", s) == 0) return DISCORD_GUILD_PREVIEW_ENABLED;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_features_print(enum discord_guild_features v){
 
   switch (v) {
@@ -1317,12 +1554,34 @@ char* discord_guild_features_print(enum discord_guild_features v){
   return NULL;
 }
 
+void discord_guild_features_list_free(enum discord_guild_features **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_features_list_from_json(char *str, size_t len, enum discord_guild_features ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_features);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_features_list_to_json(char *str, size_t len, enum discord_guild_features **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
 void discord_guild_unavailable_from_json(char *json, size_t len, struct discord_guild_unavailable **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_unavailable *p = *pp;
+  discord_guild_unavailable_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:163:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
@@ -1456,8 +1715,9 @@ void discord_guild_preview_from_json(char *json, size_t len, struct discord_guil
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_preview *p = *pp;
+  discord_guild_preview_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:173:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
@@ -1766,8 +2026,9 @@ void discord_guild_widget_from_json(char *json, size_t len, struct discord_guild
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_widget *p = *pp;
+  discord_guild_widget_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:191:18
      '{"name":"enabled", "type":{"base":"bool"}}' */
@@ -1901,8 +2162,9 @@ void discord_guild_member_from_json(char *json, size_t len, struct discord_guild
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_member *p = *pp;
+  discord_guild_member_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:202:20
      '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true}' */
@@ -2144,8 +2406,6 @@ void discord_guild_member_init(struct discord_guild_member *p) {
   memset(p, 0, sizeof(struct discord_guild_member));
   /* specs/discord/guild.json:202:20
      '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true}' */
-  p->user = malloc(sizeof *p->user);
-  discord_user_init(p->user);
 
   /* specs/discord/guild.json:203:20
      '{ "name": "nick", "type":{ "base":"char", "dec":"[DISCORD_MAX_NAME_LEN]"}, "option":true}' */
@@ -2197,8 +2457,9 @@ void discord_guild_integration_from_json(char *json, size_t len, struct discord_
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_integration *p = *pp;
+  discord_guild_integration_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:220:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
@@ -2587,13 +2848,9 @@ void discord_guild_integration_init(struct discord_guild_integration *p) {
 
   /* specs/discord/guild.json:229:20
      '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*"}, "opt":true}' */
-  p->user = malloc(sizeof *p->user);
-  discord_user_init(p->user);
 
   /* specs/discord/guild.json:230:20
      '{ "name": "account", "type":{ "base":"struct discord_guild_integration_account", "dec":"*"}}' */
-  p->account = malloc(sizeof *p->account);
-  discord_guild_integration_account_init(p->account);
 
   /* specs/discord/guild.json:231:20
      '{ "name": "synced_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}' */
@@ -2606,8 +2863,6 @@ void discord_guild_integration_init(struct discord_guild_integration *p) {
 
   /* specs/discord/guild.json:234:20
      '{ "name": "application", "type":{ "base":"struct discord_guild_integration_application", "dec":"*" }}' */
-  p->application = malloc(sizeof *p->application);
-  discord_guild_integration_application_init(p->application);
 
 }
 void discord_guild_integration_list_free(struct discord_guild_integration **p) {
@@ -2632,11 +2887,27 @@ size_t discord_guild_integration_list_to_json(char *str, size_t len, struct disc
 
 
 
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_guild_integration_expire_behaviors_list_free_v(void **p) {
+  discord_guild_integration_expire_behaviors_list_free((enum discord_guild_integration_expire_behaviors**)p);
+}
+
+void discord_guild_integration_expire_behaviors_list_from_json_v(char *str, size_t len, void *p) {
+  discord_guild_integration_expire_behaviors_list_from_json(str, len, (enum discord_guild_integration_expire_behaviors ***)p);
+}
+
+size_t discord_guild_integration_expire_behaviors_list_to_json_v(char *str, size_t len, void *p){
+  return discord_guild_integration_expire_behaviors_list_to_json(str, len, (enum discord_guild_integration_expire_behaviors **)p);
+}
+
 enum discord_guild_integration_expire_behaviors discord_guild_integration_expire_behaviors_eval(char *s){
   if(strcasecmp("REMOVE_ROLE", s) == 0) return DISCORD_GUILD_INTEGRATION_REMOVE_ROLE;
   if(strcasecmp("KICK", s) == 0) return DISCORD_GUILD_INTEGRATION_KICK;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_guild_integration_expire_behaviors_print(enum discord_guild_integration_expire_behaviors v){
 
   switch (v) {
@@ -2647,12 +2918,34 @@ char* discord_guild_integration_expire_behaviors_print(enum discord_guild_integr
   return NULL;
 }
 
+void discord_guild_integration_expire_behaviors_list_free(enum discord_guild_integration_expire_behaviors **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_guild_integration_expire_behaviors_list_from_json(char *str, size_t len, enum discord_guild_integration_expire_behaviors ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_guild_integration_expire_behaviors);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_guild_integration_expire_behaviors_list_to_json(char *str, size_t len, enum discord_guild_integration_expire_behaviors **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+
+
 void discord_guild_integration_account_from_json(char *json, size_t len, struct discord_guild_integration_account **pp)
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_integration_account *p = *pp;
+  discord_guild_integration_account_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:253:19
      '{ "name":"id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
@@ -2787,8 +3080,9 @@ void discord_guild_integration_application_from_json(char *json, size_t len, str
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_integration_application *p = *pp;
+  discord_guild_integration_application_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:263:19
      '{ "name":"id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
@@ -2989,8 +3283,6 @@ void discord_guild_integration_application_init(struct discord_guild_integration
 
   /* specs/discord/guild.json:268:19
      '{ "name":"bot", "type":{ "base":"struct discord_user", "dec":"*" }, "option":true}' */
-  p->bot = malloc(sizeof *p->bot);
-  discord_user_init(p->bot);
 
 }
 void discord_guild_integration_application_list_free(struct discord_guild_integration_application **p) {
@@ -3018,8 +3310,9 @@ void discord_guild_ban_from_json(char *json, size_t len, struct discord_guild_ba
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_ban *p = *pp;
+  discord_guild_ban_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:278:20
      '{ "name": "reason", "type":{ "base":"char", "dec":"[DISCORD_MAX_REASON_LEN]" }}' */
@@ -3129,8 +3422,6 @@ void discord_guild_ban_init(struct discord_guild_ban *p) {
 
   /* specs/discord/guild.json:279:20
      '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*"}, "comment":"partial user object"}' */
-  p->user = malloc(sizeof *p->user);
-  discord_user_init(p->user);
 
 }
 void discord_guild_ban_list_free(struct discord_guild_ban **p) {
@@ -3158,8 +3449,9 @@ void discord_guild_welcome_screen_from_json(char *json, size_t len, struct disco
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_welcome_screen *p = *pp;
+  discord_guild_welcome_screen_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:289:20
      '{ "name": "description", "type":{ "base":"char", "dec":"*" }, "comment":"@todo fixed size limit"}' */
@@ -3295,8 +3587,9 @@ void discord_guild_welcome_screen_channel_from_json(char *json, size_t len, stru
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_welcome_screen_channel *p = *pp;
+  discord_guild_welcome_screen_channel_init(p);
   r=json_extract(json, len, 
   /* specs/discord/guild.json:300:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */

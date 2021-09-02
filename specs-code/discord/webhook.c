@@ -17,8 +17,9 @@ void discord_webhook_from_json(char *json, size_t len, struct discord_webhook **
 {
   static size_t ret=0; // used for debugging
   size_t r=0;
-  if (!*pp) *pp = calloc(1, sizeof **pp);
+  if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_webhook *p = *pp;
+  discord_webhook_init(p);
   r=json_extract(json, len, 
   /* specs/discord/webhook.json:12:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
@@ -272,8 +273,6 @@ void discord_webhook_init(struct discord_webhook *p) {
 
   /* specs/discord/webhook.json:16:20
      '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*" }}' */
-  p->user = malloc(sizeof *p->user);
-  discord_user_init(p->user);
 
   /* specs/discord/webhook.json:17:20
      '{ "name": "name", "type":{ "base":"char", "dec":"[DISCORD_WEBHOOK_NAME_LEN]" }}' */
@@ -310,11 +309,27 @@ size_t discord_webhook_list_to_json(char *str, size_t len, struct discord_webhoo
 
 
 
+typedef void (*vfvp)(void *);
+typedef void (*vfcpsvp)(char *, size_t, void *);
+typedef size_t (*sfcpsvp)(char *, size_t, void *);
+void discord_webhook_types_list_free_v(void **p) {
+  discord_webhook_types_list_free((enum discord_webhook_types**)p);
+}
+
+void discord_webhook_types_list_from_json_v(char *str, size_t len, void *p) {
+  discord_webhook_types_list_from_json(str, len, (enum discord_webhook_types ***)p);
+}
+
+size_t discord_webhook_types_list_to_json_v(char *str, size_t len, void *p){
+  return discord_webhook_types_list_to_json(str, len, (enum discord_webhook_types **)p);
+}
+
 enum discord_webhook_types discord_webhook_types_eval(char *s){
   if(strcasecmp("INCOMING", s) == 0) return DISCORD_WEBHOOK_INCOMING;
   if(strcasecmp("CHANNEL_FOLLOWER", s) == 0) return DISCORD_WEBHOOK_CHANNEL_FOLLOWER;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
+
 char* discord_webhook_types_print(enum discord_webhook_types v){
 
   switch (v) {
@@ -324,3 +339,24 @@ char* discord_webhook_types_print(enum discord_webhook_types v){
 
   return NULL;
 }
+
+void discord_webhook_types_list_free(enum discord_webhook_types **p) {
+  ntl_free((void**)p, NULL);
+}
+
+void discord_webhook_types_list_from_json(char *str, size_t len, enum discord_webhook_types ***p)
+{
+  struct ntl_deserializer d;
+  memset(&d, 0, sizeof(d));
+  d.elem_size = sizeof(enum discord_webhook_types);
+  d.init_elem = NULL;
+  d.elem_from_buf = ja_u64_from_json_v;
+  d.ntl_recipient_p= (void***)p;
+  extract_ntl_from_json2(str, len, &d);
+}
+
+size_t discord_webhook_types_list_to_json(char *str, size_t len, enum discord_webhook_types **p)
+{
+  return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
+}
+

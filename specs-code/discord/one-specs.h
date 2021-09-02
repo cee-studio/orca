@@ -1019,6 +1019,12 @@ enum discord_application_flags {
 };
 extern char* discord_application_flags_print(enum discord_application_flags);
 extern enum discord_application_flags discord_application_flags_eval(char*);
+extern void discord_application_flags_list_free_v(void **p);
+extern void discord_application_flags_list_free(enum discord_application_flags **p);
+extern void discord_application_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_flags_list_from_json(char *str, size_t len, enum discord_application_flags ***p);
+extern size_t discord_application_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_flags_list_to_json(char *str, size_t len, enum discord_application_flags **p);
 /* This file is generated from specs/discord/application_commands.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/application_commands.json, Please don't edit it. */
 
@@ -1046,6 +1052,12 @@ enum discord_application_command_types {
 };
 extern char* discord_application_command_types_print(enum discord_application_command_types);
 extern enum discord_application_command_types discord_application_command_types_eval(char*);
+extern void discord_application_command_types_list_free_v(void **p);
+extern void discord_application_command_types_list_free(enum discord_application_command_types **p);
+extern void discord_application_command_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_types_list_from_json(char *str, size_t len, enum discord_application_command_types ***p);
+extern size_t discord_application_command_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_types_list_to_json(char *str, size_t len, enum discord_application_command_types **p);
 
 
 // Application Command Option Type
@@ -1078,6 +1090,12 @@ enum discord_application_command_option_types {
 };
 extern char* discord_application_command_option_types_print(enum discord_application_command_option_types);
 extern enum discord_application_command_option_types discord_application_command_option_types_eval(char*);
+extern void discord_application_command_option_types_list_free_v(void **p);
+extern void discord_application_command_option_types_list_free(enum discord_application_command_option_types **p);
+extern void discord_application_command_option_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_option_types_list_from_json(char *str, size_t len, enum discord_application_command_option_types ***p);
+extern size_t discord_application_command_option_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_option_types_list_to_json(char *str, size_t len, enum discord_application_command_option_types **p);
 
 
 // Application Command Permission Type
@@ -1102,6 +1120,12 @@ enum discord_application_command_permission_types {
 };
 extern char* discord_application_command_permission_types_print(enum discord_application_command_permission_types);
 extern enum discord_application_command_permission_types discord_application_command_permission_types_eval(char*);
+extern void discord_application_command_permission_types_list_free_v(void **p);
+extern void discord_application_command_permission_types_list_free(enum discord_application_command_permission_types **p);
+extern void discord_application_command_permission_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_permission_types_list_from_json(char *str, size_t len, enum discord_application_command_permission_types ***p);
+extern size_t discord_application_command_permission_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_permission_types_list_to_json(char *str, size_t len, enum discord_application_command_permission_types **p);
 
 
 // Interaction Request Type
@@ -1127,6 +1151,12 @@ enum discord_interaction_request_types {
 };
 extern char* discord_interaction_request_types_print(enum discord_interaction_request_types);
 extern enum discord_interaction_request_types discord_interaction_request_types_eval(char*);
+extern void discord_interaction_request_types_list_free_v(void **p);
+extern void discord_interaction_request_types_list_free(enum discord_interaction_request_types **p);
+extern void discord_interaction_request_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_request_types_list_from_json(char *str, size_t len, enum discord_interaction_request_types ***p);
+extern size_t discord_interaction_request_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_request_types_list_to_json(char *str, size_t len, enum discord_interaction_request_types **p);
 
 
 // Interaction Callback Type
@@ -1154,6 +1184,12 @@ enum discord_interaction_callback_types {
 };
 extern char* discord_interaction_callback_types_print(enum discord_interaction_callback_types);
 extern enum discord_interaction_callback_types discord_interaction_callback_types_eval(char*);
+extern void discord_interaction_callback_types_list_free_v(void **p);
+extern void discord_interaction_callback_types_list_free(enum discord_interaction_callback_types **p);
+extern void discord_interaction_callback_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_callback_types_list_from_json(char *str, size_t len, enum discord_interaction_callback_types ***p);
+extern size_t discord_interaction_callback_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_callback_types_list_to_json(char *str, size_t len, enum discord_interaction_callback_types **p);
 
 
 // Interaction Application Command Callback Data Flags
@@ -1177,6 +1213,12 @@ enum discord_interaction_application_command_callback_data_flags {
 };
 extern char* discord_interaction_application_command_callback_data_flags_print(enum discord_interaction_application_command_callback_data_flags);
 extern enum discord_interaction_application_command_callback_data_flags discord_interaction_application_command_callback_data_flags_eval(char*);
+extern void discord_interaction_application_command_callback_data_flags_list_free_v(void **p);
+extern void discord_interaction_application_command_callback_data_flags_list_free(enum discord_interaction_application_command_callback_data_flags **p);
+extern void discord_interaction_application_command_callback_data_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_application_command_callback_data_flags_list_from_json(char *str, size_t len, enum discord_interaction_application_command_callback_data_flags ***p);
+extern size_t discord_interaction_application_command_callback_data_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_application_command_callback_data_flags_list_to_json(char *str, size_t len, enum discord_interaction_application_command_callback_data_flags **p);
 /* This file is generated from specs/discord/audit_log.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/audit_log.json, Please don't edit it. */
 
@@ -1235,6 +1277,12 @@ enum discord_audit_log_events {
 };
 extern char* discord_audit_log_events_print(enum discord_audit_log_events);
 extern enum discord_audit_log_events discord_audit_log_events_eval(char*);
+extern void discord_audit_log_events_list_free_v(void **p);
+extern void discord_audit_log_events_list_free(enum discord_audit_log_events **p);
+extern void discord_audit_log_events_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_audit_log_events_list_from_json(char *str, size_t len, enum discord_audit_log_events ***p);
+extern size_t discord_audit_log_events_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_audit_log_events_list_to_json(char *str, size_t len, enum discord_audit_log_events **p);
 /* This file is generated from specs/discord/channel.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/channel.json, Please don't edit it. */
 
@@ -1270,6 +1318,12 @@ enum discord_channel_types {
 };
 extern char* discord_channel_types_print(enum discord_channel_types);
 extern enum discord_channel_types discord_channel_types_eval(char*);
+extern void discord_channel_types_list_free_v(void **p);
+extern void discord_channel_types_list_free(enum discord_channel_types **p);
+extern void discord_channel_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_channel_types_list_from_json(char *str, size_t len, enum discord_channel_types ***p);
+extern size_t discord_channel_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_channel_types_list_to_json(char *str, size_t len, enum discord_channel_types **p);
 
 
 // Message Sticker Format Types
@@ -1295,6 +1349,12 @@ enum discord_message_sticker_format_types {
 };
 extern char* discord_message_sticker_format_types_print(enum discord_message_sticker_format_types);
 extern enum discord_message_sticker_format_types discord_message_sticker_format_types_eval(char*);
+extern void discord_message_sticker_format_types_list_free_v(void **p);
+extern void discord_message_sticker_format_types_list_free(enum discord_message_sticker_format_types **p);
+extern void discord_message_sticker_format_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_message_sticker_format_types_list_from_json(char *str, size_t len, enum discord_message_sticker_format_types ***p);
+extern size_t discord_message_sticker_format_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_message_sticker_format_types_list_to_json(char *str, size_t len, enum discord_message_sticker_format_types **p);
 
 
 // Message Flags
@@ -1322,6 +1382,12 @@ enum discord_message_flags {
 };
 extern char* discord_message_flags_print(enum discord_message_flags);
 extern enum discord_message_flags discord_message_flags_eval(char*);
+extern void discord_message_flags_list_free_v(void **p);
+extern void discord_message_flags_list_free(enum discord_message_flags **p);
+extern void discord_message_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_message_flags_list_from_json(char *str, size_t len, enum discord_message_flags ***p);
+extern size_t discord_message_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_message_flags_list_to_json(char *str, size_t len, enum discord_message_flags **p);
 
 
 // Message Activity Types
@@ -1348,6 +1414,12 @@ enum discord_message_activity_types {
 };
 extern char* discord_message_activity_types_print(enum discord_message_activity_types);
 extern enum discord_message_activity_types discord_message_activity_types_eval(char*);
+extern void discord_message_activity_types_list_free_v(void **p);
+extern void discord_message_activity_types_list_free(enum discord_message_activity_types **p);
+extern void discord_message_activity_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_message_activity_types_list_from_json(char *str, size_t len, enum discord_message_activity_types ***p);
+extern size_t discord_message_activity_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_message_activity_types_list_to_json(char *str, size_t len, enum discord_message_activity_types **p);
 
 
 // Message Types
@@ -1387,6 +1459,12 @@ enum discord_message_types {
 };
 extern char* discord_message_types_print(enum discord_message_types);
 extern enum discord_message_types discord_message_types_eval(char*);
+extern void discord_message_types_list_free_v(void **p);
+extern void discord_message_types_list_free(enum discord_message_types **p);
+extern void discord_message_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_message_types_list_from_json(char *str, size_t len, enum discord_message_types ***p);
+extern size_t discord_message_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_message_types_list_to_json(char *str, size_t len, enum discord_message_types **p);
 /* This file is generated from specs/discord/emoji.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/emoji.json, Please don't edit it. */
 /* This file is generated from specs/discord/gateway.json, Please don't edit it. */
@@ -1426,6 +1504,12 @@ enum discord_gateway_close_opcodes {
 };
 extern char* discord_gateway_close_opcodes_print(enum discord_gateway_close_opcodes);
 extern enum discord_gateway_close_opcodes discord_gateway_close_opcodes_eval(char*);
+extern void discord_gateway_close_opcodes_list_free_v(void **p);
+extern void discord_gateway_close_opcodes_list_free(enum discord_gateway_close_opcodes **p);
+extern void discord_gateway_close_opcodes_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_gateway_close_opcodes_list_from_json(char *str, size_t len, enum discord_gateway_close_opcodes ***p);
+extern size_t discord_gateway_close_opcodes_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_gateway_close_opcodes_list_to_json(char *str, size_t len, enum discord_gateway_close_opcodes **p);
 
 
 // Gateway Intents
@@ -1463,6 +1547,12 @@ enum discord_gateway_intents {
 };
 extern char* discord_gateway_intents_print(enum discord_gateway_intents);
 extern enum discord_gateway_intents discord_gateway_intents_eval(char*);
+extern void discord_gateway_intents_list_free_v(void **p);
+extern void discord_gateway_intents_list_free(enum discord_gateway_intents **p);
+extern void discord_gateway_intents_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_gateway_intents_list_from_json(char *str, size_t len, enum discord_gateway_intents ***p);
+extern size_t discord_gateway_intents_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_gateway_intents_list_to_json(char *str, size_t len, enum discord_gateway_intents **p);
 
 
 // Gateway Opcodes
@@ -1496,6 +1586,12 @@ enum discord_gateway_opcodes {
 };
 extern char* discord_gateway_opcodes_print(enum discord_gateway_opcodes);
 extern enum discord_gateway_opcodes discord_gateway_opcodes_eval(char*);
+extern void discord_gateway_opcodes_list_free_v(void **p);
+extern void discord_gateway_opcodes_list_free(enum discord_gateway_opcodes **p);
+extern void discord_gateway_opcodes_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_gateway_opcodes_list_from_json(char *str, size_t len, enum discord_gateway_opcodes ***p);
+extern size_t discord_gateway_opcodes_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_gateway_opcodes_list_to_json(char *str, size_t len, enum discord_gateway_opcodes **p);
 
 
 // Gateway Events
@@ -1572,6 +1668,12 @@ enum discord_gateway_events {
 };
 extern char* discord_gateway_events_print(enum discord_gateway_events);
 extern enum discord_gateway_events discord_gateway_events_eval(char*);
+extern void discord_gateway_events_list_free_v(void **p);
+extern void discord_gateway_events_list_free(enum discord_gateway_events **p);
+extern void discord_gateway_events_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_gateway_events_list_from_json(char *str, size_t len, enum discord_gateway_events ***p);
+extern size_t discord_gateway_events_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_gateway_events_list_to_json(char *str, size_t len, enum discord_gateway_events **p);
 
 
 // Activity Types
@@ -1599,6 +1701,12 @@ enum discord_gateway_activity_types {
 };
 extern char* discord_gateway_activity_types_print(enum discord_gateway_activity_types);
 extern enum discord_gateway_activity_types discord_gateway_activity_types_eval(char*);
+extern void discord_gateway_activity_types_list_free_v(void **p);
+extern void discord_gateway_activity_types_list_free(enum discord_gateway_activity_types **p);
+extern void discord_gateway_activity_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_gateway_activity_types_list_from_json(char *str, size_t len, enum discord_gateway_activity_types ***p);
+extern size_t discord_gateway_activity_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_gateway_activity_types_list_to_json(char *str, size_t len, enum discord_gateway_activity_types **p);
 /* This file is generated from specs/discord/guild-template.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/guild-template.json, Please don't edit it. */
 /* This file is generated from specs/discord/guild.endpoints-params.json, Please don't edit it. */
@@ -1627,6 +1735,12 @@ enum discord_guild_default_message_notification_level {
 };
 extern char* discord_guild_default_message_notification_level_print(enum discord_guild_default_message_notification_level);
 extern enum discord_guild_default_message_notification_level discord_guild_default_message_notification_level_eval(char*);
+extern void discord_guild_default_message_notification_level_list_free_v(void **p);
+extern void discord_guild_default_message_notification_level_list_free(enum discord_guild_default_message_notification_level **p);
+extern void discord_guild_default_message_notification_level_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_default_message_notification_level_list_from_json(char *str, size_t len, enum discord_guild_default_message_notification_level ***p);
+extern size_t discord_guild_default_message_notification_level_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_default_message_notification_level_list_to_json(char *str, size_t len, enum discord_guild_default_message_notification_level **p);
 
 
 // Explicit Content Filter Level
@@ -1652,6 +1766,12 @@ enum discord_guild_explicit_content_filter_level {
 };
 extern char* discord_guild_explicit_content_filter_level_print(enum discord_guild_explicit_content_filter_level);
 extern enum discord_guild_explicit_content_filter_level discord_guild_explicit_content_filter_level_eval(char*);
+extern void discord_guild_explicit_content_filter_level_list_free_v(void **p);
+extern void discord_guild_explicit_content_filter_level_list_free(enum discord_guild_explicit_content_filter_level **p);
+extern void discord_guild_explicit_content_filter_level_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_explicit_content_filter_level_list_from_json(char *str, size_t len, enum discord_guild_explicit_content_filter_level ***p);
+extern size_t discord_guild_explicit_content_filter_level_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_explicit_content_filter_level_list_to_json(char *str, size_t len, enum discord_guild_explicit_content_filter_level **p);
 
 
 // MFA Level
@@ -1676,6 +1796,12 @@ enum discord_guild_mfa_level {
 };
 extern char* discord_guild_mfa_level_print(enum discord_guild_mfa_level);
 extern enum discord_guild_mfa_level discord_guild_mfa_level_eval(char*);
+extern void discord_guild_mfa_level_list_free_v(void **p);
+extern void discord_guild_mfa_level_list_free(enum discord_guild_mfa_level **p);
+extern void discord_guild_mfa_level_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_mfa_level_list_from_json(char *str, size_t len, enum discord_guild_mfa_level ***p);
+extern size_t discord_guild_mfa_level_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_mfa_level_list_to_json(char *str, size_t len, enum discord_guild_mfa_level **p);
 
 
 // Verification Level
@@ -1703,6 +1829,12 @@ enum discord_guild_verification_level {
 };
 extern char* discord_guild_verification_level_print(enum discord_guild_verification_level);
 extern enum discord_guild_verification_level discord_guild_verification_level_eval(char*);
+extern void discord_guild_verification_level_list_free_v(void **p);
+extern void discord_guild_verification_level_list_free(enum discord_guild_verification_level **p);
+extern void discord_guild_verification_level_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_verification_level_list_from_json(char *str, size_t len, enum discord_guild_verification_level ***p);
+extern size_t discord_guild_verification_level_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_verification_level_list_to_json(char *str, size_t len, enum discord_guild_verification_level **p);
 
 
 // Premium Tier
@@ -1729,6 +1861,12 @@ enum discord_guild_premium_tier {
 };
 extern char* discord_guild_premium_tier_print(enum discord_guild_premium_tier);
 extern enum discord_guild_premium_tier discord_guild_premium_tier_eval(char*);
+extern void discord_guild_premium_tier_list_free_v(void **p);
+extern void discord_guild_premium_tier_list_free(enum discord_guild_premium_tier **p);
+extern void discord_guild_premium_tier_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_premium_tier_list_from_json(char *str, size_t len, enum discord_guild_premium_tier ***p);
+extern size_t discord_guild_premium_tier_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_premium_tier_list_to_json(char *str, size_t len, enum discord_guild_premium_tier **p);
 
 
 // System Channel Flags
@@ -1753,6 +1891,12 @@ enum discord_guild_system_channel_flags {
 };
 extern char* discord_guild_system_channel_flags_print(enum discord_guild_system_channel_flags);
 extern enum discord_guild_system_channel_flags discord_guild_system_channel_flags_eval(char*);
+extern void discord_guild_system_channel_flags_list_free_v(void **p);
+extern void discord_guild_system_channel_flags_list_free(enum discord_guild_system_channel_flags **p);
+extern void discord_guild_system_channel_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_system_channel_flags_list_from_json(char *str, size_t len, enum discord_guild_system_channel_flags ***p);
+extern size_t discord_guild_system_channel_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_system_channel_flags_list_to_json(char *str, size_t len, enum discord_guild_system_channel_flags **p);
 
 
 // Guild Features
@@ -1790,6 +1934,12 @@ enum discord_guild_features {
 };
 extern char* discord_guild_features_print(enum discord_guild_features);
 extern enum discord_guild_features discord_guild_features_eval(char*);
+extern void discord_guild_features_list_free_v(void **p);
+extern void discord_guild_features_list_free(enum discord_guild_features **p);
+extern void discord_guild_features_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_features_list_from_json(char *str, size_t len, enum discord_guild_features ***p);
+extern size_t discord_guild_features_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_features_list_to_json(char *str, size_t len, enum discord_guild_features **p);
 
 
 // Integration Expire Behaviors
@@ -1814,6 +1964,12 @@ enum discord_guild_integration_expire_behaviors {
 };
 extern char* discord_guild_integration_expire_behaviors_print(enum discord_guild_integration_expire_behaviors);
 extern enum discord_guild_integration_expire_behaviors discord_guild_integration_expire_behaviors_eval(char*);
+extern void discord_guild_integration_expire_behaviors_list_free_v(void **p);
+extern void discord_guild_integration_expire_behaviors_list_free(enum discord_guild_integration_expire_behaviors **p);
+extern void discord_guild_integration_expire_behaviors_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_guild_integration_expire_behaviors_list_from_json(char *str, size_t len, enum discord_guild_integration_expire_behaviors ***p);
+extern size_t discord_guild_integration_expire_behaviors_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_guild_integration_expire_behaviors_list_to_json(char *str, size_t len, enum discord_guild_integration_expire_behaviors **p);
 /* This file is generated from specs/discord/invite.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/invite.json, Please don't edit it. */
 
@@ -1839,6 +1995,12 @@ enum discord_invite_target_user_types {
 };
 extern char* discord_invite_target_user_types_print(enum discord_invite_target_user_types);
 extern enum discord_invite_target_user_types discord_invite_target_user_types_eval(char*);
+extern void discord_invite_target_user_types_list_free_v(void **p);
+extern void discord_invite_target_user_types_list_free(enum discord_invite_target_user_types **p);
+extern void discord_invite_target_user_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_invite_target_user_types_list_from_json(char *str, size_t len, enum discord_invite_target_user_types ***p);
+extern size_t discord_invite_target_user_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_invite_target_user_types_list_to_json(char *str, size_t len, enum discord_invite_target_user_types **p);
 /* This file is generated from specs/discord/message_components.json, Please don't edit it. */
 
 
@@ -1865,6 +2027,12 @@ enum discord_component_types {
 };
 extern char* discord_component_types_print(enum discord_component_types);
 extern enum discord_component_types discord_component_types_eval(char*);
+extern void discord_component_types_list_free_v(void **p);
+extern void discord_component_types_list_free(enum discord_component_types **p);
+extern void discord_component_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_component_types_list_from_json(char *str, size_t len, enum discord_component_types ***p);
+extern size_t discord_component_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_component_types_list_to_json(char *str, size_t len, enum discord_component_types **p);
 
 
 // Button Styles
@@ -1892,6 +2060,12 @@ enum discord_button_styles {
 };
 extern char* discord_button_styles_print(enum discord_button_styles);
 extern enum discord_button_styles discord_button_styles_eval(char*);
+extern void discord_button_styles_list_free_v(void **p);
+extern void discord_button_styles_list_free(enum discord_button_styles **p);
+extern void discord_button_styles_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_button_styles_list_from_json(char *str, size_t len, enum discord_button_styles ***p);
+extern size_t discord_button_styles_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_button_styles_list_to_json(char *str, size_t len, enum discord_button_styles **p);
 /* This file is generated from specs/discord/permissions.json, Please don't edit it. */
 
 
@@ -1945,6 +2119,12 @@ enum discord_permissions_bitwise_flags {
 };
 extern char* discord_permissions_bitwise_flags_print(enum discord_permissions_bitwise_flags);
 extern enum discord_permissions_bitwise_flags discord_permissions_bitwise_flags_eval(char*);
+extern void discord_permissions_bitwise_flags_list_free_v(void **p);
+extern void discord_permissions_bitwise_flags_list_free(enum discord_permissions_bitwise_flags **p);
+extern void discord_permissions_bitwise_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_permissions_bitwise_flags_list_from_json(char *str, size_t len, enum discord_permissions_bitwise_flags ***p);
+extern size_t discord_permissions_bitwise_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_permissions_bitwise_flags_list_to_json(char *str, size_t len, enum discord_permissions_bitwise_flags **p);
 /* This file is generated from specs/discord/receiving_and_responding.json, Please don't edit it. */
 
 
@@ -1971,6 +2151,12 @@ enum discord_interaction_types {
 };
 extern char* discord_interaction_types_print(enum discord_interaction_types);
 extern enum discord_interaction_types discord_interaction_types_eval(char*);
+extern void discord_interaction_types_list_free_v(void **p);
+extern void discord_interaction_types_list_free(enum discord_interaction_types **p);
+extern void discord_interaction_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_types_list_from_json(char *str, size_t len, enum discord_interaction_types ***p);
+extern size_t discord_interaction_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_types_list_to_json(char *str, size_t len, enum discord_interaction_types **p);
 
 
 // Interaction Callback Type
@@ -1998,6 +2184,12 @@ enum discord_interaction_callback_types {
 };
 extern char* discord_interaction_callback_types_print(enum discord_interaction_callback_types);
 extern enum discord_interaction_callback_types discord_interaction_callback_types_eval(char*);
+extern void discord_interaction_callback_types_list_free_v(void **p);
+extern void discord_interaction_callback_types_list_free(enum discord_interaction_callback_types **p);
+extern void discord_interaction_callback_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_callback_types_list_from_json(char *str, size_t len, enum discord_interaction_callback_types ***p);
+extern size_t discord_interaction_callback_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_callback_types_list_to_json(char *str, size_t len, enum discord_interaction_callback_types **p);
 
 
 // Interaction Callback Data Flags
@@ -2021,6 +2213,12 @@ enum discord_interaction_callback_data_flags {
 };
 extern char* discord_interaction_callback_data_flags_print(enum discord_interaction_callback_data_flags);
 extern enum discord_interaction_callback_data_flags discord_interaction_callback_data_flags_eval(char*);
+extern void discord_interaction_callback_data_flags_list_free_v(void **p);
+extern void discord_interaction_callback_data_flags_list_free(enum discord_interaction_callback_data_flags **p);
+extern void discord_interaction_callback_data_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_callback_data_flags_list_from_json(char *str, size_t len, enum discord_interaction_callback_data_flags ***p);
+extern size_t discord_interaction_callback_data_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_callback_data_flags_list_to_json(char *str, size_t len, enum discord_interaction_callback_data_flags **p);
 /* This file is generated from specs/discord/user.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/user.json, Please don't edit it. */
 
@@ -2058,6 +2256,12 @@ enum discord_user_flags {
 };
 extern char* discord_user_flags_print(enum discord_user_flags);
 extern enum discord_user_flags discord_user_flags_eval(char*);
+extern void discord_user_flags_list_free_v(void **p);
+extern void discord_user_flags_list_free(enum discord_user_flags **p);
+extern void discord_user_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_user_flags_list_from_json(char *str, size_t len, enum discord_user_flags ***p);
+extern size_t discord_user_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_user_flags_list_to_json(char *str, size_t len, enum discord_user_flags **p);
 
 
 // Premium Types
@@ -2082,6 +2286,12 @@ enum discord_user_premium_types {
 };
 extern char* discord_user_premium_types_print(enum discord_user_premium_types);
 extern enum discord_user_premium_types discord_user_premium_types_eval(char*);
+extern void discord_user_premium_types_list_free_v(void **p);
+extern void discord_user_premium_types_list_free(enum discord_user_premium_types **p);
+extern void discord_user_premium_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_user_premium_types_list_from_json(char *str, size_t len, enum discord_user_premium_types ***p);
+extern size_t discord_user_premium_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_user_premium_types_list_to_json(char *str, size_t len, enum discord_user_premium_types **p);
 
 
 // Visbility Types
@@ -2106,6 +2316,12 @@ enum discord_user_connection_visibility_types {
 };
 extern char* discord_user_connection_visibility_types_print(enum discord_user_connection_visibility_types);
 extern enum discord_user_connection_visibility_types discord_user_connection_visibility_types_eval(char*);
+extern void discord_user_connection_visibility_types_list_free_v(void **p);
+extern void discord_user_connection_visibility_types_list_free(enum discord_user_connection_visibility_types **p);
+extern void discord_user_connection_visibility_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_user_connection_visibility_types_list_from_json(char *str, size_t len, enum discord_user_connection_visibility_types ***p);
+extern size_t discord_user_connection_visibility_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_user_connection_visibility_types_list_to_json(char *str, size_t len, enum discord_user_connection_visibility_types **p);
 /* This file is generated from specs/discord/voice-connections.json, Please don't edit it. */
 
 
@@ -2141,6 +2357,12 @@ enum discord_voice_close_opcodes {
 };
 extern char* discord_voice_close_opcodes_print(enum discord_voice_close_opcodes);
 extern enum discord_voice_close_opcodes discord_voice_close_opcodes_eval(char*);
+extern void discord_voice_close_opcodes_list_free_v(void **p);
+extern void discord_voice_close_opcodes_list_free(enum discord_voice_close_opcodes **p);
+extern void discord_voice_close_opcodes_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_voice_close_opcodes_list_from_json(char *str, size_t len, enum discord_voice_close_opcodes ***p);
+extern size_t discord_voice_close_opcodes_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_voice_close_opcodes_list_to_json(char *str, size_t len, enum discord_voice_close_opcodes **p);
 
 
 // Voice Opcodes
@@ -2175,6 +2397,12 @@ enum discord_voice_opcodes {
 };
 extern char* discord_voice_opcodes_print(enum discord_voice_opcodes);
 extern enum discord_voice_opcodes discord_voice_opcodes_eval(char*);
+extern void discord_voice_opcodes_list_free_v(void **p);
+extern void discord_voice_opcodes_list_free(enum discord_voice_opcodes **p);
+extern void discord_voice_opcodes_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_voice_opcodes_list_from_json(char *str, size_t len, enum discord_voice_opcodes ***p);
+extern size_t discord_voice_opcodes_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_voice_opcodes_list_to_json(char *str, size_t len, enum discord_voice_opcodes **p);
 
 
 // Voice Speaking Flags
@@ -2200,6 +2428,12 @@ enum discord_voice_speaking_flags {
 };
 extern char* discord_voice_speaking_flags_print(enum discord_voice_speaking_flags);
 extern enum discord_voice_speaking_flags discord_voice_speaking_flags_eval(char*);
+extern void discord_voice_speaking_flags_list_free_v(void **p);
+extern void discord_voice_speaking_flags_list_free(enum discord_voice_speaking_flags **p);
+extern void discord_voice_speaking_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_voice_speaking_flags_list_from_json(char *str, size_t len, enum discord_voice_speaking_flags ***p);
+extern size_t discord_voice_speaking_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_voice_speaking_flags_list_to_json(char *str, size_t len, enum discord_voice_speaking_flags **p);
 /* This file is generated from specs/discord/voice.json, Please don't edit it. */
 /* This file is generated from specs/discord/webhook.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/webhook.json, Please don't edit it. */
@@ -2227,6 +2461,12 @@ enum discord_webhook_types {
 };
 extern char* discord_webhook_types_print(enum discord_webhook_types);
 extern enum discord_webhook_types discord_webhook_types_eval(char*);
+extern void discord_webhook_types_list_free_v(void **p);
+extern void discord_webhook_types_list_free(enum discord_webhook_types **p);
+extern void discord_webhook_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_webhook_types_list_from_json(char *str, size_t len, enum discord_webhook_types ***p);
+extern size_t discord_webhook_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_webhook_types_list_to_json(char *str, size_t len, enum discord_webhook_types **p);
 /* This file is generated from specs/discord/application.json, Please don't edit it. */
 
 // Identify Structure

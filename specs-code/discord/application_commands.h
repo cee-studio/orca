@@ -119,6 +119,12 @@ enum discord_application_command_types {
 };
 extern char* discord_application_command_types_print(enum discord_application_command_types);
 extern enum discord_application_command_types discord_application_command_types_eval(char*);
+extern void discord_application_command_types_list_free_v(void **p);
+extern void discord_application_command_types_list_free(enum discord_application_command_types **p);
+extern void discord_application_command_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_types_list_from_json(char *str, size_t len, enum discord_application_command_types ***p);
+extern size_t discord_application_command_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_types_list_to_json(char *str, size_t len, enum discord_application_command_types **p);
 
 // Application Command Option Structure
 // defined at specs/discord/application_commands.json:37:22
@@ -237,6 +243,12 @@ enum discord_application_command_option_types {
 };
 extern char* discord_application_command_option_types_print(enum discord_application_command_option_types);
 extern enum discord_application_command_option_types discord_application_command_option_types_eval(char*);
+extern void discord_application_command_option_types_list_free_v(void **p);
+extern void discord_application_command_option_types_list_free(enum discord_application_command_option_types **p);
+extern void discord_application_command_option_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_option_types_list_from_json(char *str, size_t len, enum discord_application_command_option_types ***p);
+extern size_t discord_application_command_option_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_option_types_list_to_json(char *str, size_t len, enum discord_application_command_option_types **p);
 
 // Application Command Option Choice Structure
 // defined at specs/discord/application_commands.json:71:22
@@ -483,6 +495,12 @@ enum discord_application_command_permission_types {
 };
 extern char* discord_application_command_permission_types_print(enum discord_application_command_permission_types);
 extern enum discord_application_command_permission_types discord_application_command_permission_types_eval(char*);
+extern void discord_application_command_permission_types_list_free_v(void **p);
+extern void discord_application_command_permission_types_list_free(enum discord_application_command_permission_types **p);
+extern void discord_application_command_permission_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_application_command_permission_types_list_from_json(char *str, size_t len, enum discord_application_command_permission_types ***p);
+extern size_t discord_application_command_permission_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_application_command_permission_types_list_to_json(char *str, size_t len, enum discord_application_command_permission_types **p);
 
 // Interaction Structure
 // defined at specs/discord/application_commands.json:117:22
@@ -606,6 +624,12 @@ enum discord_interaction_request_types {
 };
 extern char* discord_interaction_request_types_print(enum discord_interaction_request_types);
 extern enum discord_interaction_request_types discord_interaction_request_types_eval(char*);
+extern void discord_interaction_request_types_list_free_v(void **p);
+extern void discord_interaction_request_types_list_free(enum discord_interaction_request_types **p);
+extern void discord_interaction_request_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_request_types_list_from_json(char *str, size_t len, enum discord_interaction_request_types ***p);
+extern size_t discord_interaction_request_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_request_types_list_to_json(char *str, size_t len, enum discord_interaction_request_types **p);
 
 // Application Command Interaction Data Structure
 // defined at specs/discord/application_commands.json:147:22
@@ -945,6 +969,12 @@ enum discord_interaction_callback_types {
 };
 extern char* discord_interaction_callback_types_print(enum discord_interaction_callback_types);
 extern enum discord_interaction_callback_types discord_interaction_callback_types_eval(char*);
+extern void discord_interaction_callback_types_list_free_v(void **p);
+extern void discord_interaction_callback_types_list_free(enum discord_interaction_callback_types **p);
+extern void discord_interaction_callback_types_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_callback_types_list_from_json(char *str, size_t len, enum discord_interaction_callback_types ***p);
+extern size_t discord_interaction_callback_types_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_callback_types_list_to_json(char *str, size_t len, enum discord_interaction_callback_types **p);
 
 // Interaction Application Command Callback Data Structure
 // defined at specs/discord/application_commands.json:213:22
@@ -1054,6 +1084,12 @@ enum discord_interaction_application_command_callback_data_flags {
 };
 extern char* discord_interaction_application_command_callback_data_flags_print(enum discord_interaction_application_command_callback_data_flags);
 extern enum discord_interaction_application_command_callback_data_flags discord_interaction_application_command_callback_data_flags_eval(char*);
+extern void discord_interaction_application_command_callback_data_flags_list_free_v(void **p);
+extern void discord_interaction_application_command_callback_data_flags_list_free(enum discord_interaction_application_command_callback_data_flags **p);
+extern void discord_interaction_application_command_callback_data_flags_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_interaction_application_command_callback_data_flags_list_from_json(char *str, size_t len, enum discord_interaction_application_command_callback_data_flags ***p);
+extern size_t discord_interaction_application_command_callback_data_flags_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_interaction_application_command_callback_data_flags_list_to_json(char *str, size_t len, enum discord_interaction_application_command_callback_data_flags **p);
 
 // Message Interaction Structure
 // defined at specs/discord/application_commands.json:238:22

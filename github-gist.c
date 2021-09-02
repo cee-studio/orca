@@ -96,16 +96,16 @@ github_gist_is_starred(struct github *client, char *id) {
 }
 
 ORCAcode
-github_list_public_gists(struct github *client, struct github_list_public_gists_params *params, char *output) {
-  log_info("===gist-is-starred===");
-
-  if (!params) {
-    log_error("Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+github_list_public_gists(struct github *client, struct github_list_public_gists_params *params, struct sized_buffer *output) {
+  log_info("===list-public-gists===");
 
   if (!output) {
     log_error("Missing 'output'");
+    return ORCA_MISSING_PARAMETER;
+  }
+
+  if (!params) {
+    log_error("Missing 'params'");
     return ORCA_MISSING_PARAMETER;
   }
 

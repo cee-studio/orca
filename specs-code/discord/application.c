@@ -445,7 +445,3 @@ char* discord_application_flags_print(enum discord_application_flags v){
 
   return NULL;
 }
-bool discord_application_flags_cmp(enum discord_application_flags v, char *s) {
-  enum discord_application_flags v1 = discord_application_flags_eval(s);
-  return v == v1;
-}

@@ -952,7 +952,6 @@ struct discord_webhook;
 
  *   * :code:`char* discord_application_flags_print(enum discord_application_flags code)`
  *   * :code:`enum discord_application_flags discord_application_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_application_flags_cmp(enum discord_application_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_application_flags {
@@ -965,7 +964,6 @@ enum discord_application_flags {
 };
 extern char* discord_application_flags_print(enum discord_application_flags);
 extern enum discord_application_flags discord_application_flags_eval(char*);
-extern bool discord_application_flags_cmp(enum discord_application_flags, char*);
 /* This file is generated from specs/discord/application_commands.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/application_commands.json, Please don't edit it. */
 
@@ -984,7 +982,6 @@ extern bool discord_application_flags_cmp(enum discord_application_flags, char*)
 
  *   * :code:`char* discord_application_command_types_print(enum discord_application_command_types code)`
  *   * :code:`enum discord_application_command_types discord_application_command_types_eval(char *code_as_str)`
- *   * :code:`bool discord_application_command_types_cmp(enum discord_application_command_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_application_command_types {
@@ -994,7 +991,6 @@ enum discord_application_command_types {
 };
 extern char* discord_application_command_types_print(enum discord_application_command_types);
 extern enum discord_application_command_types discord_application_command_types_eval(char*);
-extern bool discord_application_command_types_cmp(enum discord_application_command_types, char*);
 
 
 // Application Command Option Type
@@ -1011,7 +1007,6 @@ extern bool discord_application_command_types_cmp(enum discord_application_comma
 
  *   * :code:`char* discord_application_command_option_types_print(enum discord_application_command_option_types code)`
  *   * :code:`enum discord_application_command_option_types discord_application_command_option_types_eval(char *code_as_str)`
- *   * :code:`bool discord_application_command_option_types_cmp(enum discord_application_command_option_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_application_command_option_types {
@@ -1028,7 +1023,6 @@ enum discord_application_command_option_types {
 };
 extern char* discord_application_command_option_types_print(enum discord_application_command_option_types);
 extern enum discord_application_command_option_types discord_application_command_option_types_eval(char*);
-extern bool discord_application_command_option_types_cmp(enum discord_application_command_option_types, char*);
 
 
 // Application Command Permission Type
@@ -1045,7 +1039,6 @@ extern bool discord_application_command_option_types_cmp(enum discord_applicatio
 
  *   * :code:`char* discord_application_command_permission_types_print(enum discord_application_command_permission_types code)`
  *   * :code:`enum discord_application_command_permission_types discord_application_command_permission_types_eval(char *code_as_str)`
- *   * :code:`bool discord_application_command_permission_types_cmp(enum discord_application_command_permission_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_application_command_permission_types {
@@ -1054,7 +1047,6 @@ enum discord_application_command_permission_types {
 };
 extern char* discord_application_command_permission_types_print(enum discord_application_command_permission_types);
 extern enum discord_application_command_permission_types discord_application_command_permission_types_eval(char*);
-extern bool discord_application_command_permission_types_cmp(enum discord_application_command_permission_types, char*);
 
 
 // Interaction Request Type
@@ -1071,7 +1063,6 @@ extern bool discord_application_command_permission_types_cmp(enum discord_applic
 
  *   * :code:`char* discord_interaction_request_types_print(enum discord_interaction_request_types code)`
  *   * :code:`enum discord_interaction_request_types discord_interaction_request_types_eval(char *code_as_str)`
- *   * :code:`bool discord_interaction_request_types_cmp(enum discord_interaction_request_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_interaction_request_types {
@@ -1081,7 +1072,6 @@ enum discord_interaction_request_types {
 };
 extern char* discord_interaction_request_types_print(enum discord_interaction_request_types);
 extern enum discord_interaction_request_types discord_interaction_request_types_eval(char*);
-extern bool discord_interaction_request_types_cmp(enum discord_interaction_request_types, char*);
 
 
 // Interaction Callback Type
@@ -1098,7 +1088,6 @@ extern bool discord_interaction_request_types_cmp(enum discord_interaction_reque
 
  *   * :code:`char* discord_interaction_callback_types_print(enum discord_interaction_callback_types code)`
  *   * :code:`enum discord_interaction_callback_types discord_interaction_callback_types_eval(char *code_as_str)`
- *   * :code:`bool discord_interaction_callback_types_cmp(enum discord_interaction_callback_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_interaction_callback_types {
@@ -1110,7 +1099,6 @@ enum discord_interaction_callback_types {
 };
 extern char* discord_interaction_callback_types_print(enum discord_interaction_callback_types);
 extern enum discord_interaction_callback_types discord_interaction_callback_types_eval(char*);
-extern bool discord_interaction_callback_types_cmp(enum discord_interaction_callback_types, char*);
 
 
 // Interaction Application Command Callback Data Flags
@@ -1127,7 +1115,6 @@ extern bool discord_interaction_callback_types_cmp(enum discord_interaction_call
 
  *   * :code:`char* discord_interaction_application_command_callback_data_flags_print(enum discord_interaction_application_command_callback_data_flags code)`
  *   * :code:`enum discord_interaction_application_command_callback_data_flags discord_interaction_application_command_callback_data_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_interaction_application_command_callback_data_flags_cmp(enum discord_interaction_application_command_callback_data_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_interaction_application_command_callback_data_flags {
@@ -1135,7 +1122,6 @@ enum discord_interaction_application_command_callback_data_flags {
 };
 extern char* discord_interaction_application_command_callback_data_flags_print(enum discord_interaction_application_command_callback_data_flags);
 extern enum discord_interaction_application_command_callback_data_flags discord_interaction_application_command_callback_data_flags_eval(char*);
-extern bool discord_interaction_application_command_callback_data_flags_cmp(enum discord_interaction_application_command_callback_data_flags, char*);
 /* This file is generated from specs/discord/audit_log.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/audit_log.json, Please don't edit it. */
 
@@ -1154,7 +1140,6 @@ extern bool discord_interaction_application_command_callback_data_flags_cmp(enum
 
  *   * :code:`char* discord_audit_log_events_print(enum discord_audit_log_events code)`
  *   * :code:`enum discord_audit_log_events discord_audit_log_events_eval(char *code_as_str)`
- *   * :code:`bool discord_audit_log_events_cmp(enum discord_audit_log_events code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_audit_log_events {
@@ -1195,7 +1180,6 @@ enum discord_audit_log_events {
 };
 extern char* discord_audit_log_events_print(enum discord_audit_log_events);
 extern enum discord_audit_log_events discord_audit_log_events_eval(char*);
-extern bool discord_audit_log_events_cmp(enum discord_audit_log_events, char*);
 /* This file is generated from specs/discord/channel.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/channel.json, Please don't edit it. */
 
@@ -1214,7 +1198,6 @@ extern bool discord_audit_log_events_cmp(enum discord_audit_log_events, char*);
 
  *   * :code:`char* discord_channel_types_print(enum discord_channel_types code)`
  *   * :code:`enum discord_channel_types discord_channel_types_eval(char *code_as_str)`
- *   * :code:`bool discord_channel_types_cmp(enum discord_channel_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_channel_types {
@@ -1232,7 +1215,6 @@ enum discord_channel_types {
 };
 extern char* discord_channel_types_print(enum discord_channel_types);
 extern enum discord_channel_types discord_channel_types_eval(char*);
-extern bool discord_channel_types_cmp(enum discord_channel_types, char*);
 
 
 // Message Sticker Format Types
@@ -1249,7 +1231,6 @@ extern bool discord_channel_types_cmp(enum discord_channel_types, char*);
 
  *   * :code:`char* discord_message_sticker_format_types_print(enum discord_message_sticker_format_types code)`
  *   * :code:`enum discord_message_sticker_format_types discord_message_sticker_format_types_eval(char *code_as_str)`
- *   * :code:`bool discord_message_sticker_format_types_cmp(enum discord_message_sticker_format_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_message_sticker_format_types {
@@ -1259,7 +1240,6 @@ enum discord_message_sticker_format_types {
 };
 extern char* discord_message_sticker_format_types_print(enum discord_message_sticker_format_types);
 extern enum discord_message_sticker_format_types discord_message_sticker_format_types_eval(char*);
-extern bool discord_message_sticker_format_types_cmp(enum discord_message_sticker_format_types, char*);
 
 
 // Message Flags
@@ -1276,7 +1256,6 @@ extern bool discord_message_sticker_format_types_cmp(enum discord_message_sticke
 
  *   * :code:`char* discord_message_flags_print(enum discord_message_flags code)`
  *   * :code:`enum discord_message_flags discord_message_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_message_flags_cmp(enum discord_message_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_message_flags {
@@ -1288,7 +1267,6 @@ enum discord_message_flags {
 };
 extern char* discord_message_flags_print(enum discord_message_flags);
 extern enum discord_message_flags discord_message_flags_eval(char*);
-extern bool discord_message_flags_cmp(enum discord_message_flags, char*);
 
 
 // Message Activity Types
@@ -1305,7 +1283,6 @@ extern bool discord_message_flags_cmp(enum discord_message_flags, char*);
 
  *   * :code:`char* discord_message_activity_types_print(enum discord_message_activity_types code)`
  *   * :code:`enum discord_message_activity_types discord_message_activity_types_eval(char *code_as_str)`
- *   * :code:`bool discord_message_activity_types_cmp(enum discord_message_activity_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_message_activity_types {
@@ -1316,7 +1293,6 @@ enum discord_message_activity_types {
 };
 extern char* discord_message_activity_types_print(enum discord_message_activity_types);
 extern enum discord_message_activity_types discord_message_activity_types_eval(char*);
-extern bool discord_message_activity_types_cmp(enum discord_message_activity_types, char*);
 
 
 // Message Types
@@ -1333,7 +1309,6 @@ extern bool discord_message_activity_types_cmp(enum discord_message_activity_typ
 
  *   * :code:`char* discord_message_types_print(enum discord_message_types code)`
  *   * :code:`enum discord_message_types discord_message_types_eval(char *code_as_str)`
- *   * :code:`bool discord_message_types_cmp(enum discord_message_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_message_types {
@@ -1357,7 +1332,6 @@ enum discord_message_types {
 };
 extern char* discord_message_types_print(enum discord_message_types);
 extern enum discord_message_types discord_message_types_eval(char*);
-extern bool discord_message_types_cmp(enum discord_message_types, char*);
 /* This file is generated from specs/discord/emoji.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/emoji.json, Please don't edit it. */
 /* This file is generated from specs/discord/gateway.json, Please don't edit it. */
@@ -1377,7 +1351,6 @@ extern bool discord_message_types_cmp(enum discord_message_types, char*);
 
  *   * :code:`char* discord_gateway_close_opcodes_print(enum discord_gateway_close_opcodes code)`
  *   * :code:`enum discord_gateway_close_opcodes discord_gateway_close_opcodes_eval(char *code_as_str)`
- *   * :code:`bool discord_gateway_close_opcodes_cmp(enum discord_gateway_close_opcodes code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_gateway_close_opcodes {
@@ -1398,7 +1371,6 @@ enum discord_gateway_close_opcodes {
 };
 extern char* discord_gateway_close_opcodes_print(enum discord_gateway_close_opcodes);
 extern enum discord_gateway_close_opcodes discord_gateway_close_opcodes_eval(char*);
-extern bool discord_gateway_close_opcodes_cmp(enum discord_gateway_close_opcodes, char*);
 
 
 // Gateway Intents
@@ -1415,7 +1387,6 @@ extern bool discord_gateway_close_opcodes_cmp(enum discord_gateway_close_opcodes
 
  *   * :code:`char* discord_gateway_intents_print(enum discord_gateway_intents code)`
  *   * :code:`enum discord_gateway_intents discord_gateway_intents_eval(char *code_as_str)`
- *   * :code:`bool discord_gateway_intents_cmp(enum discord_gateway_intents code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_gateway_intents {
@@ -1437,7 +1408,6 @@ enum discord_gateway_intents {
 };
 extern char* discord_gateway_intents_print(enum discord_gateway_intents);
 extern enum discord_gateway_intents discord_gateway_intents_eval(char*);
-extern bool discord_gateway_intents_cmp(enum discord_gateway_intents, char*);
 
 
 // Gateway Opcodes
@@ -1454,7 +1424,6 @@ extern bool discord_gateway_intents_cmp(enum discord_gateway_intents, char*);
 
  *   * :code:`char* discord_gateway_opcodes_print(enum discord_gateway_opcodes code)`
  *   * :code:`enum discord_gateway_opcodes discord_gateway_opcodes_eval(char *code_as_str)`
- *   * :code:`bool discord_gateway_opcodes_cmp(enum discord_gateway_opcodes code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_gateway_opcodes {
@@ -1472,7 +1441,6 @@ enum discord_gateway_opcodes {
 };
 extern char* discord_gateway_opcodes_print(enum discord_gateway_opcodes);
 extern enum discord_gateway_opcodes discord_gateway_opcodes_eval(char*);
-extern bool discord_gateway_opcodes_cmp(enum discord_gateway_opcodes, char*);
 
 
 // Gateway Events
@@ -1489,7 +1457,6 @@ extern bool discord_gateway_opcodes_cmp(enum discord_gateway_opcodes, char*);
 
  *   * :code:`char* discord_gateway_events_print(enum discord_gateway_events code)`
  *   * :code:`enum discord_gateway_events discord_gateway_events_eval(char *code_as_str)`
- *   * :code:`bool discord_gateway_events_cmp(enum discord_gateway_events code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_gateway_events {
@@ -1550,7 +1517,6 @@ enum discord_gateway_events {
 };
 extern char* discord_gateway_events_print(enum discord_gateway_events);
 extern enum discord_gateway_events discord_gateway_events_eval(char*);
-extern bool discord_gateway_events_cmp(enum discord_gateway_events, char*);
 
 
 // Activity Types
@@ -1567,7 +1533,6 @@ extern bool discord_gateway_events_cmp(enum discord_gateway_events, char*);
 
  *   * :code:`char* discord_gateway_activity_types_print(enum discord_gateway_activity_types code)`
  *   * :code:`enum discord_gateway_activity_types discord_gateway_activity_types_eval(char *code_as_str)`
- *   * :code:`bool discord_gateway_activity_types_cmp(enum discord_gateway_activity_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_gateway_activity_types {
@@ -1579,7 +1544,6 @@ enum discord_gateway_activity_types {
 };
 extern char* discord_gateway_activity_types_print(enum discord_gateway_activity_types);
 extern enum discord_gateway_activity_types discord_gateway_activity_types_eval(char*);
-extern bool discord_gateway_activity_types_cmp(enum discord_gateway_activity_types, char*);
 /* This file is generated from specs/discord/guild-template.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/guild-template.json, Please don't edit it. */
 /* This file is generated from specs/discord/guild.endpoints-params.json, Please don't edit it. */
@@ -1600,7 +1564,6 @@ extern bool discord_gateway_activity_types_cmp(enum discord_gateway_activity_typ
 
  *   * :code:`char* discord_guild_default_message_notification_level_print(enum discord_guild_default_message_notification_level code)`
  *   * :code:`enum discord_guild_default_message_notification_level discord_guild_default_message_notification_level_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_default_message_notification_level_cmp(enum discord_guild_default_message_notification_level code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_default_message_notification_level {
@@ -1609,7 +1572,6 @@ enum discord_guild_default_message_notification_level {
 };
 extern char* discord_guild_default_message_notification_level_print(enum discord_guild_default_message_notification_level);
 extern enum discord_guild_default_message_notification_level discord_guild_default_message_notification_level_eval(char*);
-extern bool discord_guild_default_message_notification_level_cmp(enum discord_guild_default_message_notification_level, char*);
 
 
 // Explicit Content Filter Level
@@ -1626,7 +1588,6 @@ extern bool discord_guild_default_message_notification_level_cmp(enum discord_gu
 
  *   * :code:`char* discord_guild_explicit_content_filter_level_print(enum discord_guild_explicit_content_filter_level code)`
  *   * :code:`enum discord_guild_explicit_content_filter_level discord_guild_explicit_content_filter_level_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_explicit_content_filter_level_cmp(enum discord_guild_explicit_content_filter_level code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_explicit_content_filter_level {
@@ -1636,7 +1597,6 @@ enum discord_guild_explicit_content_filter_level {
 };
 extern char* discord_guild_explicit_content_filter_level_print(enum discord_guild_explicit_content_filter_level);
 extern enum discord_guild_explicit_content_filter_level discord_guild_explicit_content_filter_level_eval(char*);
-extern bool discord_guild_explicit_content_filter_level_cmp(enum discord_guild_explicit_content_filter_level, char*);
 
 
 // MFA Level
@@ -1653,7 +1613,6 @@ extern bool discord_guild_explicit_content_filter_level_cmp(enum discord_guild_e
 
  *   * :code:`char* discord_guild_mfa_level_print(enum discord_guild_mfa_level code)`
  *   * :code:`enum discord_guild_mfa_level discord_guild_mfa_level_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_mfa_level_cmp(enum discord_guild_mfa_level code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_mfa_level {
@@ -1662,7 +1621,6 @@ enum discord_guild_mfa_level {
 };
 extern char* discord_guild_mfa_level_print(enum discord_guild_mfa_level);
 extern enum discord_guild_mfa_level discord_guild_mfa_level_eval(char*);
-extern bool discord_guild_mfa_level_cmp(enum discord_guild_mfa_level, char*);
 
 
 // Verification Level
@@ -1679,7 +1637,6 @@ extern bool discord_guild_mfa_level_cmp(enum discord_guild_mfa_level, char*);
 
  *   * :code:`char* discord_guild_verification_level_print(enum discord_guild_verification_level code)`
  *   * :code:`enum discord_guild_verification_level discord_guild_verification_level_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_verification_level_cmp(enum discord_guild_verification_level code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_verification_level {
@@ -1691,7 +1648,6 @@ enum discord_guild_verification_level {
 };
 extern char* discord_guild_verification_level_print(enum discord_guild_verification_level);
 extern enum discord_guild_verification_level discord_guild_verification_level_eval(char*);
-extern bool discord_guild_verification_level_cmp(enum discord_guild_verification_level, char*);
 
 
 // Premium Tier
@@ -1708,7 +1664,6 @@ extern bool discord_guild_verification_level_cmp(enum discord_guild_verification
 
  *   * :code:`char* discord_guild_premium_tier_print(enum discord_guild_premium_tier code)`
  *   * :code:`enum discord_guild_premium_tier discord_guild_premium_tier_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_premium_tier_cmp(enum discord_guild_premium_tier code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_premium_tier {
@@ -1719,7 +1674,6 @@ enum discord_guild_premium_tier {
 };
 extern char* discord_guild_premium_tier_print(enum discord_guild_premium_tier);
 extern enum discord_guild_premium_tier discord_guild_premium_tier_eval(char*);
-extern bool discord_guild_premium_tier_cmp(enum discord_guild_premium_tier, char*);
 
 
 // System Channel Flags
@@ -1736,7 +1690,6 @@ extern bool discord_guild_premium_tier_cmp(enum discord_guild_premium_tier, char
 
  *   * :code:`char* discord_guild_system_channel_flags_print(enum discord_guild_system_channel_flags code)`
  *   * :code:`enum discord_guild_system_channel_flags discord_guild_system_channel_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_system_channel_flags_cmp(enum discord_guild_system_channel_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_system_channel_flags {
@@ -1745,7 +1698,6 @@ enum discord_guild_system_channel_flags {
 };
 extern char* discord_guild_system_channel_flags_print(enum discord_guild_system_channel_flags);
 extern enum discord_guild_system_channel_flags discord_guild_system_channel_flags_eval(char*);
-extern bool discord_guild_system_channel_flags_cmp(enum discord_guild_system_channel_flags, char*);
 
 
 // Guild Features
@@ -1762,7 +1714,6 @@ extern bool discord_guild_system_channel_flags_cmp(enum discord_guild_system_cha
 
  *   * :code:`char* discord_guild_features_print(enum discord_guild_features code)`
  *   * :code:`enum discord_guild_features discord_guild_features_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_features_cmp(enum discord_guild_features code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_features {
@@ -1784,7 +1735,6 @@ enum discord_guild_features {
 };
 extern char* discord_guild_features_print(enum discord_guild_features);
 extern enum discord_guild_features discord_guild_features_eval(char*);
-extern bool discord_guild_features_cmp(enum discord_guild_features, char*);
 
 
 // Integration Expire Behaviors
@@ -1801,7 +1751,6 @@ extern bool discord_guild_features_cmp(enum discord_guild_features, char*);
 
  *   * :code:`char* discord_guild_integration_expire_behaviors_print(enum discord_guild_integration_expire_behaviors code)`
  *   * :code:`enum discord_guild_integration_expire_behaviors discord_guild_integration_expire_behaviors_eval(char *code_as_str)`
- *   * :code:`bool discord_guild_integration_expire_behaviors_cmp(enum discord_guild_integration_expire_behaviors code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_guild_integration_expire_behaviors {
@@ -1810,7 +1759,6 @@ enum discord_guild_integration_expire_behaviors {
 };
 extern char* discord_guild_integration_expire_behaviors_print(enum discord_guild_integration_expire_behaviors);
 extern enum discord_guild_integration_expire_behaviors discord_guild_integration_expire_behaviors_eval(char*);
-extern bool discord_guild_integration_expire_behaviors_cmp(enum discord_guild_integration_expire_behaviors, char*);
 /* This file is generated from specs/discord/invite.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/invite.json, Please don't edit it. */
 
@@ -1829,7 +1777,6 @@ extern bool discord_guild_integration_expire_behaviors_cmp(enum discord_guild_in
 
  *   * :code:`char* discord_invite_target_user_types_print(enum discord_invite_target_user_types code)`
  *   * :code:`enum discord_invite_target_user_types discord_invite_target_user_types_eval(char *code_as_str)`
- *   * :code:`bool discord_invite_target_user_types_cmp(enum discord_invite_target_user_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_invite_target_user_types {
@@ -1837,7 +1784,6 @@ enum discord_invite_target_user_types {
 };
 extern char* discord_invite_target_user_types_print(enum discord_invite_target_user_types);
 extern enum discord_invite_target_user_types discord_invite_target_user_types_eval(char*);
-extern bool discord_invite_target_user_types_cmp(enum discord_invite_target_user_types, char*);
 /* This file is generated from specs/discord/message_components.json, Please don't edit it. */
 
 
@@ -1855,7 +1801,6 @@ extern bool discord_invite_target_user_types_cmp(enum discord_invite_target_user
 
  *   * :code:`char* discord_component_types_print(enum discord_component_types code)`
  *   * :code:`enum discord_component_types discord_component_types_eval(char *code_as_str)`
- *   * :code:`bool discord_component_types_cmp(enum discord_component_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_component_types {
@@ -1865,7 +1810,6 @@ enum discord_component_types {
 };
 extern char* discord_component_types_print(enum discord_component_types);
 extern enum discord_component_types discord_component_types_eval(char*);
-extern bool discord_component_types_cmp(enum discord_component_types, char*);
 
 
 // Button Styles
@@ -1882,7 +1826,6 @@ extern bool discord_component_types_cmp(enum discord_component_types, char*);
 
  *   * :code:`char* discord_button_styles_print(enum discord_button_styles code)`
  *   * :code:`enum discord_button_styles discord_button_styles_eval(char *code_as_str)`
- *   * :code:`bool discord_button_styles_cmp(enum discord_button_styles code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_button_styles {
@@ -1894,7 +1837,6 @@ enum discord_button_styles {
 };
 extern char* discord_button_styles_print(enum discord_button_styles);
 extern enum discord_button_styles discord_button_styles_eval(char*);
-extern bool discord_button_styles_cmp(enum discord_button_styles, char*);
 /* This file is generated from specs/discord/permissions.json, Please don't edit it. */
 
 
@@ -1910,7 +1852,6 @@ extern bool discord_button_styles_cmp(enum discord_button_styles, char*);
 
  *   * :code:`char* discord_permissions_bitwise_flags_print(enum discord_permissions_bitwise_flags code)`
  *   * :code:`enum discord_permissions_bitwise_flags discord_permissions_bitwise_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_permissions_bitwise_flags_cmp(enum discord_permissions_bitwise_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_permissions_bitwise_flags {
@@ -1949,7 +1890,6 @@ enum discord_permissions_bitwise_flags {
 };
 extern char* discord_permissions_bitwise_flags_print(enum discord_permissions_bitwise_flags);
 extern enum discord_permissions_bitwise_flags discord_permissions_bitwise_flags_eval(char*);
-extern bool discord_permissions_bitwise_flags_cmp(enum discord_permissions_bitwise_flags, char*);
 /* This file is generated from specs/discord/user.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/user.json, Please don't edit it. */
 
@@ -1968,7 +1908,6 @@ extern bool discord_permissions_bitwise_flags_cmp(enum discord_permissions_bitwi
 
  *   * :code:`char* discord_user_flags_print(enum discord_user_flags code)`
  *   * :code:`enum discord_user_flags discord_user_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_user_flags_cmp(enum discord_user_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_user_flags {
@@ -1988,7 +1927,6 @@ enum discord_user_flags {
 };
 extern char* discord_user_flags_print(enum discord_user_flags);
 extern enum discord_user_flags discord_user_flags_eval(char*);
-extern bool discord_user_flags_cmp(enum discord_user_flags, char*);
 
 
 // Premium Types
@@ -2005,7 +1943,6 @@ extern bool discord_user_flags_cmp(enum discord_user_flags, char*);
 
  *   * :code:`char* discord_user_premium_types_print(enum discord_user_premium_types code)`
  *   * :code:`enum discord_user_premium_types discord_user_premium_types_eval(char *code_as_str)`
- *   * :code:`bool discord_user_premium_types_cmp(enum discord_user_premium_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_user_premium_types {
@@ -2014,7 +1951,6 @@ enum discord_user_premium_types {
 };
 extern char* discord_user_premium_types_print(enum discord_user_premium_types);
 extern enum discord_user_premium_types discord_user_premium_types_eval(char*);
-extern bool discord_user_premium_types_cmp(enum discord_user_premium_types, char*);
 
 
 // Visbility Types
@@ -2031,7 +1967,6 @@ extern bool discord_user_premium_types_cmp(enum discord_user_premium_types, char
 
  *   * :code:`char* discord_user_connection_visibility_types_print(enum discord_user_connection_visibility_types code)`
  *   * :code:`enum discord_user_connection_visibility_types discord_user_connection_visibility_types_eval(char *code_as_str)`
- *   * :code:`bool discord_user_connection_visibility_types_cmp(enum discord_user_connection_visibility_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_user_connection_visibility_types {
@@ -2040,7 +1975,6 @@ enum discord_user_connection_visibility_types {
 };
 extern char* discord_user_connection_visibility_types_print(enum discord_user_connection_visibility_types);
 extern enum discord_user_connection_visibility_types discord_user_connection_visibility_types_eval(char*);
-extern bool discord_user_connection_visibility_types_cmp(enum discord_user_connection_visibility_types, char*);
 /* This file is generated from specs/discord/voice-connections.json, Please don't edit it. */
 
 
@@ -2058,7 +1992,6 @@ extern bool discord_user_connection_visibility_types_cmp(enum discord_user_conne
 
  *   * :code:`char* discord_voice_close_opcodes_print(enum discord_voice_close_opcodes code)`
  *   * :code:`enum discord_voice_close_opcodes discord_voice_close_opcodes_eval(char *code_as_str)`
- *   * :code:`bool discord_voice_close_opcodes_cmp(enum discord_voice_close_opcodes code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_voice_close_opcodes {
@@ -2077,7 +2010,6 @@ enum discord_voice_close_opcodes {
 };
 extern char* discord_voice_close_opcodes_print(enum discord_voice_close_opcodes);
 extern enum discord_voice_close_opcodes discord_voice_close_opcodes_eval(char*);
-extern bool discord_voice_close_opcodes_cmp(enum discord_voice_close_opcodes, char*);
 
 
 // Voice Opcodes
@@ -2094,7 +2026,6 @@ extern bool discord_voice_close_opcodes_cmp(enum discord_voice_close_opcodes, ch
 
  *   * :code:`char* discord_voice_opcodes_print(enum discord_voice_opcodes code)`
  *   * :code:`enum discord_voice_opcodes discord_voice_opcodes_eval(char *code_as_str)`
- *   * :code:`bool discord_voice_opcodes_cmp(enum discord_voice_opcodes code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_voice_opcodes {
@@ -2113,7 +2044,6 @@ enum discord_voice_opcodes {
 };
 extern char* discord_voice_opcodes_print(enum discord_voice_opcodes);
 extern enum discord_voice_opcodes discord_voice_opcodes_eval(char*);
-extern bool discord_voice_opcodes_cmp(enum discord_voice_opcodes, char*);
 
 
 // Voice Speaking Flags
@@ -2130,7 +2060,6 @@ extern bool discord_voice_opcodes_cmp(enum discord_voice_opcodes, char*);
 
  *   * :code:`char* discord_voice_speaking_flags_print(enum discord_voice_speaking_flags code)`
  *   * :code:`enum discord_voice_speaking_flags discord_voice_speaking_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_voice_speaking_flags_cmp(enum discord_voice_speaking_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_voice_speaking_flags {
@@ -2140,7 +2069,6 @@ enum discord_voice_speaking_flags {
 };
 extern char* discord_voice_speaking_flags_print(enum discord_voice_speaking_flags);
 extern enum discord_voice_speaking_flags discord_voice_speaking_flags_eval(char*);
-extern bool discord_voice_speaking_flags_cmp(enum discord_voice_speaking_flags, char*);
 /* This file is generated from specs/discord/voice.json, Please don't edit it. */
 /* This file is generated from specs/discord/webhook.endpoints-params.json, Please don't edit it. */
 /* This file is generated from specs/discord/webhook.json, Please don't edit it. */
@@ -2160,7 +2088,6 @@ extern bool discord_voice_speaking_flags_cmp(enum discord_voice_speaking_flags, 
 
  *   * :code:`char* discord_webhook_types_print(enum discord_webhook_types code)`
  *   * :code:`enum discord_webhook_types discord_webhook_types_eval(char *code_as_str)`
- *   * :code:`bool discord_webhook_types_cmp(enum discord_webhook_types code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_webhook_types {
@@ -2169,7 +2096,6 @@ enum discord_webhook_types {
 };
 extern char* discord_webhook_types_print(enum discord_webhook_types);
 extern enum discord_webhook_types discord_webhook_types_eval(char*);
-extern bool discord_webhook_types_cmp(enum discord_webhook_types, char*);
 /* This file is generated from specs/discord/application.json, Please don't edit it. */
 
 // Identify Structure

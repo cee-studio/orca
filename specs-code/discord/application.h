@@ -138,7 +138,6 @@ extern size_t discord_application_identify_list_to_json(char *str, size_t len, s
 
  *   * :code:`char* discord_application_flags_print(enum discord_application_flags code)`
  *   * :code:`enum discord_application_flags discord_application_flags_eval(char *code_as_str)`
- *   * :code:`bool discord_application_flags_cmp(enum discord_application_flags code, char *code_as_str)`
  * @endverbatim
  */
 enum discord_application_flags {
@@ -151,4 +150,3 @@ enum discord_application_flags {
 };
 extern char* discord_application_flags_print(enum discord_application_flags);
 extern enum discord_application_flags discord_application_flags_eval(char*);
-extern bool discord_application_flags_cmp(enum discord_application_flags, char*);

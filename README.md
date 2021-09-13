@@ -168,6 +168,12 @@ Installed headers must be prefixed with `orca/` like so:
 #include <orca/github.h>
 ```
 
+### Standalone executable
+
+```bash
+$ gcc myBot.c -o myBot.out -ldiscord -lcurl -lcrypto -lpthread -lm
+```
+
 ## Debugging Memory Errors
 
 * The recommended method: 

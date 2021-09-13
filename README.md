@@ -116,7 +116,7 @@ $ make
 The following outlines the default fields of `config.json`
 ```js
 {
-  "logging": {               // logging directives
+  "logging": { // logging directives
     "level": "trace",        // trace, debug, info, warn, error, fatal
     "filename": "bot.log",   // the output file
     "quiet": false,          // change to true to disable logs in console
@@ -125,9 +125,10 @@ The following outlines the default fields of `config.json`
     "http": {
       "enable": true,        // generate http specific logging
       "filename": "http.log" // the output file
-    }
+    },
+    "disable_modules": ["WEBSOCKETS", "USER_AGENT"] // disable logging for these modules
   },
-  ... // API specific directives (discord, slack, github, etc)
+  ...         // API directives (discord, slack, github, etc)
 }
 ```
 

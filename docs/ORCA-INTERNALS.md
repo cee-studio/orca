@@ -28,11 +28,6 @@ These two folders and their contents are some of the most important parts of
 Orca's internal workings. These two folders, or 'the specs' as you may hear
 them be called, are a method of code generation.
 
-## Specs, and Specs-code
-These two folders and their contents are some of the most important parts of
-Orca's internal workings. These two folders, or 'the specs,' are a method of 
-code generation.
-
 ``specs`` is the folder where many 'templates' are stored for structures,
 enumerations, and more. They are written in JSON and are used to generate their
 C code equivalents. This system is better than writing the structures and

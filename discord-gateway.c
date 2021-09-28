@@ -104,7 +104,7 @@ send_resume(struct discord_gateway *gw)
   struct ws_info info={0};
   ws_send_text(gw->ws, &info, payload, ret);
 
-  logconf_info(&gw->conf, ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN)" RESUME (%d bytes) [@@@_%zu_@@@]", ret, info.loginfo.counter);
+  logconf_info(&gw->conf, ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN)" RESUME (%d bytes) [@@@_%zu_@@@]", ret, info.loginfo.counter + 1);
 }
 
 static void
@@ -130,7 +130,7 @@ send_identify(struct discord_gateway *gw)
   struct ws_info info={0};
   ws_send_text(gw->ws, &info, payload, ret);
 
-  logconf_info(&gw->conf, ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN)" IDENTIFY (%d bytes) [@@@_%zu_@@@]", ret, info.loginfo.counter);
+  logconf_info(&gw->conf, ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN)" IDENTIFY (%d bytes) [@@@_%zu_@@@]", ret, info.loginfo.counter + 1);
   
   //get timestamp for this identify
   gw->session.identify_tstamp = ws_timestamp(gw->ws);
@@ -1168,7 +1168,7 @@ send_heartbeat(struct discord_gateway *gw)
   struct ws_info info={0};
   ws_send_text(gw->ws, &info, payload, ret);
 
-  logconf_info(&gw->conf, ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN)" HEARTBEAT (%d bytes) [@@@_%zu_@@@]", ret, info.loginfo.counter);
+  logconf_info(&gw->conf, ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN)" HEARTBEAT (%d bytes) [@@@_%zu_@@@]", ret, info.loginfo.counter + 1);
 }
 
 static void noop_idle_cb(struct discord *a, const struct discord_user *b)

@@ -104,7 +104,7 @@ Next, we verify that the 'owner' and 'repository' strings are provided. These ar
 for extracting topics from the correct repository, and so we must not allow the function to
 run unless both are provided. Depending on the nature of the error, it may be desirable to
 return something other than ``ORCA_MISSING_PARAMETER``. However, for most purposes, this is
-fine. If there is a need for another error code, they can be found or added at ``/common/types.h``.
+fine. If there is a need for another error code, they can be found or added at ``common/types.h``.
 
 When the function ends, we return ``ORCA_OK`` to signal that 'everything went well.'
 
@@ -117,5 +117,31 @@ If we want this to be useful for users, it would be best to 'output' the respons
 to the user, but parsed in a way that is easy to use for the user. To output the information,
 however, we will need a location to output it **to.**
 
+As said previously, we will have to utilize the ``specs`` system to generate structures that
+can be used to store the topics in. Create a file in ``specs/github`` called ``repository.json.``
+In this file, put the following code inside of it:
+
+```json
+{
+    "title":"Topics Object",
+    "namespace": ["github"],
+    "comment": "https://docs.github.com/en/rest/reference/repos#get-all-repository-topics",
+    "defs":
+    [
+        {
+            "title": "Topic Structure",
+            "struct": "topic",
+            "fields":
+            [
+                { "name": "names", "type":{ "base":"char", "dec":"**"}}
+            ]
+        }
+    ]
+}
+```
+
+This may seem complicated at first, but in reality it is quite simple. As explained at the
+start of this guide, this JSON will be used to generate structures, enumerations, and functions
+that are used internally and by the user.
 
 If you have any questions, feel free to join our [Discord server](https://discord.gg/nBUqrWf).

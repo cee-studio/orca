@@ -45,8 +45,6 @@ to demonstrate said feature, as a sort of makeshift test for other users and dev
 `discord-*.c`, `github-*.c`, `reddit-*.c`, and `slack-*.c` are the source 
 files that handle all the logic behind their individual API wrapper.
 
-<!-- THIS IS A WORK IN PROGRESS
-
 # Choosing an Endpoint
 
 Now that the boring reading stuff is out of the way, we can get to the fun
@@ -60,6 +58,25 @@ documentation. This will at least require a simple Google search, but it may
 require a bit of digging in some occasions. For this guide, we can use the 
 GitHub API reference found [here](https://docs.github.com/en/rest/reference).
 
--->
+For the purposes of this guide, we will be implementing [this](https://docs.github.com/en/rest/reference/repos#get-all-repository-topics) endpoint, which
+will allow the programmer to display the topics that are assigned to a repository.
+
+# First steps
+Now that we have the endpoint we want to implement, we can begin writing code. For
+starters, we will want to edit the ``github.h`` header file so that others can use
+our code.
+
+```c
+ORCAcode github_get_repository_topics(struct github *client, char* owner, char* repository);
+```
+
+Here, we define a function that returns an ``ORCACode``, and takes a structure named ``github``.
+``ORCAcode`` is an integer that represents an error code from the request. The ``github``
+structure, called the ``client`` in this function, acts as a storage device for information
+that is required for sending requests.
+
+Once this is added into ``github.h``, we can begin writing the function code that will
+make it work underneath. Here is a skeleton of the function, and an
+
 
 If you have any questions, feel free to join our [Discord server](https://discord.gg/nBUqrWf).

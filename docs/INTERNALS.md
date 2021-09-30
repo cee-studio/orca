@@ -59,7 +59,7 @@ require a bit of digging in some occasions. For this guide, we can use the
 GitHub API reference found [here](https://docs.github.com/en/rest/reference).
 
 For the purposes of this guide, we will be implementing [this](https://docs.github.com/en/rest/reference/repos#get-all-repository-topics) endpoint, which
-will allow the programmer to display the topics that are assigned to a repository.
+will allow the programmer to retrieve the topics that are assigned to a repository.
 
 # First steps
 Now that we have the endpoint we want to implement, we can begin writing code. For
@@ -76,7 +76,33 @@ structure, called the ``client`` in this function, acts as a storage device for 
 that is required for sending requests.
 
 Once this is added into ``github.h``, we can begin writing the function code that will
-make it work underneath. Here is a skeleton of the function, and an
+make it work underneath. Here is a skeleton of the function:
+
+```c
+ORCAcode github_get_repository_topics(struct github *client, char* owner, char* repository) {
+    log_info("===github-get-repository-topics===");
+
+    if (!owner) {
+        log_error("missing 'owner'");
+        return ORCA_MISSING_PARAMETER;
+    }
+    
+    if (!repository) {
+        log_error("missing 'repository'");
+        return ORCA_MISSING_PARAMETER;
+    }
+
+    return ORCA_OK;
+}
+```
+
+For starters, we make sure that the function that is being executed is logged. The reason
+we do this is simply for purposes of debugging. Knowing **where** functions are running is
+critical in debugging.
+
+Next, we verify that the 'owner' and 'repository' strings are provided. These are required
+for extracting topics from the correct repository, and so we must not allow the function to
+run unless both are provided.
 
 
 If you have any questions, feel free to join our [Discord server](https://discord.gg/nBUqrWf).

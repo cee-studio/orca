@@ -102,7 +102,9 @@ critical in debugging.
 
 Next, we verify that the 'owner' and 'repository' strings are provided. These are required
 for extracting topics from the correct repository, and so we must not allow the function to
-run unless both are provided.
+run unless both are provided. Depending on the nature of the error, it may be desirable to
+return something other than ``ORCA_MISSING_PARAMETER``. However, for most purposes, this is
+fine. If there is a need for another error code, they can be found or added at ``/common/types.h``.
 
 
 If you have any questions, feel free to join our [Discord server](https://discord.gg/nBUqrWf).

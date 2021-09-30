@@ -106,5 +106,16 @@ run unless both are provided. Depending on the nature of the error, it may be de
 return something other than ``ORCA_MISSING_PARAMETER``. However, for most purposes, this is
 fine. If there is a need for another error code, they can be found or added at ``/common/types.h``.
 
+When the function ends, we return ``ORCA_OK`` to signal that 'everything went well.'
+
+# Extending our function
+Now that the base skeleton is complete, we can continue on in finishing the function.
+To start this chapter off, we will be utilizing the ``specs`` system described near the start
+of this guide.
+
+If we want this to be useful for users, it would be best to 'output' the response information
+to the user, but parsed in a way that is easy to use for the user. To output the information,
+however, we will need a location to output it **to.**
+
 
 If you have any questions, feel free to join our [Discord server](https://discord.gg/nBUqrWf).

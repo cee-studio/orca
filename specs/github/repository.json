@@ -9,7 +9,7 @@
             "struct": "topic",
             "fields":
             [
-                { "name": "names", "type":{ "base":"char", "dec":"**"}}
+                { "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}
             ]
         }
     ]

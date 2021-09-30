@@ -12,6 +12,8 @@ list="README.md
 debug.h
 cee-sqlite3.h
 cee-sqlite3.c
+cee-sqlite3-2.h
+cee-sqlite3-2.c
 jsmn.h
 json-actor-boxed.c
 json-actor-boxed.h
@@ -47,7 +49,9 @@ uthash.h
 utlist.h
 utringbuffer.h
 utstack.h
-utstring.h"
+utstring.h
+HttpStatusCodes_C.h
+"
 
 mkdir -p $mypath/../cee-utils
 pushd $mypath/../cee-utils

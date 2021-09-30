@@ -133,7 +133,7 @@ In this file, put the following code inside of it:
             "struct": "topic",
             "fields":
             [
-                { "name": "names", "type":{ "base":"char", "dec":"**"}}
+                { "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}
             ]
         }
     ]

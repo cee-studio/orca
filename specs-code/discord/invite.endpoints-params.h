@@ -5,8 +5,8 @@
  */
 
 
-// Get Invite
-// defined at specs/discord/invite.endpoints-params.json:9:22
+/* Get Invite */
+/* defined at specs/discord/invite.endpoints-params.json:9:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -35,17 +35,17 @@
 struct discord_get_invite_params {
   /* specs/discord/invite.endpoints-params.json:12:20
      '{ "name": "with_counts", "type":{ "base":"bool" }, "comment":"whether the invite should contain approximate member counts"}' */
-  bool with_counts; ///< whether the invite should contain approximate member counts
+  bool with_counts; /** whether the invite should contain approximate member counts */
 
   /* specs/discord/invite.endpoints-params.json:13:20
      '{ "name": "with_expiration", "type":{ "base":"bool" }, "comment":"whether the invite should contain the expiration date"}' */
-  bool with_expiration; ///< whether the invite should contain the expiration date
+  bool with_expiration; /** whether the invite should contain the expiration date */
 
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
   struct {
     bool enable_arg_switches;
     bool enable_record_defined;
@@ -53,8 +53,8 @@ struct discord_get_invite_params {
     void *arg_switches[2];
     void *record_defined[2];
     void *record_null[2];
-  } __M; // metadata
-/// @endcond
+  } __M; /**< metadata */
+/** @endcond */
 };
 extern void discord_get_invite_params_cleanup_v(void *p);
 extern void discord_get_invite_params_cleanup(struct discord_get_invite_params *p);

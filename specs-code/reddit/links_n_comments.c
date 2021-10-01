@@ -15,7 +15,7 @@
 
 void reddit_comment_params_from_json(char *json, size_t len, struct reddit_comment_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct reddit_comment_params *p = *pp;
@@ -181,7 +181,7 @@ void reddit_comment_params_cleanup(struct reddit_comment_params *d) {
     free(d->api_type);
   /* specs/reddit/links_n_comments.json:14:20
      '{ "name": "return_rtjson", "type":{ "base":"bool" }, "comment":"boolean value" }' */
-  // p->return_rtjson is a scalar
+  /* p->return_rtjson is a scalar */
   /* specs/reddit/links_n_comments.json:15:20
      '{ "name": "richtext_json", "type":{ "base":"char", "dec":"*" }, "comment":"JSON data" }' */
   if (d->richtext_json)

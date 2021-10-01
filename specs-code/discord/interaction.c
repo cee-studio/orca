@@ -15,7 +15,7 @@
 
 void discord_interaction_from_json(char *json, size_t len, struct discord_interaction **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_interaction *p = *pp;
@@ -248,13 +248,13 @@ size_t discord_interaction_list_to_json_v(char *str, size_t len, void *p){
 void discord_interaction_cleanup(struct discord_interaction *d) {
   /* specs/discord/interaction.json:12:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the interaction"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/interaction.json:13:18
      '{"name":"application_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the application this iteraction is for"}' */
-  // p->application_id is a scalar
+  /* p->application_id is a scalar */
   /* specs/discord/interaction.json:14:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_interaction_types"}, "comment":"the request type of the interaction"}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/interaction.json:15:18
      '{"name":"data", "type":{"base":"struct discord_interaction_data", "dec":"*"}, "option":true, "comment":"the command data payload", "inject_if_not":null}' */
   if (d->data) {
@@ -263,10 +263,10 @@ void discord_interaction_cleanup(struct discord_interaction *d) {
   }
   /* specs/discord/interaction.json:16:18
      '{"name":"guild_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "comment":"the guild it was sent from","inject_if_not":0}' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/interaction.json:17:18
      '{"name":"channel_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "comment":"the channel it was sent from","inject_if_not":0}' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/interaction.json:18:18
      '{"name":"member", "type":{"base":"struct discord_guild_member", "dec":"*"}, "option":true, "comment":"guild member data for the invoking user, including permissions", "inject_if_not":null}' */
   if (d->member) {
@@ -402,7 +402,7 @@ size_t discord_interaction_types_list_to_json(char *str, size_t len, enum discor
 
 void discord_interaction_data_from_json(char *json, size_t len, struct discord_interaction_data **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_interaction_data *p = *pp;
@@ -601,14 +601,14 @@ size_t discord_interaction_data_list_to_json_v(char *str, size_t len, void *p){
 void discord_interaction_data_cleanup(struct discord_interaction_data *d) {
   /* specs/discord/interaction.json:43:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the ID of the invoked command"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/interaction.json:44:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"the name of the invoked command"}' */
   if (d->name)
     free(d->name);
   /* specs/discord/interaction.json:45:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_application_command_types"}, "comment":"the type of the invoked command"}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/interaction.json:46:18
      '{"name":"resolved", "type":{"base":"struct discord_resolved_data", "dec":"*"}, "option":true, "comment":"converted users + roles + channels", "inject_if_not":null}' */
   if (d->resolved) {
@@ -629,7 +629,7 @@ void discord_interaction_data_cleanup(struct discord_interaction_data *d) {
     ja_str_list_free(d->values);
   /* specs/discord/interaction.json:50:18
      '{"name":"target_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of a user or message targetted by a user or message command", "inject_if_not":0}' */
-  // p->target_id is a scalar
+  /* p->target_id is a scalar */
 }
 
 void discord_interaction_data_init(struct discord_interaction_data *p) {
@@ -682,7 +682,7 @@ size_t discord_interaction_data_list_to_json(char *str, size_t len, struct disco
 
 void discord_resolved_data_from_json(char *json, size_t len, struct discord_resolved_data **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_resolved_data *p = *pp;
@@ -894,7 +894,7 @@ size_t discord_resolved_data_list_to_json(char *str, size_t len, struct discord_
 
 void discord_message_interaction_from_json(char *json, size_t len, struct discord_message_interaction **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_message_interaction *p = *pp;
@@ -1024,10 +1024,10 @@ size_t discord_message_interaction_list_to_json_v(char *str, size_t len, void *p
 void discord_message_interaction_cleanup(struct discord_message_interaction *d) {
   /* specs/discord/interaction.json:74:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the interaction"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/interaction.json:75:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_interaction_types"}, "comment":"the request type of the interaction"}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/interaction.json:76:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"the name of the application command"}' */
   if (d->name)
@@ -1078,7 +1078,7 @@ size_t discord_message_interaction_list_to_json(char *str, size_t len, struct di
 
 void discord_interaction_response_from_json(char *json, size_t len, struct discord_interaction_response **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_interaction_response *p = *pp;
@@ -1177,7 +1177,7 @@ size_t discord_interaction_response_list_to_json_v(char *str, size_t len, void *
 void discord_interaction_response_cleanup(struct discord_interaction_response *d) {
   /* specs/discord/interaction.json:87:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_interaction_callback_types"}, "comment":"the type of response"}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/interaction.json:88:18
      '{"name":"data", "type":{"base":"struct discord_interaction_callback_data", "dec":"*"}, "option":true, "comment":"an optional response message", "inject_if_not":null}' */
   if (d->data) {
@@ -1277,7 +1277,7 @@ size_t discord_interaction_callback_types_list_to_json(char *str, size_t len, en
 
 void discord_interaction_callback_data_from_json(char *json, size_t len, struct discord_interaction_callback_data **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_interaction_callback_data *p = *pp;
@@ -1444,7 +1444,7 @@ size_t discord_interaction_callback_data_list_to_json_v(char *str, size_t len, v
 void discord_interaction_callback_data_cleanup(struct discord_interaction_callback_data *d) {
   /* specs/discord/interaction.json:112:18
      '{"name":"tts", "type":{"base":"bool"}, "option":true, "comment":"is the response TTS"}' */
-  // p->tts is a scalar
+  /* p->tts is a scalar */
   /* specs/discord/interaction.json:113:18
      '{"name":"content", "type":{"base":"char", "dec":"*"}, "option":true, "comment":"message content", "inject_if_not":null}' */
   if (d->content)
@@ -1461,7 +1461,7 @@ void discord_interaction_callback_data_cleanup(struct discord_interaction_callba
   }
   /* specs/discord/interaction.json:116:18
      '{"name":"flags", "type":{"base":"int", "int_alias":"enum discord_interaction_callback_data_flags"}, "option":true, "comment":"interaction application command callback data flags", "inject_if_not":0}' */
-  // p->flags is a scalar
+  /* p->flags is a scalar */
   /* specs/discord/interaction.json:117:18
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"message components", "inject_if_not":null}' */
   if (d->components)

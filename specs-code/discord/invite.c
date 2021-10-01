@@ -66,7 +66,7 @@ size_t discord_invite_target_user_types_list_to_json(char *str, size_t len, enum
 
 void discord_invite_from_json(char *json, size_t len, struct discord_invite **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_invite *p = *pp;
@@ -288,13 +288,13 @@ void discord_invite_cleanup(struct discord_invite *d) {
   }
   /* specs/discord/invite.json:27:20
      '{ "name": "target_user_type", "type":{ "base":"int", "int_alias":"enum discord_invite_target_user_types" }}' */
-  // p->target_user_type is a scalar
+  /* p->target_user_type is a scalar */
   /* specs/discord/invite.json:28:20
      '{ "name": "approximate_presence_count", "type":{ "base":"int" }}' */
-  // p->approximate_presence_count is a scalar
+  /* p->approximate_presence_count is a scalar */
   /* specs/discord/invite.json:29:20
      '{ "name": "approximate_member_count", "type":{ "base":"int" }}' */
-  // p->approximate_member_count is a scalar
+  /* p->approximate_member_count is a scalar */
 }
 
 void discord_invite_init(struct discord_invite *p) {
@@ -347,7 +347,7 @@ size_t discord_invite_list_to_json(char *str, size_t len, struct discord_invite 
 
 void discord_invite_metadata_from_json(char *json, size_t len, struct discord_invite_metadata **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_invite_metadata *p = *pp;
@@ -493,19 +493,19 @@ size_t discord_invite_metadata_list_to_json_v(char *str, size_t len, void *p){
 void discord_invite_metadata_cleanup(struct discord_invite_metadata *d) {
   /* specs/discord/invite.json:39:20
      '{ "name": "user", "type":{ "base":"int" }}' */
-  // p->user is a scalar
+  /* p->user is a scalar */
   /* specs/discord/invite.json:40:20
      '{ "name": "max_uses", "type":{ "base":"int" }}' */
-  // p->max_uses is a scalar
+  /* p->max_uses is a scalar */
   /* specs/discord/invite.json:41:20
      '{ "name": "max_age", "type":{ "base":"int" }}' */
-  // p->max_age is a scalar
+  /* p->max_age is a scalar */
   /* specs/discord/invite.json:42:20
      '{ "name": "temporary", "type":{ "base":"int" }}' */
-  // p->temporary is a scalar
+  /* p->temporary is a scalar */
   /* specs/discord/invite.json:43:20
      '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601"}}' */
-  // p->created_at is a scalar
+  /* p->created_at is a scalar */
 }
 
 void discord_invite_metadata_init(struct discord_invite_metadata *p) {

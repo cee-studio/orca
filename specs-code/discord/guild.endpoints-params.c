@@ -15,7 +15,7 @@
 
 void discord_create_guild_params_from_json(char *json, size_t len, struct discord_create_guild_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_guild_params *p = *pp;
@@ -279,13 +279,13 @@ void discord_create_guild_params_cleanup(struct discord_create_guild_params *d) 
     free(d->icon);
   /* specs/discord/guild.endpoints-params.json:15:20
      '{ "name": "verification_level", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"verification level"}' */
-  // p->verification_level is a scalar
+  /* p->verification_level is a scalar */
   /* specs/discord/guild.endpoints-params.json:16:20
      '{ "name": "default_message_notifications", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"default message notification level"}' */
-  // p->default_message_notifications is a scalar
+  /* p->default_message_notifications is a scalar */
   /* specs/discord/guild.endpoints-params.json:17:20
      '{ "name": "explicit_content_filter", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"explicit content filter level"}' */
-  // p->explicit_content_filter is a scalar
+  /* p->explicit_content_filter is a scalar */
   /* specs/discord/guild.endpoints-params.json:18:20
      '{ "name": "roles", "type":{ "base":"struct discord_role", "dec":"ntl" }, "option":true, "inject_if_not":null, "comment":"new guild roles" }' */
   if (d->roles)
@@ -296,13 +296,13 @@ void discord_create_guild_params_cleanup(struct discord_create_guild_params *d) 
     discord_channel_list_free(d->channels);
   /* specs/discord/guild.endpoints-params.json:20:20
      '{ "name": "afk_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"id for afk channel"}' */
-  // p->afk_channel_id is a scalar
+  /* p->afk_channel_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:21:20
      '{ "name": "afk_timeout", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"afk timeout in seconds"}' */
-  // p->afk_timeout is a scalar
+  /* p->afk_timeout is a scalar */
   /* specs/discord/guild.endpoints-params.json:22:20
      '{ "name": "system_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"the id of the channel where guild notices such as welcome messages and boost events are posted"}' */
-  // p->system_channel_id is a scalar
+  /* p->system_channel_id is a scalar */
 }
 
 void discord_create_guild_params_init(struct discord_create_guild_params *p) {
@@ -364,7 +364,7 @@ size_t discord_create_guild_params_list_to_json(char *str, size_t len, struct di
 
 void discord_modify_guild_params_from_json(char *json, size_t len, struct discord_modify_guild_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_guild_params *p = *pp;
@@ -757,26 +757,26 @@ void discord_modify_guild_params_cleanup(struct discord_modify_guild_params *d) 
     free(d->region);
   /* specs/discord/guild.endpoints-params.json:33:20
      '{ "name": "verification_level", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"verification level"}' */
-  // p->verification_level is a scalar
+  /* p->verification_level is a scalar */
   /* specs/discord/guild.endpoints-params.json:34:20
      '{ "name": "default_message_notifications", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"default message notification level"}' */
-  // p->default_message_notifications is a scalar
+  /* p->default_message_notifications is a scalar */
   /* specs/discord/guild.endpoints-params.json:35:20
      '{ "name": "explicit_content_filter", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"explicit content filter level"}' */
-  // p->explicit_content_filter is a scalar
+  /* p->explicit_content_filter is a scalar */
   /* specs/discord/guild.endpoints-params.json:36:20
      '{ "name": "afk_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"id for afk channel"}' */
-  // p->afk_channel_id is a scalar
+  /* p->afk_channel_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:37:20
      '{ "name": "afk_timeout", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"afk timeout in seconds"}' */
-  // p->afk_timeout is a scalar
+  /* p->afk_timeout is a scalar */
   /* specs/discord/guild.endpoints-params.json:38:20
      '{ "name": "icon", "type":{ "base":"char", "dec":"*" }, "option":true, "inject_if_not":null, "comment":"base64 128x1128 image for the guild icon"}' */
   if (d->icon)
     free(d->icon);
   /* specs/discord/guild.endpoints-params.json:39:20
      '{ "name": "owner_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"user id to transfer guild ownership to (must be owner)"}' */
-  // p->owner_id is a scalar
+  /* p->owner_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:40:20
      '{ "name": "splash", "type":{ "base":"char", "dec":"*" }, "option":true, "inject_if_not":null, "comment":"base64 16:9 png/jpeg image for the guild splash (when the server has the INVITE_SPLASH feature"}' */
   if (d->splash)
@@ -791,16 +791,16 @@ void discord_modify_guild_params_cleanup(struct discord_modify_guild_params *d) 
     free(d->banner);
   /* specs/discord/guild.endpoints-params.json:43:20
      '{ "name": "system_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"	the id of the channel where guild notices such as welcome messages and boost events are posted"}' */
-  // p->system_channel_id is a scalar
+  /* p->system_channel_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:44:20
      '{ "name": "system_channel_flags", "type":{ "base":"int", "int_alias":"enum discord_system_channel_flags" }, "option":true, "inject_if_not":0, "comment":"system channel flags"}' */
-  // p->system_channel_flags is a scalar
+  /* p->system_channel_flags is a scalar */
   /* specs/discord/guild.endpoints-params.json:45:20
      '{ "name": "rules_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"the id of the channel where Community guilds display rules and/or guidelines"}' */
-  // p->rules_channel_id is a scalar
+  /* p->rules_channel_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:46:20
      '{ "name": "public_updates_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"the id of the channel where admins and moderators of Community guilds receive notices from Discord"}' */
-  // p->public_updates_channel_id is a scalar
+  /* p->public_updates_channel_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:47:20
      '{ "name": "preferred_locale", "type":{ "base":"char", "dec":"*" }, "comment":"the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to \"en-US\""}' */
   if (d->preferred_locale)
@@ -898,7 +898,7 @@ size_t discord_modify_guild_params_list_to_json(char *str, size_t len, struct di
 
 void discord_create_guild_channel_params_from_json(char *json, size_t len, struct discord_create_guild_channel_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_guild_channel_params *p = *pp;
@@ -1133,33 +1133,33 @@ void discord_create_guild_channel_params_cleanup(struct discord_create_guild_cha
     free(d->name);
   /* specs/discord/guild.endpoints-params.json:59:20
      '{ "name": "type", "type":{ "base":"int" }}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/guild.endpoints-params.json:60:20
      '{ "name": "topic", "type":{ "base":"char", "dec":"*" }}' */
   if (d->topic)
     free(d->topic);
   /* specs/discord/guild.endpoints-params.json:61:20
      '{ "name": "bitrate", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->bitrate is a scalar
+  /* p->bitrate is a scalar */
   /* specs/discord/guild.endpoints-params.json:62:20
      '{ "name": "user_limit", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->user_limit is a scalar
+  /* p->user_limit is a scalar */
   /* specs/discord/guild.endpoints-params.json:63:20
      '{ "name": "rate_limit_per_user", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->rate_limit_per_user is a scalar
+  /* p->rate_limit_per_user is a scalar */
   /* specs/discord/guild.endpoints-params.json:64:20
      '{ "name": "position", "type":{ "base":"int" } }' */
-  // p->position is a scalar
+  /* p->position is a scalar */
   /* specs/discord/guild.endpoints-params.json:65:20
      '{ "name": "permission_overwrites", "type":{ "base":"struct discord_overwrite", "dec":"ntl" }, "inject_if_not":null}' */
   if (d->permission_overwrites)
     discord_overwrite_list_free(d->permission_overwrites);
   /* specs/discord/guild.endpoints-params.json:66:20
      '{ "name": "parent_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}' */
-  // p->parent_id is a scalar
+  /* p->parent_id is a scalar */
   /* specs/discord/guild.endpoints-params.json:67:20
      '{ "name": "nsfw", "type":{ "base":"bool" }}' */
-  // p->nsfw is a scalar
+  /* p->nsfw is a scalar */
 }
 
 void discord_create_guild_channel_params_init(struct discord_create_guild_channel_params *p) {
@@ -1218,7 +1218,7 @@ size_t discord_create_guild_channel_params_list_to_json(char *str, size_t len, s
 
 void discord_modify_guild_channel_positions_params_from_json(char *json, size_t len, struct discord_modify_guild_channel_positions_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_guild_channel_positions_params *p = *pp;
@@ -1352,16 +1352,16 @@ size_t discord_modify_guild_channel_positions_params_list_to_json_v(char *str, s
 void discord_modify_guild_channel_positions_params_cleanup(struct discord_modify_guild_channel_positions_params *d) {
   /* specs/discord/guild.endpoints-params.json:76:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"channel id"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/guild.endpoints-params.json:77:20
      '{ "name": "position", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"sorting position of the channel"}' */
-  // p->position is a scalar
+  /* p->position is a scalar */
   /* specs/discord/guild.endpoints-params.json:78:20
      '{ "name": "lock_permissions", "type":{ "base":"bool" }, "option":true, "inject_if_not":false, "comment":"syncs the permission overwrites with the new parent, if moving to a new category"}' */
-  // p->lock_permissions is a scalar
+  /* p->lock_permissions is a scalar */
   /* specs/discord/guild.endpoints-params.json:79:20
      '{ "name": "parent_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"the new parent ID for the channel that is moved"}' */
-  // p->parent_id is a scalar
+  /* p->parent_id is a scalar */
 }
 
 void discord_modify_guild_channel_positions_params_init(struct discord_modify_guild_channel_positions_params *p) {
@@ -1402,7 +1402,7 @@ size_t discord_modify_guild_channel_positions_params_list_to_json(char *str, siz
 
 void discord_list_guild_members_params_from_json(char *json, size_t len, struct discord_list_guild_members_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_list_guild_members_params *p = *pp;
@@ -1502,10 +1502,10 @@ size_t discord_list_guild_members_params_list_to_json_v(char *str, size_t len, v
 void discord_list_guild_members_params_cleanup(struct discord_list_guild_members_params *d) {
   /* specs/discord/guild.endpoints-params.json:88:20
      '{ "name": "limit", "type":{ "base":"int" }, "inject_if_not":0, "comment": "max numbers of members to return (1-1000)", "default_value":1 }' */
-  // p->limit is a scalar
+  /* p->limit is a scalar */
   /* specs/discord/guild.endpoints-params.json:89:20
      '{ "name": "after", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0, "comment": "the highest user id in the previous page"}' */
-  // p->after is a scalar
+  /* p->after is a scalar */
 }
 
 void discord_list_guild_members_params_init(struct discord_list_guild_members_params *p) {
@@ -1540,7 +1540,7 @@ size_t discord_list_guild_members_params_list_to_json(char *str, size_t len, str
 
 void discord_search_guild_members_params_from_json(char *json, size_t len, struct discord_search_guild_members_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_search_guild_members_params *p = *pp;
@@ -1644,7 +1644,7 @@ void discord_search_guild_members_params_cleanup(struct discord_search_guild_mem
     free(d->query);
   /* specs/discord/guild.endpoints-params.json:99:20
      '{ "name": "limit", "type":{ "base":"int" }, "inject_if_not":0, "comment": "max number of members to return (1-1000)"}' */
-  // p->limit is a scalar
+  /* p->limit is a scalar */
 }
 
 void discord_search_guild_members_params_init(struct discord_search_guild_members_params *p) {
@@ -1679,7 +1679,7 @@ size_t discord_search_guild_members_params_list_to_json(char *str, size_t len, s
 
 void discord_add_guild_member_params_from_json(char *json, size_t len, struct discord_add_guild_member_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_add_guild_member_params *p = *pp;
@@ -1842,10 +1842,10 @@ void discord_add_guild_member_params_cleanup(struct discord_add_guild_member_par
     ja_u64_list_free(d->roles);
   /* specs/discord/guild.endpoints-params.json:111:20
      '{ "name": "mute", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->mute is a scalar
+  /* p->mute is a scalar */
   /* specs/discord/guild.endpoints-params.json:112:20
      '{ "name": "deaf", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->deaf is a scalar
+  /* p->deaf is a scalar */
 }
 
 void discord_add_guild_member_params_init(struct discord_add_guild_member_params *p) {
@@ -1889,7 +1889,7 @@ size_t discord_add_guild_member_params_list_to_json(char *str, size_t len, struc
 
 void discord_modify_guild_member_params_from_json(char *json, size_t len, struct discord_modify_guild_member_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_guild_member_params *p = *pp;
@@ -2047,13 +2047,13 @@ void discord_modify_guild_member_params_cleanup(struct discord_modify_guild_memb
     ja_u64_list_free(d->roles);
   /* specs/discord/guild.endpoints-params.json:123:20
      '{ "name": "mute", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->mute is a scalar
+  /* p->mute is a scalar */
   /* specs/discord/guild.endpoints-params.json:124:20
      '{ "name": "deaf", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->deaf is a scalar
+  /* p->deaf is a scalar */
   /* specs/discord/guild.endpoints-params.json:125:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
 }
 
 void discord_modify_guild_member_params_init(struct discord_modify_guild_member_params *p) {
@@ -2097,7 +2097,7 @@ size_t discord_modify_guild_member_params_list_to_json(char *str, size_t len, st
 
 void discord_create_guild_role_params_from_json(char *json, size_t len, struct discord_create_guild_role_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_guild_role_params *p = *pp;
@@ -2251,16 +2251,16 @@ void discord_create_guild_role_params_cleanup(struct discord_create_guild_role_p
     free(d->name);
   /* specs/discord/guild.endpoints-params.json:135:20
      '{ "name": "permissions", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags" }, "inject_if_not":0}' */
-  // p->permissions is a scalar
+  /* p->permissions is a scalar */
   /* specs/discord/guild.endpoints-params.json:136:20
      '{ "name": "color", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->color is a scalar
+  /* p->color is a scalar */
   /* specs/discord/guild.endpoints-params.json:137:20
      '{ "name": "hoist", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->hoist is a scalar
+  /* p->hoist is a scalar */
   /* specs/discord/guild.endpoints-params.json:138:20
      '{ "name": "mentionable", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->mentionable is a scalar
+  /* p->mentionable is a scalar */
 }
 
 void discord_create_guild_role_params_init(struct discord_create_guild_role_params *p) {
@@ -2304,7 +2304,7 @@ size_t discord_create_guild_role_params_list_to_json(char *str, size_t len, stru
 
 void discord_modify_guild_role_positions_params_from_json(char *json, size_t len, struct discord_modify_guild_role_positions_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_guild_role_positions_params *p = *pp;
@@ -2404,10 +2404,10 @@ size_t discord_modify_guild_role_positions_params_list_to_json_v(char *str, size
 void discord_modify_guild_role_positions_params_cleanup(struct discord_modify_guild_role_positions_params *d) {
   /* specs/discord/guild.endpoints-params.json:147:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"role"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/guild.endpoints-params.json:148:20
      '{ "name": "position", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"sorting position of the role"}' */
-  // p->position is a scalar
+  /* p->position is a scalar */
 }
 
 void discord_modify_guild_role_positions_params_init(struct discord_modify_guild_role_positions_params *p) {
@@ -2442,7 +2442,7 @@ size_t discord_modify_guild_role_positions_params_list_to_json(char *str, size_t
 
 void discord_modify_guild_role_params_from_json(char *json, size_t len, struct discord_modify_guild_role_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_guild_role_params *p = *pp;
@@ -2597,16 +2597,16 @@ void discord_modify_guild_role_params_cleanup(struct discord_modify_guild_role_p
     free(d->name);
   /* specs/discord/guild.endpoints-params.json:158:20
      '{ "name": "permissions", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags" }, "option":true, "inject_if_not":0, "comment":"bitwise value of the enabled/disabled permissions"}' */
-  // p->permissions is a scalar
+  /* p->permissions is a scalar */
   /* specs/discord/guild.endpoints-params.json:159:20
      '{ "name": "color", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"RGB color value"}' */
-  // p->color is a scalar
+  /* p->color is a scalar */
   /* specs/discord/guild.endpoints-params.json:160:20
      '{ "name": "hoist", "type":{ "base":"bool" }, "option":true, "inject_if_not":false, "comment":"whether the role should be displayed separately in the sidebar"}' */
-  // p->hoist is a scalar
+  /* p->hoist is a scalar */
   /* specs/discord/guild.endpoints-params.json:161:20
      '{ "name": "mentionable", "type":{ "base":"bool" }, "option":true, "inject_if_not":false, "comment":"whether the role should be mentionable"}' */
-  // p->mentionable is a scalar
+  /* p->mentionable is a scalar */
 }
 
 void discord_modify_guild_role_params_init(struct discord_modify_guild_role_params *p) {
@@ -2650,7 +2650,7 @@ size_t discord_modify_guild_role_params_list_to_json(char *str, size_t len, stru
 
 void discord_get_guild_prune_count_params_from_json(char *json, size_t len, struct discord_get_guild_prune_count_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_get_guild_prune_count_params *p = *pp;
@@ -2750,7 +2750,7 @@ size_t discord_get_guild_prune_count_params_list_to_json_v(char *str, size_t len
 void discord_get_guild_prune_count_params_cleanup(struct discord_get_guild_prune_count_params *d) {
   /* specs/discord/guild.endpoints-params.json:170:20
      '{ "name": "days", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->days is a scalar
+  /* p->days is a scalar */
   /* specs/discord/guild.endpoints-params.json:171:20
      '{ "name": "include_roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}' */
   if (d->include_roles)
@@ -2789,7 +2789,7 @@ size_t discord_get_guild_prune_count_params_list_to_json(char *str, size_t len, 
 
 void discord_begin_guild_prune_params_from_json(char *json, size_t len, struct discord_begin_guild_prune_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_begin_guild_prune_params *p = *pp;
@@ -2923,10 +2923,10 @@ size_t discord_begin_guild_prune_params_list_to_json_v(char *str, size_t len, vo
 void discord_begin_guild_prune_params_cleanup(struct discord_begin_guild_prune_params *d) {
   /* specs/discord/guild.endpoints-params.json:180:20
      '{ "name": "days", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->days is a scalar
+  /* p->days is a scalar */
   /* specs/discord/guild.endpoints-params.json:181:20
      '{ "name": "compute_prune_count", "type":{ "base":"bool" }, "inject_if_not":false}' */
-  // p->compute_prune_count is a scalar
+  /* p->compute_prune_count is a scalar */
   /* specs/discord/guild.endpoints-params.json:182:20
      '{ "name": "include_roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}' */
   if (d->include_roles)

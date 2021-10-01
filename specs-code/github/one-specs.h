@@ -5,7 +5,7 @@
  */
 
 
-// defined at specs/github/gist.endpoints-params.json:10:32
+/* defined at specs/github/gist.endpoints-params.json:10:32 */
 /**
  * @brief Gist Create
  *
@@ -14,7 +14,7 @@
 struct github_gist_create_params;
 /* This file is generated from specs/github/gist.json, Please don't edit it. */
 
-// defined at specs/github/gist.json:9:33
+/* defined at specs/github/gist.json:9:33 */
 /**
  * @brief Gist Structure
  *
@@ -22,7 +22,7 @@ struct github_gist_create_params;
 struct github_gist;
 /* This file is generated from specs/github/repository.json, Please don't edit it. */
 
-// defined at specs/github/repository.json:9:33
+/* defined at specs/github/repository.json:9:33 */
 /**
  * @brief Topic Structure
  *
@@ -30,7 +30,7 @@ struct github_gist;
 struct github_topic;
 /* This file is generated from specs/github/user.json, Please don't edit it. */
 
-// defined at specs/github/user.json:9:33
+/* defined at specs/github/user.json:9:33 */
 /**
  * @brief User Structure
  *
@@ -42,8 +42,8 @@ struct github_user;
 /* This file is generated from specs/github/user.json, Please don't edit it. */
 /* This file is generated from specs/github/gist.endpoints-params.json, Please don't edit it. */
 
-// Gist Create
-// defined at specs/github/gist.endpoints-params.json:10:32
+/* Gist Create */
+/* defined at specs/github/gist.endpoints-params.json:10:32 */
 /**
  * @see https://docs.github.com/en/rest/reference/gists#create-a-gist--parameters
  *
@@ -88,11 +88,11 @@ struct github_gist_create_params {
      '{ "name": "public", "type":{ "base":"char", "dec":"*" }}' */
   char *public;
 
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
   struct {
     bool enable_arg_switches;
     bool enable_record_defined;
@@ -100,13 +100,13 @@ struct github_gist_create_params {
     void *arg_switches[4];
     void *record_defined[4];
     void *record_null[4];
-  } __M; // metadata
-/// @endcond
+  } __M; /**< metadata */
+/** @endcond */
 };
 /* This file is generated from specs/github/gist.json, Please don't edit it. */
 
-// Gist Structure
-// defined at specs/github/gist.json:9:33
+/* Gist Structure */
+/* defined at specs/github/gist.json:9:33 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -165,11 +165,11 @@ struct github_gist {
      '{ "name": "comments", "type":{ "base":"int"}}' */
   int comments;
 
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
   struct {
     bool enable_arg_switches;
     bool enable_record_defined;
@@ -177,13 +177,13 @@ struct github_gist {
     void *arg_switches[8];
     void *record_defined[8];
     void *record_null[8];
-  } __M; // metadata
-/// @endcond
+  } __M; /**< metadata */
+/** @endcond */
 };
 /* This file is generated from specs/github/repository.json, Please don't edit it. */
 
-// Topic Structure
-// defined at specs/github/repository.json:9:33
+/* Topic Structure */
+/* defined at specs/github/repository.json:9:33 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -214,11 +214,11 @@ struct github_topic {
      '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
   ja_str **names;
 
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
   struct {
     bool enable_arg_switches;
     bool enable_record_defined;
@@ -226,13 +226,13 @@ struct github_topic {
     void *arg_switches[1];
     void *record_defined[1];
     void *record_null[1];
-  } __M; // metadata
-/// @endcond
+  } __M; /**< metadata */
+/** @endcond */
 };
 /* This file is generated from specs/github/user.json, Please don't edit it. */
 
-// User Structure
-// defined at specs/github/user.json:9:33
+/* User Structure */
+/* defined at specs/github/user.json:9:33 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -343,11 +343,11 @@ struct github_user {
      '{ "name": "updated_at", "type":{ "base":"char", "dec":"*"}}' */
   char *updated_at;
 
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
   struct {
     bool enable_arg_switches;
     bool enable_record_defined;
@@ -355,8 +355,8 @@ struct github_user {
     void *arg_switches[21];
     void *record_defined[21];
     void *record_null[21];
-  } __M; // metadata
-/// @endcond
+  } __M; /**< metadata */
+/** @endcond */
 };
 /* This file is generated from specs/github/gist.endpoints-params.json, Please don't edit it. */
 

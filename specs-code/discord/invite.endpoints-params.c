@@ -15,7 +15,7 @@
 
 void discord_get_invite_params_from_json(char *json, size_t len, struct discord_get_invite_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_get_invite_params *p = *pp;
@@ -113,10 +113,10 @@ size_t discord_get_invite_params_list_to_json_v(char *str, size_t len, void *p){
 void discord_get_invite_params_cleanup(struct discord_get_invite_params *d) {
   /* specs/discord/invite.endpoints-params.json:12:20
      '{ "name": "with_counts", "type":{ "base":"bool" }, "comment":"whether the invite should contain approximate member counts"}' */
-  // p->with_counts is a scalar
+  /* p->with_counts is a scalar */
   /* specs/discord/invite.endpoints-params.json:13:20
      '{ "name": "with_expiration", "type":{ "base":"bool" }, "comment":"whether the invite should contain the expiration date"}' */
-  // p->with_expiration is a scalar
+  /* p->with_expiration is a scalar */
 }
 
 void discord_get_invite_params_init(struct discord_get_invite_params *p) {

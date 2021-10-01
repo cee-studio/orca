@@ -15,7 +15,7 @@
 
 void discord_guild_template_from_json(char *json, size_t len, struct discord_guild_template **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_guild_template *p = *pp;
@@ -269,10 +269,10 @@ void discord_guild_template_cleanup(struct discord_guild_template *d) {
     free(d->description);
   /* specs/discord/guild-template.json:15:20
      '{ "name": "usage_count", "type":{ "base":"int"}}' */
-  // p->usage_count is a scalar
+  /* p->usage_count is a scalar */
   /* specs/discord/guild-template.json:16:20
      '{ "name": "creator_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->creator_id is a scalar
+  /* p->creator_id is a scalar */
   /* specs/discord/guild-template.json:17:20
      '{ "name": "creator", "type":{ "base":"struct discord_user", "dec":"*" }}' */
   if (d->creator) {
@@ -281,13 +281,13 @@ void discord_guild_template_cleanup(struct discord_guild_template *d) {
   }
   /* specs/discord/guild-template.json:18:20
      '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
-  // p->created_at is a scalar
+  /* p->created_at is a scalar */
   /* specs/discord/guild-template.json:19:20
      '{ "name": "updated_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
-  // p->updated_at is a scalar
+  /* p->updated_at is a scalar */
   /* specs/discord/guild-template.json:20:20
      '{ "name": "source_guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->source_guild_id is a scalar
+  /* p->source_guild_id is a scalar */
   /* specs/discord/guild-template.json:21:20
      '{ "name": "serialized_source_guild", "type":{ "base":"struct discord_guild", "dec":"*" }}' */
   if (d->serialized_source_guild) {
@@ -296,7 +296,7 @@ void discord_guild_template_cleanup(struct discord_guild_template *d) {
   }
   /* specs/discord/guild-template.json:22:20
      '{ "name": "is_dirty", "type":{ "base":"bool" }}' */
-  // p->is_dirty is a scalar
+  /* p->is_dirty is a scalar */
 }
 
 void discord_guild_template_init(struct discord_guild_template *p) {

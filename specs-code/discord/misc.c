@@ -67,7 +67,7 @@ void discord_file_cleanup(struct discord_file *d) {
     free(d->content);
   /* specs/discord/misc.json:13:20
      '{ "name": "size", "type":{ "base":"int", "int_alias":"size_t" }, "comment":"the size of the file in bytes", "inject_if_not":0 }' */
-  // p->size is a scalar
+  /* p->size is a scalar */
 }
 
 void discord_file_init(struct discord_file *p) {

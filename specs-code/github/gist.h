@@ -5,8 +5,8 @@
  */
 
 
-// Gist Structure
-// defined at specs/github/gist.json:9:33
+/* Gist Structure */
+/* defined at specs/github/gist.json:9:33 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -65,11 +65,11 @@ struct github_gist {
      '{ "name": "comments", "type":{ "base":"int"}}' */
   int comments;
 
-  // The following is metadata used to 
-  // 1. control which field should be extracted/injected
-  // 2. record which field is presented(defined) in JSON
-  // 3. record which field is null in JSON
-/// @cond DOXYGEN_SHOULD_SKIP_THIS
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
   struct {
     bool enable_arg_switches;
     bool enable_record_defined;
@@ -77,8 +77,8 @@ struct github_gist {
     void *arg_switches[8];
     void *record_defined[8];
     void *record_null[8];
-  } __M; // metadata
-/// @endcond
+  } __M; /**< metadata */
+/** @endcond */
 };
 extern void github_gist_cleanup_v(void *p);
 extern void github_gist_cleanup(struct github_gist *p);

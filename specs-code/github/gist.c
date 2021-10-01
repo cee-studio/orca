@@ -15,7 +15,7 @@
 
 void github_gist_from_json(char *json, size_t len, struct github_gist **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct github_gist *p = *pp;
@@ -237,7 +237,7 @@ void github_gist_cleanup(struct github_gist *d) {
     free(d->description);
   /* specs/github/gist.json:19:28
      '{ "name": "comments", "type":{ "base":"int"}}' */
-  // p->comments is a scalar
+  /* p->comments is a scalar */
 }
 
 void github_gist_init(struct github_gist *p) {

@@ -15,7 +15,7 @@
 
 void discord_get_guild_audit_log_params_from_json(char *json, size_t len, struct discord_get_guild_audit_log_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_get_guild_audit_log_params *p = *pp;
@@ -149,16 +149,16 @@ size_t discord_get_guild_audit_log_params_list_to_json_v(char *str, size_t len, 
 void discord_get_guild_audit_log_params_cleanup(struct discord_get_guild_audit_log_params *d) {
   /* specs/discord/audit_log.endpoints-params.json:10:20
      '{ "name": "user_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"filter the log for actions made by a user", "inject_if_not":0 }' */
-  // p->user_id is a scalar
+  /* p->user_id is a scalar */
   /* specs/discord/audit_log.endpoints-params.json:11:20
      '{ "name": "action_type", "type":{ "base":"int", "int_alias":"enum discord_audit_log_events" }, "comment":"the type of audit log event", "inject_if_not":0 }' */
-  // p->action_type is a scalar
+  /* p->action_type is a scalar */
   /* specs/discord/audit_log.endpoints-params.json:12:20
      '{ "name": "before", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"filter the log before a certain entry id", "inject_if_not":0 }' */
-  // p->before is a scalar
+  /* p->before is a scalar */
   /* specs/discord/audit_log.endpoints-params.json:13:20
      '{ "name": "limit", "type":{ "base":"int" }, "default_value":50, "comment":"how many entries are returned (default 50, minimum 1, maximum 100)", "inject_if_not":0 }' */
-  // p->limit is a scalar
+  /* p->limit is a scalar */
 }
 
 void discord_get_guild_audit_log_params_init(struct discord_get_guild_audit_log_params *p) {

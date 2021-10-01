@@ -15,7 +15,7 @@
 
 void github_user_from_json(char *json, size_t len, struct github_user **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct github_user *p = *pp;
@@ -421,7 +421,7 @@ void github_user_cleanup(struct github_user *d) {
     free(d->login);
   /* specs/github/user.json:13:28
      '{ "name": "id", "type":{ "base":"int"}}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/github/user.json:14:28
      '{ "name": "node_id", "type":{ "base":"char", "dec":"*"}}' */
   if (d->node_id)
@@ -444,7 +444,7 @@ void github_user_cleanup(struct github_user *d) {
     free(d->type);
   /* specs/github/user.json:19:28
      '{ "name": "site_admin", "type":{ "base":"bool"}}' */
-  // p->site_admin is a scalar
+  /* p->site_admin is a scalar */
   /* specs/github/user.json:20:28
      '{ "name": "name", "type":{ "base":"char", "dec":"*"}}' */
   if (d->name)
@@ -475,16 +475,16 @@ void github_user_cleanup(struct github_user *d) {
     free(d->bio);
   /* specs/github/user.json:27:28
      '{ "name": "public_repos", "type":{ "base":"int"}}' */
-  // p->public_repos is a scalar
+  /* p->public_repos is a scalar */
   /* specs/github/user.json:28:28
      '{ "name": "public_gists", "type":{ "base":"int"}}' */
-  // p->public_gists is a scalar
+  /* p->public_gists is a scalar */
   /* specs/github/user.json:29:28
      '{ "name": "followers", "type":{ "base":"int"}}' */
-  // p->followers is a scalar
+  /* p->followers is a scalar */
   /* specs/github/user.json:30:28
      '{ "name": "following", "type":{ "base":"int"}}' */
-  // p->following is a scalar
+  /* p->following is a scalar */
   /* specs/github/user.json:31:28
      '{ "name": "created_at", "type":{ "base":"char", "dec":"*"}}' */
   if (d->created_at)

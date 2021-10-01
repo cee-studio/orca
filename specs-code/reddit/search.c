@@ -15,7 +15,7 @@
 
 void reddit_search_params_from_json(char *json, size_t len, struct reddit_search_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct reddit_search_params *p = *pp;
@@ -301,20 +301,20 @@ void reddit_search_params_cleanup(struct reddit_search_params *d) {
     free(d->category);
   /* specs/reddit/search.json:16:20
      '{ "name": "count", "type":{ "base":"int" }, "comment":"a positive integer (default: 0)"}' */
-  // p->count is a scalar
+  /* p->count is a scalar */
   /* specs/reddit/search.json:17:20
      '{ "name": "include_facets", "type":{ "base":"bool" }, "comment":"boolean value"}' */
-  // p->include_facets is a scalar
+  /* p->include_facets is a scalar */
   /* specs/reddit/search.json:18:20
      '{ "name": "limit", "type":{ "base":"int" }, "comment":"the maximum number of items desired (default: 25, maximum: 100)"}' */
-  // p->limit is a scalar
+  /* p->limit is a scalar */
   /* specs/reddit/search.json:19:20
      '{ "name": "q", "type":{ "base":"char", "dec":"*" }, "comment":"a string no longer than 512 characters"}' */
   if (d->q)
     free(d->q);
   /* specs/reddit/search.json:20:20
      '{ "name": "restrict_sr", "type":{ "base":"bool" }, "comment":"boolean value"}' */
-  // p->restrict_sr is a scalar
+  /* p->restrict_sr is a scalar */
   /* specs/reddit/search.json:21:20
      '{ "name": "show", "type":{ "base":"char", "dec":"*" }, "comment":"(optional)the string all"}' */
   if (d->show)

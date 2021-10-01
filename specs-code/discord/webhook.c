@@ -15,7 +15,7 @@
 
 void discord_webhook_from_json(char *json, size_t len, struct discord_webhook **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_webhook *p = *pp;
@@ -282,16 +282,16 @@ size_t discord_webhook_list_to_json_v(char *str, size_t len, void *p){
 void discord_webhook_cleanup(struct discord_webhook *d) {
   /* specs/discord/webhook.json:12:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"the id of the webhook" }' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/webhook.json:13:20
      '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_webhook_types" }, "comment":"the type of the webhook" }' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/webhook.json:14:20
      '{ "name": "guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"the guild id this webhook is for, if any", "inject_if_not":0 }' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/webhook.json:15:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"the channel id this webhook is for, if any", "inject_if_not":0 }' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/webhook.json:16:20
      '{ "name": "user", "type":{ "base":"struct discord_user", "dec":"*" }, "comment":"the user this webhook was created by (not returned when getting a webhook with its token", "inject_if_not":null }' */
   if (d->user) {
@@ -300,7 +300,7 @@ void discord_webhook_cleanup(struct discord_webhook *d) {
   }
   /* specs/discord/webhook.json:17:20
      '{ "name": "name", "type":{ "base":"char", "dec":"[DISCORD_WEBHOOK_NAME_LEN]", "comment":"the default name of the webhook", "inject_if_not":"" }}' */
-  // p->name is a scalar
+  /* p->name is a scalar */
   /* specs/discord/webhook.json:18:20
      '{ "name": "avatar", "type":{ "base":"char", "dec":"*" }, "comment":"the default user avatar has of the webhook", "inject_if_not":null }' */
   if (d->avatar)
@@ -311,7 +311,7 @@ void discord_webhook_cleanup(struct discord_webhook *d) {
     free(d->token);
   /* specs/discord/webhook.json:20:20
      '{ "name": "application_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"the bot/OAuth2 application that created this webhook", "inject_if_not":0 }' */
-  // p->application_id is a scalar
+  /* p->application_id is a scalar */
   /* specs/discord/webhook.json:21:20
      '{ "name": "source_guild", "type":{ "base":"struct discord_guild", "dec":"*" }, "comment":"the guild of the channel that this webhook is following (returned for Channel Follower Webhook)", "inject_if_not":null }' */
   if (d->source_guild) {

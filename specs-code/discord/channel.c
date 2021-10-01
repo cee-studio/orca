@@ -86,7 +86,7 @@ size_t discord_channel_types_list_to_json(char *str, size_t len, enum discord_ch
 
 void discord_channel_from_json(char *json, size_t len, struct discord_channel **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_channel *p = *pp;
@@ -537,18 +537,18 @@ size_t discord_channel_list_to_json_v(char *str, size_t len, void *p){
 void discord_channel_cleanup(struct discord_channel *d) {
   /* specs/discord/channel.json:32:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:33:83
      '{"type":{"base":"int", "int_alias":"enum discord_channel_types"}, "name":"type"}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.json:34:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"guild_id",
          "option":true, "inject_if_not":0 }' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/channel.json:36:41
      '{"type":{"base":"int"}, "name":"position",
          "option":true, "inject_if_not":0 }' */
-  // p->position is a scalar
+  /* p->position is a scalar */
   /* specs/discord/channel.json:38:75
      '{"type":{"base":"struct discord_overwrite", "dec":"ntl"}, "name":"permission_overwrites",
          "option":true, "inject_if_not":null }' */
@@ -557,28 +557,28 @@ void discord_channel_cleanup(struct discord_channel *d) {
   /* specs/discord/channel.json:40:74
      '{"type":{"base":"char", "dec":"[DISCORD_MAX_NAME_LEN]"}, "name":"name", 
          "option":true, "inject_if_not":null}' */
-  // p->name is a scalar
+  /* p->name is a scalar */
   /* specs/discord/channel.json:42:75
      '{"type":{"base":"char", "dec":"[DISCORD_MAX_TOPIC_LEN]"}, "name":"topic",
          "option":true, "inject_if_not":null }' */
-  // p->topic is a scalar
+  /* p->topic is a scalar */
   /* specs/discord/channel.json:44:42
      '{"type":{"base":"bool"}, "name":"nsfw", "option":true, "inject_if_not":false}' */
-  // p->nsfw is a scalar
+  /* p->nsfw is a scalar */
   /* specs/discord/channel.json:45:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"last_message_id",
          "option":true, "inject_if_not":0}' */
-  // p->last_message_id is a scalar
+  /* p->last_message_id is a scalar */
   /* specs/discord/channel.json:47:41
      '{"type":{"base":"int"}, "name":"bitrate", "option":true, "inject_if_not":0}' */
-  // p->bitrate is a scalar
+  /* p->bitrate is a scalar */
   /* specs/discord/channel.json:48:41
      '{"type":{"base":"int"}, "name":"user_limit", "option":true, "inject_if_not":0}' */
-  // p->user_limit is a scalar
+  /* p->user_limit is a scalar */
   /* specs/discord/channel.json:49:41
      '{"type":{"base":"int"}, "name":"rate_limit_per_user", 
          "option":true, "inject_if_not":0}' */
-  // p->rate_limit_per_user is a scalar
+  /* p->rate_limit_per_user is a scalar */
   /* specs/discord/channel.json:51:70
      '{"type":{"base":"struct discord_user", "dec":"ntl"}, "name":"recipients",
          "option":true, "inject_if_not":null}' */
@@ -587,23 +587,23 @@ void discord_channel_cleanup(struct discord_channel *d) {
   /* specs/discord/channel.json:53:72
      '{"type":{"base":"char", "dec":"[ORCA_LIMITS_SHA256]"}, "name":"icon",
          "option":true, "inject_if_not":null}' */
-  // p->icon is a scalar
+  /* p->icon is a scalar */
   /* specs/discord/channel.json:55:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"owner_id",
          "option":true, "inject_if_not":0}' */
-  // p->owner_id is a scalar
+  /* p->owner_id is a scalar */
   /* specs/discord/channel.json:57:78
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"application_id",
          "option":true, "inject_if_not":0}' */
-  // p->application_id is a scalar
+  /* p->application_id is a scalar */
   /* specs/discord/channel.json:59:95
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake", "nullable":true}, "name":"parent_id",
          "option":true, "inject_if_not":0}' */
-  // p->parent_id is a scalar
+  /* p->parent_id is a scalar */
   /* specs/discord/channel.json:61:93
      '{"type":{"base":"char", "dec":"*", "converter":"iso8601", "nullable":true}, "name":"last_pin_timestamp",
          "option":true, "inject_if_not":0}' */
-  // p->last_pin_timestamp is a scalar
+  /* p->last_pin_timestamp is a scalar */
   /* specs/discord/channel.json:63:73
      '{"type":{"base":"struct discord_message", "dec":"ntl"}, "name":"messages"}' */
   if (d->messages)
@@ -761,7 +761,7 @@ size_t discord_message_sticker_format_types_list_to_json(char *str, size_t len, 
 
 void discord_message_sticker_from_json(char *json, size_t len, struct discord_message_sticker **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_message_sticker *p = *pp;
@@ -961,10 +961,10 @@ size_t discord_message_sticker_list_to_json_v(char *str, size_t len, void *p){
 void discord_message_sticker_cleanup(struct discord_message_sticker *d) {
   /* specs/discord/channel.json:84:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:85:18
      '{"name":"pack_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
-  // p->pack_id is a scalar
+  /* p->pack_id is a scalar */
   /* specs/discord/channel.json:86:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}}' */
   if (d->name)
@@ -979,14 +979,14 @@ void discord_message_sticker_cleanup(struct discord_message_sticker *d) {
     free(d->tags);
   /* specs/discord/channel.json:89:18
      '{"name":"asset","type":{"base":"char", "dec":"[ORCA_LIMITS_SHA256]"}}' */
-  // p->asset is a scalar
+  /* p->asset is a scalar */
   /* specs/discord/channel.json:90:18
      '{"name":"preview_asset", "type":{"base":"char", "dec":"[ORCA_LIMITS_SHA256]"}, 
          "option":true, "inject_if_not":null}' */
-  // p->preview_asset is a scalar
+  /* p->preview_asset is a scalar */
   /* specs/discord/channel.json:92:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_message_sticker_format_types"}}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
 }
 
 void discord_message_sticker_init(struct discord_message_sticker *p) {
@@ -1099,7 +1099,7 @@ size_t discord_message_flags_list_to_json(char *str, size_t len, enum discord_me
 
 void discord_message_reference_from_json(char *json, size_t len, struct discord_message_reference **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_message_reference *p = *pp;
@@ -1233,16 +1233,16 @@ size_t discord_message_reference_list_to_json_v(char *str, size_t len, void *p){
 void discord_message_reference_cleanup(struct discord_message_reference *d) {
   /* specs/discord/channel.json:114:18
      '{"name":"message_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0}' */
-  // p->message_id is a scalar
+  /* p->message_id is a scalar */
   /* specs/discord/channel.json:115:18
      '{"name":"channel_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0}' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/channel.json:116:18
      '{"name":"guild_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0}' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/channel.json:117:18
      '{"name":"fail_if_not_exists", "type":{"base":"bool"}, "option":true, "inject_if_not":false}' */
-  // p->fail_if_not_exists is a scalar
+  /* p->fail_if_not_exists is a scalar */
 }
 
 void discord_message_reference_init(struct discord_message_reference *p) {
@@ -1283,7 +1283,7 @@ size_t discord_message_reference_list_to_json(char *str, size_t len, struct disc
 
 void discord_message_application_from_json(char *json, size_t len, struct discord_message_application **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_message_application *p = *pp;
@@ -1431,7 +1431,7 @@ size_t discord_message_application_list_to_json_v(char *str, size_t len, void *p
 void discord_message_application_cleanup(struct discord_message_application *d) {
   /* specs/discord/channel.json:126:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:127:18
      '{"name":"cover_image", "type":{"base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   if (d->cover_image)
@@ -1548,7 +1548,7 @@ size_t discord_message_activity_types_list_to_json(char *str, size_t len, enum d
 
 void discord_message_activity_from_json(char *json, size_t len, struct discord_message_activity **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_message_activity *p = *pp;
@@ -1652,7 +1652,7 @@ size_t discord_message_activity_list_to_json_v(char *str, size_t len, void *p){
 void discord_message_activity_cleanup(struct discord_message_activity *d) {
   /* specs/discord/channel.json:151:18
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_message_activity_types"}}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.json:152:18
      '{"name":"party_id", "type":{"base":"char", "dec":"*"},
          "option":true, "inject_if_not":null}' */
@@ -1776,7 +1776,7 @@ size_t discord_message_types_list_to_json(char *str, size_t len, enum discord_me
 
 void discord_message_from_json(char *json, size_t len, struct discord_message **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_message *p = *pp;
@@ -2334,13 +2334,13 @@ size_t discord_message_list_to_json_v(char *str, size_t len, void *p){
 void discord_message_cleanup(struct discord_message *d) {
   /* specs/discord/channel.json:186:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"id"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:187:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"channel_id"}' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/channel.json:188:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"guild_id", "option":true, "inject_if_not":0}' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/channel.json:189:69
      '{"type":{"base":"struct discord_user", "dec":"*"}, "name":"author"}' */
   if (d->author) {
@@ -2359,16 +2359,16 @@ void discord_message_cleanup(struct discord_message *d) {
     free(d->content);
   /* specs/discord/channel.json:192:76
      '{"type":{"base":"char", "dec":"*", "converter":"iso8601"},"name":"timestamp"}' */
-  // p->timestamp is a scalar
+  /* p->timestamp is a scalar */
   /* specs/discord/channel.json:193:77
      '{"type":{"base":"char", "dec":"*", "converter":"iso8601"}, "name":"edited_timestamp", "inject_if_not":0}' */
-  // p->edited_timestamp is a scalar
+  /* p->edited_timestamp is a scalar */
   /* specs/discord/channel.json:194:43
      '{"type":{"base":"bool"}, "name":"tts"}' */
-  // p->tts is a scalar
+  /* p->tts is a scalar */
   /* specs/discord/channel.json:195:43
      '{"type":{"base":"bool"}, "name":"mention_everyone"}' */
-  // p->mention_everyone is a scalar
+  /* p->mention_everyone is a scalar */
   /* specs/discord/channel.json:196:71
      '{"type":{"base":"struct discord_user", "dec":"ntl"}, "name":"mentions", "comment":"array of user objects, with an additional partial member field"}' */
   if (d->mentions)
@@ -2399,13 +2399,13 @@ void discord_message_cleanup(struct discord_message *d) {
     free(d->nonce);
   /* specs/discord/channel.json:203:43
      '{"type":{"base":"bool"}, "name":"pinned"}' */
-  // p->pinned is a scalar
+  /* p->pinned is a scalar */
   /* specs/discord/channel.json:204:79
      '{"type":{"base":"char", "dec":"*", "converter":"snowflake"}, "name":"webhook_id", "option":true }' */
-  // p->webhook_id is a scalar
+  /* p->webhook_id is a scalar */
   /* specs/discord/channel.json:205:84
      '{"type":{"base":"int", "int_alias":"enum discord_message_types"}, "name":"type"}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.json:206:81
      '{"type":{"base":"struct discord_message_activity", "dec":"*"}, "name":"activity", "option":true, "inject_if_not":null }' */
   if (d->activity) {
@@ -2424,7 +2424,7 @@ void discord_message_cleanup(struct discord_message *d) {
   }
   /* specs/discord/channel.json:209:84
      '{"type":{"base":"int", "int_alias":"enum discord_message_flags"}, "name":"flags", "option":true, "inject_if_not":0 }' */
-  // p->flags is a scalar
+  /* p->flags is a scalar */
   /* specs/discord/channel.json:210:72
      '{"type":{"base":"struct discord_message", "dec":"*"}, "name":"referenced_message", "lazy_init":true, "option":true, "inject_if_not":null, "comment":"this will cause recursive allocation if allocating as the parent"}' */
   if (d->referenced_message) {
@@ -2573,7 +2573,7 @@ size_t discord_message_list_to_json(char *str, size_t len, struct discord_messag
 
 void discord_followed_channel_from_json(char *json, size_t len, struct discord_followed_channel **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_followed_channel *p = *pp;
@@ -2671,10 +2671,10 @@ size_t discord_followed_channel_list_to_json_v(char *str, size_t len, void *p){
 void discord_followed_channel_cleanup(struct discord_followed_channel *d) {
   /* specs/discord/channel.json:224:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/channel.json:225:20
      '{ "name": "webhook_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->webhook_id is a scalar
+  /* p->webhook_id is a scalar */
 }
 
 void discord_followed_channel_init(struct discord_followed_channel *p) {
@@ -2709,7 +2709,7 @@ size_t discord_followed_channel_list_to_json(char *str, size_t len, struct disco
 
 void discord_reaction_from_json(char *json, size_t len, struct discord_reaction **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_reaction *p = *pp;
@@ -2823,10 +2823,10 @@ size_t discord_reaction_list_to_json_v(char *str, size_t len, void *p){
 void discord_reaction_cleanup(struct discord_reaction *d) {
   /* specs/discord/channel.json:234:20
      '{ "name": "count", "type":{ "base":"int" }}' */
-  // p->count is a scalar
+  /* p->count is a scalar */
   /* specs/discord/channel.json:235:20
      '{ "name": "me", "type":{ "base":"bool" }}' */
-  // p->me is a scalar
+  /* p->me is a scalar */
   /* specs/discord/channel.json:236:20
      '{ "name": "emoji", "type":{ "base":"struct discord_emoji", "dec":"*" }, "comment":"partial emoji object"}' */
   if (d->emoji) {
@@ -2870,7 +2870,7 @@ size_t discord_reaction_list_to_json(char *str, size_t len, struct discord_react
 
 void discord_overwrite_from_json(char *json, size_t len, struct discord_overwrite **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_overwrite *p = *pp;
@@ -3010,18 +3010,18 @@ size_t discord_overwrite_list_to_json_v(char *str, size_t len, void *p){
 void discord_overwrite_cleanup(struct discord_overwrite *d) {
   /* specs/discord/channel.json:244:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:245:20
      '{ "name": "type", "type":{ "base":"int" }}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.json:246:20
      '{ "name": "allow", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags"}, 
           "comment":"permission bit set"}' */
-  // p->allow is a scalar
+  /* p->allow is a scalar */
   /* specs/discord/channel.json:248:20
      '{ "name": "deny", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags"}, 
           "comment":"permission bit set"}' */
-  // p->deny is a scalar
+  /* p->deny is a scalar */
 }
 
 void discord_overwrite_init(struct discord_overwrite *p) {
@@ -3064,7 +3064,7 @@ size_t discord_overwrite_list_to_json(char *str, size_t len, struct discord_over
 
 void discord_thread_metadata_from_json(char *json, size_t len, struct discord_thread_metadata **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_thread_metadata *p = *pp;
@@ -3210,19 +3210,19 @@ size_t discord_thread_metadata_list_to_json_v(char *str, size_t len, void *p){
 void discord_thread_metadata_cleanup(struct discord_thread_metadata *d) {
   /* specs/discord/channel.json:259:20
      '{ "name": "archived", "type":{ "base":"bool" }}' */
-  // p->archived is a scalar
+  /* p->archived is a scalar */
   /* specs/discord/channel.json:260:20
      '{ "name": "archiver_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->archiver_id is a scalar
+  /* p->archiver_id is a scalar */
   /* specs/discord/channel.json:261:20
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }}' */
-  // p->auto_archive_duration is a scalar
+  /* p->auto_archive_duration is a scalar */
   /* specs/discord/channel.json:262:20
      '{ "name": "archive_timestamp", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
-  // p->archive_timestamp is a scalar
+  /* p->archive_timestamp is a scalar */
   /* specs/discord/channel.json:263:20
      '{ "name": "locked", "type":{ "base":"bool" }}' */
-  // p->locked is a scalar
+  /* p->locked is a scalar */
 }
 
 void discord_thread_metadata_init(struct discord_thread_metadata *p) {
@@ -3266,7 +3266,7 @@ size_t discord_thread_metadata_list_to_json(char *str, size_t len, struct discor
 
 void discord_thread_member_from_json(char *json, size_t len, struct discord_thread_member **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_thread_member *p = *pp;
@@ -3396,16 +3396,16 @@ size_t discord_thread_member_list_to_json_v(char *str, size_t len, void *p){
 void discord_thread_member_cleanup(struct discord_thread_member *d) {
   /* specs/discord/channel.json:273:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:274:20
      '{ "name": "user_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->user_id is a scalar
+  /* p->user_id is a scalar */
   /* specs/discord/channel.json:275:20
      '{ "name": "join_timestamp", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
-  // p->join_timestamp is a scalar
+  /* p->join_timestamp is a scalar */
   /* specs/discord/channel.json:276:20
      '{ "name": "flags", "type":{ "base":"int" }}' */
-  // p->flags is a scalar
+  /* p->flags is a scalar */
 }
 
 void discord_thread_member_init(struct discord_thread_member *p) {
@@ -3446,7 +3446,7 @@ size_t discord_thread_member_list_to_json(char *str, size_t len, struct discord_
 
 void discord_attachment_from_json(char *json, size_t len, struct discord_attachment **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_attachment *p = *pp;
@@ -3624,13 +3624,13 @@ size_t discord_attachment_list_to_json_v(char *str, size_t len, void *p){
 void discord_attachment_cleanup(struct discord_attachment *d) {
   /* specs/discord/channel.json:285:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:286:20
      '{ "name": "filename", "type":{ "base":"char", "dec":"[256]" }}' */
-  // p->filename is a scalar
+  /* p->filename is a scalar */
   /* specs/discord/channel.json:287:20
      '{ "name": "size", "type":{ "base":"int" }}' */
-  // p->size is a scalar
+  /* p->size is a scalar */
   /* specs/discord/channel.json:288:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }}' */
   if (d->url)
@@ -3641,10 +3641,10 @@ void discord_attachment_cleanup(struct discord_attachment *d) {
     free(d->proxy_url);
   /* specs/discord/channel.json:290:20
      '{ "name": "height", "type":{ "base":"int", "nullable":true }}' */
-  // p->height is a scalar
+  /* p->height is a scalar */
   /* specs/discord/channel.json:291:20
      '{ "name": "width", "type":{ "base":"int", "nullable":true }}' */
-  // p->width is a scalar
+  /* p->width is a scalar */
 }
 
 void discord_attachment_init(struct discord_attachment *p) {
@@ -3694,7 +3694,7 @@ size_t discord_attachment_list_to_json(char *str, size_t len, struct discord_att
 
 void discord_channel_mention_from_json(char *json, size_t len, struct discord_channel_mention **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_channel_mention *p = *pp;
@@ -3824,13 +3824,13 @@ size_t discord_channel_mention_list_to_json_v(char *str, size_t len, void *p){
 void discord_channel_mention_cleanup(struct discord_channel_mention *d) {
   /* specs/discord/channel.json:301:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/channel.json:302:20
      '{ "name": "guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/channel.json:303:20
      '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_channel_types" }}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.json:304:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*" }}' */
   if (d->name)
@@ -3875,7 +3875,7 @@ size_t discord_channel_mention_list_to_json(char *str, size_t len, struct discor
 
 void discord_allowed_mentions_from_json(char *json, size_t len, struct discord_allowed_mentions **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_allowed_mentions *p = *pp;
@@ -4017,7 +4017,7 @@ void discord_allowed_mentions_cleanup(struct discord_allowed_mentions *d) {
     ja_u64_list_free(d->users);
   /* specs/discord/channel.json:316:20
      '{ "name": "replied_user", "type":{ "base":"bool" }}' */
-  // p->replied_user is a scalar
+  /* p->replied_user is a scalar */
 }
 
 void discord_allowed_mentions_init(struct discord_allowed_mentions *p) {
@@ -4058,7 +4058,7 @@ size_t discord_allowed_mentions_list_to_json(char *str, size_t len, struct disco
 
 void discord_embed_from_json(char *json, size_t len, struct discord_embed **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed *p = *pp;
@@ -4345,23 +4345,23 @@ size_t discord_embed_list_to_json_v(char *str, size_t len, void *p){
 void discord_embed_cleanup(struct discord_embed *d) {
   /* specs/discord/channel.json:325:20
      '{ "name": "title", "type":{ "base":"char", "dec":"[DISCORD_EMBED_TITLE_LEN]" }, "option":true, "inject_if_not":null}' */
-  // p->title is a scalar
+  /* p->title is a scalar */
   /* specs/discord/channel.json:326:20
      '{ "name": "type", "type":{ "base":"char", "dec":"[32]" }, "option":true, "inject_if_not":null}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.json:327:20
      '{ "name": "description", "type":{ "base":"char", "dec":"[DISCORD_EMBED_DESCRIPTION_LEN]"}, "option":true, "inject_if_not":null}' */
-  // p->description is a scalar
+  /* p->description is a scalar */
   /* specs/discord/channel.json:328:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   if (d->url)
     free(d->url);
   /* specs/discord/channel.json:329:20
      '{ "name": "timestamp", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }, "option":true, "inject_if_not":0}' */
-  // p->timestamp is a scalar
+  /* p->timestamp is a scalar */
   /* specs/discord/channel.json:330:20
      '{ "name": "color", "type":{ "base":"int" }, "option":true, "inject_if_not":0}' */
-  // p->color is a scalar
+  /* p->color is a scalar */
   /* specs/discord/channel.json:331:20
      '{ "name": "footer", "type":{ "base":"struct discord_embed_footer", "dec":"*"}, "option":true, "inject_if_not":null}' */
   if (d->footer) {
@@ -4469,7 +4469,7 @@ size_t discord_embed_list_to_json(char *str, size_t len, struct discord_embed **
 
 void discord_embed_thumbnail_from_json(char *json, size_t len, struct discord_embed_thumbnail **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_thumbnail *p = *pp;
@@ -4611,10 +4611,10 @@ void discord_embed_thumbnail_cleanup(struct discord_embed_thumbnail *d) {
     free(d->proxy_url);
   /* specs/discord/channel.json:348:20
      '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->height is a scalar
+  /* p->height is a scalar */
   /* specs/discord/channel.json:349:20
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->width is a scalar
+  /* p->width is a scalar */
 }
 
 void discord_embed_thumbnail_init(struct discord_embed_thumbnail *p) {
@@ -4655,7 +4655,7 @@ size_t discord_embed_thumbnail_list_to_json(char *str, size_t len, struct discor
 
 void discord_embed_video_from_json(char *json, size_t len, struct discord_embed_video **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_video *p = *pp;
@@ -4797,10 +4797,10 @@ void discord_embed_video_cleanup(struct discord_embed_video *d) {
     free(d->proxy_url);
   /* specs/discord/channel.json:360:20
      '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->height is a scalar
+  /* p->height is a scalar */
   /* specs/discord/channel.json:361:20
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->width is a scalar
+  /* p->width is a scalar */
 }
 
 void discord_embed_video_init(struct discord_embed_video *p) {
@@ -4841,7 +4841,7 @@ size_t discord_embed_video_list_to_json(char *str, size_t len, struct discord_em
 
 void discord_embed_image_from_json(char *json, size_t len, struct discord_embed_image **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_image *p = *pp;
@@ -4983,10 +4983,10 @@ void discord_embed_image_cleanup(struct discord_embed_image *d) {
     free(d->proxy_url);
   /* specs/discord/channel.json:372:20
      '{ "name": "height", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->height is a scalar
+  /* p->height is a scalar */
   /* specs/discord/channel.json:373:20
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
-  // p->width is a scalar
+  /* p->width is a scalar */
 }
 
 void discord_embed_image_init(struct discord_embed_image *p) {
@@ -5027,7 +5027,7 @@ size_t discord_embed_image_list_to_json(char *str, size_t len, struct discord_em
 
 void discord_embed_provider_from_json(char *json, size_t len, struct discord_embed_provider **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_provider *p = *pp;
@@ -5167,7 +5167,7 @@ size_t discord_embed_provider_list_to_json(char *str, size_t len, struct discord
 
 void discord_embed_author_from_json(char *json, size_t len, struct discord_embed_author **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_author *p = *pp;
@@ -5301,7 +5301,7 @@ size_t discord_embed_author_list_to_json_v(char *str, size_t len, void *p){
 void discord_embed_author_cleanup(struct discord_embed_author *d) {
   /* specs/discord/channel.json:392:20
      '{ "name": "name", "type":{ "base":"char", "dec":"[DISCORD_EMBED_AUTHOR_NAME_LEN]" }, "inject_if_not":null}' */
-  // p->name is a scalar
+  /* p->name is a scalar */
   /* specs/discord/channel.json:393:20
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   if (d->url)
@@ -5354,7 +5354,7 @@ size_t discord_embed_author_list_to_json(char *str, size_t len, struct discord_e
 
 void discord_embed_footer_from_json(char *json, size_t len, struct discord_embed_footer **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_footer *p = *pp;
@@ -5471,7 +5471,7 @@ size_t discord_embed_footer_list_to_json_v(char *str, size_t len, void *p){
 void discord_embed_footer_cleanup(struct discord_embed_footer *d) {
   /* specs/discord/channel.json:404:20
      '{ "name": "text", "type": {"base":"char", "dec":"[DISCORD_EMBED_FOOTER_TEXT_LEN]"}, "inject_if_not":null}' */
-  // p->text is a scalar
+  /* p->text is a scalar */
   /* specs/discord/channel.json:405:20
      '{ "name": "icon_url", "type": {"base":"char", "dec":"*" }, "option":true, "inject_if_not":null}' */
   if (d->icon_url)
@@ -5517,7 +5517,7 @@ size_t discord_embed_footer_list_to_json(char *str, size_t len, struct discord_e
 
 void discord_embed_field_from_json(char *json, size_t len, struct discord_embed_field **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_embed_field *p = *pp;
@@ -5633,13 +5633,13 @@ size_t discord_embed_field_list_to_json_v(char *str, size_t len, void *p){
 void discord_embed_field_cleanup(struct discord_embed_field *d) {
   /* specs/discord/channel.json:415:20
      '{ "name": "name", "type": { "base":"char", "dec":"[DISCORD_EMBED_FIELD_NAME_LEN]" }, "inject_if_not":null}' */
-  // p->name is a scalar
+  /* p->name is a scalar */
   /* specs/discord/channel.json:416:20
      '{ "name": "value", "type": { "base":"char", "dec":"[DISCORD_EMBED_FIELD_VALUE_LEN]" }, "inject_if_not":null}' */
-  // p->value is a scalar
+  /* p->value is a scalar */
   /* specs/discord/channel.json:417:20
      '{ "name": "Inline", "json_key":"inline", "type": { "base":"bool" }, "option":true}' */
-  // p->Inline is a scalar
+  /* p->Inline is a scalar */
 }
 
 void discord_embed_field_init(struct discord_embed_field *p) {

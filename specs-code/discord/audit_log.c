@@ -15,7 +15,7 @@
 
 void discord_audit_log_from_json(char *json, size_t len, struct discord_audit_log **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_audit_log *p = *pp;
@@ -227,7 +227,7 @@ size_t discord_audit_log_list_to_json(char *str, size_t len, struct discord_audi
 
 void discord_audit_log_entry_from_json(char *json, size_t len, struct discord_audit_log_entry **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_audit_log_entry *p = *pp;
@@ -420,20 +420,20 @@ void discord_audit_log_entry_cleanup(struct discord_audit_log_entry *d) {
     discord_audit_log_change_list_free(d->changes);
   /* specs/discord/audit_log.json:28:18
      '{"name":"user_id", "type": {"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"the user who made the changes", "inject_if_not":0 }' */
-  // p->user_id is a scalar
+  /* p->user_id is a scalar */
   /* specs/discord/audit_log.json:29:18
      '{"name":"id", "type": {"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the entry", "inject_if_not":0 }' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/audit_log.json:30:18
      '{"name":"action_type", "type": {"base":"int", "c_base":"enum discord_audit_log_events"}, "comment":"type of action that occured", "inject_if_not":0 }' */
-  // p->action_type is a scalar
+  /* p->action_type is a scalar */
   /* specs/discord/audit_log.json:31:18
      '{"name":"options", "type": {"base":"struct discord_optional_audit_entry_info", "dec":"ntl"}, "comment":"additional info for certain action types", "inject_if_not":null }' */
   if (d->options)
     discord_optional_audit_entry_info_list_free(d->options);
   /* specs/discord/audit_log.json:32:18
      '{"name":"reason", "type": {"base":"char", "dec":"[DISCORD_MAX_REASON_LEN]"}, "comment":"the reason for the change", "inject_if_not":"" }' */
-  // p->reason is a scalar
+  /* p->reason is a scalar */
 }
 
 void discord_audit_log_entry_init(struct discord_audit_log_entry *p) {
@@ -618,7 +618,7 @@ size_t discord_audit_log_events_list_to_json(char *str, size_t len, enum discord
 
 void discord_optional_audit_entry_info_from_json(char *json, size_t len, struct discord_optional_audit_entry_info **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_optional_audit_entry_info *p = *pp;
@@ -828,17 +828,17 @@ void discord_optional_audit_entry_info_cleanup(struct discord_optional_audit_ent
     free(d->members_removed);
   /* specs/discord/audit_log.json:96:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"channel in which the entities were targeted", "inject_if_not":0 }' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/audit_log.json:97:20
      '{ "name": "message_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"id of the message that was targeted", "inject_if_not":0 }' */
-  // p->message_id is a scalar
+  /* p->message_id is a scalar */
   /* specs/discord/audit_log.json:98:20
      '{ "name": "count", "type":{ "base":"char", "dec":"*" }, "comment":"number of entities that were targeted", "inject_if_not":null }' */
   if (d->count)
     free(d->count);
   /* specs/discord/audit_log.json:99:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"id of the ovewritten entity", "inject_if_not":0 }' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/audit_log.json:100:20
      '{ "name": "type", "type":{ "base":"char", "dec":"*" }, "comment":"type of overwritten entity - '0' for role or '1' for member", "inject_if_not":null }' */
   if (d->type)
@@ -899,7 +899,7 @@ size_t discord_optional_audit_entry_info_list_to_json(char *str, size_t len, str
 
 void discord_audit_log_change_from_json(char *json, size_t len, struct discord_audit_log_change **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_audit_log_change *p = *pp;

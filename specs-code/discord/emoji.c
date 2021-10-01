@@ -15,7 +15,7 @@
 
 void discord_emoji_from_json(char *json, size_t len, struct discord_emoji **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_emoji *p = *pp;
@@ -209,7 +209,7 @@ size_t discord_emoji_list_to_json_v(char *str, size_t len, void *p){
 void discord_emoji_cleanup(struct discord_emoji *d) {
   /* specs/discord/emoji.json:12:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "comment":"emoji id"}' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/emoji.json:13:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*"}, "comment":"emoji name"}' */
   if (d->name)
@@ -226,16 +226,16 @@ void discord_emoji_cleanup(struct discord_emoji *d) {
   }
   /* specs/discord/emoji.json:16:20
      '{ "name": "require_colons", "type":{ "base":"bool" }, "option":true, "comment":"whether this emoji must be wrapped in colons" }' */
-  // p->require_colons is a scalar
+  /* p->require_colons is a scalar */
   /* specs/discord/emoji.json:17:20
      '{ "name": "managed", "type":{ "base":"bool" }, "option":true, "comment":"whether this emoji is managed" }' */
-  // p->managed is a scalar
+  /* p->managed is a scalar */
   /* specs/discord/emoji.json:18:20
      '{ "name": "animated", "type":{ "base":"bool" }, "option":true, "comment":"whether this emoji is animated" }' */
-  // p->animated is a scalar
+  /* p->animated is a scalar */
   /* specs/discord/emoji.json:19:20
      '{ "name": "available", "type":{ "base":"bool" }, "option":true, "whether this emoji can be used, may be false due to loss of Server Boosts" }' */
-  // p->available is a scalar
+  /* p->available is a scalar */
 }
 
 void discord_emoji_init(struct discord_emoji *p) {

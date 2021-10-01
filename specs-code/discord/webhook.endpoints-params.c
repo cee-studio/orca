@@ -15,7 +15,7 @@
 
 void discord_create_webhook_params_from_json(char *json, size_t len, struct discord_create_webhook_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_webhook_params *p = *pp;
@@ -154,7 +154,7 @@ size_t discord_create_webhook_params_list_to_json(char *str, size_t len, struct 
 
 void discord_modify_webhook_params_from_json(char *json, size_t len, struct discord_modify_webhook_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_webhook_params *p = *pp;
@@ -279,7 +279,7 @@ void discord_modify_webhook_params_cleanup(struct discord_modify_webhook_params 
     free(d->avatar);
   /* specs/discord/webhook.endpoints-params.json:24:20
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0, "comment":"the new channel id this webhook should be moved to" }' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
 }
 
 void discord_modify_webhook_params_init(struct discord_modify_webhook_params *p) {
@@ -317,7 +317,7 @@ size_t discord_modify_webhook_params_list_to_json(char *str, size_t len, struct 
 
 void discord_modify_webhook_with_token_params_from_json(char *json, size_t len, struct discord_modify_webhook_with_token_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_webhook_with_token_params *p = *pp;
@@ -457,7 +457,7 @@ size_t discord_modify_webhook_with_token_params_list_to_json(char *str, size_t l
 
 void discord_execute_webhook_params_from_json(char *json, size_t len, struct discord_execute_webhook_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_execute_webhook_params *p = *pp;
@@ -673,10 +673,10 @@ size_t discord_execute_webhook_params_list_to_json_v(char *str, size_t len, void
 void discord_execute_webhook_params_cleanup(struct discord_execute_webhook_params *d) {
   /* specs/discord/webhook.endpoints-params.json:44:20
      '{ "name": "wait", "type":{ "base":"bool"}, "loc":"query", "comment":"	waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error)" }' */
-  // p->wait is a scalar
+  /* p->wait is a scalar */
   /* specs/discord/webhook.endpoints-params.json:45:20
      '{ "name": "thread_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "loc":"query", "comment":"Send a message to the specified thread withing a webhook's channel. The thread will automatically be unarchived", "inject_if_not":0 }' */
-  // p->thread_id is a scalar
+  /* p->thread_id is a scalar */
   /* specs/discord/webhook.endpoints-params.json:46:20
      '{ "name": "content", "type":{ "base":"char", "dec":"*" }, "comment":"the message contents (up to 2000 characters)", "inject_if_not": null }' */
   if (d->content)
@@ -691,7 +691,7 @@ void discord_execute_webhook_params_cleanup(struct discord_execute_webhook_param
     free(d->avatar_url);
   /* specs/discord/webhook.endpoints-params.json:49:20
      '{ "name": "tts", "type":{ "base":"bool" }, "comment":"true if this is a TTS message", "inject_if_not":false }' */
-  // p->tts is a scalar
+  /* p->tts is a scalar */
   /* specs/discord/webhook.endpoints-params.json:50:20
      '{ "name": "file", "type":{ "base":"char", "dec":"*" }, "loc":"multipart", "comment":"the contents of the file being sent", "inject_if_not":null }' */
   if (d->file)
@@ -777,7 +777,7 @@ size_t discord_execute_webhook_params_list_to_json(char *str, size_t len, struct
 
 void discord_edit_webhook_message_params_from_json(char *json, size_t len, struct discord_edit_webhook_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_webhook_message_params *p = *pp;

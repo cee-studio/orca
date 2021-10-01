@@ -143,7 +143,7 @@ size_t discord_user_premium_types_list_to_json(char *str, size_t len, enum disco
 
 void discord_user_from_json(char *json, size_t len, struct discord_user **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_user *p = *pp;
@@ -417,43 +417,43 @@ size_t discord_user_list_to_json_v(char *str, size_t len, void *p){
 void discord_user_cleanup(struct discord_user *d) {
   /* specs/discord/user.json:44:24
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"} }' */
-  // p->id is a scalar
+  /* p->id is a scalar */
   /* specs/discord/user.json:45:24
      '{ "name": "username", "type":{ "base":"char", "dec":"[DISCORD_MAX_USERNAME_LEN]"}}' */
-  // p->username is a scalar
+  /* p->username is a scalar */
   /* specs/discord/user.json:46:24
      '{ "name": "discriminator", "type":{ "base":"char", "dec":"[DISCORD_MAX_DISCRIMINATOR_LEN]" }}' */
-  // p->discriminator is a scalar
+  /* p->discriminator is a scalar */
   /* specs/discord/user.json:47:24
      '{ "name": "avatar", "type":{ "base":"char", "dec":"[ORCA_LIMITS_SHA256]" }}' */
-  // p->avatar is a scalar
+  /* p->avatar is a scalar */
   /* specs/discord/user.json:48:24
      '{ "name": "bot", "type":{ "base":"bool" }}' */
-  // p->bot is a scalar
+  /* p->bot is a scalar */
   /* specs/discord/user.json:49:24
      '{ "name": "System", "json_key": "system", "type":{ "base":"bool" }}' */
-  // p->System is a scalar
+  /* p->System is a scalar */
   /* specs/discord/user.json:50:24
      '{ "name": "mfa_enabled", "type":{ "base":"bool" }}' */
-  // p->mfa_enabled is a scalar
+  /* p->mfa_enabled is a scalar */
   /* specs/discord/user.json:51:24
      '{ "name": "locale", "type":{ "base":"char", "dec":"[ORCA_LIMITS_LOCALE]" }}' */
-  // p->locale is a scalar
+  /* p->locale is a scalar */
   /* specs/discord/user.json:52:24
      '{ "name": "verified", "type":{ "base":"bool" }}' */
-  // p->verified is a scalar
+  /* p->verified is a scalar */
   /* specs/discord/user.json:53:24
      '{ "name": "email", "type":{ "base":"char", "dec":"[ORCA_LIMITS_EMAIL]" }}' */
-  // p->email is a scalar
+  /* p->email is a scalar */
   /* specs/discord/user.json:54:24
      '{ "name": "flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}' */
-  // p->flags is a scalar
+  /* p->flags is a scalar */
   /* specs/discord/user.json:55:24
      '{ "name": "premium_type", "type":{ "base":"int", "int_alias": "enum discord_user_premium_types" }}' */
-  // p->premium_type is a scalar
+  /* p->premium_type is a scalar */
   /* specs/discord/user.json:56:24
      '{ "name": "public_flags", "type":{ "base":"int", "int_alias": "enum discord_user_flags" }}' */
-  // p->public_flags is a scalar
+  /* p->public_flags is a scalar */
 }
 
 void discord_user_init(struct discord_user *p) {
@@ -574,7 +574,7 @@ size_t discord_visibility_types_list_to_json(char *str, size_t len, enum discord
 
 void discord_connection_from_json(char *json, size_t len, struct discord_connection **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_connection *p = *pp;
@@ -796,23 +796,23 @@ void discord_connection_cleanup(struct discord_connection *d) {
     free(d->type);
   /* specs/discord/user.json:79:24
      '{ "name": "revoked", "type":{ "base":"bool"}}' */
-  // p->revoked is a scalar
+  /* p->revoked is a scalar */
   /* specs/discord/user.json:80:24
      '{ "name": "integrations", "type": {"base":"struct discord_integration", "dec":"ntl"}}' */
   if (d->integrations)
     discord_integration_list_free(d->integrations);
   /* specs/discord/user.json:81:24
      '{ "name": "verified", "type":{ "base":"bool" }}' */
-  // p->verified is a scalar
+  /* p->verified is a scalar */
   /* specs/discord/user.json:82:24
      '{ "name": "friend_sync", "type":{ "base":"bool" }}' */
-  // p->friend_sync is a scalar
+  /* p->friend_sync is a scalar */
   /* specs/discord/user.json:83:24
      '{ "name": "show_activity", "type":{ "base":"bool" }}' */
-  // p->show_activity is a scalar
+  /* p->show_activity is a scalar */
   /* specs/discord/user.json:84:24
      '{ "name": "visibility", "type":{ "base":"int", "int_alias":"enum discord_visibility_types" }}' */
-  // p->visibility is a scalar
+  /* p->visibility is a scalar */
 }
 
 void discord_connection_init(struct discord_connection *p) {

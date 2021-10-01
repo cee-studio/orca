@@ -15,7 +15,7 @@
 
 void discord_create_global_application_command_params_from_json(char *json, size_t len, struct discord_create_global_application_command_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_global_application_command_params *p = *pp;
@@ -174,10 +174,10 @@ void discord_create_global_application_command_params_cleanup(struct discord_cre
     discord_application_command_option_list_free(d->options);
   /* specs/discord/application_commands.endpoints-params.json:16:20
      '{ "name": "default_permission", "type":{"base":"bool", "default_value":true}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
-  // p->default_permission is a scalar
+  /* p->default_permission is a scalar */
   /* specs/discord/application_commands.endpoints-params.json:17:20
      '{ "name": "type", "type":{"base":"int", "int_alias":"enum discord_application_command_types", "inject_if_not":0}}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
 }
 
 void discord_create_global_application_command_params_init(struct discord_create_global_application_command_params *p) {
@@ -222,7 +222,7 @@ size_t discord_create_global_application_command_params_list_to_json(char *str, 
 
 void discord_edit_global_application_command_params_from_json(char *json, size_t len, struct discord_edit_global_application_command_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_global_application_command_params *p = *pp;
@@ -367,7 +367,7 @@ void discord_edit_global_application_command_params_cleanup(struct discord_edit_
     discord_application_command_option_list_free(d->options);
   /* specs/discord/application_commands.endpoints-params.json:30:20
      '{ "name": "default_permission", "type":{"base":"bool", "default_value":true}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
-  // p->default_permission is a scalar
+  /* p->default_permission is a scalar */
 }
 
 void discord_edit_global_application_command_params_init(struct discord_edit_global_application_command_params *p) {
@@ -409,7 +409,7 @@ size_t discord_edit_global_application_command_params_list_to_json(char *str, si
 
 void discord_create_guild_application_command_params_from_json(char *json, size_t len, struct discord_create_guild_application_command_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_guild_application_command_params *p = *pp;
@@ -568,10 +568,10 @@ void discord_create_guild_application_command_params_cleanup(struct discord_crea
     discord_application_command_option_list_free(d->options);
   /* specs/discord/application_commands.endpoints-params.json:43:20
      '{ "name": "default_permission", "type":{"base":"bool", "default_value":true}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
-  // p->default_permission is a scalar
+  /* p->default_permission is a scalar */
   /* specs/discord/application_commands.endpoints-params.json:44:20
      '{ "name": "type", "type":{"base":"int", "int_alias":"enum discord_application_command_types", "inject_if_not":0}}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
 }
 
 void discord_create_guild_application_command_params_init(struct discord_create_guild_application_command_params *p) {
@@ -616,7 +616,7 @@ size_t discord_create_guild_application_command_params_list_to_json(char *str, s
 
 void discord_edit_guild_application_command_params_from_json(char *json, size_t len, struct discord_edit_guild_application_command_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_guild_application_command_params *p = *pp;
@@ -761,7 +761,7 @@ void discord_edit_guild_application_command_params_cleanup(struct discord_edit_g
     discord_application_command_option_list_free(d->options);
   /* specs/discord/application_commands.endpoints-params.json:57:20
      '{ "name": "default_permission", "type":{"base":"bool", "default_value":true}, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
-  // p->default_permission is a scalar
+  /* p->default_permission is a scalar */
 }
 
 void discord_edit_guild_application_command_params_init(struct discord_edit_guild_application_command_params *p) {
@@ -803,7 +803,7 @@ size_t discord_edit_guild_application_command_params_list_to_json(char *str, siz
 
 void discord_edit_application_command_permissions_params_from_json(char *json, size_t len, struct discord_edit_application_command_permissions_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_application_command_permissions_params *p = *pp;

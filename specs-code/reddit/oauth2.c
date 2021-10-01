@@ -15,7 +15,7 @@
 
 void reddit_access_token_params_from_json(char *json, size_t len, struct reddit_access_token_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct reddit_access_token_params *p = *pp;

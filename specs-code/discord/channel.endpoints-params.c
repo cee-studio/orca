@@ -15,7 +15,7 @@
 
 void discord_modify_channel_params_from_json(char *json, size_t len, struct discord_modify_channel_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_modify_channel_params *p = *pp;
@@ -360,49 +360,49 @@ void discord_modify_channel_params_cleanup(struct discord_modify_channel_params 
     free(d->icon);
   /* specs/discord/channel.endpoints-params.json:14:20
      '{ "name": "type", "type":{ "base":"int" }}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/channel.endpoints-params.json:15:20
      '{ "name": "position", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->position is a scalar
+  /* p->position is a scalar */
   /* specs/discord/channel.endpoints-params.json:16:20
      '{ "name": "topic", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null }' */
   if (d->topic)
     free(d->topic);
   /* specs/discord/channel.endpoints-params.json:17:20
      '{ "name": "nsfw", "type":{ "base":"bool" }, "inject_if_not":false }' */
-  // p->nsfw is a scalar
+  /* p->nsfw is a scalar */
   /* specs/discord/channel.endpoints-params.json:18:20
      '{ "name": "rate_limit_per_user", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->rate_limit_per_user is a scalar
+  /* p->rate_limit_per_user is a scalar */
   /* specs/discord/channel.endpoints-params.json:19:20
      '{ "name": "bitrate", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->bitrate is a scalar
+  /* p->bitrate is a scalar */
   /* specs/discord/channel.endpoints-params.json:20:20
      '{ "name": "user_limit", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->user_limit is a scalar
+  /* p->user_limit is a scalar */
   /* specs/discord/channel.endpoints-params.json:21:20
      '{ "name": "permission_overwrites", "type":{ "base":"struct discord_overwrite", "dec":"ntl" }, "inject_if_not":null }' */
   if (d->permission_overwrites)
     discord_overwrite_list_free(d->permission_overwrites);
   /* specs/discord/channel.endpoints-params.json:22:20
      '{ "name": "parent_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0 }' */
-  // p->parent_id is a scalar
+  /* p->parent_id is a scalar */
   /* specs/discord/channel.endpoints-params.json:23:20
      '{ "name": "rtc_region", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null }' */
   if (d->rtc_region)
     free(d->rtc_region);
   /* specs/discord/channel.endpoints-params.json:24:20
      '{ "name": "video_quality_mode", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->video_quality_mode is a scalar
+  /* p->video_quality_mode is a scalar */
   /* specs/discord/channel.endpoints-params.json:25:20
      '{ "name": "archived", "type":{ "base":"bool" }, "inject_if_not":false }' */
-  // p->archived is a scalar
+  /* p->archived is a scalar */
   /* specs/discord/channel.endpoints-params.json:26:20
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->auto_archive_duration is a scalar
+  /* p->auto_archive_duration is a scalar */
   /* specs/discord/channel.endpoints-params.json:27:20
      '{ "name": "locked", "type":{ "base":"bool" }, "inject_if_not":false }' */
-  // p->locked is a scalar
+  /* p->locked is a scalar */
 }
 
 void discord_modify_channel_params_init(struct discord_modify_channel_params *p) {
@@ -479,7 +479,7 @@ size_t discord_modify_channel_params_list_to_json(char *str, size_t len, struct 
 
 void discord_create_message_params_from_json(char *json, size_t len, struct discord_create_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_message_params *p = *pp;
@@ -695,7 +695,7 @@ void discord_create_message_params_cleanup(struct discord_create_message_params 
     free(d->content);
   /* specs/discord/channel.endpoints-params.json:37:20
      '{ "name": "tts", "type":{ "base":"bool" }, "comment":"true if this is a TTS message", "inject_if_not":false }' */
-  // p->tts is a scalar
+  /* p->tts is a scalar */
   /* specs/discord/channel.endpoints-params.json:38:20
      '{ "name": "file", "type":{ "base":"struct discord_file", "dec":"*" }, "loc":"multipart", "comment":"the contents of the file being sent", "inject_if_not":null }' */
   if (d->file) {
@@ -794,7 +794,7 @@ size_t discord_create_message_params_list_to_json(char *str, size_t len, struct 
 
 void discord_get_channel_messages_params_from_json(char *json, size_t len, struct discord_get_channel_messages_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_get_channel_messages_params *p = *pp;
@@ -880,16 +880,16 @@ size_t discord_get_channel_messages_params_list_to_json_v(char *str, size_t len,
 void discord_get_channel_messages_params_cleanup(struct discord_get_channel_messages_params *d) {
   /* specs/discord/channel.endpoints-params.json:54:20
      '{ "name": "around", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query", "comment":"get messages around this message ID", "inject_if_not":0 }' */
-  // p->around is a scalar
+  /* p->around is a scalar */
   /* specs/discord/channel.endpoints-params.json:55:20
      '{ "name": "before", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query", "comment":"get messages before this message ID", "inject_if_not":0 }' */
-  // p->before is a scalar
+  /* p->before is a scalar */
   /* specs/discord/channel.endpoints-params.json:56:20
      '{ "name": "after", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query", "comment":"get messages after this message ID", "inject_if_not":0 }' */
-  // p->after is a scalar
+  /* p->after is a scalar */
   /* specs/discord/channel.endpoints-params.json:57:20
      '{ "name": "limit", "type":{ "base":"int" }, "loc":"query", "default_value":50, "comment":"max number of messages to return (1-100)", "inject_if_not":0 }' */
-  // p->limit is a scalar
+  /* p->limit is a scalar */
 }
 
 void discord_get_channel_messages_params_init(struct discord_get_channel_messages_params *p) {
@@ -930,7 +930,7 @@ size_t discord_get_channel_messages_params_list_to_json(char *str, size_t len, s
 
 void discord_get_reactions_params_from_json(char *json, size_t len, struct discord_get_reactions_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_get_reactions_params *p = *pp;
@@ -1004,10 +1004,10 @@ size_t discord_get_reactions_params_list_to_json_v(char *str, size_t len, void *
 void discord_get_reactions_params_cleanup(struct discord_get_reactions_params *d) {
   /* specs/discord/channel.endpoints-params.json:66:20
      '{ "name": "after", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "loc":"query"}' */
-  // p->after is a scalar
+  /* p->after is a scalar */
   /* specs/discord/channel.endpoints-params.json:67:20
      '{ "name": "limit", "type":{ "base":"int" }, "loc":"query"}' */
-  // p->limit is a scalar
+  /* p->limit is a scalar */
 }
 
 void discord_get_reactions_params_init(struct discord_get_reactions_params *p) {
@@ -1042,7 +1042,7 @@ size_t discord_get_reactions_params_list_to_json(char *str, size_t len, struct d
 
 void discord_edit_channel_permissions_params_from_json(char *json, size_t len, struct discord_edit_channel_permissions_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_channel_permissions_params *p = *pp;
@@ -1156,13 +1156,13 @@ size_t discord_edit_channel_permissions_params_list_to_json_v(char *str, size_t 
 void discord_edit_channel_permissions_params_cleanup(struct discord_edit_channel_permissions_params *d) {
   /* specs/discord/channel.endpoints-params.json:76:20
      '{ "name": "allow", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags"}, "comment":"permission bit set" }' */
-  // p->allow is a scalar
+  /* p->allow is a scalar */
   /* specs/discord/channel.endpoints-params.json:77:20
      '{ "name": "deny", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags"}, "comment":"permission bit set" }' */
-  // p->deny is a scalar
+  /* p->deny is a scalar */
   /* specs/discord/channel.endpoints-params.json:78:20
      '{ "name": "type", "type":{ "base":"int" }}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
 }
 
 void discord_edit_channel_permissions_params_init(struct discord_edit_channel_permissions_params *p) {
@@ -1200,7 +1200,7 @@ size_t discord_edit_channel_permissions_params_list_to_json(char *str, size_t le
 
 void discord_edit_message_params_from_json(char *json, size_t len, struct discord_edit_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_message_params *p = *pp;
@@ -1409,7 +1409,7 @@ void discord_edit_message_params_cleanup(struct discord_edit_message_params *d) 
   }
   /* specs/discord/channel.endpoints-params.json:90:20
      '{ "name": "flags", "type":{ "base":"int", "int_alias":"enum discord_message_flags" }, "comment":"edit the flags of a message", "inject_if_not":0 }' */
-  // p->flags is a scalar
+  /* p->flags is a scalar */
   /* specs/discord/channel.endpoints-params.json:91:20
      '{ "name": "file", "type":{ "base":"struct discord_file", "dec":"*" }, "loc":"multipart", "comment":"the contents of the file being sent", "inject_if_not":null }' */
   if (d->file) {
@@ -1489,7 +1489,7 @@ size_t discord_edit_message_params_list_to_json(char *str, size_t len, struct di
 
 void discord_follow_news_channel_params_from_json(char *json, size_t len, struct discord_follow_news_channel_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_follow_news_channel_params *p = *pp;
@@ -1571,7 +1571,7 @@ size_t discord_follow_news_channel_params_list_to_json_v(char *str, size_t len, 
 void discord_follow_news_channel_params_cleanup(struct discord_follow_news_channel_params *d) {
   /* specs/discord/channel.endpoints-params.json:104:20
      '{ "name": "webhook_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"} }' */
-  // p->webhook_channel_id is a scalar
+  /* p->webhook_channel_id is a scalar */
 }
 
 void discord_follow_news_channel_params_init(struct discord_follow_news_channel_params *p) {
@@ -1603,7 +1603,7 @@ size_t discord_follow_news_channel_params_list_to_json(char *str, size_t len, st
 
 void discord_create_channel_invite_params_from_json(char *json, size_t len, struct discord_create_channel_invite_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_channel_invite_params *p = *pp;
@@ -1784,25 +1784,25 @@ size_t discord_create_channel_invite_params_list_to_json_v(char *str, size_t len
 void discord_create_channel_invite_params_cleanup(struct discord_create_channel_invite_params *d) {
   /* specs/discord/channel.endpoints-params.json:113:20
      '{ "name": "max_age", "type":{ "base":"int" }}' */
-  // p->max_age is a scalar
+  /* p->max_age is a scalar */
   /* specs/discord/channel.endpoints-params.json:114:20
      '{ "name": "max_uses", "type":{ "base":"int" }}' */
-  // p->max_uses is a scalar
+  /* p->max_uses is a scalar */
   /* specs/discord/channel.endpoints-params.json:115:20
      '{ "name": "temporary", "type":{ "base":"bool" }}' */
-  // p->temporary is a scalar
+  /* p->temporary is a scalar */
   /* specs/discord/channel.endpoints-params.json:116:20
      '{ "name": "unique", "type":{ "base":"bool" }}' */
-  // p->unique is a scalar
+  /* p->unique is a scalar */
   /* specs/discord/channel.endpoints-params.json:117:20
      '{ "name": "target_type", "type":{ "base":"int" }, "option":true, "inject_if_not":0 }' */
-  // p->target_type is a scalar
+  /* p->target_type is a scalar */
   /* specs/discord/channel.endpoints-params.json:118:20
      '{ "name": "target_user_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0 }' */
-  // p->target_user_id is a scalar
+  /* p->target_user_id is a scalar */
   /* specs/discord/channel.endpoints-params.json:119:20
      '{ "name": "target_application_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0 }' */
-  // p->target_application_id is a scalar
+  /* p->target_application_id is a scalar */
 }
 
 void discord_create_channel_invite_params_init(struct discord_create_channel_invite_params *p) {
@@ -1852,7 +1852,7 @@ size_t discord_create_channel_invite_params_list_to_json(char *str, size_t len, 
 
 void discord_group_dm_add_recipient_params_from_json(char *json, size_t len, struct discord_group_dm_add_recipient_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_group_dm_add_recipient_params *p = *pp;
@@ -1990,7 +1990,7 @@ size_t discord_group_dm_add_recipient_params_list_to_json(char *str, size_t len,
 
 void discord_start_thread_with_message_params_from_json(char *json, size_t len, struct discord_start_thread_with_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_start_thread_with_message_params *p = *pp;
@@ -2094,7 +2094,7 @@ void discord_start_thread_with_message_params_cleanup(struct discord_start_threa
     free(d->name);
   /* specs/discord/channel.endpoints-params.json:139:20
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->auto_archive_duration is a scalar
+  /* p->auto_archive_duration is a scalar */
 }
 
 void discord_start_thread_with_message_params_init(struct discord_start_thread_with_message_params *p) {
@@ -2129,7 +2129,7 @@ size_t discord_start_thread_with_message_params_list_to_json(char *str, size_t l
 
 void discord_start_thread_without_message_params_from_json(char *json, size_t len, struct discord_start_thread_without_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_start_thread_without_message_params *p = *pp;
@@ -2248,10 +2248,10 @@ void discord_start_thread_without_message_params_cleanup(struct discord_start_th
     free(d->name);
   /* specs/discord/channel.endpoints-params.json:149:20
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }, "inject_if_not":0 }' */
-  // p->auto_archive_duration is a scalar
+  /* p->auto_archive_duration is a scalar */
   /* specs/discord/channel.endpoints-params.json:150:20
      '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_channel_types" } }' */
-  // p->type is a scalar
+  /* p->type is a scalar */
 }
 
 void discord_start_thread_without_message_params_init(struct discord_start_thread_without_message_params *p) {
@@ -2289,7 +2289,7 @@ size_t discord_start_thread_without_message_params_list_to_json(char *str, size_
 
 void discord_thread_response_body_from_json(char *json, size_t len, struct discord_thread_response_body **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_thread_response_body *p = *pp;
@@ -2411,7 +2411,7 @@ void discord_thread_response_body_cleanup(struct discord_thread_response_body *d
     discord_thread_member_list_free(d->members);
   /* specs/discord/channel.endpoints-params.json:161:20
      '{ "name": "has_more", "type":{ "base":"bool" } }' */
-  // p->has_more is a scalar
+  /* p->has_more is a scalar */
 }
 
 void discord_thread_response_body_init(struct discord_thread_response_body *p) {

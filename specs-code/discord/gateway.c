@@ -399,7 +399,7 @@ size_t discord_gateway_events_list_to_json(char *str, size_t len, enum discord_g
 
 void discord_identify_from_json(char *json, size_t len, struct discord_identify **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_identify *p = *pp;
@@ -598,16 +598,16 @@ void discord_identify_cleanup(struct discord_identify *d) {
   }
   /* specs/discord/gateway.json:144:19
      '{ "name":"compress","type":{"base":"bool"}}' */
-  // p->compress is a scalar
+  /* p->compress is a scalar */
   /* specs/discord/gateway.json:145:19
      '{ "name":"large_threshold","type":{"base":"int"}}' */
-  // p->large_threshold is a scalar
+  /* p->large_threshold is a scalar */
   /* specs/discord/gateway.json:146:19
      '{ "name":"guild_subscriptions","type":{"base":"bool"}}' */
-  // p->guild_subscriptions is a scalar
+  /* p->guild_subscriptions is a scalar */
   /* specs/discord/gateway.json:147:19
      '{ "name":"shard","type":{"base":"int", "dec":"*"}, "todo":true}' */
-  // @todo p->(null)
+  /* @todo p->(null) */
   /* specs/discord/gateway.json:148:19
      '{ "name":"presence","type":{"base":"struct discord_presence_status", "dec":"*"}}' */
   if (d->presence) {
@@ -616,7 +616,7 @@ void discord_identify_cleanup(struct discord_identify *d) {
   }
   /* specs/discord/gateway.json:149:19
      '{ "name":"intents","type":{"base":"int"}}' */
-  // p->intents is a scalar
+  /* p->intents is a scalar */
 }
 
 void discord_identify_init(struct discord_identify *p) {
@@ -669,7 +669,7 @@ size_t discord_identify_list_to_json(char *str, size_t len, struct discord_ident
 
 void discord_voice_state_status_from_json(char *json, size_t len, struct discord_voice_state_status **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_voice_state_status *p = *pp;
@@ -801,16 +801,16 @@ size_t discord_voice_state_status_list_to_json_v(char *str, size_t len, void *p)
 void discord_voice_state_status_cleanup(struct discord_voice_state_status *d) {
   /* specs/discord/gateway.json:159:19
      '{ "name":"guild_id","type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the guild", "inject_if_not":0 }' */
-  // p->guild_id is a scalar
+  /* p->guild_id is a scalar */
   /* specs/discord/gateway.json:160:19
      '{ "name":"channel_id","type":{"base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "comment":"id of the voice channel client wants to join (null if disconnecting)", "inject_if_not":0 }' */
-  // p->channel_id is a scalar
+  /* p->channel_id is a scalar */
   /* specs/discord/gateway.json:161:19
      '{ "name":"self_mute","type":{"base":"bool"}, "comment":"is the client muted"}' */
-  // p->self_mute is a scalar
+  /* p->self_mute is a scalar */
   /* specs/discord/gateway.json:162:19
      '{ "name":"self_deaf","type":{"base":"bool"}, "comment":"is the client deafened"}' */
-  // p->self_deaf is a scalar
+  /* p->self_deaf is a scalar */
 }
 
 void discord_voice_state_status_init(struct discord_voice_state_status *p) {
@@ -851,7 +851,7 @@ size_t discord_voice_state_status_list_to_json(char *str, size_t len, struct dis
 
 void discord_presence_status_from_json(char *json, size_t len, struct discord_presence_status **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_presence_status *p = *pp;
@@ -984,17 +984,17 @@ size_t discord_presence_status_list_to_json_v(char *str, size_t len, void *p){
 void discord_presence_status_cleanup(struct discord_presence_status *d) {
   /* specs/discord/gateway.json:172:19
      '{ "name":"since","type":{"base":"char", "dec":"*", "converter":"iso8601"}, "comment":"unix time (in milliseconds) of when the client went idle, or null if the client is not idle", "inject_if_not":0 }' */
-  // p->since is a scalar
+  /* p->since is a scalar */
   /* specs/discord/gateway.json:173:19
      '{ "name":"activities","type":{"base":"struct discord_activity", "dec":"ntl"}, "option":true, "comment":"the user's activities", "inject_if_not":null}' */
   if (d->activities)
     discord_activity_list_free(d->activities);
   /* specs/discord/gateway.json:174:19
      '{ "name":"status","type":{"base":"char", "dec":"[16]"}, "comment":"the user's new status", "inject_if_not":"" }' */
-  // p->status is a scalar
+  /* p->status is a scalar */
   /* specs/discord/gateway.json:175:19
      '{ "name":"afk","type":{"base":"bool"}, "comment":"whether or not the client is afk"}' */
-  // p->afk is a scalar
+  /* p->afk is a scalar */
 }
 
 void discord_presence_status_init(struct discord_presence_status *p) {
@@ -1035,7 +1035,7 @@ size_t discord_presence_status_list_to_json(char *str, size_t len, struct discor
 
 void discord_identify_connection_from_json(char *json, size_t len, struct discord_identify_connection **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_identify_connection *p = *pp;
@@ -1199,7 +1199,7 @@ size_t discord_identify_connection_list_to_json(char *str, size_t len, struct di
 
 void discord_activity_from_json(char *json, size_t len, struct discord_activity **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_activity *p = *pp;
@@ -1399,20 +1399,20 @@ size_t discord_activity_list_to_json_v(char *str, size_t len, void *p){
 void discord_activity_cleanup(struct discord_activity *d) {
   /* specs/discord/gateway.json:196:19
      '{ "name":"name","type":{"base":"char", "dec":"[512]"}}' */
-  // p->name is a scalar
+  /* p->name is a scalar */
   /* specs/discord/gateway.json:197:19
      '{ "name":"type","type":{"base":"int"}}' */
-  // p->type is a scalar
+  /* p->type is a scalar */
   /* specs/discord/gateway.json:198:19
      '{ "name":"url","type":{"base":"char", "dec":"*"}, "option":true, "inject_if_not":""}' */
   if (d->url)
     free(d->url);
   /* specs/discord/gateway.json:199:19
      '{ "name":"created_at","type":{"base":"char", "dec":"*", "converter":"iso8601"}, "option":true, "inject_if_not":0 }' */
-  // p->created_at is a scalar
+  /* p->created_at is a scalar */
   /* specs/discord/gateway.json:200:19
      '{ "name":"application_id","type":{"base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0 }' */
-  // p->application_id is a scalar
+  /* p->application_id is a scalar */
   /* specs/discord/gateway.json:201:19
      '{ "name":"details","type":{"base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   if (d->details)
@@ -1423,7 +1423,7 @@ void discord_activity_cleanup(struct discord_activity *d) {
     free(d->state);
   /* specs/discord/gateway.json:203:19
      '{ "name":"instance","type":{"base":"bool"}, "option":true, "inject_if_not":false}' */
-  // p->instance is a scalar
+  /* p->instance is a scalar */
 }
 
 void discord_activity_init(struct discord_activity *p) {
@@ -1535,7 +1535,7 @@ size_t discord_activity_types_list_to_json(char *str, size_t len, enum discord_a
 
 void discord_session_start_limit_from_json(char *json, size_t len, struct discord_session_start_limit **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_session_start_limit *p = *pp;
@@ -1669,16 +1669,16 @@ size_t discord_session_start_limit_list_to_json_v(char *str, size_t len, void *p
 void discord_session_start_limit_cleanup(struct discord_session_start_limit *d) {
   /* specs/discord/gateway.json:227:19
      '{ "name":"total","type":{"base":"int"}, "comment":"the total number of session starts the current user is allowed", "inject_if_not":0 }' */
-  // p->total is a scalar
+  /* p->total is a scalar */
   /* specs/discord/gateway.json:228:19
      '{ "name":"remaining","type":{"base":"int"}, "comment":"the remaining number of session starts the current user is allowed", "inject_if_not":0 }' */
-  // p->remaining is a scalar
+  /* p->remaining is a scalar */
   /* specs/discord/gateway.json:229:19
      '{ "name":"reset_after","type":{"base":"int"}, "comment":"the number of milliseconds after which the limit resets", "inject_if_not":0 }' */
-  // p->reset_after is a scalar
+  /* p->reset_after is a scalar */
   /* specs/discord/gateway.json:230:19
      '{ "name":"max_concurrency","type":{"base":"int"}, "comment":"the number of identify requests allowed per 5 seconds", "inject_if_not":0 }' */
-  // p->max_concurrency is a scalar
+  /* p->max_concurrency is a scalar */
 }
 
 void discord_session_start_limit_init(struct discord_session_start_limit *p) {

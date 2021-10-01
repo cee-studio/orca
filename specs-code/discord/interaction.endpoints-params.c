@@ -15,7 +15,7 @@
 
 void discord_edit_original_interaction_response_params_from_json(char *json, size_t len, struct discord_edit_original_interaction_response_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_original_interaction_response_params *p = *pp;
@@ -265,7 +265,7 @@ size_t discord_edit_original_interaction_response_params_list_to_json(char *str,
 
 void discord_create_followup_message_params_from_json(char *json, size_t len, struct discord_create_followup_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_create_followup_message_params *p = *pp;
@@ -498,10 +498,10 @@ size_t discord_create_followup_message_params_list_to_json_v(char *str, size_t l
 void discord_create_followup_message_params_cleanup(struct discord_create_followup_message_params *d) {
   /* specs/discord/interaction.endpoints-params.json:28:20
      '{ "name": "wait", "type":{ "base":"bool"}, "loc":"query", "comment":"	waits for server confirmation of message send before response, and returns the created message body (defaults to false; when false a message that is not saved does not return an error)", "default_value":true }' */
-  // p->wait is a scalar
+  /* p->wait is a scalar */
   /* specs/discord/interaction.endpoints-params.json:29:20
      '{ "name": "thread_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "loc":"query", "comment":"Send a message to the specified thread withing a webhook's channel. The thread will automatically be unarchived", "inject_if_not":0 }' */
-  // p->thread_id is a scalar
+  /* p->thread_id is a scalar */
   /* specs/discord/interaction.endpoints-params.json:30:20
      '{ "name": "content", "type":{ "base":"char", "dec":"*" }, "comment":"the message contents (up to 2000 characters)", "inject_if_not": null }' */
   if (d->content)
@@ -516,7 +516,7 @@ void discord_create_followup_message_params_cleanup(struct discord_create_follow
     free(d->avatar_url);
   /* specs/discord/interaction.endpoints-params.json:33:20
      '{ "name": "tts", "type":{ "base":"bool" }, "comment":"true if this is a TTS message", "inject_if_not":false }' */
-  // p->tts is a scalar
+  /* p->tts is a scalar */
   /* specs/discord/interaction.endpoints-params.json:34:20
      '{ "name": "file", "type":{ "base":"char", "dec":"*" }, "loc":"multipart", "comment":"the contents of the file being sent", "inject_if_not":null }' */
   if (d->file)
@@ -543,7 +543,7 @@ void discord_create_followup_message_params_cleanup(struct discord_create_follow
     discord_component_list_free(d->components);
   /* specs/discord/interaction.endpoints-params.json:39:20
      '{ "name": "flags", "type":{ "base":"int" }, "comment":"can be set to 64 to send a ephemeral message", "inject_if_not": 0 }' */
-  // p->flags is a scalar
+  /* p->flags is a scalar */
 }
 
 void discord_create_followup_message_params_init(struct discord_create_followup_message_params *p) {
@@ -608,7 +608,7 @@ size_t discord_create_followup_message_params_list_to_json(char *str, size_t len
 
 void discord_edit_followup_message_params_from_json(char *json, size_t len, struct discord_edit_followup_message_params **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct discord_edit_followup_message_params *p = *pp;

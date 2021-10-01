@@ -15,7 +15,7 @@
 
 void github_topic_from_json(char *json, size_t len, struct github_topic **pp)
 {
-  static size_t ret=0; // used for debugging
+  static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
   struct github_topic *p = *pp;

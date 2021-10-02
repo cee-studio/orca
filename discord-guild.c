@@ -584,7 +584,7 @@ discord_create_guild_ban(
     return ORCA_BAD_PARAMETER;
   }
 
-  void *A[2]={0}; // pointer availability array.
+  void *A[2]={0}; /* pointer availability array. */
   A[0] = (void *)&delete_message_days;
   if (!IS_EMPTY_STRING(reason)) {
     if (!cee_str_bounds_check(reason, DISCORD_MAX_REASON_LEN)) {

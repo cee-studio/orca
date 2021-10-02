@@ -596,33 +596,47 @@ struct discord_modify_guild_member_params;
 
 /* defined at specs/discord/guild.endpoints-params.json:131:22 */
 /**
+ * @brief Modify Current User Nick
+ *
+ */
+struct discord_modify_current_user_nick_params;
+
+/* defined at specs/discord/guild.endpoints-params.json:140:22 */
+/**
+ * @brief Create Guild Ban
+ *
+ */
+struct discord_create_guild_ban_params;
+
+/* defined at specs/discord/guild.endpoints-params.json:150:22 */
+/**
  * @brief Create Guild Role
  *
  */
 struct discord_create_guild_role_params;
 
-/* defined at specs/discord/guild.endpoints-params.json:144:22 */
+/* defined at specs/discord/guild.endpoints-params.json:163:22 */
 /**
  * @brief Modify Guild Role Positions
  *
  */
 struct discord_modify_guild_role_positions_params;
 
-/* defined at specs/discord/guild.endpoints-params.json:154:22 */
+/* defined at specs/discord/guild.endpoints-params.json:173:22 */
 /**
  * @brief Modify Guild Role
  *
  */
 struct discord_modify_guild_role_params;
 
-/* defined at specs/discord/guild.endpoints-params.json:167:22 */
+/* defined at specs/discord/guild.endpoints-params.json:186:22 */
 /**
  * @brief Get Guild Prune Count
  *
  */
 struct discord_get_guild_prune_count_params;
 
-/* defined at specs/discord/guild.endpoints-params.json:177:22 */
+/* defined at specs/discord/guild.endpoints-params.json:196:22 */
 /**
  * @brief Begin Guild Prune
  *
@@ -911,6 +925,13 @@ struct discord_role_tags;
 struct discord_modify_current_user_params;
 
 /* defined at specs/discord/user.endpoints-params.json:19:22 */
+/**
+ * @brief Create DM
+ *
+ */
+struct discord_create_dm_params;
+
+/* defined at specs/discord/user.endpoints-params.json:28:22 */
 /**
  * @brief Create Group DM
  *
@@ -7347,8 +7368,108 @@ struct discord_modify_guild_member_params {
 /** @endcond */
 };
 
-/* Create Guild Role */
+/* Modify Current User Nick */
 /* defined at specs/discord/guild.endpoints-params.json:131:22 */
+/**
+ * @verbatim embed:rst:leading-asterisk
+ * .. container:: toggle
+
+ *   .. container:: header
+
+ *     **Methods**
+
+ *   * Initializer:
+
+ *     * :code:`void discord_modify_current_user_nick_params_init(struct discord_modify_current_user_nick_params *)`
+ *   * Cleanup:
+
+ *     * :code:`void discord_modify_current_user_nick_params_cleanup(struct discord_modify_current_user_nick_params *)`
+ *     * :code:`void discord_modify_current_user_nick_params_list_free(struct discord_modify_current_user_nick_params **)`
+ *   * JSON Decoder:
+
+ *     * :code:`void discord_modify_current_user_nick_params_from_json(char *rbuf, size_t len, struct discord_modify_current_user_nick_params **)`
+ *     * :code:`void discord_modify_current_user_nick_params_list_from_json(char *rbuf, size_t len, struct discord_modify_current_user_nick_params ***)`
+ *   * JSON Encoder:
+
+ *     * :code:`void discord_modify_current_user_nick_params_to_json(char *wbuf, size_t len, struct discord_modify_current_user_nick_params *)`
+ *     * :code:`void discord_modify_current_user_nick_params_list_to_json(char *wbuf, size_t len, struct discord_modify_current_user_nick_params **)`
+ * @endverbatim
+ */
+struct discord_modify_current_user_nick_params {
+  /* specs/discord/guild.endpoints-params.json:134:20
+     '{ "name": "nick", "type":{ "base":"char", "dec":"*" }}' */
+  char *nick;
+
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[1];
+    void *record_defined[1];
+    void *record_null[1];
+  } __M; /**< metadata */
+/** @endcond */
+};
+
+/* Create Guild Ban */
+/* defined at specs/discord/guild.endpoints-params.json:140:22 */
+/**
+ * @verbatim embed:rst:leading-asterisk
+ * .. container:: toggle
+
+ *   .. container:: header
+
+ *     **Methods**
+
+ *   * Initializer:
+
+ *     * :code:`void discord_create_guild_ban_params_init(struct discord_create_guild_ban_params *)`
+ *   * Cleanup:
+
+ *     * :code:`void discord_create_guild_ban_params_cleanup(struct discord_create_guild_ban_params *)`
+ *     * :code:`void discord_create_guild_ban_params_list_free(struct discord_create_guild_ban_params **)`
+ *   * JSON Decoder:
+
+ *     * :code:`void discord_create_guild_ban_params_from_json(char *rbuf, size_t len, struct discord_create_guild_ban_params **)`
+ *     * :code:`void discord_create_guild_ban_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_ban_params ***)`
+ *   * JSON Encoder:
+
+ *     * :code:`void discord_create_guild_ban_params_to_json(char *wbuf, size_t len, struct discord_create_guild_ban_params *)`
+ *     * :code:`void discord_create_guild_ban_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_ban_params **)`
+ * @endverbatim
+ */
+struct discord_create_guild_ban_params {
+  /* specs/discord/guild.endpoints-params.json:143:20
+     '{ "name": "delete_message_days", "type":{ "base":"int" }, "comment":"number of days to delete messages for(0-7)"}' */
+  int delete_message_days; /** number of days to delete messages for(0-7) */
+
+  /* specs/discord/guild.endpoints-params.json:144:20
+     '{ "name": "reason", "type":{ "base":"char", "dec":"*" }, "comment":"reason for the ban (deprecated)", "inject_if_not":null }' */
+  char *reason; /** reason for the ban (deprecated) */
+
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[2];
+    void *record_defined[2];
+    void *record_null[2];
+  } __M; /**< metadata */
+/** @endcond */
+};
+
+/* Create Guild Role */
+/* defined at specs/discord/guild.endpoints-params.json:150:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -7375,23 +7496,23 @@ struct discord_modify_guild_member_params {
  * @endverbatim
  */
 struct discord_create_guild_role_params {
-  /* specs/discord/guild.endpoints-params.json:134:20
+  /* specs/discord/guild.endpoints-params.json:153:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*" }}' */
   char *name;
 
-  /* specs/discord/guild.endpoints-params.json:135:20
+  /* specs/discord/guild.endpoints-params.json:154:20
      '{ "name": "permissions", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags" }, "inject_if_not":0}' */
   enum discord_bitwise_permission_flags permissions;
 
-  /* specs/discord/guild.endpoints-params.json:136:20
+  /* specs/discord/guild.endpoints-params.json:155:20
      '{ "name": "color", "type":{ "base":"int" }, "inject_if_not":0}' */
   int color;
 
-  /* specs/discord/guild.endpoints-params.json:137:20
+  /* specs/discord/guild.endpoints-params.json:156:20
      '{ "name": "hoist", "type":{ "base":"bool" }, "inject_if_not":false}' */
   bool hoist;
 
-  /* specs/discord/guild.endpoints-params.json:138:20
+  /* specs/discord/guild.endpoints-params.json:157:20
      '{ "name": "mentionable", "type":{ "base":"bool" }, "inject_if_not":false}' */
   bool mentionable;
 
@@ -7412,7 +7533,7 @@ struct discord_create_guild_role_params {
 };
 
 /* Modify Guild Role Positions */
-/* defined at specs/discord/guild.endpoints-params.json:144:22 */
+/* defined at specs/discord/guild.endpoints-params.json:163:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -7439,11 +7560,11 @@ struct discord_create_guild_role_params {
  * @endverbatim
  */
 struct discord_modify_guild_role_positions_params {
-  /* specs/discord/guild.endpoints-params.json:147:20
+  /* specs/discord/guild.endpoints-params.json:166:20
      '{ "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"role"}' */
   u64_snowflake_t id; /** role */
 
-  /* specs/discord/guild.endpoints-params.json:148:20
+  /* specs/discord/guild.endpoints-params.json:167:20
      '{ "name": "position", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"sorting position of the role"}' */
   int position; /** sorting position of the role */
 
@@ -7464,7 +7585,7 @@ struct discord_modify_guild_role_positions_params {
 };
 
 /* Modify Guild Role */
-/* defined at specs/discord/guild.endpoints-params.json:154:22 */
+/* defined at specs/discord/guild.endpoints-params.json:173:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -7491,23 +7612,23 @@ struct discord_modify_guild_role_positions_params {
  * @endverbatim
  */
 struct discord_modify_guild_role_params {
-  /* specs/discord/guild.endpoints-params.json:157:20
+  /* specs/discord/guild.endpoints-params.json:176:20
      '{ "name": "name", "type":{ "base":"char", "dec":"*" }, "option":true, "inject_if_not":null, "comment":"name of the role"}' */
   char *name; /** name of the role */
 
-  /* specs/discord/guild.endpoints-params.json:158:20
+  /* specs/discord/guild.endpoints-params.json:177:20
      '{ "name": "permissions", "type":{ "base":"s_as_hex_uint", "int_alias":"enum discord_bitwise_permission_flags" }, "option":true, "inject_if_not":0, "comment":"bitwise value of the enabled/disabled permissions"}' */
   enum discord_bitwise_permission_flags permissions; /** bitwise value of the enabled/disabled permissions */
 
-  /* specs/discord/guild.endpoints-params.json:159:20
+  /* specs/discord/guild.endpoints-params.json:178:20
      '{ "name": "color", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"RGB color value"}' */
   int color; /** RGB color value */
 
-  /* specs/discord/guild.endpoints-params.json:160:20
+  /* specs/discord/guild.endpoints-params.json:179:20
      '{ "name": "hoist", "type":{ "base":"bool" }, "option":true, "inject_if_not":false, "comment":"whether the role should be displayed separately in the sidebar"}' */
   bool hoist; /** whether the role should be displayed separately in the sidebar */
 
-  /* specs/discord/guild.endpoints-params.json:161:20
+  /* specs/discord/guild.endpoints-params.json:180:20
      '{ "name": "mentionable", "type":{ "base":"bool" }, "option":true, "inject_if_not":false, "comment":"whether the role should be mentionable"}' */
   bool mentionable; /** whether the role should be mentionable */
 
@@ -7528,7 +7649,7 @@ struct discord_modify_guild_role_params {
 };
 
 /* Get Guild Prune Count */
-/* defined at specs/discord/guild.endpoints-params.json:167:22 */
+/* defined at specs/discord/guild.endpoints-params.json:186:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -7555,11 +7676,11 @@ struct discord_modify_guild_role_params {
  * @endverbatim
  */
 struct discord_get_guild_prune_count_params {
-  /* specs/discord/guild.endpoints-params.json:170:20
+  /* specs/discord/guild.endpoints-params.json:189:20
      '{ "name": "days", "type":{ "base":"int" }, "inject_if_not":0}' */
   int days;
 
-  /* specs/discord/guild.endpoints-params.json:171:20
+  /* specs/discord/guild.endpoints-params.json:190:20
      '{ "name": "include_roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}' */
   ja_u64 **include_roles;
 
@@ -7580,7 +7701,7 @@ struct discord_get_guild_prune_count_params {
 };
 
 /* Begin Guild Prune */
-/* defined at specs/discord/guild.endpoints-params.json:177:22 */
+/* defined at specs/discord/guild.endpoints-params.json:196:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -7607,19 +7728,19 @@ struct discord_get_guild_prune_count_params {
  * @endverbatim
  */
 struct discord_begin_guild_prune_params {
-  /* specs/discord/guild.endpoints-params.json:180:20
+  /* specs/discord/guild.endpoints-params.json:199:20
      '{ "name": "days", "type":{ "base":"int" }, "inject_if_not":0}' */
   int days;
 
-  /* specs/discord/guild.endpoints-params.json:181:20
+  /* specs/discord/guild.endpoints-params.json:200:20
      '{ "name": "compute_prune_count", "type":{ "base":"bool" }, "inject_if_not":false}' */
   bool compute_prune_count;
 
-  /* specs/discord/guild.endpoints-params.json:182:20
+  /* specs/discord/guild.endpoints-params.json:201:20
      '{ "name": "include_roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}' */
   ja_u64 **include_roles;
 
-  /* specs/discord/guild.endpoints-params.json:183:20
+  /* specs/discord/guild.endpoints-params.json:202:20
      '{ "name": "reason", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *reason;
 
@@ -9992,8 +10113,56 @@ struct discord_modify_current_user_params {
 /** @endcond */
 };
 
-/* Create Group DM */
+/* Create DM */
 /* defined at specs/discord/user.endpoints-params.json:19:22 */
+/**
+ * @verbatim embed:rst:leading-asterisk
+ * .. container:: toggle
+
+ *   .. container:: header
+
+ *     **Methods**
+
+ *   * Initializer:
+
+ *     * :code:`void discord_create_dm_params_init(struct discord_create_dm_params *)`
+ *   * Cleanup:
+
+ *     * :code:`void discord_create_dm_params_cleanup(struct discord_create_dm_params *)`
+ *     * :code:`void discord_create_dm_params_list_free(struct discord_create_dm_params **)`
+ *   * JSON Decoder:
+
+ *     * :code:`void discord_create_dm_params_from_json(char *rbuf, size_t len, struct discord_create_dm_params **)`
+ *     * :code:`void discord_create_dm_params_list_from_json(char *rbuf, size_t len, struct discord_create_dm_params ***)`
+ *   * JSON Encoder:
+
+ *     * :code:`void discord_create_dm_params_to_json(char *wbuf, size_t len, struct discord_create_dm_params *)`
+ *     * :code:`void discord_create_dm_params_list_to_json(char *wbuf, size_t len, struct discord_create_dm_params **)`
+ * @endverbatim
+ */
+struct discord_create_dm_params {
+  /* specs/discord/user.endpoints-params.json:22:20
+     '{ "name": "recipient_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"the recipient to open a DM channel with", "inject_if_not":0 }' */
+  u64_snowflake_t recipient_id; /** the recipient to open a DM channel with */
+
+  /* The following is metadata used to 
+     1. control which field should be extracted/injected
+     2. record which field is presented(defined) in JSON
+     3. record which field is null in JSON */
+/** @cond DOXYGEN_SHOULD_SKIP_THIS */
+  struct {
+    bool enable_arg_switches;
+    bool enable_record_defined;
+    bool enable_record_null;
+    void *arg_switches[1];
+    void *record_defined[1];
+    void *record_null[1];
+  } __M; /**< metadata */
+/** @endcond */
+};
+
+/* Create Group DM */
+/* defined at specs/discord/user.endpoints-params.json:28:22 */
 /**
  * @verbatim embed:rst:leading-asterisk
  * .. container:: toggle
@@ -10020,12 +10189,12 @@ struct discord_modify_current_user_params {
  * @endverbatim
  */
 struct discord_create_group_dm_params {
-  /* specs/discord/user.endpoints-params.json:22:20
+  /* specs/discord/user.endpoints-params.json:31:20
      '{ "name": "access_tokens", "type":{ "base":"ja_str", "dec":"ntl" }, 
           "comment":"access tokens of users that have granted your app the gdm.join scope"}' */
   ja_str **access_tokens; /** access tokens of users that have granted your app the gdm.join scope */
 
-  /* specs/discord/user.endpoints-params.json:24:19
+  /* specs/discord/user.endpoints-params.json:33:19
      '{ "name":"nicks", "type":{ "base":"ja_u64", "dec":"ntl"}, 
           "comment":"a dictionary of user ids to their respective nicknames"}' */
   ja_u64 **nicks; /** a dictionary of user ids to their respective nicknames */
@@ -11944,6 +12113,36 @@ extern void discord_modify_guild_member_params_list_from_json(char *str, size_t 
 extern size_t discord_modify_guild_member_params_list_to_json_v(char *str, size_t len, void *p);
 extern size_t discord_modify_guild_member_params_list_to_json(char *str, size_t len, struct discord_modify_guild_member_params **p);
 
+extern void discord_modify_current_user_nick_params_cleanup_v(void *p);
+extern void discord_modify_current_user_nick_params_cleanup(struct discord_modify_current_user_nick_params *p);
+extern void discord_modify_current_user_nick_params_init_v(void *p);
+extern void discord_modify_current_user_nick_params_init(struct discord_modify_current_user_nick_params *p);
+extern void discord_modify_current_user_nick_params_from_json_v(char *json, size_t len, void *pp);
+extern void discord_modify_current_user_nick_params_from_json(char *json, size_t len, struct discord_modify_current_user_nick_params **pp);
+extern size_t discord_modify_current_user_nick_params_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_modify_current_user_nick_params_to_json(char *json, size_t len, struct discord_modify_current_user_nick_params *p);
+extern void discord_modify_current_user_nick_params_list_free_v(void **p);
+extern void discord_modify_current_user_nick_params_list_free(struct discord_modify_current_user_nick_params **p);
+extern void discord_modify_current_user_nick_params_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_modify_current_user_nick_params_list_from_json(char *str, size_t len, struct discord_modify_current_user_nick_params ***p);
+extern size_t discord_modify_current_user_nick_params_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_modify_current_user_nick_params_list_to_json(char *str, size_t len, struct discord_modify_current_user_nick_params **p);
+
+extern void discord_create_guild_ban_params_cleanup_v(void *p);
+extern void discord_create_guild_ban_params_cleanup(struct discord_create_guild_ban_params *p);
+extern void discord_create_guild_ban_params_init_v(void *p);
+extern void discord_create_guild_ban_params_init(struct discord_create_guild_ban_params *p);
+extern void discord_create_guild_ban_params_from_json_v(char *json, size_t len, void *pp);
+extern void discord_create_guild_ban_params_from_json(char *json, size_t len, struct discord_create_guild_ban_params **pp);
+extern size_t discord_create_guild_ban_params_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_create_guild_ban_params_to_json(char *json, size_t len, struct discord_create_guild_ban_params *p);
+extern void discord_create_guild_ban_params_list_free_v(void **p);
+extern void discord_create_guild_ban_params_list_free(struct discord_create_guild_ban_params **p);
+extern void discord_create_guild_ban_params_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_create_guild_ban_params_list_from_json(char *str, size_t len, struct discord_create_guild_ban_params ***p);
+extern size_t discord_create_guild_ban_params_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_create_guild_ban_params_list_to_json(char *str, size_t len, struct discord_create_guild_ban_params **p);
+
 extern void discord_create_guild_role_params_cleanup_v(void *p);
 extern void discord_create_guild_role_params_cleanup(struct discord_create_guild_role_params *p);
 extern void discord_create_guild_role_params_init_v(void *p);
@@ -12514,6 +12713,21 @@ extern void discord_modify_current_user_params_list_from_json_v(char *str, size_
 extern void discord_modify_current_user_params_list_from_json(char *str, size_t len, struct discord_modify_current_user_params ***p);
 extern size_t discord_modify_current_user_params_list_to_json_v(char *str, size_t len, void *p);
 extern size_t discord_modify_current_user_params_list_to_json(char *str, size_t len, struct discord_modify_current_user_params **p);
+
+extern void discord_create_dm_params_cleanup_v(void *p);
+extern void discord_create_dm_params_cleanup(struct discord_create_dm_params *p);
+extern void discord_create_dm_params_init_v(void *p);
+extern void discord_create_dm_params_init(struct discord_create_dm_params *p);
+extern void discord_create_dm_params_from_json_v(char *json, size_t len, void *pp);
+extern void discord_create_dm_params_from_json(char *json, size_t len, struct discord_create_dm_params **pp);
+extern size_t discord_create_dm_params_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_create_dm_params_to_json(char *json, size_t len, struct discord_create_dm_params *p);
+extern void discord_create_dm_params_list_free_v(void **p);
+extern void discord_create_dm_params_list_free(struct discord_create_dm_params **p);
+extern void discord_create_dm_params_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_create_dm_params_list_from_json(char *str, size_t len, struct discord_create_dm_params ***p);
+extern size_t discord_create_dm_params_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_create_dm_params_list_to_json(char *str, size_t len, struct discord_create_dm_params **p);
 
 extern void discord_create_group_dm_params_cleanup_v(void *p);
 extern void discord_create_group_dm_params_cleanup(struct discord_create_group_dm_params *p);

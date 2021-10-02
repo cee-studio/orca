@@ -1712,7 +1712,8 @@ ORCAcode discord_add_guild_member(struct discord *client, const u64_snowflake_t 
 
 /** @defgroup DiscordModifyCurrentUserNick
  *  @{ */
-ORCAcode discord_modify_current_user_nick(struct discord *client, const u64_snowflake_t guild_id, const char nick[]);
+ORCAcode discord_modify_current_user_nick(struct discord *client, const u64_snowflake_t guild_id, struct discord_modify_current_user_nick_params *params, struct discord_guild_member *p_member);
+/** @struct discord_modify_current_user_nick_params */
 /** @} DiscordModifyCurrentUserNick */
 
 /** @defgroup DiscordAddGuildMemberRole
@@ -1742,12 +1743,13 @@ ORCAcode discord_get_guild_ban(struct discord *client, const u64_snowflake_t gui
 
 /** @defgroup DiscordCreateGuildBan
  *  @{ */
-ORCAcode discord_create_guild_ban(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id, int delete_message_days, const char reason[]);
+ORCAcode discord_create_guild_ban(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id, struct discord_create_guild_ban_params *params);
+/** @struct discord_create_guild_ban_params */
 /** @} DiscordCreateGuildBan */
 
 /** @defgroup DiscordRemoveGuildBan
  *  @{ */
-ORCAcode discord_remove_guild_ban(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id, const char reason[]);
+ORCAcode discord_remove_guild_ban(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id);
 /** @} DiscordRemoveGuildBan */
 
 /** @defgroup DiscordGetGuildRoles
@@ -1820,7 +1822,8 @@ ORCAcode discord_leave_guild(struct discord *client, const u64_snowflake_t guild
 
 /** @defgroup DiscordCreateDm
  *  @{ */
-ORCAcode discord_create_dm(struct discord *client, const u64_snowflake_t recipient_id, struct discord_channel *p_dm_channel);
+ORCAcode discord_create_dm(struct discord *client, struct discord_create_dm_params *params, struct discord_channel *p_dm_channel);
+/** @struct discord_create_dm_params */
 /** @} DiscordCreateDm */
 
 /** @defgroup DiscordCreateGroupDm

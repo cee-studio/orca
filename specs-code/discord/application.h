@@ -91,20 +91,6 @@ struct discord_application {
      '{ "name": "flags", "type":{ "base":"int", "int_alias":"enum discord_application_flags" }, "comment":"the application's public flags", "inject_if_not":0 }' */
   enum discord_application_flags flags; /** the application's public flags */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[14];
-    void *record_defined[14];
-    void *record_null[14];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_application_cleanup_v(void *p);
 extern void discord_application_cleanup(struct discord_application *p);

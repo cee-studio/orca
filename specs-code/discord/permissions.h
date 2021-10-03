@@ -129,20 +129,6 @@ struct discord_role {
      '{ "name": "tags", "type":{"base":"struct discord_role_tags", "dec":"*"}}' */
   struct discord_role_tags *tags;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[9];
-    void *record_defined[9];
-    void *record_null[9];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_role_cleanup_v(void *p);
 extern void discord_role_cleanup(struct discord_role *p);
@@ -201,20 +187,6 @@ struct discord_role_tags {
      '{ "name": "premium_subscriber", "type":{ "base":"int" }}' */
   int premium_subscriber;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_role_tags_cleanup_v(void *p);
 extern void discord_role_tags_cleanup(struct discord_role_tags *p);

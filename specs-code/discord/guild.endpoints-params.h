@@ -77,20 +77,6 @@ struct discord_create_guild_params {
      '{ "name": "system_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"the id of the channel where guild notices such as welcome messages and boost events are posted"}' */
   u64_snowflake_t system_channel_id; /** the id of the channel where guild notices such as welcome messages and boost events are posted */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[11];
-    void *record_defined[11];
-    void *record_null[11];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_guild_params_cleanup_v(void *p);
 extern void discord_create_guild_params_cleanup(struct discord_create_guild_params *p);
@@ -211,20 +197,6 @@ struct discord_modify_guild_params {
      '{ "name": "description", "type":{ "base":"char", "dec":"*" }, "comment":"the description for the guild, if the guild is discoverable"}' */
   char *description; /** the description for the guild, if the guild is discoverable */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[19];
-    void *record_defined[19];
-    void *record_null[19];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_guild_params_cleanup_v(void *p);
 extern void discord_modify_guild_params_cleanup(struct discord_modify_guild_params *p);
@@ -309,20 +281,6 @@ struct discord_create_guild_channel_params {
      '{ "name": "nsfw", "type":{ "base":"bool" }}' */
   bool nsfw;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[10];
-    void *record_defined[10];
-    void *record_null[10];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_guild_channel_params_cleanup_v(void *p);
 extern void discord_create_guild_channel_params_cleanup(struct discord_create_guild_channel_params *p);
@@ -383,20 +341,6 @@ struct discord_modify_guild_channel_positions_params {
      '{ "name": "parent_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "option":true, "inject_if_not":0, "comment":"the new parent ID for the channel that is moved"}' */
   u64_snowflake_t parent_id; /** the new parent ID for the channel that is moved */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_guild_channel_positions_params_cleanup_v(void *p);
 extern void discord_modify_guild_channel_positions_params_cleanup(struct discord_modify_guild_channel_positions_params *p);
@@ -449,20 +393,6 @@ struct discord_list_guild_members_params {
      '{ "name": "after", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0, "comment": "the highest user id in the previous page"}' */
   u64_snowflake_t after; /** the highest user id in the previous page */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_list_guild_members_params_cleanup_v(void *p);
 extern void discord_list_guild_members_params_cleanup(struct discord_list_guild_members_params *p);
@@ -515,20 +445,6 @@ struct discord_search_guild_members_params {
      '{ "name": "limit", "type":{ "base":"int" }, "inject_if_not":0, "comment": "max number of members to return (1-1000)"}' */
   int limit; /** max number of members to return (1-1000) */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_search_guild_members_params_cleanup_v(void *p);
 extern void discord_search_guild_members_params_cleanup(struct discord_search_guild_members_params *p);
@@ -593,20 +509,6 @@ struct discord_add_guild_member_params {
      '{ "name": "deaf", "type":{ "base":"bool" }, "inject_if_not":false}' */
   bool deaf;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_add_guild_member_params_cleanup_v(void *p);
 extern void discord_add_guild_member_params_cleanup(struct discord_add_guild_member_params *p);
@@ -671,20 +573,6 @@ struct discord_modify_guild_member_params {
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0}' */
   u64_snowflake_t channel_id;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_guild_member_params_cleanup_v(void *p);
 extern void discord_modify_guild_member_params_cleanup(struct discord_modify_guild_member_params *p);
@@ -733,20 +621,6 @@ struct discord_modify_current_user_nick_params {
      '{ "name": "nick", "type":{ "base":"char", "dec":"*" }}' */
   char *nick;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[1];
-    void *record_defined[1];
-    void *record_null[1];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_current_user_nick_params_cleanup_v(void *p);
 extern void discord_modify_current_user_nick_params_cleanup(struct discord_modify_current_user_nick_params *p);
@@ -799,20 +673,6 @@ struct discord_create_guild_ban_params {
      '{ "name": "reason", "type":{ "base":"char", "dec":"*" }, "comment":"reason for the ban (deprecated)", "inject_if_not":null }' */
   char *reason; /** reason for the ban (deprecated) */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_guild_ban_params_cleanup_v(void *p);
 extern void discord_create_guild_ban_params_cleanup(struct discord_create_guild_ban_params *p);
@@ -877,20 +737,6 @@ struct discord_create_guild_role_params {
      '{ "name": "mentionable", "type":{ "base":"bool" }, "inject_if_not":false}' */
   bool mentionable;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_guild_role_params_cleanup_v(void *p);
 extern void discord_create_guild_role_params_cleanup(struct discord_create_guild_role_params *p);
@@ -943,20 +789,6 @@ struct discord_modify_guild_role_positions_params {
      '{ "name": "position", "type":{ "base":"int" }, "option":true, "inject_if_not":0, "comment":"sorting position of the role"}' */
   int position; /** sorting position of the role */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_guild_role_positions_params_cleanup_v(void *p);
 extern void discord_modify_guild_role_positions_params_cleanup(struct discord_modify_guild_role_positions_params *p);
@@ -1021,20 +853,6 @@ struct discord_modify_guild_role_params {
      '{ "name": "mentionable", "type":{ "base":"bool" }, "option":true, "inject_if_not":false, "comment":"whether the role should be mentionable"}' */
   bool mentionable; /** whether the role should be mentionable */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_guild_role_params_cleanup_v(void *p);
 extern void discord_modify_guild_role_params_cleanup(struct discord_modify_guild_role_params *p);
@@ -1087,20 +905,6 @@ struct discord_get_guild_prune_count_params {
      '{ "name": "include_roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "inject_if_not":null}' */
   ja_u64 **include_roles;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_get_guild_prune_count_params_cleanup_v(void *p);
 extern void discord_get_guild_prune_count_params_cleanup(struct discord_get_guild_prune_count_params *p);
@@ -1161,20 +965,6 @@ struct discord_begin_guild_prune_params {
      '{ "name": "reason", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *reason;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_begin_guild_prune_params_cleanup_v(void *p);
 extern void discord_begin_guild_prune_params_cleanup(struct discord_begin_guild_prune_params *p);

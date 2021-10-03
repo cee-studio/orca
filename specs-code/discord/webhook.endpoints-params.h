@@ -41,20 +41,6 @@ struct discord_create_webhook_params {
      '{ "name": "avatar", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null, "comment":"base64 image for the default webhook avatar" }' */
   char *avatar; /** base64 image for the default webhook avatar */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_webhook_params_cleanup_v(void *p);
 extern void discord_create_webhook_params_cleanup(struct discord_create_webhook_params *p);
@@ -111,20 +97,6 @@ struct discord_modify_webhook_params {
      '{ "name": "channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0, "comment":"the new channel id this webhook should be moved to" }' */
   u64_snowflake_t channel_id; /** the new channel id this webhook should be moved to */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_webhook_params_cleanup_v(void *p);
 extern void discord_modify_webhook_params_cleanup(struct discord_modify_webhook_params *p);
@@ -177,20 +149,6 @@ struct discord_modify_webhook_with_token_params {
      '{ "name": "avatar", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null, "comment":"base64 image for the default webhook avatar" }' */
   char *avatar; /** base64 image for the default webhook avatar */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_webhook_with_token_params_cleanup_v(void *p);
 extern void discord_modify_webhook_with_token_params_cleanup(struct discord_modify_webhook_with_token_params *p);
@@ -279,20 +237,6 @@ struct discord_execute_webhook_params {
      '{ "name": "components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "comment":"the components to include with the message", "inject_if_not": null }' */
   struct discord_component **components; /** the components to include with the message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[11];
-    void *record_defined[11];
-    void *record_null[11];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_execute_webhook_params_cleanup_v(void *p);
 extern void discord_execute_webhook_params_cleanup(struct discord_execute_webhook_params *p);
@@ -365,20 +309,6 @@ struct discord_edit_webhook_message_params {
      '{ "name": "components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "comment":"the components to include with the message", "inject_if_not":null }' */
   struct discord_component **components; /** the components to include with the message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_edit_webhook_message_params_cleanup_v(void *p);
 extern void discord_edit_webhook_message_params_cleanup(struct discord_edit_webhook_message_params *p);

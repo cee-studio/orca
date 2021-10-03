@@ -45,20 +45,6 @@ struct discord_create_guild_emoji_params {
      '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"roles for which this emoji will be whitelisted"}' */
   ja_u64 **roles; /** roles for which this emoji will be whitelisted */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_guild_emoji_params_cleanup_v(void *p);
 extern void discord_create_guild_emoji_params_cleanup(struct discord_create_guild_emoji_params *p);
@@ -111,20 +97,6 @@ struct discord_modify_guild_emoji_params {
      '{ "name": "roles", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"roles for which this emoji will be whitelisted"}' */
   ja_u64 **roles; /** roles for which this emoji will be whitelisted */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_guild_emoji_params_cleanup_v(void *p);
 extern void discord_modify_guild_emoji_params_cleanup(struct discord_modify_guild_emoji_params *p);

@@ -67,20 +67,6 @@ struct discord_application_command {
      '{"name":"default_permission", "type":{"base":"bool"}, "default_value":true, "comment":"whether the command is enabled by default when the app is added to a guild"}' */
   bool default_permission; /** whether the command is enabled by default when the app is added to a guild */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_application_command_cleanup_v(void *p);
 extern void discord_application_command_cleanup(struct discord_application_command *p);
@@ -182,20 +168,6 @@ struct discord_application_command_option {
      '{"name":"options", "type":{"base":"struct discord_application_command_option", "dec":"ntl"}, "comment":"if the option is a subcommand or subcommand group type, this nested options will be the parameters", "inject_if_not":null}' */
   struct discord_application_command_option **options; /** if the option is a subcommand or subcommand group type, this nested options will be the parameters */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[6];
-    void *record_defined[6];
-    void *record_null[6];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_application_command_option_cleanup_v(void *p);
 extern void discord_application_command_option_cleanup(struct discord_application_command_option *p);
@@ -288,20 +260,6 @@ struct discord_application_command_option_choice {
      '{"name":"value", "type":{"base":"char", "dec":"*", "converter":"mixed"}, "comment":"value of choice, up to 100 characters if string"}' */
   json_char_t* value; /** value of choice, up to 100 characters if string */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_application_command_option_choice_cleanup_v(void *p);
 extern void discord_application_command_option_choice_cleanup(struct discord_application_command_option_choice *p);
@@ -364,20 +322,6 @@ struct discord_guild_application_command_permissions {
      '{"name":"permissions", "type":{"base":"struct discord_application_command_permissions", "dec":"ntl"}, "comment":"the permissions for the command in the guild"}' */
   struct discord_application_command_permissions **permissions; /** the permissions for the command in the guild */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_guild_application_command_permissions_cleanup_v(void *p);
 extern void discord_guild_application_command_permissions_cleanup(struct discord_guild_application_command_permissions *p);
@@ -436,20 +380,6 @@ struct discord_application_command_permissions {
      '{"name":"permission", "type":{"base":"bool"}, "comment":"true to allow, false, to disallow"}' */
   bool permission; /** true to allow, false, to disallow */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_application_command_permissions_cleanup_v(void *p);
 extern void discord_application_command_permissions_cleanup(struct discord_application_command_permissions *p);
@@ -542,20 +472,6 @@ struct discord_application_command_interaction_data_option {
      '{"name":"options", "type":{"base":"struct discord_application_command_interaction_data_option", "dec":"ntl"}, "comment":"present if this option is a group or subcommand", "inject_if_not":null}' */
   struct discord_application_command_interaction_data_option **options; /** present if this option is a group or subcommand */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_application_command_interaction_data_option_cleanup_v(void *p);
 extern void discord_application_command_interaction_data_option_cleanup(struct discord_application_command_interaction_data_option *p);

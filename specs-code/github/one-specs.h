@@ -88,20 +88,6 @@ struct github_gist_create_params {
      '{ "name": "public", "type":{ "base":"char", "dec":"*" }}' */
   char *public;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/github/gist.json, Please don't edit it. */
 
@@ -165,20 +151,6 @@ struct github_gist {
      '{ "name": "comments", "type":{ "base":"int"}}' */
   int comments;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/github/repository.json, Please don't edit it. */
 
@@ -214,20 +186,6 @@ struct github_topic {
      '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
   ja_str **names;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[1];
-    void *record_defined[1];
-    void *record_null[1];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/github/user.json, Please don't edit it. */
 
@@ -343,20 +301,6 @@ struct github_user {
      '{ "name": "updated_at", "type":{ "base":"char", "dec":"*"}}' */
   char *updated_at;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[21];
-    void *record_defined[21];
-    void *record_null[21];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/github/gist.endpoints-params.json, Please don't edit it. */
 

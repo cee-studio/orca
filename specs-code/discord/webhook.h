@@ -83,20 +83,6 @@ struct discord_webhook {
      '{ "name": "url", "type":{ "base":"char", "dec":"*" }, "comment":"the url used for executing the webhook (returned by the webhooks OAuth2 flow)", "inject_if_not":null }' */
   char *url; /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[12];
-    void *record_defined[12];
-    void *record_null[12];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_webhook_cleanup_v(void *p);
 extern void discord_webhook_cleanup(struct discord_webhook *p);

@@ -75,20 +75,6 @@ struct discord_interaction {
      '{"name":"message", "type":{"base":"struct discord_message", "dec":"*"}, "option":true, "comment":"for components, the message they were attached to", "inject_if_not":null}' */
   struct discord_message *message; /** for components, the message they were attached to */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[10];
-    void *record_defined[10];
-    void *record_null[10];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_interaction_cleanup_v(void *p);
 extern void discord_interaction_cleanup(struct discord_interaction *p);
@@ -198,20 +184,6 @@ struct discord_interaction_data {
      '{"name":"target_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of a user or message targetted by a user or message command", "inject_if_not":0}' */
   u64_snowflake_t target_id; /** id of a user or message targetted by a user or message command */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_interaction_data_cleanup_v(void *p);
 extern void discord_interaction_data_cleanup(struct discord_interaction_data *p);
@@ -278,20 +250,6 @@ struct discord_resolved_data {
      '{"name":"messages", "type":{"base":"ja_str", "dec":"ntl"}, "option":true, "comment":"the ids and partial Message objects", "inject_if_not":null}' */
   ja_str **messages; /** the ids and partial Message objects */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_resolved_data_cleanup_v(void *p);
 extern void discord_resolved_data_cleanup(struct discord_resolved_data *p);
@@ -354,20 +312,6 @@ struct discord_message_interaction {
      '{"name":"user", "type":{"base":"struct discord_user", "dec":"*"}, "comment":"the user who invoked the interaction"}' */
   struct discord_user *user; /** the user who invoked the interaction */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_message_interaction_cleanup_v(void *p);
 extern void discord_message_interaction_cleanup(struct discord_message_interaction *p);
@@ -422,20 +366,6 @@ struct discord_interaction_response {
      '{"name":"data", "type":{"base":"struct discord_interaction_callback_data", "dec":"*"}, "option":true, "comment":"an optional response message", "inject_if_not":null}' */
   struct discord_interaction_callback_data *data; /** an optional response message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_interaction_response_cleanup_v(void *p);
 extern void discord_interaction_response_cleanup(struct discord_interaction_response *p);
@@ -539,20 +469,6 @@ struct discord_interaction_callback_data {
      '{"name":"components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "option":true, "comment":"message components", "inject_if_not":null}' */
   struct discord_component **components; /** message components */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[6];
-    void *record_defined[6];
-    void *record_null[6];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_interaction_callback_data_cleanup_v(void *p);
 extern void discord_interaction_callback_data_cleanup(struct discord_interaction_callback_data *p);

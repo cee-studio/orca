@@ -97,20 +97,6 @@ struct discord_modify_channel_params {
      '{ "name": "locked", "type":{ "base":"bool" }, "inject_if_not":false }' */
   bool locked;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[16];
-    void *record_defined[16];
-    void *record_null[16];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_channel_params_cleanup_v(void *p);
 extern void discord_modify_channel_params_cleanup(struct discord_modify_channel_params *p);
@@ -195,20 +181,6 @@ struct discord_create_message_params {
      '{ "name": "sticker_ids", "type":{ "base":"ja_u64", "dec":"ntl" }, "comment":"ids of up to 3 stickers in the server to send in the message", "inject_if_not":null }' */
   ja_u64 **sticker_ids; /** ids of up to 3 stickers in the server to send in the message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[10];
-    void *record_defined[10];
-    void *record_null[10];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_message_params_cleanup_v(void *p);
 extern void discord_create_message_params_cleanup(struct discord_create_message_params *p);
@@ -269,20 +241,6 @@ struct discord_get_channel_messages_params {
      '{ "name": "limit", "type":{ "base":"int" }, "loc":"query", "default_value":50, "comment":"max number of messages to return (1-100)", "inject_if_not":0 }' */
   int limit; /** max number of messages to return (1-100) */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_get_channel_messages_params_cleanup_v(void *p);
 extern void discord_get_channel_messages_params_cleanup(struct discord_get_channel_messages_params *p);
@@ -335,20 +293,6 @@ struct discord_get_reactions_params {
      '{ "name": "limit", "type":{ "base":"int" }, "loc":"query"}' */
   int limit;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_get_reactions_params_cleanup_v(void *p);
 extern void discord_get_reactions_params_cleanup(struct discord_get_reactions_params *p);
@@ -405,20 +349,6 @@ struct discord_edit_channel_permissions_params {
      '{ "name": "type", "type":{ "base":"int" }}' */
   int type;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_edit_channel_permissions_params_cleanup_v(void *p);
 extern void discord_edit_channel_permissions_params_cleanup(struct discord_edit_channel_permissions_params *p);
@@ -499,20 +429,6 @@ struct discord_edit_message_params {
      '{ "name": "components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "comment":"the components to include with the message", "inject_if_not":null }' */
   struct discord_component **components; /** the components to include with the message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[9];
-    void *record_defined[9];
-    void *record_null[9];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_edit_message_params_cleanup_v(void *p);
 extern void discord_edit_message_params_cleanup(struct discord_edit_message_params *p);
@@ -561,20 +477,6 @@ struct discord_follow_news_channel_params {
      '{ "name": "webhook_channel_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"} }' */
   u64_snowflake_t webhook_channel_id;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[1];
-    void *record_defined[1];
-    void *record_null[1];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_follow_news_channel_params_cleanup_v(void *p);
 extern void discord_follow_news_channel_params_cleanup(struct discord_follow_news_channel_params *p);
@@ -647,20 +549,6 @@ struct discord_create_channel_invite_params {
      '{ "name": "target_application_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake"}, "option":true, "inject_if_not":0 }' */
   u64_snowflake_t target_application_id;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_channel_invite_params_cleanup_v(void *p);
 extern void discord_create_channel_invite_params_cleanup(struct discord_create_channel_invite_params *p);
@@ -713,20 +601,6 @@ struct discord_group_dm_add_recipient_params {
      '{ "name": "nick", "type":{ "base":"char", "dec":"*" }}' */
   char *nick;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_group_dm_add_recipient_params_cleanup_v(void *p);
 extern void discord_group_dm_add_recipient_params_cleanup(struct discord_group_dm_add_recipient_params *p);
@@ -779,20 +653,6 @@ struct discord_start_thread_with_message_params {
      '{ "name": "auto_archive_duration", "type":{ "base":"int" }, "inject_if_not":0 }' */
   int auto_archive_duration;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_start_thread_with_message_params_cleanup_v(void *p);
 extern void discord_start_thread_with_message_params_cleanup(struct discord_start_thread_with_message_params *p);
@@ -849,20 +709,6 @@ struct discord_start_thread_without_message_params {
      '{ "name": "type", "type":{ "base":"int", "int_alias":"enum discord_channel_types" } }' */
   enum discord_channel_types type;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_start_thread_without_message_params_cleanup_v(void *p);
 extern void discord_start_thread_without_message_params_cleanup(struct discord_start_thread_without_message_params *p);
@@ -919,20 +765,6 @@ struct discord_thread_response_body {
      '{ "name": "has_more", "type":{ "base":"bool" } }' */
   bool has_more;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_thread_response_body_cleanup_v(void *p);
 extern void discord_thread_response_body_cleanup(struct discord_thread_response_body *p);

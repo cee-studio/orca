@@ -53,20 +53,6 @@ struct reddit_access_token_params {
      '{ "name": "redirect_uri", "type":{ "base":"char", "dec":"*" }, "comment":"redirect uri for webapp"}' */
   char *redirect_uri; /** redirect uri for webapp */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void reddit_access_token_params_cleanup_v(void *p);
 extern void reddit_access_token_params_cleanup(struct reddit_access_token_params *p);

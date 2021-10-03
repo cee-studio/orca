@@ -163,20 +163,6 @@ struct discord_channel {
      '{"type":{"base":"struct discord_message", "dec":"ntl"}, "name":"messages"}' */
   struct discord_message **messages;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[19];
-    void *record_defined[19];
-    void *record_null[19];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_channel_cleanup_v(void *p);
 extern void discord_channel_cleanup(struct discord_channel *p);
@@ -287,20 +273,6 @@ struct discord_message_sticker {
      '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_message_sticker_format_types"}}' */
   enum discord_message_sticker_format_types type;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_message_sticker_cleanup_v(void *p);
 extern void discord_message_sticker_cleanup(struct discord_message_sticker *p);
@@ -396,20 +368,6 @@ struct discord_message_reference {
      '{"name":"fail_if_not_exists", "type":{"base":"bool"}, "option":true, "inject_if_not":false}' */
   bool fail_if_not_exists;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_message_reference_cleanup_v(void *p);
 extern void discord_message_reference_cleanup(struct discord_message_reference *p);
@@ -476,20 +434,6 @@ struct discord_message_application {
      '{"name":"name", "type":{"base":"char", "dec":"*"}}' */
   char *name;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_message_application_cleanup_v(void *p);
 extern void discord_message_application_cleanup(struct discord_message_application *p);
@@ -577,20 +521,6 @@ struct discord_message_activity {
          "option":true, "inject_if_not":null}' */
   char *party_id;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_message_activity_cleanup_v(void *p);
 extern void discord_message_activity_cleanup(struct discord_message_activity *p);
@@ -802,20 +732,6 @@ struct discord_message {
      '{"type":{"base":"struct discord_message_sticker", "dec":"ntl"}, "name":"stickers", "option":true, "inject_if_not":null, "comment":"[DEPRECATED] array of sticker objects"}' */
   struct discord_message_sticker **stickers; /** [DEPRECATED] array of sticker objects */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[30];
-    void *record_defined[30];
-    void *record_null[30];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_message_cleanup_v(void *p);
 extern void discord_message_cleanup(struct discord_message *p);
@@ -870,20 +786,6 @@ struct discord_followed_channel {
      '{ "name": "webhook_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
   u64_snowflake_t webhook_id;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_followed_channel_cleanup_v(void *p);
 extern void discord_followed_channel_cleanup(struct discord_followed_channel *p);
@@ -942,20 +844,6 @@ struct discord_reaction {
      '{ "name": "emoji", "type":{ "base":"struct discord_emoji", "dec":"*" }, "comment":"partial emoji object"}' */
   struct discord_emoji *emoji; /** partial emoji object */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_reaction_cleanup_v(void *p);
 extern void discord_reaction_cleanup(struct discord_reaction *p);
@@ -1018,20 +906,6 @@ struct discord_overwrite {
           "comment":"permission bit set"}' */
   enum discord_bitwise_permission_flags deny; /** permission bit set */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_overwrite_cleanup_v(void *p);
 extern void discord_overwrite_cleanup(struct discord_overwrite *p);
@@ -1098,20 +972,6 @@ struct discord_thread_metadata {
      '{ "name": "locked", "type":{ "base":"bool" }}' */
   bool locked;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_thread_metadata_cleanup_v(void *p);
 extern void discord_thread_metadata_cleanup(struct discord_thread_metadata *p);
@@ -1174,20 +1034,6 @@ struct discord_thread_member {
      '{ "name": "flags", "type":{ "base":"int" }}' */
   int flags;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_thread_member_cleanup_v(void *p);
 extern void discord_thread_member_cleanup(struct discord_thread_member *p);
@@ -1262,20 +1108,6 @@ struct discord_attachment {
      '{ "name": "width", "type":{ "base":"int", "nullable":true }}' */
   int width;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_attachment_cleanup_v(void *p);
 extern void discord_attachment_cleanup(struct discord_attachment *p);
@@ -1338,20 +1170,6 @@ struct discord_channel_mention {
      '{ "name": "name", "type":{ "base":"char", "dec":"*" }}' */
   char *name;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_channel_mention_cleanup_v(void *p);
 extern void discord_channel_mention_cleanup(struct discord_channel_mention *p);
@@ -1414,20 +1232,6 @@ struct discord_allowed_mentions {
      '{ "name": "replied_user", "type":{ "base":"bool" }}' */
   bool replied_user;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_allowed_mentions_cleanup_v(void *p);
 extern void discord_allowed_mentions_cleanup(struct discord_allowed_mentions *p);
@@ -1526,20 +1330,6 @@ struct discord_embed {
      '{ "name": "fields", "type":{ "base":"struct discord_embed_field", "dec":"ntl"}, "option":true, "inject_if_not":null}' */
   struct discord_embed_field **fields;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[13];
-    void *record_defined[13];
-    void *record_null[13];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_cleanup_v(void *p);
 extern void discord_embed_cleanup(struct discord_embed *p);
@@ -1602,20 +1392,6 @@ struct discord_embed_thumbnail {
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
   int width;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_thumbnail_cleanup_v(void *p);
 extern void discord_embed_thumbnail_cleanup(struct discord_embed_thumbnail *p);
@@ -1678,20 +1454,6 @@ struct discord_embed_video {
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
   int width;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_video_cleanup_v(void *p);
 extern void discord_embed_video_cleanup(struct discord_embed_video *p);
@@ -1754,20 +1516,6 @@ struct discord_embed_image {
      '{ "name": "width", "type":{ "base":"int" }, "inject_if_not":0}' */
   int width;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_image_cleanup_v(void *p);
 extern void discord_embed_image_cleanup(struct discord_embed_image *p);
@@ -1822,20 +1570,6 @@ struct discord_embed_provider {
      '{ "name": "url", "type":{"base":"char", "dec":"*"}, "inject_if_not":null}' */
   char *url;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_provider_cleanup_v(void *p);
 extern void discord_embed_provider_cleanup(struct discord_embed_provider *p);
@@ -1898,20 +1632,6 @@ struct discord_embed_author {
      '{ "name": "proxy_icon_url", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null}' */
   char *proxy_icon_url;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_author_cleanup_v(void *p);
 extern void discord_embed_author_cleanup(struct discord_embed_author *p);
@@ -1970,20 +1690,6 @@ struct discord_embed_footer {
      '{ "name": "proxy_icon_url", "type": {"base":"char", "dec":"*"}, "option":true, "inject_if_not":null}' */
   char *proxy_icon_url;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_footer_cleanup_v(void *p);
 extern void discord_embed_footer_cleanup(struct discord_embed_footer *p);
@@ -2042,20 +1748,6 @@ struct discord_embed_field {
      '{ "name": "Inline", "json_key":"inline", "type": { "base":"bool" }, "option":true}' */
   bool Inline;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_embed_field_cleanup_v(void *p);
 extern void discord_embed_field_cleanup(struct discord_embed_field *p);

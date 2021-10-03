@@ -51,12 +51,7 @@ void discord_guild_template_from_json(char *json, size_t len, struct discord_gui
   /* specs/discord/guild-template.json:21:20
      '{ "name": "serialized_source_guild", "type":{ "base":"struct discord_guild", "dec":"*" }}' */
                 "(serialized_source_guild):F,"
-  /* specs/discord/guild-template.json:22:20
-     '{ "name": "is_dirty", "type":{ "base":"bool" }}' */
-                "(is_dirty):b,"
-                "@arg_switches:b"
-                "@record_defined"
-                "@record_null",
+                "(is_dirty):b,",
   /* specs/discord/guild-template.json:12:20
      '{ "name": "code", "type":{ "base":"char", "dec":"*"}}' */
                 &p->code,
@@ -89,66 +84,58 @@ void discord_guild_template_from_json(char *json, size_t len, struct discord_gui
                 discord_guild_from_json, &p->serialized_source_guild,
   /* specs/discord/guild-template.json:22:20
      '{ "name": "is_dirty", "type":{ "base":"bool" }}' */
-                &p->is_dirty,
-                p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches,
-                p->__M.record_defined, sizeof(p->__M.record_defined),
-                p->__M.record_null, sizeof(p->__M.record_null));
+                &p->is_dirty);
   ret = r;
-}
-
-static void discord_guild_template_use_default_inject_settings(struct discord_guild_template *p)
-{
-  p->__M.enable_arg_switches = true;
-  /* specs/discord/guild-template.json:12:20
-     '{ "name": "code", "type":{ "base":"char", "dec":"*"}}' */
-  p->__M.arg_switches[0] = p->code;
-
-  /* specs/discord/guild-template.json:13:20
-     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}' */
-  p->__M.arg_switches[1] = p->name;
-
-  /* specs/discord/guild-template.json:14:20
-     '{ "name": "description", "type":{ "base":"char", "dec":"*" }}' */
-  p->__M.arg_switches[2] = p->description;
-
-  /* specs/discord/guild-template.json:15:20
-     '{ "name": "usage_count", "type":{ "base":"int"}}' */
-  p->__M.arg_switches[3] = &p->usage_count;
-
-  /* specs/discord/guild-template.json:16:20
-     '{ "name": "creator_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  p->__M.arg_switches[4] = &p->creator_id;
-
-  /* specs/discord/guild-template.json:17:20
-     '{ "name": "creator", "type":{ "base":"struct discord_user", "dec":"*" }}' */
-  p->__M.arg_switches[5] = p->creator;
-
-  /* specs/discord/guild-template.json:18:20
-     '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
-  p->__M.arg_switches[6] = &p->created_at;
-
-  /* specs/discord/guild-template.json:19:20
-     '{ "name": "updated_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
-  p->__M.arg_switches[7] = &p->updated_at;
-
-  /* specs/discord/guild-template.json:20:20
-     '{ "name": "source_guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
-  p->__M.arg_switches[8] = &p->source_guild_id;
-
-  /* specs/discord/guild-template.json:21:20
-     '{ "name": "serialized_source_guild", "type":{ "base":"struct discord_guild", "dec":"*" }}' */
-  p->__M.arg_switches[9] = p->serialized_source_guild;
-
-  /* specs/discord/guild-template.json:22:20
-     '{ "name": "is_dirty", "type":{ "base":"bool" }}' */
-  p->__M.arg_switches[10] = &p->is_dirty;
-
 }
 
 size_t discord_guild_template_to_json(char *json, size_t len, struct discord_guild_template *p)
 {
   size_t r;
-  discord_guild_template_use_default_inject_settings(p);
+  void *arg_switches[11]={NULL};
+  /* specs/discord/guild-template.json:12:20
+     '{ "name": "code", "type":{ "base":"char", "dec":"*"}}' */
+  arg_switches[0] = p->code;
+
+  /* specs/discord/guild-template.json:13:20
+     '{ "name": "name", "type":{ "base":"char", "dec":"*"}}' */
+  arg_switches[1] = p->name;
+
+  /* specs/discord/guild-template.json:14:20
+     '{ "name": "description", "type":{ "base":"char", "dec":"*" }}' */
+  arg_switches[2] = p->description;
+
+  /* specs/discord/guild-template.json:15:20
+     '{ "name": "usage_count", "type":{ "base":"int"}}' */
+  arg_switches[3] = &p->usage_count;
+
+  /* specs/discord/guild-template.json:16:20
+     '{ "name": "creator_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
+  arg_switches[4] = &p->creator_id;
+
+  /* specs/discord/guild-template.json:17:20
+     '{ "name": "creator", "type":{ "base":"struct discord_user", "dec":"*" }}' */
+  arg_switches[5] = p->creator;
+
+  /* specs/discord/guild-template.json:18:20
+     '{ "name": "created_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
+  arg_switches[6] = &p->created_at;
+
+  /* specs/discord/guild-template.json:19:20
+     '{ "name": "updated_at", "type":{ "base":"char", "dec":"*", "converter":"iso8601" }}' */
+  arg_switches[7] = &p->updated_at;
+
+  /* specs/discord/guild-template.json:20:20
+     '{ "name": "source_guild_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }}' */
+  arg_switches[8] = &p->source_guild_id;
+
+  /* specs/discord/guild-template.json:21:20
+     '{ "name": "serialized_source_guild", "type":{ "base":"struct discord_guild", "dec":"*" }}' */
+  arg_switches[9] = p->serialized_source_guild;
+
+  /* specs/discord/guild-template.json:22:20
+     '{ "name": "is_dirty", "type":{ "base":"bool" }}' */
+  arg_switches[10] = &p->is_dirty;
+
   r=json_inject(json, len, 
   /* specs/discord/guild-template.json:12:20
      '{ "name": "code", "type":{ "base":"char", "dec":"*"}}' */
@@ -217,7 +204,7 @@ size_t discord_guild_template_to_json(char *json, size_t len, struct discord_gui
   /* specs/discord/guild-template.json:22:20
      '{ "name": "is_dirty", "type":{ "base":"bool" }}' */
                 &p->is_dirty,
-                p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches);
+                arg_switches, sizeof(arg_switches), true);
   return r;
 }
 

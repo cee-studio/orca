@@ -55,20 +55,6 @@ struct discord_audit_log {
      '{"name":"threads", "type": { "base":"struct discord_channel", "dec":"ntl"}, "comment":"list of threads found in the audit log", "inject_if_not":null}' */
   struct discord_channel **threads; /** list of threads found in the audit log */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_audit_log_cleanup_v(void *p);
 extern void discord_audit_log_cleanup(struct discord_audit_log *p);
@@ -143,20 +129,6 @@ struct discord_audit_log_entry {
      '{"name":"reason", "type": {"base":"char", "dec":"[DISCORD_MAX_REASON_LEN]"}, "comment":"the reason for the change", "inject_if_not":"" }' */
   char reason[DISCORD_MAX_REASON_LEN]; /** the reason for the change */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_audit_log_entry_cleanup_v(void *p);
 extern void discord_audit_log_entry_cleanup(struct discord_audit_log_entry *p);
@@ -306,20 +278,6 @@ struct discord_optional_audit_entry_info {
      '{ "name": "role_name", "type":{ "base":"char", "dec":"*" }, "comment":"name of the role if type is '0' (not present if type is '1')", "inject_if_not":null }' */
   char *role_name; /** name of the role if type is '0' (not present if type is '1') */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_optional_audit_entry_info_cleanup_v(void *p);
 extern void discord_optional_audit_entry_info_cleanup(struct discord_optional_audit_entry_info *p);
@@ -378,20 +336,6 @@ struct discord_audit_log_change {
      '{"name":"key", "type":{"base":"char", "dec":"*"}, "comment":"name of audit log change key", "inject_if_not":null }' */
   char *key; /** name of audit log change key */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_audit_log_change_cleanup_v(void *p);
 extern void discord_audit_log_change_cleanup(struct discord_audit_log_change *p);

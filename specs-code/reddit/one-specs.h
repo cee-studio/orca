@@ -88,20 +88,6 @@ struct reddit_comment_params {
      '{ "name": "uh", "type":{ "base":"char", "dec":"*" }, "comment":"a modhash" }' */
   char *uh; /** a modhash */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[6];
-    void *record_defined[6];
-    void *record_null[6];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/reddit/oauth2.json, Please don't edit it. */
 
@@ -153,20 +139,6 @@ struct reddit_access_token_params {
      '{ "name": "redirect_uri", "type":{ "base":"char", "dec":"*" }, "comment":"redirect uri for webapp"}' */
   char *redirect_uri; /** redirect uri for webapp */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[5];
-    void *record_defined[5];
-    void *record_null[5];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/reddit/search.json, Please don't edit it. */
 
@@ -252,20 +224,6 @@ struct reddit_search_params {
      '{ "name": "type", "type":{ "base":"char", "dec":"*" }, "comment":"(optional) comma-delimited list of result types (sr, link, user)"}' */
   char *type; /** (optional) comma-delimited list of result types (sr, link, user) */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[13];
-    void *record_defined[13];
-    void *record_null[13];
-  } __M; /**< metadata */
-/** @endcond */
 };
 /* This file is generated from specs/reddit/links_n_comments.json, Please don't edit it. */
 

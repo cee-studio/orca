@@ -83,20 +83,6 @@ struct discord_voice_state {
      '{ "name": "supress", "type":{ "base":"bool" }}' */
   bool supress;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[12];
-    void *record_defined[12];
-    void *record_null[12];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_voice_state_cleanup_v(void *p);
 extern void discord_voice_state_cleanup(struct discord_voice_state *p);
@@ -167,20 +153,6 @@ struct discord_voice_region {
      '{ "name": "custom", "type":{ "base":"bool" }}' */
   bool custom;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[6];
-    void *record_defined[6];
-    void *record_null[6];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_voice_region_cleanup_v(void *p);
 extern void discord_voice_region_cleanup(struct discord_voice_region *p);

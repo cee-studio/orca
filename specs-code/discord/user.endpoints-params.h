@@ -41,20 +41,6 @@ struct discord_modify_current_user_params {
      '{ "name": "avatar", "type":{ "base":"char", "dec":"*"}, "comment":"base64 encoded image data"}' */
   char *avatar; /** base64 encoded image data */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_modify_current_user_params_cleanup_v(void *p);
 extern void discord_modify_current_user_params_cleanup(struct discord_modify_current_user_params *p);
@@ -103,20 +89,6 @@ struct discord_create_dm_params {
      '{ "name": "recipient_id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "comment":"the recipient to open a DM channel with", "inject_if_not":0 }' */
   u64_snowflake_t recipient_id; /** the recipient to open a DM channel with */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[1];
-    void *record_defined[1];
-    void *record_null[1];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_dm_params_cleanup_v(void *p);
 extern void discord_create_dm_params_cleanup(struct discord_create_dm_params *p);
@@ -171,20 +143,6 @@ struct discord_create_group_dm_params {
           "comment":"a dictionary of user ids to their respective nicknames"}' */
   ja_u64 **nicks; /** a dictionary of user ids to their respective nicknames */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[2];
-    void *record_defined[2];
-    void *record_null[2];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_group_dm_params_cleanup_v(void *p);
 extern void discord_create_group_dm_params_cleanup(struct discord_create_group_dm_params *p);

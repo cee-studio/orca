@@ -21,34 +21,21 @@ void github_topic_from_json(char *json, size_t len, struct github_topic **pp)
   struct github_topic *p = *pp;
   github_topic_init(p);
   r=json_extract(json, len, 
+                "(names):F,",
   /* specs/github/repository.json:12:28
      '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
-                "(names):F,"
-                "@arg_switches:b"
-                "@record_defined"
-                "@record_null",
-  /* specs/github/repository.json:12:28
-     '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
-                ja_str_list_from_json, &p->names,
-                p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches,
-                p->__M.record_defined, sizeof(p->__M.record_defined),
-                p->__M.record_null, sizeof(p->__M.record_null));
+                ja_str_list_from_json, &p->names);
   ret = r;
-}
-
-static void github_topic_use_default_inject_settings(struct github_topic *p)
-{
-  p->__M.enable_arg_switches = true;
-  /* specs/github/repository.json:12:28
-     '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
-  p->__M.arg_switches[0] = p->names;
-
 }
 
 size_t github_topic_to_json(char *json, size_t len, struct github_topic *p)
 {
   size_t r;
-  github_topic_use_default_inject_settings(p);
+  void *arg_switches[1]={NULL};
+  /* specs/github/repository.json:12:28
+     '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
+  arg_switches[0] = p->names;
+
   r=json_inject(json, len, 
   /* specs/github/repository.json:12:28
      '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
@@ -57,7 +44,7 @@ size_t github_topic_to_json(char *json, size_t len, struct github_topic *p)
   /* specs/github/repository.json:12:28
      '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
                 ja_str_list_to_json, p->names,
-                p->__M.arg_switches, sizeof(p->__M.arg_switches), p->__M.enable_arg_switches);
+                arg_switches, sizeof(arg_switches), true);
   return r;
 }
 

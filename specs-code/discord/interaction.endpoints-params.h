@@ -61,20 +61,6 @@ struct discord_edit_original_interaction_response_params {
      '{ "name": "components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "comment":"the components to include with the message", "inject_if_not":null }' */
   struct discord_component **components; /** the components to include with the message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_edit_original_interaction_response_params_cleanup_v(void *p);
 extern void discord_edit_original_interaction_response_params_cleanup(struct discord_edit_original_interaction_response_params *p);
@@ -167,20 +153,6 @@ struct discord_create_followup_message_params {
      '{ "name": "flags", "type":{ "base":"int" }, "comment":"can be set to 64 to send a ephemeral message", "inject_if_not": 0 }' */
   int flags; /** can be set to 64 to send a ephemeral message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[12];
-    void *record_defined[12];
-    void *record_null[12];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_create_followup_message_params_cleanup_v(void *p);
 extern void discord_create_followup_message_params_cleanup(struct discord_create_followup_message_params *p);
@@ -253,20 +225,6 @@ struct discord_edit_followup_message_params {
      '{ "name": "components", "type":{ "base":"struct discord_component", "dec":"ntl" }, "comment":"the components to include with the message", "inject_if_not":null }' */
   struct discord_component **components; /** the components to include with the message */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[7];
-    void *record_defined[7];
-    void *record_null[7];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_edit_followup_message_params_cleanup_v(void *p);
 extern void discord_edit_followup_message_params_cleanup(struct discord_edit_followup_message_params *p);

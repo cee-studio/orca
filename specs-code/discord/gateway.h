@@ -273,20 +273,6 @@ struct discord_identify {
      '{ "name":"intents","type":{"base":"int"}}' */
   int intents;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_identify_cleanup_v(void *p);
 extern void discord_identify_cleanup(struct discord_identify *p);
@@ -349,20 +335,6 @@ struct discord_voice_state_status {
      '{ "name":"self_deaf","type":{"base":"bool"}, "comment":"is the client deafened"}' */
   bool self_deaf; /** is the client deafened */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_voice_state_status_cleanup_v(void *p);
 extern void discord_voice_state_status_cleanup(struct discord_voice_state_status *p);
@@ -425,20 +397,6 @@ struct discord_presence_status {
      '{ "name":"afk","type":{"base":"bool"}, "comment":"whether or not the client is afk"}' */
   bool afk; /** whether or not the client is afk */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_presence_status_cleanup_v(void *p);
 extern void discord_presence_status_cleanup(struct discord_presence_status *p);
@@ -497,20 +455,6 @@ struct discord_identify_connection {
      '{ "name":"device", "json_key":"$device", "type":{"base":"char", "dec":"*"}, "comment":"your library name", "inject_if_not":null }' */
   char *device; /** your library name */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[3];
-    void *record_defined[3];
-    void *record_null[3];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_identify_connection_cleanup_v(void *p);
 extern void discord_identify_connection_cleanup(struct discord_identify_connection *p);
@@ -589,20 +533,6 @@ struct discord_activity {
      '{ "name":"instance","type":{"base":"bool"}, "option":true, "inject_if_not":false}' */
   bool instance;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[8];
-    void *record_defined[8];
-    void *record_null[8];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_activity_cleanup_v(void *p);
 extern void discord_activity_cleanup(struct discord_activity *p);
@@ -698,20 +628,6 @@ struct discord_session_start_limit {
      '{ "name":"max_concurrency","type":{"base":"int"}, "comment":"the number of identify requests allowed per 5 seconds", "inject_if_not":0 }' */
   int max_concurrency; /** the number of identify requests allowed per 5 seconds */
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[4];
-    void *record_defined[4];
-    void *record_null[4];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void discord_session_start_limit_cleanup_v(void *p);
 extern void discord_session_start_limit_cleanup(struct discord_session_start_limit *p);

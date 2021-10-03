@@ -37,20 +37,6 @@ struct github_topic {
      '{ "name": "names", "type":{ "base":"ja_str", "dec":"ntl"}}' */
   ja_str **names;
 
-  /* The following is metadata used to 
-     1. control which field should be extracted/injected
-     2. record which field is presented(defined) in JSON
-     3. record which field is null in JSON */
-/** @cond DOXYGEN_SHOULD_SKIP_THIS */
-  struct {
-    bool enable_arg_switches;
-    bool enable_record_defined;
-    bool enable_record_null;
-    void *arg_switches[1];
-    void *record_defined[1];
-    void *record_null[1];
-  } __M; /**< metadata */
-/** @endcond */
 };
 extern void github_topic_cleanup_v(void *p);
 extern void github_topic_cleanup(struct github_topic *p);

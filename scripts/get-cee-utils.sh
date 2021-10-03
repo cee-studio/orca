@@ -5,7 +5,7 @@ set -o pipefail
 mypath=$(dirname $(readlink -f $0))
 url="https://raw.githubusercontent.com/cee-studio/cee-utils/master"
 
-wget --no-cache $url/scripts/get-cee-utils.sh -O ${mypath}/get-cee-utils.sh
+wget $url/scripts/get-cee-utils.sh -O ${mypath}/get-cee-utils.sh
 chmod +x ${mypath}/get-cee-utils.sh
 
 list="README.md
@@ -58,6 +58,6 @@ pushd $mypath/../cee-utils
 for i in $list; do
     echo "getting $i"
     echo "$url/$i"
-    wget --no-cache $url/$i -O $i
+    wget $url/$i -O $i
 done
 popd

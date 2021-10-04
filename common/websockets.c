@@ -11,7 +11,7 @@
 
 #define CURLE_CHECK(ws, ecode)                             \
   VASSERT_S(CURLE_OK == ecode, "[%s] (CURLE code: %d) %s", \
-      ws->conf.id,                                             \
+      ws->conf.id,                                         \
       ecode,                                               \
       IS_EMPTY_STRING(ws->errbuf)                          \
         ? curl_easy_strerror(ecode)                        \
@@ -19,7 +19,7 @@
 
 #define CURLM_CHECK(ws, mcode)                             \
   VASSERT_S(CURLM_OK == mcode, "[%s] (CURLM code: %d) %s", \
-      ws->conf.id,                                             \
+      ws->conf.id,                                         \
       mcode,                                               \
       curl_multi_strerror(mcode))
 

@@ -5,15 +5,10 @@ set -o pipefail
 mypath=$(dirname $(readlink -f $0))
 url="https://raw.githubusercontent.com/cee-studio/cee-utils/master"
 
-wget $url/scripts/get-cee-utils.sh -O ${mypath}/get-cee-utils.sh
-chmod +x ${mypath}/get-cee-utils.sh
-
 list="README.md
 debug.h
 cee-sqlite3.h
 cee-sqlite3.c
-cee-sqlite3-2.h
-cee-sqlite3-2.c
 jsmn.h
 json-actor-boxed.c
 json-actor-boxed.h

@@ -45,7 +45,7 @@ SLACK_OBJS   := $(SLACK_SRC:%.c=$(OBJDIR)/%.o)
 
 # API libs cflags
 LIBDISCORD_CFLAGS := -std=c89
-LIBGITHUB_CFLAGS  :=# -std=c89
+LIBGITHUB_CFLAGS  := -std=c89
 LIBREDDIT_CFLAGS  :=
 LIBSLACK_CFLAGS   :=
 

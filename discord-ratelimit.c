@@ -127,8 +127,10 @@ parse_ratelimits(struct discord_adapter *adapter, struct discord_bucket *bucket,
 { 
   pthread_mutex_lock(&bucket->lock);
 
-  if (ORCA_OK == code && bucket->update_tstamp < info->req_tstamp) 
-  {
+  if (code != ORCA_OK) {
+    logconf_debug(&adapter->ratelimit->conf, "[%.4s] Request failed", bucket->hash);
+  }
+  else if (bucket->update_tstamp <= info->req_tstamp) {
     bucket->update_tstamp = info->req_tstamp;
 
     struct sized_buffer value; /* fetch header value as string */
@@ -139,14 +141,9 @@ parse_ratelimits(struct discord_adapter *adapter, struct discord_bucket *bucket,
     value = ua_info_respheader_field(info, "x-ratelimit-reset-after");
     if (value.size) bucket->reset_after_ms = 1000 * strtod(value.start, NULL);
 
-    logconf_debug(&adapter->ratelimit->conf,
+    logconf_info(&adapter->ratelimit->conf,
       "[%.4s] Reset-Timestamp = %"PRIu64" ; Remaining = %d ; Reset-After = %"PRId64" ms",
       bucket->hash, bucket->reset_tstamp, bucket->remaining, bucket->reset_after_ms);
-  }
-  else {
-    logconf_debug(&adapter->ratelimit->conf, 
-      "[%.4s] Request failed or its timestamp is older than bucket's last update", 
-      bucket->hash);
   }
 
   --bucket->busy;

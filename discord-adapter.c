@@ -146,7 +146,7 @@ discord_adapter_run(
             VASSERT_S(retry_after != -1, "(NO RETRY-AFTER INCLUDED) %s", message);
 
             if (is_global) {
-              logconf_warn(&adapter->conf, "GLOBAL RATELIMITING (wait: %.2lf ms) : %s", 1000*retry_after, message);
+              logconf_warn(&adapter->conf, "429 GLOBAL RATELIMITING (wait: %.2lf ms) : %s", 1000*retry_after, message);
               ua_block_ms(adapter->ua, (uint64_t)(1000*retry_after));
             }
             else {

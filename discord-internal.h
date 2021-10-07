@@ -80,7 +80,7 @@ ORCAcode discord_adapter_run(
   struct ua_resp_handle *resp_handle,
   struct sized_buffer *req_body,
   enum http_method http_method,
-  char endpoint[], ...);
+  char endpoint_fmt[], ...);
 
 /**
  * @brief The bucket struct that will handle ratelimiting 

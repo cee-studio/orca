@@ -70,10 +70,15 @@ discord_adapter_run(
   struct discord_adapter *adapter, 
   struct ua_resp_handle *resp_handle,
   struct sized_buffer *req_body,
-  enum http_method http_method, char endpoint[], ...)
+  enum http_method http_method, 
+  char endpoint_fmt[], ...)
 {
   va_list args;
-  va_start(args, endpoint);
+  char endpoint[2048];
+
+  va_start(args, endpoint_fmt);
+  int ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
+  ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
   /* IF UNSET, SET TO DEFAULT ERROR HANDLING CALLBACKS */
   if (resp_handle && !resp_handle->err_cb) {
@@ -81,16 +86,16 @@ discord_adapter_run(
     resp_handle->err_obj = adapter;
   }
 
-  /* Check if endpoint contain a major param */
+  /* Check if endpoint_fmt contain a major param */
   const char *route;
-  if (strstr(endpoint, "/channels/%")) 
+  if (strstr(endpoint_fmt, "/channels/%")) 
     route = "@channel";
-  else if (strstr(endpoint, "/guilds/%"))   
+  else if (strstr(endpoint_fmt, "/guilds/%"))   
     route = "@guild";
-  else if (strstr(endpoint, "/webhook/%"))  
+  else if (strstr(endpoint_fmt, "/webhook/%"))  
     route = "@webhook";
   else
-    route = endpoint;
+    route = endpoint_fmt;
 
   struct discord_bucket *bucket;
   pthread_mutex_lock(&adapter->ratelimit->lock);
@@ -104,12 +109,12 @@ discord_adapter_run(
 
     discord_bucket_try_cooldown(adapter, bucket);
 
-    code = ua_vrun(
+    code = ua_run(
       adapter->ua,
       &adapter->err.info,
       resp_handle,
       req_body,
-      http_method, endpoint, args);
+      http_method, endpoint);
     
     if (code != ORCA_HTTP_CODE)
     {

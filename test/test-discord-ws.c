@@ -4,7 +4,6 @@
 #include <assert.h>
 
 #include "discord.h"
-#include "discord-internal.h"
 
 #include "cee-utils.h"
 
@@ -26,7 +25,7 @@ void on_disconnect(
   struct discord_create_message_params params = { .content = "Disconnecting ..." };
   discord_create_message(client, msg->channel_id, &params, NULL);
 
-  discord_gateway_shutdown(&client->gw);
+  discord_shutdown(client);
 }
 
 void on_spam(
@@ -102,6 +101,8 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   discord_global_init();
+  setenv("DISCORD_THREADPOOL_SIZE", "8", 1);
+  setenv("DISCORD_THREADPOOL_QUEUE_SIZE", "128", 1);
 
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");

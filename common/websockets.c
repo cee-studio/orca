@@ -561,7 +561,7 @@ ws_cleanup(struct websockets *ws)
 bool
 ws_send_binary(struct websockets *ws, struct ws_info *info, const char msg[], size_t msglen)
 {
-  VASSERT_S(ws->tid == pthread_self(), "Can only be called from thread %u", ws->tid);
+  ASSERT_S(ws->tid == pthread_self(), "Can only be called from main-thread");
 
   logconf_http(
     &ws->conf, 
@@ -590,7 +590,7 @@ ws_send_binary(struct websockets *ws, struct ws_info *info, const char msg[], si
 bool
 ws_send_text(struct websockets *ws, struct ws_info *info, const char text[], size_t len)
 {
-  VASSERT_S(ws->tid == pthread_self(), "Can only be called from thread %u", ws->tid);
+  ASSERT_S(ws->tid == pthread_self(), "Can only be called from main-thread");
 
   logconf_http(
     &ws->conf, 

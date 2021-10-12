@@ -24,10 +24,6 @@
 
 #include "discord-voice-connections.h"
 
-#ifndef DISCORD_THREADPOOL_QUEUE_SIZE
-# define DISCORD_THREADPOOL_QUEUE_SIZE 512
-#endif /* DISCORD_THREADPOOL_QUEUE_SIZE */
-
 /**
  * @brief The handle used for performing HTTP Requests 
  *

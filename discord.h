@@ -21,10 +21,6 @@
 #define DISCORD_GATEWAY_URL_SUFFIX "?v=9&encoding=json"
 #define DISCORD_VOICE_CONNECTIONS_URL_SUFFIX "?v=4"
 
-#ifndef DISCORD_THREADPOOL_SIZE
-# define DISCORD_THREADPOOL_SIZE 4
-#endif /* DISCORD_THREADPOOL_SIZE */
-
 /* FORWARD DECLARATIONS */
 struct discord;
 struct discord_voice_cbs;

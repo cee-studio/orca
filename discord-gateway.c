@@ -1002,9 +1002,8 @@ on_dispatch(struct discord_gateway *gw)
       /** @todo in case all worker threads are stuck on a infinite loop, this
        *    function will essentially lock the program forever while waiting
        *    on a queue, how can we get around this? */
-      if (threadpool_add(gw->tpool, &dispatch_run, p_cxt, 0)) {
-        ERR("Couldn't create task");
-      }
+      int ret = threadpool_add(gw->tpool, &dispatch_run, p_cxt, 0);
+      VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
       return; }
   default:
       ERR("Unknown event handling mode (code: %d)", mode);
@@ -1178,6 +1177,23 @@ static enum discord_event_handling_mode noop_event_handler(struct discord *a, st
 void
 discord_gateway_init(struct discord_gateway *gw, struct logconf *conf, struct sized_buffer *token)
 {
+  static int nthreads;
+  static int queue_size;
+  const char *val;
+
+  val = getenv("DISCORD_THREADPOOL_SIZE");
+  if (val != NULL)
+    nthreads = atoi(val);
+  if (0 == nthreads)
+    nthreads = 1;
+  val = getenv("DISCORD_THREADPOOL_QUEUE_SIZE");
+  if (val != NULL)
+    queue_size = atoi(val);
+  if (0 == queue_size)
+    queue_size = 8;
+
+  gw->tpool = threadpool_create(nthreads, queue_size, 0);
+
   struct ws_callbacks cbs = {
     .data = gw,
     .on_connect = &on_connect_cb,
@@ -1187,11 +1203,6 @@ discord_gateway_init(struct discord_gateway *gw, struct logconf *conf, struct si
 
   gw->ws = ws_init(&cbs, conf);
   logconf_branch(&gw->conf, conf, "DISCORD_GATEWAY");
-
-  gw->tpool = threadpool_create(
-    DISCORD_THREADPOOL_SIZE, 
-    DISCORD_THREADPOOL_QUEUE_SIZE, 0)
-  ;
 
   gw->reconnect = malloc(sizeof *gw->reconnect);
   gw->reconnect->enable = true;

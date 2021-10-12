@@ -969,8 +969,8 @@ on_dispatch(struct discord_gateway *gw)
 
   if (!on_event) return; /* user not subscribed to the event */
   
-  enum discord_event_handling_mode mode;
-  mode = gw->user_cmd->event_handler(CLIENT(gw), &gw->bot, &gw->payload->event_data, event);
+  enum discord_event_scheduler mode;
+  mode = gw->user_cmd->scheduler(CLIENT(gw), &gw->bot, &gw->payload->event_data, event);
   switch (mode) {
   case DISCORD_EVENT_IGNORE: 
       return;
@@ -985,7 +985,7 @@ on_dispatch(struct discord_gateway *gw)
       };
       dispatch_run(&cxt);
       return; }
-  case DISCORD_EVENT_CHILD_THREAD: {
+  case DISCORD_EVENT_WORKER_THREAD: {
       struct discord *client_cpy = discord_clone(CLIENT(gw));
       struct discord_event_cxt *p_cxt = malloc(sizeof *p_cxt);
       *p_cxt = (struct discord_event_cxt){
@@ -1001,7 +1001,7 @@ on_dispatch(struct discord_gateway *gw)
       };
       /** @todo in case all worker threads are stuck on a infinite loop, this
        *    function will essentially lock the program forever while waiting
-       *    on a queue, how can we get around this? */
+       *    on a queue, how can we get around this? Should we? */
       int ret = threadpool_add(gw->tpool, &dispatch_run, p_cxt, 0);
       VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
       return; }
@@ -1171,7 +1171,7 @@ static void noop_idle_cb(struct discord *a, const struct discord_user *b)
 { return; }
 static void noop_event_raw_cb(struct discord *a, enum discord_gateway_events b, struct sized_buffer *c, struct sized_buffer *d)
 { return; }
-static enum discord_event_handling_mode noop_event_handler(struct discord *a, struct discord_user *b, struct sized_buffer *c, enum discord_gateway_events d)
+static enum discord_event_scheduler noop_scheduler(struct discord *a, struct discord_user *b, struct sized_buffer *c, enum discord_gateway_events d)
 { return DISCORD_EVENT_MAIN_THREAD; }
 
 void
@@ -1237,7 +1237,7 @@ discord_gateway_init(struct discord_gateway *gw, struct logconf *conf, struct si
 
   gw->user_cmd->cbs.on_idle = &noop_idle_cb;
   gw->user_cmd->cbs.on_event_raw = &noop_event_raw_cb;
-  gw->user_cmd->event_handler = &noop_event_handler;
+  gw->user_cmd->scheduler = &noop_scheduler;
 
   if (token->size) {
     discord_get_current_user(CLIENT(gw), &gw->bot);

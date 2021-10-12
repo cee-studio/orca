@@ -265,7 +265,7 @@ struct discord_gateway {
     struct discord_gateway_cmd_cbs on_default; /**< user's default callback incase prefix matches but command doesn't */
 
     struct discord_gateway_cbs cbs;            /**< user's callbacks */
-    discord_event_mode_cb event_handler;       /**< context on how each event callback is executed @see discord_set_event_handler() */
+    discord_event_scheduler_cb scheduler;      /**< context on how each event callback is executed @see discord_set_event_scheduler() */
   } *user_cmd;
 };
 

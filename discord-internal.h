@@ -20,7 +20,13 @@
 #include "user-agent.h"
 #include "websockets.h"
 #include "cee-utils.h"
+#include "threadpool.h"
+
 #include "discord-voice-connections.h"
+
+#ifndef DISCORD_THREADPOOL_QUEUE_SIZE
+# define DISCORD_THREADPOOL_QUEUE_SIZE 512
+#endif /* DISCORD_THREADPOOL_QUEUE_SIZE */
 
 /**
  * @brief The handle used for performing HTTP Requests 
@@ -211,6 +217,7 @@ struct discord_gateway_cbs {
 struct discord_gateway {
   struct logconf conf; /**< DISCORD_GATEWAY logging module */
   struct websockets *ws; /**< the websockets handle that connects to Discord */
+  threadpool_t *tpool; /**< thread-pool manager */
 
   struct { /**< Reconnect structure */
     bool enable; /**< will attempt reconnecting if true */

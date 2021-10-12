@@ -21,6 +21,10 @@
 #define DISCORD_GATEWAY_URL_SUFFIX "?v=9&encoding=json"
 #define DISCORD_VOICE_CONNECTIONS_URL_SUFFIX "?v=4"
 
+#ifndef DISCORD_THREADPOOL_SIZE
+# define DISCORD_THREADPOOL_SIZE 4
+#endif /* DISCORD_THREADPOOL_SIZE */
+
 /* FORWARD DECLARATIONS */
 struct discord;
 struct discord_voice_cbs;
@@ -411,6 +415,7 @@ void discord_set_prefix(struct discord *client, char *prefix);
 enum discord_event_handling_mode {
   DISCORD_EVENT_IGNORE,  /**< this event has been handled */
   DISCORD_EVENT_MAIN_THREAD, /**< handle this event in main thread */
+  /** @todo DISCORD_EVENT_WORKER_THREAD is more appropriate */
   DISCORD_EVENT_CHILD_THREAD /**< handle this event in a child thread */
 };
 

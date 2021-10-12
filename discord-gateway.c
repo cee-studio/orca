@@ -8,7 +8,6 @@
 #include "discord.h"
 #include "discord-internal.h"
 
-#include "cee-utils.h"
 
 /* get client from gw pointer */
 #define CLIENT(p_gw) (struct discord*)((int8_t*)(p_gw) - offsetof(struct discord, gw))
@@ -709,7 +708,7 @@ on_ready(struct discord_gateway *gw, struct sized_buffer *data) {
   ON(ready);
 }
 
-static void*
+static void
 dispatch_run(void *p_cxt)
 {
   struct discord_event_cxt *cxt = p_cxt;
@@ -723,12 +722,8 @@ dispatch_run(void *p_cxt)
         cxt->event, 
         &cxt->p_gw->sb_bot, 
         &cxt->data);
-
-    return NULL;
+    return;
   }
-
-  if (pthread_detach(cxt->tid))
-    ERR("Couldn't detach thread");
 
   logconf_info(&cxt->p_gw->conf, "Thread "ANSICOLOR("starts", ANSI_FG_RED)" to serve %s",
            cxt->event_name);
@@ -748,8 +743,6 @@ dispatch_run(void *p_cxt)
   free(cxt->data.start);
   discord_cleanup(CLIENT(cxt->p_gw));
   free(cxt);
-
-  pthread_exit(NULL);
 }
 
 static void
@@ -1006,10 +999,12 @@ on_dispatch(struct discord_gateway *gw)
         .on_event = on_event,
         .is_main_thread = false
       };
-
-      pthread_t tid;
-      if (pthread_create(&tid, NULL, &dispatch_run, p_cxt))
-        ERR("Couldn't create thread");
+      /** @todo in case all worker threads are stuck on a infinite loop, this
+       *    function will essentially lock the program forever while waiting
+       *    on a queue, how can we get around this? */
+      if (threadpool_add(gw->tpool, &dispatch_run, p_cxt, 0)) {
+        ERR("Couldn't create task");
+      }
       return; }
   default:
       ERR("Unknown event handling mode (code: %d)", mode);
@@ -1193,6 +1188,11 @@ discord_gateway_init(struct discord_gateway *gw, struct logconf *conf, struct si
   gw->ws = ws_init(&cbs, conf);
   logconf_branch(&gw->conf, conf, "DISCORD_GATEWAY");
 
+  gw->tpool = threadpool_create(
+    DISCORD_THREADPOOL_SIZE, 
+    DISCORD_THREADPOOL_QUEUE_SIZE, 0)
+  ;
+
   gw->reconnect = malloc(sizeof *gw->reconnect);
   gw->reconnect->enable = true;
   gw->reconnect->threshold = 5; /**< hard limit for now */
@@ -1253,24 +1253,27 @@ discord_gateway_init(struct discord_gateway *gw, struct logconf *conf, struct si
 void
 discord_gateway_cleanup(struct discord_gateway *gw)
 {
+  /* cleanup WebSockets handle */
   ws_cleanup(gw->ws);
-  free(gw->reconnect);
-  free(gw->status);
-  /* @todo Add a bitfield in generated structures to ignore freeing strings unless set ( useful for structures created via xxx_from_json() ) */
-#if 0
-  discord_identify_cleanup(&gw->id);
-#else
+  /* cleanup thread-pool manager */
+  threadpool_destroy(gw->tpool, threadpool_graceful);
+  /* cleanup bot identification */
   if (gw->id.token)
     free(gw->id.token);
   free(gw->id.properties);
   free(gw->id.presence);
-#endif
+  /* cleanup connection url */
   if (gw->session.url)
     free(gw->session.url);
+  /* cleanup user bot */
   discord_user_cleanup(&gw->bot);
   if (gw->sb_bot.start)
     free(gw->sb_bot.start);
+  /* cleanup response payload buffer */
   free(gw->payload);
+  /* cleanup misc fields */
+  free(gw->reconnect);
+  free(gw->status);
   free(gw->hbeat);
   if (gw->user_cmd->pool)
     free(gw->user_cmd->pool);
@@ -1344,10 +1347,12 @@ event_loop(struct discord_gateway *gw)
 ORCAcode
 discord_gateway_run(struct discord_gateway *gw)
 {
-  ORCAcode code;
   while (gw->reconnect->attempt < gw->reconnect->threshold) 
   {
+    ORCAcode code;
+
     code = event_loop(gw);
+
     if (code != ORCA_OK) return code;
 
     if (!gw->reconnect->enable) {

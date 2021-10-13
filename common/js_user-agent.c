@@ -260,5 +260,5 @@ jsua_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
           p_info, 
           NULL, 
           &req_body, 
-          method, endpoint, "");
+          method, endpoint);
 }

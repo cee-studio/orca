@@ -4,11 +4,13 @@
 #include <assert.h>
 
 #include "discord.h"
-
 #include "cee-utils.h"
+
+#define THREADPOOL_SIZE "4"
 
 pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 bool g_keep_spamming = true;
+
 
 void on_ready(struct discord *client, const struct discord_user *me) {
   log_info("Succesfully connected to Discord as %s#%s!",
@@ -33,9 +35,24 @@ void on_spam(
   const struct discord_user *bot,
   const struct discord_message *msg)
 {
+  static unsigned count;
+  const unsigned threadpool_size = strtol(THREADPOOL_SIZE, NULL, 10);
+
   if (msg->author->bot) return;
 
   pthread_mutex_lock(&g_lock);
+  if (count >= threadpool_size-1) { // prevent blocking all threads
+    discord_create_message(
+        client, 
+        msg->channel_id, 
+        &(struct discord_create_message_params){
+          .content = "Too many threads ("THREADPOOL_SIZE") will block the threadpool!"
+        }, 
+        NULL);
+    pthread_mutex_unlock(&g_lock);
+    return;
+  }
+  ++count;
   g_keep_spamming = true;
   pthread_mutex_unlock(&g_lock);
 
@@ -52,7 +69,7 @@ void on_spam(
     snprintf(number, sizeof(number), "%d", i);
     params.content = number;
     discord_create_message(client, msg->channel_id, &params, NULL);
-  };
+  }
 }
 
 void on_stop(
@@ -101,7 +118,7 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   discord_global_init();
-  setenv("DISCORD_THREADPOOL_SIZE", "8", 1);
+  setenv("DISCORD_THREADPOOL_SIZE", THREADPOOL_SIZE, 1);
   setenv("DISCORD_THREADPOOL_QUEUE_SIZE", "128", 1);
 
   struct discord *client = discord_config_init(config_file);

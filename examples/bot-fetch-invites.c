@@ -14,9 +14,10 @@
 
 void print_usage() {
   fprintf(stderr, "%s", "bot-fetch-invites - an example bot to fetch invites from a server\n");
-  fprintf(stderr, "%s", "USAGE: ./bot-fetch-invites <guild_id>\n");
+  fprintf(stderr, "%s", "USAGE: ./bot-fetch-invites <config> <guild_id>\n");
 
   fprintf(stderr, "%s", "Positional arguments:\n");
+  fprintf(stderr, "%s", "\tconfig\tthe configuration file to use\n");
   fprintf(stderr, "%s", "\tguild_id\tthe id of the guild to fetch invites from\n");
 
   exit(EXIT_FAILURE);
@@ -24,16 +25,22 @@ void print_usage() {
 
 int main(int argc, char *argv[])
 {
-  if(argc == 1) {
+  const char* config_file;
+
+  if (argc == 1) {
     print_usage();
+  }
+  else if (argc > 1) {
+    config_file = argv[1];
+  } else {
+    config_file = "../config.json";
   }
 
   int index;
-  const char* config_file = "../config.json";
   struct discord* client = discord_config_init(config_file);
   struct discord_invite** invites = {0};
 
-  discord_get_guild_invites(client, strtoul(argv[1], NULL, 10), &invites);
+  discord_get_guild_invites(client, strtoul(argv[2], NULL, 10), &invites);
   
   for(index = 0; invites[index] != NULL; index++) {
     printf("Active invite: %s\n", (*invites)[index].code);

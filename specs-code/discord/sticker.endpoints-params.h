@@ -65,22 +65,22 @@ extern size_t discord_list_nitro_sticker_packs_response_list_to_json(char *str, 
 
  *   * Initializer:
 
- *     * :code:`void discord_params_init(struct discord_params *)`
+ *     * :code:`void discord_create_guild_sticker_params_init(struct discord_create_guild_sticker_params *)`
  *   * Cleanup:
 
- *     * :code:`void discord_params_cleanup(struct discord_params *)`
- *     * :code:`void discord_params_list_free(struct discord_params **)`
+ *     * :code:`void discord_create_guild_sticker_params_cleanup(struct discord_create_guild_sticker_params *)`
+ *     * :code:`void discord_create_guild_sticker_params_list_free(struct discord_create_guild_sticker_params **)`
  *   * JSON Decoder:
 
- *     * :code:`void discord_params_from_json(char *rbuf, size_t len, struct discord_params **)`
- *     * :code:`void discord_params_list_from_json(char *rbuf, size_t len, struct discord_params ***)`
+ *     * :code:`void discord_create_guild_sticker_params_from_json(char *rbuf, size_t len, struct discord_create_guild_sticker_params **)`
+ *     * :code:`void discord_create_guild_sticker_params_list_from_json(char *rbuf, size_t len, struct discord_create_guild_sticker_params ***)`
  *   * JSON Encoder:
 
- *     * :code:`void discord_params_to_json(char *wbuf, size_t len, struct discord_params *)`
- *     * :code:`void discord_params_list_to_json(char *wbuf, size_t len, struct discord_params **)`
+ *     * :code:`void discord_create_guild_sticker_params_to_json(char *wbuf, size_t len, struct discord_create_guild_sticker_params *)`
+ *     * :code:`void discord_create_guild_sticker_params_list_to_json(char *wbuf, size_t len, struct discord_create_guild_sticker_params **)`
  * @endverbatim
  */
-struct discord_params {
+struct discord_create_guild_sticker_params {
   /* specs/discord/sticker.endpoints-params.json:20:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker (2-30 characters)"}' */
   char *name; /**< name of the sticker (2-30 characters) */
@@ -98,20 +98,20 @@ struct discord_params {
   struct discord_file *file; /**< the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB */
 
 };
-extern void discord_params_cleanup_v(void *p);
-extern void discord_params_cleanup(struct discord_params *p);
-extern void discord_params_init_v(void *p);
-extern void discord_params_init(struct discord_params *p);
-extern void discord_params_from_json_v(char *json, size_t len, void *pp);
-extern void discord_params_from_json(char *json, size_t len, struct discord_params **pp);
-extern size_t discord_params_to_json_v(char *json, size_t len, void *p);
-extern size_t discord_params_to_json(char *json, size_t len, struct discord_params *p);
-extern void discord_params_list_free_v(void **p);
-extern void discord_params_list_free(struct discord_params **p);
-extern void discord_params_list_from_json_v(char *str, size_t len, void *p);
-extern void discord_params_list_from_json(char *str, size_t len, struct discord_params ***p);
-extern size_t discord_params_list_to_json_v(char *str, size_t len, void *p);
-extern size_t discord_params_list_to_json(char *str, size_t len, struct discord_params **p);
+extern void discord_create_guild_sticker_params_cleanup_v(void *p);
+extern void discord_create_guild_sticker_params_cleanup(struct discord_create_guild_sticker_params *p);
+extern void discord_create_guild_sticker_params_init_v(void *p);
+extern void discord_create_guild_sticker_params_init(struct discord_create_guild_sticker_params *p);
+extern void discord_create_guild_sticker_params_from_json_v(char *json, size_t len, void *pp);
+extern void discord_create_guild_sticker_params_from_json(char *json, size_t len, struct discord_create_guild_sticker_params **pp);
+extern size_t discord_create_guild_sticker_params_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_create_guild_sticker_params_to_json(char *json, size_t len, struct discord_create_guild_sticker_params *p);
+extern void discord_create_guild_sticker_params_list_free_v(void **p);
+extern void discord_create_guild_sticker_params_list_free(struct discord_create_guild_sticker_params **p);
+extern void discord_create_guild_sticker_params_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_create_guild_sticker_params_list_from_json(char *str, size_t len, struct discord_create_guild_sticker_params ***p);
+extern size_t discord_create_guild_sticker_params_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_create_guild_sticker_params_list_to_json(char *str, size_t len, struct discord_create_guild_sticker_params **p);
 
 /* Modify Guild Sticker */
 /* defined at specs/discord/sticker.endpoints-params.json:29:22 */
@@ -125,22 +125,22 @@ extern size_t discord_params_list_to_json(char *str, size_t len, struct discord_
 
  *   * Initializer:
 
- *     * :code:`void discord_params_init(struct discord_params *)`
+ *     * :code:`void discord_modify_guild_sticker_params_init(struct discord_modify_guild_sticker_params *)`
  *   * Cleanup:
 
- *     * :code:`void discord_params_cleanup(struct discord_params *)`
- *     * :code:`void discord_params_list_free(struct discord_params **)`
+ *     * :code:`void discord_modify_guild_sticker_params_cleanup(struct discord_modify_guild_sticker_params *)`
+ *     * :code:`void discord_modify_guild_sticker_params_list_free(struct discord_modify_guild_sticker_params **)`
  *   * JSON Decoder:
 
- *     * :code:`void discord_params_from_json(char *rbuf, size_t len, struct discord_params **)`
- *     * :code:`void discord_params_list_from_json(char *rbuf, size_t len, struct discord_params ***)`
+ *     * :code:`void discord_modify_guild_sticker_params_from_json(char *rbuf, size_t len, struct discord_modify_guild_sticker_params **)`
+ *     * :code:`void discord_modify_guild_sticker_params_list_from_json(char *rbuf, size_t len, struct discord_modify_guild_sticker_params ***)`
  *   * JSON Encoder:
 
- *     * :code:`void discord_params_to_json(char *wbuf, size_t len, struct discord_params *)`
- *     * :code:`void discord_params_list_to_json(char *wbuf, size_t len, struct discord_params **)`
+ *     * :code:`void discord_modify_guild_sticker_params_to_json(char *wbuf, size_t len, struct discord_modify_guild_sticker_params *)`
+ *     * :code:`void discord_modify_guild_sticker_params_list_to_json(char *wbuf, size_t len, struct discord_modify_guild_sticker_params **)`
  * @endverbatim
  */
-struct discord_params {
+struct discord_modify_guild_sticker_params {
   /* specs/discord/sticker.endpoints-params.json:32:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker (2-30 characters)"}' */
   char *name; /**< name of the sticker (2-30 characters) */
@@ -154,17 +154,17 @@ struct discord_params {
   char *tags; /**< autocomplete/suggestion tags for the sticker (max 200 characters) */
 
 };
-extern void discord_params_cleanup_v(void *p);
-extern void discord_params_cleanup(struct discord_params *p);
-extern void discord_params_init_v(void *p);
-extern void discord_params_init(struct discord_params *p);
-extern void discord_params_from_json_v(char *json, size_t len, void *pp);
-extern void discord_params_from_json(char *json, size_t len, struct discord_params **pp);
-extern size_t discord_params_to_json_v(char *json, size_t len, void *p);
-extern size_t discord_params_to_json(char *json, size_t len, struct discord_params *p);
-extern void discord_params_list_free_v(void **p);
-extern void discord_params_list_free(struct discord_params **p);
-extern void discord_params_list_from_json_v(char *str, size_t len, void *p);
-extern void discord_params_list_from_json(char *str, size_t len, struct discord_params ***p);
-extern size_t discord_params_list_to_json_v(char *str, size_t len, void *p);
-extern size_t discord_params_list_to_json(char *str, size_t len, struct discord_params **p);
+extern void discord_modify_guild_sticker_params_cleanup_v(void *p);
+extern void discord_modify_guild_sticker_params_cleanup(struct discord_modify_guild_sticker_params *p);
+extern void discord_modify_guild_sticker_params_init_v(void *p);
+extern void discord_modify_guild_sticker_params_init(struct discord_modify_guild_sticker_params *p);
+extern void discord_modify_guild_sticker_params_from_json_v(char *json, size_t len, void *pp);
+extern void discord_modify_guild_sticker_params_from_json(char *json, size_t len, struct discord_modify_guild_sticker_params **pp);
+extern size_t discord_modify_guild_sticker_params_to_json_v(char *json, size_t len, void *p);
+extern size_t discord_modify_guild_sticker_params_to_json(char *json, size_t len, struct discord_modify_guild_sticker_params *p);
+extern void discord_modify_guild_sticker_params_list_free_v(void **p);
+extern void discord_modify_guild_sticker_params_list_free(struct discord_modify_guild_sticker_params **p);
+extern void discord_modify_guild_sticker_params_list_from_json_v(char *str, size_t len, void *p);
+extern void discord_modify_guild_sticker_params_list_from_json(char *str, size_t len, struct discord_modify_guild_sticker_params ***p);
+extern size_t discord_modify_guild_sticker_params_list_to_json_v(char *str, size_t len, void *p);
+extern size_t discord_modify_guild_sticker_params_list_to_json(char *str, size_t len, struct discord_modify_guild_sticker_params **p);

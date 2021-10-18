@@ -13,7 +13,7 @@
     },
     {
       "title":"Create Guild Sticker",
-      "namspace":["create_guild_sticker"],
+      "namespace":["create_guild_sticker"],
       "struct":"params",
       "fields":
       [
@@ -25,7 +25,7 @@
     },
     {
       "title":"Modify Guild Sticker",
-      "namspace":["modify_guild_sticker"],
+      "namespace":["modify_guild_sticker"],
       "struct":"params",
       "fields":
       [

@@ -17,25 +17,25 @@
 typedef void (*vfvp)(void *);
 typedef void (*vfcpsvp)(char *, size_t, void *);
 typedef size_t (*sfcpsvp)(char *, size_t, void *);
-void discord_sticker_type_list_free_v(void **p) {
-  discord_sticker_type_list_free((enum discord_sticker_type**)p);
+void discord_sticker_types_list_free_v(void **p) {
+  discord_sticker_types_list_free((enum discord_sticker_types**)p);
 }
 
-void discord_sticker_type_list_from_json_v(char *str, size_t len, void *p) {
-  discord_sticker_type_list_from_json(str, len, (enum discord_sticker_type ***)p);
+void discord_sticker_types_list_from_json_v(char *str, size_t len, void *p) {
+  discord_sticker_types_list_from_json(str, len, (enum discord_sticker_types ***)p);
 }
 
-size_t discord_sticker_type_list_to_json_v(char *str, size_t len, void *p){
-  return discord_sticker_type_list_to_json(str, len, (enum discord_sticker_type **)p);
+size_t discord_sticker_types_list_to_json_v(char *str, size_t len, void *p){
+  return discord_sticker_types_list_to_json(str, len, (enum discord_sticker_types **)p);
 }
 
-enum discord_sticker_type discord_sticker_type_eval(char *s){
+enum discord_sticker_types discord_sticker_types_eval(char *s){
   if(strcasecmp("STANDARD", s) == 0) return DISCORD_STICKER_STANDARD;
   if(strcasecmp("GUILD", s) == 0) return DISCORD_STICKER_GUILD;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
 
-char* discord_sticker_type_print(enum discord_sticker_type v){
+char* discord_sticker_types_print(enum discord_sticker_types v){
 
   switch (v) {
   case DISCORD_STICKER_STANDARD: return "STANDARD";
@@ -45,22 +45,22 @@ char* discord_sticker_type_print(enum discord_sticker_type v){
   return NULL;
 }
 
-void discord_sticker_type_list_free(enum discord_sticker_type **p) {
+void discord_sticker_types_list_free(enum discord_sticker_types **p) {
   ntl_free((void**)p, NULL);
 }
 
-void discord_sticker_type_list_from_json(char *str, size_t len, enum discord_sticker_type ***p)
+void discord_sticker_types_list_from_json(char *str, size_t len, enum discord_sticker_types ***p)
 {
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
-  d.elem_size = sizeof(enum discord_sticker_type);
+  d.elem_size = sizeof(enum discord_sticker_types);
   d.init_elem = NULL;
   d.elem_from_buf = ja_u64_from_json_v;
   d.ntl_recipient_p= (void***)p;
   extract_ntl_from_json2(str, len, &d);
 }
 
-size_t discord_sticker_type_list_to_json(char *str, size_t len, enum discord_sticker_type **p)
+size_t discord_sticker_types_list_to_json(char *str, size_t len, enum discord_sticker_types **p)
 {
   return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
 }
@@ -70,26 +70,26 @@ size_t discord_sticker_type_list_to_json(char *str, size_t len, enum discord_sti
 typedef void (*vfvp)(void *);
 typedef void (*vfcpsvp)(char *, size_t, void *);
 typedef size_t (*sfcpsvp)(char *, size_t, void *);
-void discord_sticker_format_type_list_free_v(void **p) {
-  discord_sticker_format_type_list_free((enum discord_sticker_format_type**)p);
+void discord_sticker_format_types_list_free_v(void **p) {
+  discord_sticker_format_types_list_free((enum discord_sticker_format_types**)p);
 }
 
-void discord_sticker_format_type_list_from_json_v(char *str, size_t len, void *p) {
-  discord_sticker_format_type_list_from_json(str, len, (enum discord_sticker_format_type ***)p);
+void discord_sticker_format_types_list_from_json_v(char *str, size_t len, void *p) {
+  discord_sticker_format_types_list_from_json(str, len, (enum discord_sticker_format_types ***)p);
 }
 
-size_t discord_sticker_format_type_list_to_json_v(char *str, size_t len, void *p){
-  return discord_sticker_format_type_list_to_json(str, len, (enum discord_sticker_format_type **)p);
+size_t discord_sticker_format_types_list_to_json_v(char *str, size_t len, void *p){
+  return discord_sticker_format_types_list_to_json(str, len, (enum discord_sticker_format_types **)p);
 }
 
-enum discord_sticker_format_type discord_sticker_format_type_eval(char *s){
+enum discord_sticker_format_types discord_sticker_format_types_eval(char *s){
   if(strcasecmp("PNG", s) == 0) return DISCORD_STICKER_PNG;
   if(strcasecmp("APNG", s) == 0) return DISCORD_STICKER_APNG;
   if(strcasecmp("LOTTIE", s) == 0) return DISCORD_STICKER_LOTTIE;
   ERR("'%s' doesn't match any known enumerator.", s);
 }
 
-char* discord_sticker_format_type_print(enum discord_sticker_format_type v){
+char* discord_sticker_format_types_print(enum discord_sticker_format_types v){
 
   switch (v) {
   case DISCORD_STICKER_PNG: return "PNG";
@@ -100,34 +100,34 @@ char* discord_sticker_format_type_print(enum discord_sticker_format_type v){
   return NULL;
 }
 
-void discord_sticker_format_type_list_free(enum discord_sticker_format_type **p) {
+void discord_sticker_format_types_list_free(enum discord_sticker_format_types **p) {
   ntl_free((void**)p, NULL);
 }
 
-void discord_sticker_format_type_list_from_json(char *str, size_t len, enum discord_sticker_format_type ***p)
+void discord_sticker_format_types_list_from_json(char *str, size_t len, enum discord_sticker_format_types ***p)
 {
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
-  d.elem_size = sizeof(enum discord_sticker_format_type);
+  d.elem_size = sizeof(enum discord_sticker_format_types);
   d.init_elem = NULL;
   d.elem_from_buf = ja_u64_from_json_v;
   d.ntl_recipient_p= (void***)p;
   extract_ntl_from_json2(str, len, &d);
 }
 
-size_t discord_sticker_format_type_list_to_json(char *str, size_t len, enum discord_sticker_format_type **p)
+size_t discord_sticker_format_types_list_to_json(char *str, size_t len, enum discord_sticker_format_types **p)
 {
   return ntl_to_buf(str, len, (void **)p, NULL, ja_u64_to_json_v);
 }
 
 
-void discord_sitcker_from_json(char *json, size_t len, struct discord_sitcker **pp)
+void discord_sticker_from_json(char *json, size_t len, struct discord_sticker **pp)
 {
   static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
-  struct discord_sitcker *p = *pp;
-  discord_sitcker_init(p);
+  struct discord_sticker *p = *pp;
+  discord_sticker_init(p);
   r=json_extract(json, len, 
   /* specs/discord/sticker.json:31:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
@@ -148,10 +148,10 @@ void discord_sitcker_from_json(char *json, size_t len, struct discord_sitcker **
      '{"name":"asset", "type":{"base":"char", "dec":"*"}, "comment":"Deprecated previously the sticker asset hash, now an empty string"}' */
                 "(asset):?s,"
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
                 "(type):d,"
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 "(format_type):d,"
   /* specs/discord/sticker.json:39:18
      '{"name":"available", "type":{"base":"bool"}, "inject_if_not":false, "comment":"whether this guild sticker can be used, may be false due to loss of Server Boosts"}' */
@@ -184,10 +184,10 @@ void discord_sitcker_from_json(char *json, size_t len, struct discord_sitcker **
      '{"name":"asset", "type":{"base":"char", "dec":"*"}, "comment":"Deprecated previously the sticker asset hash, now an empty string"}' */
                 &p->asset,
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
                 &p->type,
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 &p->format_type,
   /* specs/discord/sticker.json:39:18
      '{"name":"available", "type":{"base":"bool"}, "inject_if_not":false, "comment":"whether this guild sticker can be used, may be false due to loss of Server Boosts"}' */
@@ -204,7 +204,7 @@ void discord_sitcker_from_json(char *json, size_t len, struct discord_sitcker **
   ret = r;
 }
 
-size_t discord_sitcker_to_json(char *json, size_t len, struct discord_sitcker *p)
+size_t discord_sticker_to_json(char *json, size_t len, struct discord_sticker *p)
 {
   size_t r;
   void *arg_switches[12]={NULL};
@@ -234,11 +234,11 @@ size_t discord_sitcker_to_json(char *json, size_t len, struct discord_sitcker *p
   arg_switches[5] = p->asset;
 
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
   arg_switches[6] = &p->type;
 
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
   arg_switches[7] = &p->format_type;
 
   /* specs/discord/sticker.json:39:18
@@ -280,10 +280,10 @@ size_t discord_sitcker_to_json(char *json, size_t len, struct discord_sitcker *p
      '{"name":"asset", "type":{"base":"char", "dec":"*"}, "comment":"Deprecated previously the sticker asset hash, now an empty string"}' */
                 "(asset):s,"
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
                 "(type):d,"
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 "(format_type):d,"
   /* specs/discord/sticker.json:39:18
      '{"name":"available", "type":{"base":"bool"}, "inject_if_not":false, "comment":"whether this guild sticker can be used, may be false due to loss of Server Boosts"}' */
@@ -317,10 +317,10 @@ size_t discord_sitcker_to_json(char *json, size_t len, struct discord_sitcker *p
      '{"name":"asset", "type":{"base":"char", "dec":"*"}, "comment":"Deprecated previously the sticker asset hash, now an empty string"}' */
                 p->asset,
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
                 &p->type,
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 &p->format_type,
   /* specs/discord/sticker.json:39:18
      '{"name":"available", "type":{"base":"bool"}, "inject_if_not":false, "comment":"whether this guild sticker can be used, may be false due to loss of Server Boosts"}' */
@@ -342,36 +342,36 @@ size_t discord_sitcker_to_json(char *json, size_t len, struct discord_sitcker *p
 typedef void (*vfvp)(void *);
 typedef void (*vfcpsvp)(char *, size_t, void *);
 typedef size_t (*sfcpsvp)(char *, size_t, void *);
-void discord_sitcker_cleanup_v(void *p) {
-  discord_sitcker_cleanup((struct discord_sitcker *)p);
+void discord_sticker_cleanup_v(void *p) {
+  discord_sticker_cleanup((struct discord_sticker *)p);
 }
 
-void discord_sitcker_init_v(void *p) {
-  discord_sitcker_init((struct discord_sitcker *)p);
+void discord_sticker_init_v(void *p) {
+  discord_sticker_init((struct discord_sticker *)p);
 }
 
-void discord_sitcker_from_json_v(char *json, size_t len, void *pp) {
- discord_sitcker_from_json(json, len, (struct discord_sitcker**)pp);
+void discord_sticker_from_json_v(char *json, size_t len, void *pp) {
+ discord_sticker_from_json(json, len, (struct discord_sticker**)pp);
 }
 
-size_t discord_sitcker_to_json_v(char *json, size_t len, void *p) {
-  return discord_sitcker_to_json(json, len, (struct discord_sitcker*)p);
+size_t discord_sticker_to_json_v(char *json, size_t len, void *p) {
+  return discord_sticker_to_json(json, len, (struct discord_sticker*)p);
 }
 
-void discord_sitcker_list_free_v(void **p) {
-  discord_sitcker_list_free((struct discord_sitcker**)p);
+void discord_sticker_list_free_v(void **p) {
+  discord_sticker_list_free((struct discord_sticker**)p);
 }
 
-void discord_sitcker_list_from_json_v(char *str, size_t len, void *p) {
-  discord_sitcker_list_from_json(str, len, (struct discord_sitcker ***)p);
+void discord_sticker_list_from_json_v(char *str, size_t len, void *p) {
+  discord_sticker_list_from_json(str, len, (struct discord_sticker ***)p);
 }
 
-size_t discord_sitcker_list_to_json_v(char *str, size_t len, void *p){
-  return discord_sitcker_list_to_json(str, len, (struct discord_sitcker **)p);
+size_t discord_sticker_list_to_json_v(char *str, size_t len, void *p){
+  return discord_sticker_list_to_json(str, len, (struct discord_sticker **)p);
 }
 
 
-void discord_sitcker_cleanup(struct discord_sitcker *d) {
+void discord_sticker_cleanup(struct discord_sticker *d) {
   /* specs/discord/sticker.json:31:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
   /* p->id is a scalar */
@@ -395,10 +395,10 @@ void discord_sitcker_cleanup(struct discord_sitcker *d) {
   if (d->asset)
     free(d->asset);
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
   /* p->type is a scalar */
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
   /* p->format_type is a scalar */
   /* specs/discord/sticker.json:39:18
      '{"name":"available", "type":{"base":"bool"}, "inject_if_not":false, "comment":"whether this guild sticker can be used, may be false due to loss of Server Boosts"}' */
@@ -417,8 +417,8 @@ void discord_sitcker_cleanup(struct discord_sitcker *d) {
   /* p->sort_value is a scalar */
 }
 
-void discord_sitcker_init(struct discord_sitcker *p) {
-  memset(p, 0, sizeof(struct discord_sitcker));
+void discord_sticker_init(struct discord_sticker *p) {
+  memset(p, 0, sizeof(struct discord_sticker));
   /* specs/discord/sticker.json:31:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
 
@@ -438,10 +438,10 @@ void discord_sitcker_init(struct discord_sitcker *p) {
      '{"name":"asset", "type":{"base":"char", "dec":"*"}, "comment":"Deprecated previously the sticker asset hash, now an empty string"}' */
 
   /* specs/discord/sticker.json:37:18
-     '{"name":"type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_type"}, "comment":"type of sticker"}' */
+     '{"name":"type", "type":{"base":"int", "int_alias":"enum discord_sticker_types"}, "comment":"type of sticker"}' */
 
   /* specs/discord/sticker.json:38:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
 
   /* specs/discord/sticker.json:39:18
      '{"name":"available", "type":{"base":"bool"}, "inject_if_not":false, "comment":"whether this guild sticker can be used, may be false due to loss of Server Boosts"}' */
@@ -456,34 +456,34 @@ void discord_sitcker_init(struct discord_sitcker *p) {
      '{"name":"sort_value", "type":{"base":"int"}, "comment":"the standard sticker's sort order within its pack"}' */
 
 }
-void discord_sitcker_list_free(struct discord_sitcker **p) {
-  ntl_free((void**)p, (vfvp)discord_sitcker_cleanup);
+void discord_sticker_list_free(struct discord_sticker **p) {
+  ntl_free((void**)p, (vfvp)discord_sticker_cleanup);
 }
 
-void discord_sitcker_list_from_json(char *str, size_t len, struct discord_sitcker ***p)
+void discord_sticker_list_from_json(char *str, size_t len, struct discord_sticker ***p)
 {
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
-  d.elem_size = sizeof(struct discord_sitcker);
+  d.elem_size = sizeof(struct discord_sticker);
   d.init_elem = NULL;
-  d.elem_from_buf = discord_sitcker_from_json_v;
+  d.elem_from_buf = discord_sticker_from_json_v;
   d.ntl_recipient_p= (void***)p;
   extract_ntl_from_json2(str, len, &d);
 }
 
-size_t discord_sitcker_list_to_json(char *str, size_t len, struct discord_sitcker **p)
+size_t discord_sticker_list_to_json(char *str, size_t len, struct discord_sticker **p)
 {
-  return ntl_to_buf(str, len, (void **)p, NULL, discord_sitcker_to_json_v);
+  return ntl_to_buf(str, len, (void **)p, NULL, discord_sticker_to_json_v);
 }
 
 
-void discord_sitcker_item_from_json(char *json, size_t len, struct discord_sitcker_item **pp)
+void discord_sticker_item_from_json(char *json, size_t len, struct discord_sticker_item **pp)
 {
   static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
-  struct discord_sitcker_item *p = *pp;
-  discord_sitcker_item_init(p);
+  struct discord_sticker_item *p = *pp;
+  discord_sticker_item_init(p);
   r=json_extract(json, len, 
   /* specs/discord/sticker.json:50:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
@@ -492,7 +492,7 @@ void discord_sitcker_item_from_json(char *json, size_t len, struct discord_sitck
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker"}' */
                 "(name):?s,"
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 "(format_type):d,",
   /* specs/discord/sticker.json:50:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
@@ -501,12 +501,12 @@ void discord_sitcker_item_from_json(char *json, size_t len, struct discord_sitck
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker"}' */
                 &p->name,
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 &p->format_type);
   ret = r;
 }
 
-size_t discord_sitcker_item_to_json(char *json, size_t len, struct discord_sitcker_item *p)
+size_t discord_sticker_item_to_json(char *json, size_t len, struct discord_sticker_item *p)
 {
   size_t r;
   void *arg_switches[3]={NULL};
@@ -519,7 +519,7 @@ size_t discord_sitcker_item_to_json(char *json, size_t len, struct discord_sitck
   arg_switches[1] = p->name;
 
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
   arg_switches[2] = &p->format_type;
 
   r=json_inject(json, len, 
@@ -530,7 +530,7 @@ size_t discord_sitcker_item_to_json(char *json, size_t len, struct discord_sitck
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker"}' */
                 "(name):s,"
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 "(format_type):d,"
                 "@arg_switches:b",
   /* specs/discord/sticker.json:50:18
@@ -540,7 +540,7 @@ size_t discord_sitcker_item_to_json(char *json, size_t len, struct discord_sitck
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker"}' */
                 p->name,
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
                 &p->format_type,
                 arg_switches, sizeof(arg_switches), true);
   return r;
@@ -550,36 +550,36 @@ size_t discord_sitcker_item_to_json(char *json, size_t len, struct discord_sitck
 typedef void (*vfvp)(void *);
 typedef void (*vfcpsvp)(char *, size_t, void *);
 typedef size_t (*sfcpsvp)(char *, size_t, void *);
-void discord_sitcker_item_cleanup_v(void *p) {
-  discord_sitcker_item_cleanup((struct discord_sitcker_item *)p);
+void discord_sticker_item_cleanup_v(void *p) {
+  discord_sticker_item_cleanup((struct discord_sticker_item *)p);
 }
 
-void discord_sitcker_item_init_v(void *p) {
-  discord_sitcker_item_init((struct discord_sitcker_item *)p);
+void discord_sticker_item_init_v(void *p) {
+  discord_sticker_item_init((struct discord_sticker_item *)p);
 }
 
-void discord_sitcker_item_from_json_v(char *json, size_t len, void *pp) {
- discord_sitcker_item_from_json(json, len, (struct discord_sitcker_item**)pp);
+void discord_sticker_item_from_json_v(char *json, size_t len, void *pp) {
+ discord_sticker_item_from_json(json, len, (struct discord_sticker_item**)pp);
 }
 
-size_t discord_sitcker_item_to_json_v(char *json, size_t len, void *p) {
-  return discord_sitcker_item_to_json(json, len, (struct discord_sitcker_item*)p);
+size_t discord_sticker_item_to_json_v(char *json, size_t len, void *p) {
+  return discord_sticker_item_to_json(json, len, (struct discord_sticker_item*)p);
 }
 
-void discord_sitcker_item_list_free_v(void **p) {
-  discord_sitcker_item_list_free((struct discord_sitcker_item**)p);
+void discord_sticker_item_list_free_v(void **p) {
+  discord_sticker_item_list_free((struct discord_sticker_item**)p);
 }
 
-void discord_sitcker_item_list_from_json_v(char *str, size_t len, void *p) {
-  discord_sitcker_item_list_from_json(str, len, (struct discord_sitcker_item ***)p);
+void discord_sticker_item_list_from_json_v(char *str, size_t len, void *p) {
+  discord_sticker_item_list_from_json(str, len, (struct discord_sticker_item ***)p);
 }
 
-size_t discord_sitcker_item_list_to_json_v(char *str, size_t len, void *p){
-  return discord_sitcker_item_list_to_json(str, len, (struct discord_sitcker_item **)p);
+size_t discord_sticker_item_list_to_json_v(char *str, size_t len, void *p){
+  return discord_sticker_item_list_to_json(str, len, (struct discord_sticker_item **)p);
 }
 
 
-void discord_sitcker_item_cleanup(struct discord_sitcker_item *d) {
+void discord_sticker_item_cleanup(struct discord_sticker_item *d) {
   /* specs/discord/sticker.json:50:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
   /* p->id is a scalar */
@@ -588,12 +588,12 @@ void discord_sitcker_item_cleanup(struct discord_sitcker_item *d) {
   if (d->name)
     free(d->name);
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
   /* p->format_type is a scalar */
 }
 
-void discord_sitcker_item_init(struct discord_sitcker_item *p) {
-  memset(p, 0, sizeof(struct discord_sitcker_item));
+void discord_sticker_item_init(struct discord_sticker_item *p) {
+  memset(p, 0, sizeof(struct discord_sticker_item));
   /* specs/discord/sticker.json:50:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker"}' */
 
@@ -601,37 +601,37 @@ void discord_sitcker_item_init(struct discord_sitcker_item *p) {
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker"}' */
 
   /* specs/discord/sticker.json:52:18
-     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum disocrd_sticker_format_type"}, "comment":"type of sticker format"}' */
+     '{"name":"format_type", "type":{"base":"int", "int_alias":"enum discord_sticker_format_types"}, "comment":"type of sticker format"}' */
 
 }
-void discord_sitcker_item_list_free(struct discord_sitcker_item **p) {
-  ntl_free((void**)p, (vfvp)discord_sitcker_item_cleanup);
+void discord_sticker_item_list_free(struct discord_sticker_item **p) {
+  ntl_free((void**)p, (vfvp)discord_sticker_item_cleanup);
 }
 
-void discord_sitcker_item_list_from_json(char *str, size_t len, struct discord_sitcker_item ***p)
+void discord_sticker_item_list_from_json(char *str, size_t len, struct discord_sticker_item ***p)
 {
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
-  d.elem_size = sizeof(struct discord_sitcker_item);
+  d.elem_size = sizeof(struct discord_sticker_item);
   d.init_elem = NULL;
-  d.elem_from_buf = discord_sitcker_item_from_json_v;
+  d.elem_from_buf = discord_sticker_item_from_json_v;
   d.ntl_recipient_p= (void***)p;
   extract_ntl_from_json2(str, len, &d);
 }
 
-size_t discord_sitcker_item_list_to_json(char *str, size_t len, struct discord_sitcker_item **p)
+size_t discord_sticker_item_list_to_json(char *str, size_t len, struct discord_sticker_item **p)
 {
-  return ntl_to_buf(str, len, (void **)p, NULL, discord_sitcker_item_to_json_v);
+  return ntl_to_buf(str, len, (void **)p, NULL, discord_sticker_item_to_json_v);
 }
 
 
-void discord_sitcker_pack_from_json(char *json, size_t len, struct discord_sitcker_pack **pp)
+void discord_sticker_pack_from_json(char *json, size_t len, struct discord_sticker_pack **pp)
 {
   static size_t ret=0; /**< used for debugging */
   size_t r=0;
   if (!*pp) *pp = malloc(sizeof **pp);
-  struct discord_sitcker_pack *p = *pp;
-  discord_sitcker_pack_init(p);
+  struct discord_sticker_pack *p = *pp;
+  discord_sticker_pack_init(p);
   r=json_extract(json, len, 
   /* specs/discord/sticker.json:60:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker pack"}' */
@@ -678,7 +678,7 @@ void discord_sitcker_pack_from_json(char *json, size_t len, struct discord_sitck
   ret = r;
 }
 
-size_t discord_sitcker_pack_to_json(char *json, size_t len, struct discord_sitcker_pack *p)
+size_t discord_sticker_pack_to_json(char *json, size_t len, struct discord_sticker_pack *p)
 {
   size_t r;
   void *arg_switches[7]={NULL};
@@ -763,36 +763,36 @@ size_t discord_sitcker_pack_to_json(char *json, size_t len, struct discord_sitck
 typedef void (*vfvp)(void *);
 typedef void (*vfcpsvp)(char *, size_t, void *);
 typedef size_t (*sfcpsvp)(char *, size_t, void *);
-void discord_sitcker_pack_cleanup_v(void *p) {
-  discord_sitcker_pack_cleanup((struct discord_sitcker_pack *)p);
+void discord_sticker_pack_cleanup_v(void *p) {
+  discord_sticker_pack_cleanup((struct discord_sticker_pack *)p);
 }
 
-void discord_sitcker_pack_init_v(void *p) {
-  discord_sitcker_pack_init((struct discord_sitcker_pack *)p);
+void discord_sticker_pack_init_v(void *p) {
+  discord_sticker_pack_init((struct discord_sticker_pack *)p);
 }
 
-void discord_sitcker_pack_from_json_v(char *json, size_t len, void *pp) {
- discord_sitcker_pack_from_json(json, len, (struct discord_sitcker_pack**)pp);
+void discord_sticker_pack_from_json_v(char *json, size_t len, void *pp) {
+ discord_sticker_pack_from_json(json, len, (struct discord_sticker_pack**)pp);
 }
 
-size_t discord_sitcker_pack_to_json_v(char *json, size_t len, void *p) {
-  return discord_sitcker_pack_to_json(json, len, (struct discord_sitcker_pack*)p);
+size_t discord_sticker_pack_to_json_v(char *json, size_t len, void *p) {
+  return discord_sticker_pack_to_json(json, len, (struct discord_sticker_pack*)p);
 }
 
-void discord_sitcker_pack_list_free_v(void **p) {
-  discord_sitcker_pack_list_free((struct discord_sitcker_pack**)p);
+void discord_sticker_pack_list_free_v(void **p) {
+  discord_sticker_pack_list_free((struct discord_sticker_pack**)p);
 }
 
-void discord_sitcker_pack_list_from_json_v(char *str, size_t len, void *p) {
-  discord_sitcker_pack_list_from_json(str, len, (struct discord_sitcker_pack ***)p);
+void discord_sticker_pack_list_from_json_v(char *str, size_t len, void *p) {
+  discord_sticker_pack_list_from_json(str, len, (struct discord_sticker_pack ***)p);
 }
 
-size_t discord_sitcker_pack_list_to_json_v(char *str, size_t len, void *p){
-  return discord_sitcker_pack_list_to_json(str, len, (struct discord_sitcker_pack **)p);
+size_t discord_sticker_pack_list_to_json_v(char *str, size_t len, void *p){
+  return discord_sticker_pack_list_to_json(str, len, (struct discord_sticker_pack **)p);
 }
 
 
-void discord_sitcker_pack_cleanup(struct discord_sitcker_pack *d) {
+void discord_sticker_pack_cleanup(struct discord_sticker_pack *d) {
   /* specs/discord/sticker.json:60:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker pack"}' */
   /* p->id is a scalar */
@@ -819,8 +819,8 @@ void discord_sitcker_pack_cleanup(struct discord_sitcker_pack *d) {
   /* p->banner_asset_id is a scalar */
 }
 
-void discord_sitcker_pack_init(struct discord_sitcker_pack *p) {
-  memset(p, 0, sizeof(struct discord_sitcker_pack));
+void discord_sticker_pack_init(struct discord_sticker_pack *p) {
+  memset(p, 0, sizeof(struct discord_sticker_pack));
   /* specs/discord/sticker.json:60:18
      '{"name":"id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker pack"}' */
 
@@ -843,23 +843,23 @@ void discord_sitcker_pack_init(struct discord_sitcker_pack *p) {
      '{"name":"banner_asset_id", "type":{"base":"char", "dec":"*", "converter":"snowflake"}, "comment":"id of the sticker pack's banner image"}' */
 
 }
-void discord_sitcker_pack_list_free(struct discord_sitcker_pack **p) {
-  ntl_free((void**)p, (vfvp)discord_sitcker_pack_cleanup);
+void discord_sticker_pack_list_free(struct discord_sticker_pack **p) {
+  ntl_free((void**)p, (vfvp)discord_sticker_pack_cleanup);
 }
 
-void discord_sitcker_pack_list_from_json(char *str, size_t len, struct discord_sitcker_pack ***p)
+void discord_sticker_pack_list_from_json(char *str, size_t len, struct discord_sticker_pack ***p)
 {
   struct ntl_deserializer d;
   memset(&d, 0, sizeof(d));
-  d.elem_size = sizeof(struct discord_sitcker_pack);
+  d.elem_size = sizeof(struct discord_sticker_pack);
   d.init_elem = NULL;
-  d.elem_from_buf = discord_sitcker_pack_from_json_v;
+  d.elem_from_buf = discord_sticker_pack_from_json_v;
   d.ntl_recipient_p= (void***)p;
   extract_ntl_from_json2(str, len, &d);
 }
 
-size_t discord_sitcker_pack_list_to_json(char *str, size_t len, struct discord_sitcker_pack **p)
+size_t discord_sticker_pack_list_to_json(char *str, size_t len, struct discord_sticker_pack **p)
 {
-  return ntl_to_buf(str, len, (void **)p, NULL, discord_sitcker_pack_to_json_v);
+  return ntl_to_buf(str, len, (void **)p, NULL, discord_sticker_pack_to_json_v);
 }
 

@@ -131,24 +131,18 @@ void discord_create_guild_sticker_params_from_json(char *json, size_t len, struc
   /* specs/discord/sticker.endpoints-params.json:21:18
      '{"name":"description", "type":{"base":"char", "dec":"*"}, "comment":"description of the sticker (empty or 2-100 characters)"}' */
                 "(description):?s,"
-  /* specs/discord/sticker.endpoints-params.json:22:18
-     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
-                "(tags):?s,"
   /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
-                "(file):F,",
+     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
+                "(tags):?s,",
   /* specs/discord/sticker.endpoints-params.json:20:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker (2-30 characters)"}' */
                 &p->name,
   /* specs/discord/sticker.endpoints-params.json:21:18
      '{"name":"description", "type":{"base":"char", "dec":"*"}, "comment":"description of the sticker (empty or 2-100 characters)"}' */
                 &p->description,
-  /* specs/discord/sticker.endpoints-params.json:22:18
-     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
-                &p->tags,
   /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
-                discord_file_from_json, &p->file);
+     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
+                &p->tags);
   ret = r;
 }
 
@@ -165,12 +159,12 @@ size_t discord_create_guild_sticker_params_to_json(char *json, size_t len, struc
   arg_switches[1] = p->description;
 
   /* specs/discord/sticker.endpoints-params.json:22:18
-     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
-  arg_switches[2] = p->tags;
+     '{"name":"file", "type":{ "base":"struct discord_file", "dec":"*" }, "loc":"multipart", "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
+  arg_switches[2] = p->file;
 
   /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
-  arg_switches[3] = p->file;
+     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
+  arg_switches[3] = p->tags;
 
   r=json_inject(json, len, 
   /* specs/discord/sticker.endpoints-params.json:20:18
@@ -179,12 +173,9 @@ size_t discord_create_guild_sticker_params_to_json(char *json, size_t len, struc
   /* specs/discord/sticker.endpoints-params.json:21:18
      '{"name":"description", "type":{"base":"char", "dec":"*"}, "comment":"description of the sticker (empty or 2-100 characters)"}' */
                 "(description):s,"
-  /* specs/discord/sticker.endpoints-params.json:22:18
+  /* specs/discord/sticker.endpoints-params.json:23:18
      '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
                 "(tags):s,"
-  /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
-                "(file):F,"
                 "@arg_switches:b",
   /* specs/discord/sticker.endpoints-params.json:20:18
      '{"name":"name", "type":{"base":"char", "dec":"*"}, "comment":"name of the sticker (2-30 characters)"}' */
@@ -192,12 +183,9 @@ size_t discord_create_guild_sticker_params_to_json(char *json, size_t len, struc
   /* specs/discord/sticker.endpoints-params.json:21:18
      '{"name":"description", "type":{"base":"char", "dec":"*"}, "comment":"description of the sticker (empty or 2-100 characters)"}' */
                 p->description,
-  /* specs/discord/sticker.endpoints-params.json:22:18
+  /* specs/discord/sticker.endpoints-params.json:23:18
      '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
                 p->tags,
-  /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
-                discord_file_to_json, p->file,
                 arg_switches, sizeof(arg_switches), true);
   return r;
 }
@@ -245,15 +233,15 @@ void discord_create_guild_sticker_params_cleanup(struct discord_create_guild_sti
   if (d->description)
     free(d->description);
   /* specs/discord/sticker.endpoints-params.json:22:18
-     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
-  if (d->tags)
-    free(d->tags);
-  /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
+     '{"name":"file", "type":{ "base":"struct discord_file", "dec":"*" }, "loc":"multipart", "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
   if (d->file) {
     discord_file_cleanup(d->file);
     free(d->file);
   }
+  /* specs/discord/sticker.endpoints-params.json:23:18
+     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
+  if (d->tags)
+    free(d->tags);
 }
 
 void discord_create_guild_sticker_params_init(struct discord_create_guild_sticker_params *p) {
@@ -265,10 +253,10 @@ void discord_create_guild_sticker_params_init(struct discord_create_guild_sticke
      '{"name":"description", "type":{"base":"char", "dec":"*"}, "comment":"description of the sticker (empty or 2-100 characters)"}' */
 
   /* specs/discord/sticker.endpoints-params.json:22:18
-     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
+     '{"name":"file", "type":{ "base":"struct discord_file", "dec":"*" }, "loc":"multipart", "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
 
   /* specs/discord/sticker.endpoints-params.json:23:18
-     '{"name":"file", "type":{"base":"struct discord_file", "dec":"*"}, "comment":"the sticker file to upload, must be a PNG, APNG, or Lottie JSON file, max 500 KB"}' */
+     '{"name":"tags", "type":{"base":"char", "dec":"*"}, "comment":"autocomplete/suggestion tags for the sticker (max 200 characters)"}' */
 
 }
 void discord_create_guild_sticker_params_list_free(struct discord_create_guild_sticker_params **p) {

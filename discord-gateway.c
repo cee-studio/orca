@@ -1291,8 +1291,8 @@ discord_gateway_cleanup(struct discord_gateway *gw)
   /* cleanup user commands */
   if (gw->user_cmd->pool)
     free(gw->user_cmd->pool);
-  if (client->gw.user_cmd->prefix.start)
-    free(client->gw.user_cmd->prefix.start);
+  if (gw->user_cmd->prefix.start)
+    free(gw->user_cmd->prefix.start);
   free(gw->user_cmd);
 }
 

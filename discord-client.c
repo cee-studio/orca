@@ -1,3 +1,4 @@
+#define _GNU_SOURCE /* asprintf() */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -157,7 +158,7 @@ discord_set_prefix(struct discord *client, char *prefix)
   if (IS_EMPTY_STRING(prefix)) return;
   if (client->gw.user_cmd->prefix.start)
     free(client->gw.user_cmd->prefix.start);
-  client->gw.user_cmd->prefix.size = asprintf(client->gw.user_cmd->prefix.start, "%s", prefix);
+  client->gw.user_cmd->prefix.size = asprintf(&client->gw.user_cmd->prefix.start, "%s", prefix);
 }
 
 void

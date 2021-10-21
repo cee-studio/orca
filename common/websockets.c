@@ -810,3 +810,8 @@ int
 ws_unlock(struct websockets *ws) {
   return pthread_mutex_unlock(&ws->lock);
 }
+
+void
+ws_reqheader_add(struct websockets *ws, const char field[], const char value[]) {
+  cws_reqheader_add(ws->ehandle, field, value);
+}

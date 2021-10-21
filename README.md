@@ -90,7 +90,7 @@ $ sudo apt-get install -y build-essential wget libcurl4-openssl-dev libssl-dev
 #### Void Linux
 
 ```bash
-$ sudo xbps-install -S wget xbps-install -S libcurl-devel
+$ sudo xbps-install -S wget libcurl-devel
 ```
 ### Setting up your environment
 

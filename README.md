@@ -52,11 +52,9 @@ void on_message(
   const struct discord_user *bot, 
   const struct discord_message *msg)
 {
-  // if message content is equal to 'ping', then the bot will respond with 'Pong! XXms'.
+  // if message content is equal to 'ping', then the bot will respond with 'Pong!'.
   if (0 == strcmp(msg->content, "ping")) {
-    char text[256];
-    sprintf(text, "Pong! %dms", client->gateway.hbeat->ping_ms);
-    struct discord_create_message_params params = { .content = text };
+    struct discord_create_message_params params = { .content = "Pong! %dms" };
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
 }

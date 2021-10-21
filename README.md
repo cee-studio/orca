@@ -52,9 +52,9 @@ void on_message(
   const struct discord_user *bot, 
   const struct discord_message *msg)
 {
-  // if message content is equal to 'ping', then the bot will respond with 'Pong'.
+  // if message content is equal to 'ping', then the bot will respond with 'pong'.
   if (0 == strcmp(msg->content, "ping")) {
-    struct discord_create_message_params params = { .content = "Pong" };
+    struct discord_create_message_params params = { .content = "pong" };
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
 }
@@ -90,7 +90,7 @@ $ sudo apt-get install -y build-essential wget libcurl4-openssl-dev libssl-dev
 #### Void Linux
 
 ```bash
-$ sudo xbps-install -S wget libcurl-devel
+$ sudo xbps-install -S wget && sudo xbps-install -S libcurl-devel
 ```
 ### Setting up your environment
 

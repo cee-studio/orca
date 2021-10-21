@@ -99,8 +99,7 @@ $ sudo xbps-install -S wget xbps-install -S libcurl-devel
 #### Clone orca into your workspace
 
 ```bash
-$ git clone https://github.com/cee-studio/orca.git
-$ cd orca
+$ git clone https://github.com/cee-studio/orca.git && cd orca
 ```
 
 #### Compile orca

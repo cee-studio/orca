@@ -54,7 +54,7 @@ void on_message(
 {
   // if message content is equal to 'ping', then the bot will respond with 'Pong!'.
   if (0 == strcmp(msg->content, "ping")) {
-    struct discord_create_message_params params = { .content = "Pong! %dms" };
+    struct discord_create_message_params params = { .content = "Pong" };
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
 }

@@ -185,7 +185,7 @@ $ clang myBot.c -o myBot.out -pthread -ldiscord -lcurl -lcrypto -lm
 
 ## Recommended debuggers
 
-First, make sure your executable is compiled with the `-g` flag so you can make debugger messages more human-readable.
+First, make sure your executable is compiled with the `-g` flag to ensure human-readable debugger messages.
 
 ### Valgrind
 

@@ -17,8 +17,8 @@
 Orca is implemented in plain C, its symbols are organized to be easily matched to the documentation of the API being covered.
 
 This is done in order to:
-* Minimize the need of thoroughly documenting every Orca API.
-* Reduce our user's cognitive burden of having to read both Orca API documentation and supported REST API documentations. 
+* Minimize the need to thoroughly document every Orca API.
+* Reduce our user's cognitive burden of having to read both Orca API documentation and supported REST API documentation.
 * The codebase becomes easier to navigate.
 
 Orca's implementation has minimum external dependencies to make bot deployment deadly simple.
@@ -52,9 +52,11 @@ void on_message(
   const struct discord_user *bot, 
   const struct discord_message *msg)
 {
-  // if message content equals 'ping', then bot responds with 'pong'
+  // if message content is equal to 'ping', then the bot will respond with 'Pong! XXms'.
   if (0 == strcmp(msg->content, "ping")) {
-    struct discord_create_message_params params = { .content = "pong" };
+    char text[256];
+    sprintf(text, "Pong! %dms", client->gateway.hbeat->ping_ms);
+    struct discord_create_message_params params = { .content = text };
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
 }
@@ -84,15 +86,13 @@ be used by the Makefile for fetching [cee-utils](https://github.com/cee-studio/c
 #### Ubuntu and Debian
 
 ```bash
-$ sudo apt-get install -y build-essential wget
-$ sudo apt-get install -y libcurl4-openssl-dev libssl-dev
+$ sudo apt-get install -y build-essential wget libcurl4-openssl-dev libssl-dev
 ```
 
 #### Void Linux
 
 ```bash
-$ sudo xbps-install -S wget
-$ sudo xbps-install -S libcurl-devel
+$ sudo xbps-install -S wget xbps-install -S libcurl-devel
 ```
 ### Setting up your environment
 
@@ -143,8 +143,7 @@ The following outlines the default fields of `config.json`
    ```
 3. Run Echo-Bot:
    ```bash
-   $ cd examples
-   $ ./bot-echo.out
+   $ cd examples && ./bot-echo.out
    ```
 
 #### Get Echo-Bot Response
@@ -175,14 +174,21 @@ Included headers must be `orca/` prefixed:
 
 ### Standalone executable
 
+#### GCC (Recommended)
+
 ```bash
 $ gcc myBot.c -o myBot.out -pthread -ldiscord -lcurl -lcrypto -lm
 ```
 
+#### Clang
+
+```bash
+$ clang myBot.c -o myBot.out -pthread -ldiscord -lcurl -lcrypto -lm
+```
+
 ## Recommended debuggers
 
-First, make sure your executable is compiled with the `-g` flag so you can get more
-detailed debugger messages.
+First, make sure your executable is compiled with the `-g` flag so you can make debugger messages more human-readable.
 
 ### Valgrind
 
@@ -211,9 +217,12 @@ If the program has crashed, get a backtrace of the function calls leading to it:
 
 For a more comprehensive guide check [Beej's Quick Guide to GDB](https://beej.us/guide/bggdb/)
 
+## Support
+
+Problems? Check out our [Discord Server](https://discord.gg/nBUqrWf).
+
 ## Links
 
-- [Discord Server](https://discord.gg/nBUqrWf)
 - [Documentation](https://cee-studio.github.io/orca/)
 - [Building your first bot](docs/BUILDING_A_BOT.md)
 - [Internals](docs/INTERNALS.md)

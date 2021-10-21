@@ -1058,9 +1058,6 @@ cws_reqheader_add(CURL *easy, const char field[],  const char value[])
         node = node->next;
     }
 
-    /* couldn't find match, we will create a new field */
-    if (NULL == priv->headers) 
-        priv->headers = curl_slist_append(NULL, buf);
-    else
-        curl_slist_append(priv->headers, buf);
+    curl_slist_append(priv->headers, buf);
+    curl_easy_setopt(easy, CURLOPT_HTTPHEADER, priv->headers);
 }

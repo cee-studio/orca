@@ -8,7 +8,7 @@
     Easy to reason, easy to debug, easy to use.
   </p>
   <p>
-    Join our Discord server: <a href="https://discord.gg/nBUqrWf"><img src="https://img.shields.io/discord/562694099887587338?color=5865F2&logo=discord&logoColor=white" alt="Discord server" /></a>
+    Join our Discord server: <br> <a href="https://discord.gg/nBUqrWf"><img src="https://img.shields.io/discord/562694099887587338?color=5865F2&logo=discord&logoColor=white" alt="Discord server" /></a> </br>
   </p>
 </div>
 

@@ -812,6 +812,8 @@ ws_unlock(struct websockets *ws) {
 }
 
 void
-ws_reqheader_add(struct websockets *ws, const char field[], const char value[]) {
+ws_reqheader_add(struct websockets *ws, const char field[], const char value[]) 
+{
+  ASSERT_S(ws_is_alive(ws), "ws_start() must have been called prior to ws_reqheader_add()");
   cws_reqheader_add(ws->ehandle, field, value);
 }

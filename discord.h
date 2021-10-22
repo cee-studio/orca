@@ -1587,7 +1587,7 @@ ORCAcode discord_create_channel_invite(struct discord *client, const u64_snowfla
 /** @} DiscordCreateChannelInvite */
 
 /** @defgroup DiscordDeleteChannelPermission
-  * @b DELETE/channels/{channel.id}/permissions/{overwrite.id}
+  * @b DELETE /channels/{channel.id}/permissions/{overwrite.id}
   * Delete a channel permission overwrite for a user or role in a channel.
   * @{ */
 /**

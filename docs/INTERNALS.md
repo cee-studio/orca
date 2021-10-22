@@ -144,7 +144,7 @@ This may seem complicated at first, but in reality it is quite simple. As explai
 start of this guide, this JSON will be used to generate structures, enumerations, and functions
 that are used internally and by the user.
 
-On a base level, this will generate allow us to generate a structure that holds a “ja_str” which
+On a base level, this allow us to generate a structure that holds a “ja_str” which
 has a “decorator” of an “ntl.” ja_str is a string found in the JSON library that Orca uses internally.
 It holds a single value, which is a string.
 

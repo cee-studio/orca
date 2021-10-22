@@ -2305,15 +2305,13 @@ void discord_presence_add_activity(struct discord_presence_status *presence, str
  * @brief @b GET /guilds/templates/{template.code}
  *
  * @see https://discord.com/developers/docs/resources/guild-template#get-guild-template
- *  @{ */
-/**
+ * @{ */
+/** 
  * @param client the client created with discord_init()
- * @param webhook_id the webhook itself
- * @param webhook_token the webhook token
- * @param params request parameters
- * @param p_webhook the webhook object if successful
+ * @param code the code of the guild template
+ * @param p_template the location to store the template
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_get_guild_template(struct discord *client, char *code, struct discord_guild_template *p_template);
 /** @} DiscordGetGuildTemplate */
 

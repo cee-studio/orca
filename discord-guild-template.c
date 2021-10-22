@@ -25,7 +25,7 @@ discord_get_guild_template(
   return discord_adapter_run(
           &client->adapter,
           &(struct ua_resp_handle){
-            .ok_cb = p_template ? discord_guild_template_from_json_v : NULL,
+            .ok_cb = discord_guild_template_from_json_v,
             .ok_obj = &p_template
           },
           NULL,

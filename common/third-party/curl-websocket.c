@@ -1059,5 +1059,4 @@ cws_reqheader_add(CURL *easy, const char field[],  const char value[])
     }
 
     curl_slist_append(priv->headers, buf);
-    curl_easy_setopt(easy, CURLOPT_HTTPHEADER, priv->headers);
 }

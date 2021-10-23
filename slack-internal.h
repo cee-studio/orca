@@ -40,8 +40,8 @@ struct slack_sm {
     long interval_ms;
   } hbeat;
 
-  struct { /* CALLBACKS STRUCTURE */
-    slack_idle_cb on_idle; ///< trigers in every event loop iteration
+  struct {                  /* CALLBACKS STRUCTURE */
+    slack_idle_cb on_idle;  ///< trigers in every event loop iteration
     slack_idle_cb on_hello; ///< triggers when connections first establishes
     // EVENT API CALLBACKS
     slack_idle_cb on_message; ///< triggers when a message is sent
@@ -77,9 +77,9 @@ struct slack {
 };
 
 struct slack_event_cxt {
-  pthread_t tid; ///< the thread id
+  pthread_t tid;            ///< the thread id
   struct sized_buffer data; ///< a copy of payload data
-  struct slack_sm* p_sm; ///< the sm client
+  struct slack_sm* p_sm;    ///< the sm client
   char str_type[64];
   enum slack_sm_types type;
   void (*on_event)(struct slack_sm* sm, struct sized_buffer* data);

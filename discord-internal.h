@@ -35,9 +35,9 @@
  *   - discord_adapter_cleanup()
  */
 struct discord_adapter {
-  struct logconf conf; /**< DISCORD_HTTP or DISCORD_WEBHOOK logging module */
+  struct logconf conf;   /**< DISCORD_HTTP or DISCORD_WEBHOOK logging module */
   struct user_agent* ua; /**< The user agent handle for performing requests */
-  struct { /**< Ratelimiting structure */
+  struct {               /**< Ratelimiting structure */
     struct logconf conf; /**< DISCORD_RATELIMIT logging module */
     struct discord_bucket*
             buckets; /**< Endpoint/routes discovered, check a endpoint/bucket match with tree search functions */
@@ -45,10 +45,10 @@ struct discord_adapter {
             lock; /**< Mutex used when adding to or searching for buckets */
   } * ratelimit;
 
-  struct { /**< Error storage context */
+  struct {               /**< Error storage context */
     struct ua_info info; /**< Informational on the latest transfer */
-    int jsoncode; /**< JSON error code on failed request */
-    char jsonstr[512]; /**< The entire JSON response of the error */
+    int jsoncode;        /**< JSON error code on failed request */
+    char jsonstr[512];   /**< The entire JSON response of the error */
   } err;
 };
 
@@ -98,14 +98,14 @@ ORCAcode discord_adapter_run(struct discord_adapter* adapter,
  */
 struct discord_bucket {
   char route[256]; /**< this bucket 'key' */
-  char hash[128]; /**< the unique hash associated with this bucket */
+  char hash[128];  /**< the unique hash associated with this bucket */
   int busy; /**< amount of busy connections that have not yet finished its requests */
   int remaining; /**< connections this bucket can do before waiting for cooldown */
-  u64_unix_ms_t reset_tstamp; /**< timestamp of when cooldown timer resets */
+  u64_unix_ms_t reset_tstamp;  /**< timestamp of when cooldown timer resets */
   u64_unix_ms_t update_tstamp; /**< timestamp of the most recent request */
 
   pthread_mutex_t lock; /**< synchronize buckets between threads */
-  UT_hash_handle hh; /**< makes this structure hashable */
+  UT_hash_handle hh;    /**< makes this structure hashable */
 };
 
 /**
@@ -181,7 +181,7 @@ struct discord_gateway_cbs {
   discord_channel_cb on_thread_update; /**< triggers when a thread is updated */
   discord_channel_cb on_thread_delete; /**< triggers when a thread is deleted */
 
-  discord_guild_ban_cb on_guild_ban_add; /**< triggers when a ban occurs */
+  discord_guild_ban_cb on_guild_ban_add;    /**< triggers when a ban occurs */
   discord_guild_ban_cb on_guild_ban_remove; /**< triggers when a ban is removed */
 
   discord_guild_member_cb
@@ -236,17 +236,17 @@ struct discord_gateway_cbs {
  * @note A wrapper over struct websockets
  */
 struct discord_gateway {
-  struct logconf conf; /**< DISCORD_GATEWAY logging module */
+  struct logconf conf;   /**< DISCORD_GATEWAY logging module */
   struct websockets* ws; /**< the websockets handle that connects to Discord */
-  threadpool_t* tpool; /**< thread-pool manager */
+  threadpool_t* tpool;   /**< thread-pool manager */
 
-  struct { /**< Reconnect structure */
+  struct {       /**< Reconnect structure */
     bool enable; /**< will attempt reconnecting if true */
     int attempt; /**< current reconnect attempt (resets to 0 when succesful) */
     int threshold; /**< max amount of reconnects before giving up */
   } * reconnect;
 
-  struct { /**< Status structure */
+  struct {             /**< Status structure */
     bool is_resumable; /**< will attempt to resume session if connection shutsdowns */
     bool is_ready; /**< can start sending/receiving additional events to discord */
     bool shutdown; /**< if true shutdown websockets connection as soon as possible */
@@ -271,18 +271,18 @@ struct discord_gateway {
           sb_bot; /**< the client's user raw JSON @todo this is temporary */
 
   /* https://discord.com/developers/docs/topics/gateway#payloads-gateway-payload-structure */
-  struct { /**< Response-payload structure */
+  struct {                               /**< Response-payload structure */
     enum discord_gateway_opcodes opcode; /**< field 'op' */
-    int seq; /**< field 's' */
-    char event_name[64]; /**< field 't' */
-    struct sized_buffer event_data; /**< field 'd' */
+    int seq;                             /**< field 's' */
+    char event_name[64];                 /**< field 't' */
+    struct sized_buffer event_data;      /**< field 'd' */
   } * payload;
 
   /* Discord expects a proccess called heartbeating in order to keep the client-server connection alive */
   /* https://discord.com/developers/docs/topics/gateway#heartbeating */
-  struct { /**< Heartbeating (keep-alive) structure */
+  struct {                     /**< Heartbeating (keep-alive) structure */
     u64_unix_ms_t interval_ms; /**< fixed interval between heartbeats */
-    u64_unix_ms_t tstamp; /**< start pulse timestamp in milliseconds */
+    u64_unix_ms_t tstamp;      /**< start pulse timestamp in milliseconds */
     int ping_ms; /**< latency calculated by HEARTBEAT and HEARTBEAT_ACK interval */
   } * hbeat;
 
@@ -377,8 +377,8 @@ struct discord {
 
 struct discord_event_cxt {
   char* event_name;
-  pthread_t tid; /**< the thread id */
-  struct sized_buffer data; /**< a copy of payload data */
+  pthread_t tid;                /**< the thread id */
+  struct sized_buffer data;     /**< a copy of payload data */
   struct discord_gateway* p_gw; /**< the discord gateway client */
   enum discord_gateway_events event;
   void (*on_event)(struct discord_gateway* gw, struct sized_buffer* data);

@@ -408,8 +408,8 @@ void discord_set_prefix(struct discord* client, char* prefix);
  * @see discord_set_event_scheduler()
  */
 enum discord_event_scheduler {
-  DISCORD_EVENT_IGNORE, /**< this event has been handled */
-  DISCORD_EVENT_MAIN_THREAD, /**< handle this event in main thread */
+  DISCORD_EVENT_IGNORE,       /**< this event has been handled */
+  DISCORD_EVENT_MAIN_THREAD,  /**< handle this event in main thread */
   DISCORD_EVENT_WORKER_THREAD /**< handle this event in a worker thread */
 };
 

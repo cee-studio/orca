@@ -23,7 +23,7 @@ AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 #AlignEscapedNewlines: Left # Unknown to clang-format-4.0
 AlignOperands: true
-AlignTrailingComments: false
+# AlignTrailingComments: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
@@ -576,3 +576,4 @@ DerivePointerAlignment: false
 PointerAlignment: Left
 AllowShortIfStatementsOnASingleLine: true
 BreakBeforeBraces: Stroustrup
+AlignTrailingComments: true

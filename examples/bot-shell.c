@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
   assert(NULL != SUDO.discriminator && "Missing '#' delimiter (eg. user#1234)");
 
   SUDO.discriminator[strlen(SUDO.discriminator) - 1] = '\0'; //remove \n
-  *SUDO.discriminator = '\0'; //split at #
+  *SUDO.discriminator = '\0';                                //split at #
   ++SUDO.discriminator;
 
   discord_run(client);

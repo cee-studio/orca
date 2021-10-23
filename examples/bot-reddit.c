@@ -2,14 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> /* strchr() */
-#include <ctype.h> /* isalnum() */
+#include <ctype.h>  /* isalnum() */
 #include <assert.h>
 
 #include "reddit.h"
 #include "discord.h"
 
 #include "json-actor.h" /* json_extract() */
-#include "cee-utils.h" /* cee_load_whole_file() */
+#include "cee-utils.h"  /* cee_load_whole_file() */
 #include "scheduler.h"
 
 #define SEARCH_PARAMS_FILE "bot-reddit.json"
@@ -18,7 +18,7 @@
 
 struct {
   struct sized_buffer json; // file contents
-  struct { /* REDDIT UTILS */
+  struct {                  /* REDDIT UTILS */
     struct reddit* client;
     struct task_s* tsk_refresh_token;
     struct task_s* tsk_search;
@@ -197,7 +197,7 @@ void on_search(struct discord* client, const struct discord_user* bot,
   char subreddits[1024] = "", before[16] = "", after[16] = "";
   char* msg_content = msg->content;
   if ('?' == *msg_content) { // '?' means separate query from keywords
-    ++msg_content; // eat up '?'
+    ++msg_content;           // eat up '?'
 
     // there should be a space between query string and keywords
     char* query_end = strchr(msg_content, ' ');

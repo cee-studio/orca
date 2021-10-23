@@ -9,7 +9,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "types.h" /* ORCAcode */
+#include "types.h"   /* ORCAcode */
 #include "logconf.h" /* logging facilities */
 
 /**
@@ -28,7 +28,7 @@ struct websockets;
  */
 struct ws_info {
   struct loginfo loginfo; /**< logging info */
-  ORCAcode code; /**< how the transfer went @todo implement */
+  ORCAcode code;          /**< how the transfer went @todo implement */
 };
 
 /**
@@ -38,9 +38,9 @@ struct ws_info {
  */
 enum ws_status {
   WS_DISCONNECTED = 0, /**< client disconnected from ws */
-  WS_CONNECTED, /**< client connected to ws */
-  WS_DISCONNECTING, /**< client in the process of disconnecting to ws */
-  WS_CONNECTING, /**< client in the process of connecting from ws */
+  WS_CONNECTED,        /**< client connected to ws */
+  WS_DISCONNECTING,    /**< client in the process of disconnecting to ws */
+  WS_CONNECTING,       /**< client in the process of connecting from ws */
 };
 
 /** 
@@ -308,7 +308,8 @@ int ws_unlock(struct websockets* ws);
  * @param field the header field
  * @param value the header value
  */
-void ws_reqheader_add(struct websockets *ws, const char field[], const char value[]);
+void ws_reqheader_add(struct websockets* ws, const char field[],
+                      const char value[]);
 
 #ifdef __cplusplus
 }

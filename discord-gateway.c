@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h> /* offsetof() */
-#include <ctype.h> /* isspace() */
+#include <ctype.h>  /* isspace() */
 
 #include "discord.h"
 #include "discord-internal.h"
@@ -1295,7 +1295,7 @@ static ORCAcode event_loop(struct discord_gateway* gw)
   bool is_running = false;
   while (1) {
     ws_perform(gw->ws, &is_running, 5);
-    if (!is_running) break; /* exit event loop */
+    if (!is_running) break;              /* exit event loop */
     if (!gw->status->is_ready) continue; /* wait until on_ready() */
 
     /* connection is established */

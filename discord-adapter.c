@@ -171,7 +171,7 @@ ORCAcode discord_adapter_run(struct discord_adapter* adapter,
       }
       default:
         if (adapter->err.info.httpcode >= 500) /* server related error, retry */
-          ua_block_ms(adapter->ua, 5000); /* wait for 5 seconds */
+          ua_block_ms(adapter->ua, 5000);      /* wait for 5 seconds */
         break;
       }
     }

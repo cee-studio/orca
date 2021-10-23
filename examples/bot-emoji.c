@@ -35,7 +35,7 @@ void on_list(struct discord* client, const struct discord_user* bot,
                       emojis[i]->id, emojis[i]->id);
 
       if (cur >= end) { // to make sure no emoji is skipped
-        *prev = '\0'; // end string before truncation
+        *prev = '\0';   // end string before truncation
         // reset for retry
         cur = text;
         --i;

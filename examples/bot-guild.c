@@ -234,9 +234,9 @@ void on_role_list(struct discord* client, const struct discord_user* bot,
                       roles[i]->id, roles[i]->id);
 
       if (cur >= end) { // to make sure no role is skipped
-        *prev = '\0'; // end string before truncation
-        cur = text; // reset
-        --i; // retry current iteration
+        *prev = '\0';   // end string before truncation
+        cur = text;     // reset
+        --i;            // retry current iteration
 
         struct discord_create_message_params params = { .content = text };
         discord_create_message(client, msg->channel_id, &params, NULL);
@@ -330,7 +330,7 @@ void on_member_search(struct discord* client, const struct discord_user* bot,
                       members[i]->user->id);
 
       if (cur >= end) { // to make sure no member is skipped
-        *prev = '\0'; // end string before truncation
+        *prev = '\0';   // end string before truncation
         // reset for retry
         cur = text;
         --i;

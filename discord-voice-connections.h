@@ -59,7 +59,7 @@ typedef void (*discord_voice_codec_cb)(struct discord* client,
                                        const char audio_codec[],
                                        const char video_codec[]);
 
-struct discord_voice_cbs { /* CALLBACKS STRUCTURE */
+struct discord_voice_cbs {       /* CALLBACKS STRUCTURE */
   discord_voice_idle_cb on_idle; /**< triggers on every event loop iteration */
   discord_voice_speaking_cb
           on_speaking; /**< triggers when a user start speaking */
@@ -100,7 +100,7 @@ struct discord_voice {
   struct websockets*
           ws; /**< the websockets handle that binds to Discord Voice Connections */
   /** @brief handle reconnect logic */
-  struct { /* RECONNECT STRUCTURE */
+  struct {       /* RECONNECT STRUCTURE */
     bool enable; /**< will attempt reconnecting if true */
     unsigned char
             attempt; /**< current reconnect attempt (resets to 0 when succesful) */
@@ -114,14 +114,14 @@ struct discord_voice {
   /**
    * @see https://discord.com/developers/docs/topics/voice-connections#establishing-a-voice-websocket-connection-example-voice-ready-payload
    */
-  struct { /* VOICE PAYLOAD STRUCTURE */
+  struct {                             /* VOICE PAYLOAD STRUCTURE */
     enum discord_voice_opcodes opcode; /**<field 'op' */
-    struct sized_buffer event_data; /**<field 'd' */
+    struct sized_buffer event_data;    /**<field 'd' */
   } payload;
 
-  struct { /* HEARTBEAT STRUCTURE */
+  struct {                     /* HEARTBEAT STRUCTURE */
     u64_unix_ms_t interval_ms; /**<fixed interval between heartbeats */
-    u64_unix_ms_t tstamp; /**<start pulse timestamp in milliseconds */
+    u64_unix_ms_t tstamp;      /**<start pulse timestamp in milliseconds */
   } hbeat;
 
   int ping_ms; /**< latency between client and websockets server, calculated by the interval between HEARTBEAT and HEARTBEAT_ACK */

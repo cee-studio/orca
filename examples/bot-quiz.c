@@ -183,14 +183,14 @@ create_session_channel(struct discord* client, const u64_snowflake_t guild_id,
   discord_overwrite_append(
           &params1.permission_overwrites,
           guild_id, // @everyone role id is the same as guild id
-          0, // role type
-          DISCORD_BITWISE_PERMISSION_ZERO, //Allow
+          0,        // role type
+          DISCORD_BITWISE_PERMISSION_ZERO,         //Allow
           DISCORD_BITWISE_PERMISSION_ADD_REACTIONS //Deny
                   | DISCORD_BITWISE_PERMISSION_VIEW_CHANNEL |
                   DISCORD_BITWISE_PERMISSION_SEND_MESSAGES);
 
   discord_overwrite_append(&params1.permission_overwrites, member->user->id,
-                           1, // user type
+                           1,                                       // user type
                            DISCORD_BITWISE_PERMISSION_ADD_REACTIONS //Allow
                                    | DISCORD_BITWISE_PERMISSION_VIEW_CHANNEL |
                                    DISCORD_BITWISE_PERMISSION_SEND_MESSAGES,
@@ -333,7 +333,7 @@ void on_reaction_add(struct discord* client, const struct discord_user* bot,
     }
   }
 
-  if (!session) return; /* EARLY RETURN */
+  if (!session) return;                    /* EARLY RETURN */
   if (FINISHED == session->status) return; /* EARLY RETURN */
 
   struct question* question = NULL;

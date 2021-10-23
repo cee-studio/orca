@@ -288,7 +288,7 @@ void slack_sm_run(struct slack* client)
   bool is_running = false;
   while (1) {
     ws_perform(sm->ws, &is_running, 1);
-    if (!is_running) break; // exit event loop
+    if (!is_running) break;      // exit event loop
     if (!sm->is_ready) continue; // wait until on_hello()
 
     // connection established

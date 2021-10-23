@@ -516,7 +516,7 @@ static void event_loop(struct discord_voice* vc)
   /* the ws server side events */
   while (1) {
     ws_perform(vc->ws, &is_running, 100);
-    if (!is_running) break; /* exit event loop */
+    if (!is_running) break;      /* exit event loop */
     if (!vc->is_ready) continue; /* wait until on_ready() */
 
     /* connection is established */

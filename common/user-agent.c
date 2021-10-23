@@ -301,7 +301,7 @@ static size_t conn_respheader_cb(char* buf, size_t size, size_t nmemb,
     return bufsize;
   }
 
-  ptrdiff_t delim_idx = ptr - buf; /* get ':' position */
+  ptrdiff_t delim_idx = ptr - buf;        /* get ':' position */
   if (!(ptr = strstr(ptr + 1, "\r\n"))) { /*returns if can't find CRLF match */
     return bufsize;
   }
@@ -799,7 +799,7 @@ ORCAcode ua_run(struct user_agent* ua, struct ua_info* info,
   }
 
   conn_reset(conn); /* reset for next iteration */
-  if (ua->mime) { /**< @todo this is temporary */
+  if (ua->mime) {   /**< @todo this is temporary */
     curl_mime_free(ua->mime);
     ua->mime = NULL;
   }

@@ -31,7 +31,7 @@ struct slack* slack_config_init(const char config_file[]);
 void slack_cleanup(struct slack* client);
 
 enum slack_event_handling_mode {
-  SLACK_EVENT_IGNORE, ///< this event has been handled
+  SLACK_EVENT_IGNORE,      ///< this event has been handled
   SLACK_EVENT_MAIN_THREAD, ///< handle this event in main thread
   SLACK_EVENT_CHILD_THREAD ///< handle this event in a child thread
 };

@@ -58,7 +58,7 @@ void on_pong(
 
 int main()
 {
-  struct discord *client = discord_config_init("../config.json");
+  struct discord *client = discord_config_init("./mybot_config.json");
 
   discord_set_on_ready(client, &on_ready);
   discord_set_on_command(client, "ping", &on_ping);
@@ -77,7 +77,7 @@ int main()
 You can initialize the bot by providing a `config.json` file:
 
 ```c
-struct discord *client = discord_config_init("../config.json");
+struct discord *client = discord_config_init("./mybot_config.json");
 ```
 
 You can also initialize it by providing the token directly to `discord_init()`:

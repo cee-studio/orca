@@ -6,33 +6,38 @@
 #include "discord.h"
 #include "debug.h"
 
-char* SPAM[] = {
-  "Yes I love to spam",                  //1
-  "Do you?",                             //2
-  "ROFL",                                //3
-  "What are you going to do about it?",  //4
-  "Are you going to !clear me?",         //5
-  "Good luck with that.",                //6
-  "Many have tried but..",               //7
-  "They all fail.",                      //8
-  "What makes you think",                //9
+
+char *SPAM[] = {
+  "Yes I love to spam", //1
+  "Do you?", //2
+  "ROFL", //3
+  "What are you going to do about it?", //4
+  "Are you going to !clear me?", //5
+  "Good luck with that.", //6
+  "Many have tried but..", //7
+  "They all fail.", //8
+  "What makes you think", //9
   "It should be any different with you?" //10
 };
 
-void on_spam(struct discord* client, const struct discord_user* bot,
-             const struct discord_message* msg)
+void on_spam(
+  struct discord *client,
+  const struct discord_user *bot,
+  const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
-  struct discord_create_message_params params = {};
-  for (size_t i = 0; i < 10; ++i) {
+  struct discord_create_message_params params={};
+  for (size_t i=0; i < 10; ++i) {
     params.content = SPAM[i];
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
 }
 
-void on_clear(struct discord* client, const struct discord_user* bot,
-              const struct discord_message* msg)
+void on_clear(
+  struct discord *client,
+  const struct discord_user *bot,
+  const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -43,9 +48,9 @@ void on_clear(struct discord* client, const struct discord_user* bot,
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-  const char* config_file;
+  const char *config_file;
   if (argc > 1)
     config_file = argv[1];
   else
@@ -53,7 +58,7 @@ int main(int argc, char* argv[])
 
   discord_global_init();
 
-  struct discord* client = discord_config_init(config_file);
+  struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
   discord_set_on_command(client, "!spam", &on_spam);

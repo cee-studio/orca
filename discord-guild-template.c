@@ -6,8 +6,11 @@
 #include "discord-internal.h"
 #include "cee-utils.h"
 
-ORCAcode discord_get_guild_template(struct discord* client, char* code,
-                                    struct discord_guild_template* p_template)
+ORCAcode
+discord_get_guild_template(
+  struct discord *client,
+  char *code,
+  struct discord_guild_template *p_template)
 {
   if (!code) {
     log_error("Missing 'code'");
@@ -21,7 +24,12 @@ ORCAcode discord_get_guild_template(struct discord* client, char* code,
 
   return discord_adapter_run(
           &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = discord_guild_template_from_json_v,
-                                    .ok_obj = &p_template },
-          NULL, HTTP_GET, "/guilds/templates/%s", code);
+          &(struct ua_resp_handle){
+            .ok_cb = discord_guild_template_from_json_v,
+            .ok_obj = &p_template
+          },
+          NULL,
+          HTTP_GET,
+          "/guilds/templates/%s",
+          code);
 }

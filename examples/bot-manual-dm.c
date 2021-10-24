@@ -7,23 +7,25 @@
 
 #include "discord.h"
 
-void on_ready(struct discord* client, const struct discord_user* bot)
-{
+
+void on_ready(struct discord *client, const struct discord_user *bot) {
   log_info("ManualDM-Bot succesfully connected to Discord as %s#%s!",
-           bot->username, bot->discriminator);
+      bot->username, bot->discriminator);
 }
 
-void on_dm_receive(struct discord* client, const struct discord_user* bot,
-                   const struct discord_message* msg)
+void on_dm_receive(
+    struct discord *client,
+    const struct discord_user *bot,
+    const struct discord_message *msg)
 {
   if (msg->author->bot) return;
   printf("%s:%s\n", msg->author->username, msg->content);
 }
 
-void* read_input(void* p_client)
+void* read_input(void *p_client)
 {
   pthread_detach(pthread_self());
-  struct discord* client = p_client;
+  struct discord *client = p_client;
 
   char buf[32 + DISCORD_MAX_MESSAGE_LEN];
   u64_snowflake_t recipient_id;
@@ -33,19 +35,19 @@ void* read_input(void* p_client)
     memset(buf, 0, sizeof(buf));
     fgets(buf, sizeof(buf), stdin);
     if (!*buf) continue; // is empty
-
+    
     memset(msg, 0, sizeof(msg));
-    recipient_id = 0;
-    sscanf(buf, "%" PRIu64 ":%[^\n]", &recipient_id, msg);
+    recipient_id=0;
+    sscanf(buf, "%"PRIu64":%[^\n]", &recipient_id, msg);
     if (!recipient_id || !*msg) {
       sscanf(buf, "%[^\n]", msg);
       if (!*msg) {
-        printf("Expected format: <*recipient_id>:<message>");
+        printf("Expected format: <*recipient_id>:<message>"); 
         continue;
       }
     }
     else { /* reset active chat */
-      struct discord_channel dm_channel = { 0 };
+      struct discord_channel dm_channel={0};
 
       struct discord_create_dm_params params = { .recipient_id = recipient_id };
       discord_create_dm(client, &params, &dm_channel);
@@ -61,9 +63,9 @@ void* read_input(void* p_client)
   pthread_exit(NULL);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-  const char* config_file;
+  const char *config_file;
   if (argc > 1)
     config_file = argv[1];
   else
@@ -71,7 +73,7 @@ int main(int argc, char* argv[])
 
   discord_global_init();
 
-  struct discord* client = discord_config_init(config_file);
+  struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
   discord_set_on_ready(client, &on_ready);
@@ -81,7 +83,7 @@ int main(int argc, char* argv[])
   discord_remove_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES);
 
   printf("\n\nThis bot demonstrates how easy it is to start a DM"
-         " with someone and talk without leaving the terminal\n"
+         " with someone and talk without leaving the terminal\n" 
          "1. Type at the terminal <recipient_id>:<message> to start your conversation\n"
          "\tex: 1232232312321232123:Hello there friend!\n"
          "2. For successive messages to the same person, you can just type the message"

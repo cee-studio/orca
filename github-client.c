@@ -12,93 +12,103 @@
 #include "github.h"
 #include "github-internal.h"
 
-static void _github_presets_init(struct github_presets* presets, char* username,
-                                 char* token, const char* repo_config)
+
+static void
+_github_presets_init(
+  struct github_presets *presets, 
+  char *username, 
+  char *token, 
+  const char *repo_config)
 {
+
   presets->owner = NULL;
   presets->repo = NULL;
   presets->default_branch = NULL;
 
   /* Optionally fill in the repo_config. Can be
    * done later with github_fill_repo_config. */
-  if (repo_config) {
+  if(repo_config) {
     size_t len = 0;
-    char* json = cee_load_whole_file(repo_config, &len);
+    char *json = cee_load_whole_file(repo_config, &len);
 
-    json_extract(json, len, "(owner):?s,(repo):?s,(default_branch):?s",
-                 &presets->owner, &presets->repo, &presets->default_branch);
+    json_extract(json, len, 
+        "(owner):?s,(repo):?s,(default_branch):?s",
+        &presets->owner, &presets->repo, &presets->default_branch);
 
     free(json);
   }
 
   presets->username = username;
   presets->token = token;
+
 }
 
-void github_write_json(char* json, size_t len, void* user_obj)
-{
-  struct sized_buffer* new_user_obj = user_obj;
-  new_user_obj->size = asprintf(&new_user_obj->start, "%.*s", (int)len, json);
+void github_write_json(char *json, size_t len, void *user_obj) {
+    struct sized_buffer *new_user_obj = user_obj;
+    new_user_obj->size = asprintf(&new_user_obj->start, "%.*s", (int) len, json);
 }
 
-ORCAcode github_fill_repo_config(struct github* client, char* repo_config)
-{
-  log_info("===github-fill-repo-config===");
 
-  if (!repo_config) {
-    log_error("repo_config is NULL.");
-    return ORCA_MISSING_PARAMETER;
-  }
+ORCAcode
+github_fill_repo_config(struct github *client, char *repo_config) {
+    log_info("===github-fill-repo-config===");
 
-  size_t len = 0;
-  char* json = cee_load_whole_file(repo_config, &len);
+    if(!repo_config) {
+        log_error("repo_config is NULL.");
+        return ORCA_MISSING_PARAMETER;
+    }
 
-  json_extract(json, len, "(owner):?s,(repo):?s,(default_branch):?s",
-               &client->presets.owner, &client->presets.repo,
-               &client->presets.default_branch);
+    size_t len = 0;
+    char *json = cee_load_whole_file(repo_config, &len);
 
-  free(json);
+    json_extract(json, len, 
+        "(owner):?s,(repo):?s,(default_branch):?s",
+        &client->presets.owner, &client->presets.repo, &client->presets.default_branch);
 
-  return ORCA_OK;
+    free(json);
+
+    return ORCA_OK;
 }
 
-static void load_object_sha(char* str, size_t len, void* pp)
-{
+static void
+load_object_sha(char *str, size_t len, void *pp) {
   json_extract(str, len, "(object.sha):?s", (char**)pp);
 }
 
-static void load_sha(char* json, size_t len, void* pp)
-{
+static void
+load_sha(char *json, size_t len, void *pp) {
   json_extract(json, len, "(sha):?s", (char**)pp);
 }
 
-static void __log_trace(char* str, size_t len, void* p)
-{
+static void
+__log_trace(char *str, size_t len, void *p) {
   log_trace("%.*s", (int)len, str);
 }
 
-struct github* github_init(const char username[], const char token[],
-                           const char repo_config[])
+struct github*
+github_init(const char username[], const char token[], const char repo_config[])
 {
-  struct github* new_client = calloc(1, sizeof *new_client);
+  struct github *new_client = calloc(1, sizeof *new_client);
 
   logconf_setup(&new_client->conf, "GITHUB", NULL);
 
-  _github_presets_init(&new_client->presets, strdup(username), strdup(token),
-                       repo_config);
+  _github_presets_init(
+    &new_client->presets,
+    strdup(username), 
+    strdup(token),
+    repo_config);
 
-  github_adapter_init(&new_client->adapter, &new_client->conf,
-                      &new_client->presets);
+  github_adapter_init(&new_client->adapter, &new_client->conf, &new_client->presets);
 
   return new_client;
 }
 
-struct github* github_config_init(const char config_file[],
-                                  const char repo_config[])
+struct github*
+github_config_init(const char config_file[], const char repo_config[])
 {
-  struct github* new_client = calloc(1, sizeof *new_client);
+  struct github *new_client = calloc(1, sizeof *new_client);
 
-  FILE* fp = fopen(config_file, "rb");
+  FILE *fp = fopen(config_file, "rb");
   VASSERT_S(fp != NULL, "Couldn't open '%s': %s", config_file, strerror(errno));
 
   logconf_setup(&new_client->conf, "GITHUB", fp);
@@ -113,15 +123,19 @@ struct github* github_config_init(const char config_file[],
   asprintf(&username, "%.*s", (int)t_username.size, t_username.start);
   asprintf(&token, "%.*s", (int)t_token.size, t_token.start);
 
-  _github_presets_init(&new_client->presets, username, token, repo_config);
+  _github_presets_init(
+    &new_client->presets,
+    username,
+    token,
+    repo_config);
 
-  github_adapter_init(&new_client->adapter, &new_client->conf,
-                      &new_client->presets);
+  github_adapter_init(&new_client->adapter, &new_client->conf, &new_client->presets);
 
   return new_client;
 }
 
-ORCAcode github_update_my_fork(struct github* client, char** p_sha)
+ORCAcode
+github_update_my_fork(struct github *client, char **p_sha)
 {
   log_info("===update-my-fork===");
 
@@ -134,14 +148,19 @@ ORCAcode github_update_my_fork(struct github* client, char** p_sha)
     return ORCA_MISSING_PARAMETER;
   }
 
-  char* sha = NULL;
+  char *sha=NULL;
   ORCAcode code;
-  code = github_adapter_run(&client->adapter,
-                            &(struct ua_resp_handle){ .ok_cb = &load_object_sha,
-                                                      .ok_obj = &sha },
-                            NULL, HTTP_GET, "/repos/%s/%s/git/refs/heads/%s",
-                            client->presets.owner, client->presets.repo,
-                            client->presets.default_branch);
+  code = github_adapter_run(
+           &client->adapter, 
+           &(struct ua_resp_handle){
+             .ok_cb = &load_object_sha,
+             .ok_obj = &sha
+           },
+           NULL,
+           HTTP_GET, "/repos/%s/%s/git/refs/heads/%s",
+           client->presets.owner, 
+           client->presets.repo, 
+           client->presets.default_branch);
 
   if (ORCA_OK != code) {
     log_error("Couldn't fetch sha");
@@ -156,15 +175,19 @@ ORCAcode github_update_my_fork(struct github* client, char** p_sha)
   else
     free(sha);
 
-  return github_adapter_run(&client->adapter,
-                            &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-                            &(struct sized_buffer){ payload, ret }, HTTP_PATCH,
-                            "/repos/%s/%s/git/refs/heads/%s",
-                            client->presets.username, client->presets.repo,
-                            client->presets.default_branch);
+  return github_adapter_run(
+           &client->adapter, 
+           &(struct ua_resp_handle){ .ok_cb = &__log_trace },
+           &(struct sized_buffer){ payload, ret },
+           HTTP_PATCH, "/repos/%s/%s/git/refs/heads/%s",
+           client->presets.username, 
+           client->presets.repo, 
+           client->presets.default_branch);
 }
 
-ORCAcode github_get_head_commit(struct github* client, char** p_sha)
+
+ORCAcode
+github_get_head_commit(struct github *client, char **p_sha)
 {
   if (!p_sha) {
     log_error("Missing 'p_sha'");
@@ -179,16 +202,21 @@ ORCAcode github_get_head_commit(struct github* client, char** p_sha)
     return ORCA_MISSING_PARAMETER;
   }
 
-  return github_adapter_run(&client->adapter,
-                            &(struct ua_resp_handle){ .ok_cb = &load_object_sha,
-                                                      .ok_obj = p_sha },
-                            NULL, HTTP_GET, "/repos/%s/%s/git/refs/heads/%s",
-                            client->presets.username, client->presets.repo,
-                            client->presets.default_branch);
+  return github_adapter_run(
+           &client->adapter, 
+           &(struct ua_resp_handle){
+             .ok_cb = &load_object_sha,
+             .ok_obj = p_sha
+           },
+           NULL,
+           HTTP_GET, "/repos/%s/%s/git/refs/heads/%s",
+           client->presets.username, 
+           client->presets.repo, 
+           client->presets.default_branch);
 }
 
-ORCAcode github_get_tree_sha(struct github* client, char* commit_sha,
-                             char** p_sha)
+ORCAcode
+github_get_tree_sha(struct github *client, char *commit_sha, char **p_sha)
 {
   log_info("===get-tree-sha==");
 
@@ -210,14 +238,20 @@ ORCAcode github_get_tree_sha(struct github* client, char* commit_sha,
   }
 
   return github_adapter_run(
-          &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = &load_sha, .ok_obj = p_sha }, NULL,
-          HTTP_GET, "/repos/%s/%s/git/trees/%s", client->presets.username,
-          client->presets.repo, commit_sha);
+           &client->adapter, 
+           &(struct ua_resp_handle){
+             .ok_cb = &load_sha,
+             .ok_obj = p_sha
+           },
+           NULL, 
+           HTTP_GET, "/repos/%s/%s/git/trees/%s", 
+           client->presets.username, 
+           client->presets.repo, 
+           commit_sha);
 }
 
-ORCAcode github_create_blobs(struct github* client,
-                             NTL_T(struct github_file) files)
+ORCAcode
+github_create_blobs(struct github *client, NTL_T(struct github_file) files)
 {
   if (!files) {
     log_error("Missing 'files'");
@@ -233,11 +267,11 @@ ORCAcode github_create_blobs(struct github* client,
   }
 
   int i;
-  char* f_content;
+  char *f_content;
   size_t f_len;
   ORCAcode code;
 
-  for (i = 0; files[i]; ++i) {
+  for (i=0; files[i]; ++i) {
     log_info("===creating blob for %s===", files[i]->path);
 
     f_content = cee_load_whole_file(files[i]->path, &f_len);
@@ -246,12 +280,12 @@ ORCAcode github_create_blobs(struct github* client,
       return ORCA_BAD_PARAMETER;
     }
 
-    char* payload = NULL;
+    char *payload=NULL;
     size_t ret;
     ret = json_ainject(&payload,
-                       "(content):.*s"
-                       "(encoding):|utf-8|",
-                       f_len, f_content);
+            "(content):.*s"
+            "(encoding):|utf-8|", 
+            f_len, f_content);
 
     if (!payload) {
       log_error("Couldn't create JSON Payload");
@@ -260,12 +294,15 @@ ORCAcode github_create_blobs(struct github* client,
     }
 
     code = github_adapter_run(
-            &client->adapter,
-            &(struct ua_resp_handle){ .ok_cb = &load_sha,
-                                      .ok_obj = &files[i]->sha },
-            &(struct sized_buffer){ payload, ret }, HTTP_POST,
-            "/repos/%s/%s/git/blobs", client->presets.username,
-            client->presets.repo);
+             &client->adapter, 
+             &(struct ua_resp_handle){
+               .ok_cb = &load_sha,
+               .ok_obj = &files[i]->sha
+             },
+             &(struct sized_buffer){ payload, ret },
+             HTTP_POST, "/repos/%s/%s/git/blobs", 
+             client->presets.username, 
+             client->presets.repo);
 
     free(payload);
     free(f_content);
@@ -274,24 +311,30 @@ ORCAcode github_create_blobs(struct github* client,
   return code;
 }
 
-static size_t node2json(char* str, size_t size, void* p)
+static size_t
+node2json(char *str, size_t size, void *p)
 {
-  struct github_file* f = p;
+  struct github_file *f = p;
   return json_inject(str, size,
                      "(path):s"
                      "(mode):|100644|"
                      "(type):|blob|"
                      "(sha):s",
-                     f->path, f->sha);
+                     f->path,
+                     f->sha);
 }
 
-static int node_list2json(char* buf, size_t size, void* p)
-{
-  return ntl_to_buf(buf, size, (void**)p, NULL, node2json);
+static int
+node_list2json(char *buf, size_t size, void *p) {
+  return ntl_to_buf(buf, size, (void **)p, NULL, node2json);
 }
 
-ORCAcode github_create_tree(struct github* client, char* base_tree_sha,
-                            NTL_T(struct github_file) files, char** p_tree_sha)
+ORCAcode
+github_create_tree(
+  struct github *client, 
+  char *base_tree_sha, 
+  NTL_T(struct github_file) files,
+  char **p_tree_sha)
 {
   log_info("==create-tree==");
 
@@ -315,22 +358,30 @@ ORCAcode github_create_tree(struct github* client, char* base_tree_sha,
   char payload[2048];
   size_t ret;
   ret = json_inject(payload, sizeof(payload),
-                    "(tree):F"
-                    "(base_tree):s",
-                    &node_list2json, files, base_tree_sha);
+          "(tree):F"
+          "(base_tree):s",
+          &node_list2json, files,
+          base_tree_sha);
 
   return github_adapter_run(
-          &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = p_tree_sha ? &load_sha : NULL,
-                                    .ok_obj = p_tree_sha },
-          &(struct sized_buffer){ payload, ret }, HTTP_POST,
-          "/repos/%s/%s/git/trees", client->presets.username,
-          client->presets.repo);
+           &client->adapter, 
+           &(struct ua_resp_handle){
+             .ok_cb = p_tree_sha ? &load_sha : NULL,
+             .ok_obj = p_tree_sha
+           },
+           &(struct sized_buffer){ payload, ret },
+           HTTP_POST, "/repos/%s/%s/git/trees", 
+           client->presets.username, 
+           client->presets.repo);
 }
 
-ORCAcode github_create_a_commit(struct github* client, char* tree_sha,
-                                char* parent_commit_sha, char* commit_msg,
-                                char** p_commit_sha)
+ORCAcode
+github_create_a_commit(
+  struct github *client, 
+  char *tree_sha, 
+  char *parent_commit_sha, 
+  char *commit_msg,
+  char **p_commit_sha)
 {
   log_info("===create-a-commit===");
 
@@ -358,22 +409,30 @@ ORCAcode github_create_a_commit(struct github* client, char* tree_sha,
   char payload[4096];
   size_t ret;
   ret = json_inject(payload, sizeof(payload),
-                    "(message):s"
-                    "(tree):s"
-                    "(parents):[s]",
-                    commit_msg, tree_sha, parent_commit_sha);
+          "(message):s"
+          "(tree):s"
+          "(parents):[s]",
+          commit_msg,
+          tree_sha,
+          parent_commit_sha);
 
   return github_adapter_run(
-          &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = p_commit_sha ? &load_sha : NULL,
-                                    .ok_obj = p_commit_sha },
-          &(struct sized_buffer){ payload, ret }, HTTP_POST,
-          "/repos/%s/%s/git/commits", client->presets.username,
-          client->presets.repo);
+           &client->adapter, 
+           &(struct ua_resp_handle){
+             .ok_cb = p_commit_sha ? &load_sha : NULL,
+             .ok_obj = p_commit_sha
+           },
+           &(struct sized_buffer){ payload, ret },
+           HTTP_POST, "/repos/%s/%s/git/commits",
+           client->presets.username, 
+           client->presets.repo);
 }
 
-ORCAcode github_create_a_branch(struct github* client, char* head_commit_sha,
-                                char* branch)
+ORCAcode
+github_create_a_branch(
+  struct github *client, 
+  char *head_commit_sha, 
+  char *branch)
 {
   log_info("===create-a-branch===");
 
@@ -397,19 +456,22 @@ ORCAcode github_create_a_branch(struct github* client, char* head_commit_sha,
   char payload[4096];
   size_t ret;
   ret = json_inject(payload, sizeof(payload),
-                    "(ref):|refs/heads/%s|"
-                    "(sha):s",
-                    branch, head_commit_sha);
+          "(ref):|refs/heads/%s|"
+          "(sha):s",
+          branch, 
+          head_commit_sha);
 
-  return github_adapter_run(&client->adapter,
-                            &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-                            &(struct sized_buffer){ payload, ret }, HTTP_POST,
-                            "/repos/%s/%s/git/refs", client->presets.username,
-                            client->presets.repo);
+  return github_adapter_run(
+           &client->adapter, 
+           &(struct ua_resp_handle){ .ok_cb = &__log_trace },
+           &(struct sized_buffer){ payload, ret },
+           HTTP_POST, "/repos/%s/%s/git/refs",
+           client->presets.username, 
+           client->presets.repo);
 }
 
-ORCAcode github_update_a_commit(struct github* client, char* branch,
-                                char* commit_sha)
+ORCAcode
+github_update_a_commit(struct github *client, char *branch, char *commit_sha)
 {
   log_info("===update-a-commit===");
 
@@ -434,16 +496,18 @@ ORCAcode github_update_a_commit(struct github* client, char* branch,
   size_t ret;
   ret = json_inject(payload, sizeof(payload), "(sha):s", commit_sha);
 
-  return github_adapter_run(&client->adapter,
-                            &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-                            &(struct sized_buffer){ payload, ret }, HTTP_PATCH,
-                            "/repos/%s/%s/git/refs/heads/%s",
-                            client->presets.username, client->presets.repo,
-                            branch);
+  return github_adapter_run(
+           &client->adapter, 
+           &(struct ua_resp_handle){ .ok_cb = &__log_trace },
+           &(struct sized_buffer){ payload, ret },
+           HTTP_PATCH, "/repos/%s/%s/git/refs/heads/%s",
+           client->presets.username, 
+           client->presets.repo, 
+           branch);
 }
 
-ORCAcode github_create_a_pull_request(struct github* client, char* branch,
-                                      char* pull_msg)
+ORCAcode
+github_create_a_pull_request(struct github *client, char *branch, char *pull_msg) 
 {
   log_info("===create-a-pull-request===");
 
@@ -467,22 +531,26 @@ ORCAcode github_create_a_pull_request(struct github* client, char* branch,
   char payload[4096];
   size_t ret;
   ret = json_inject(payload, sizeof(payload),
-                    "(title):s"
-                    "(body):s"
-                    "(head):|%s:%s|"
-                    "(base):s",
-                    branch, pull_msg, client->presets.username, branch,
-                    client->presets.default_branch);
+          "(title):s"
+          "(body):s"
+          "(head):|%s:%s|"
+          "(base):s",
+          branch, 
+          pull_msg, 
+          client->presets.username, branch, 
+          client->presets.default_branch);
 
-  return github_adapter_run(&client->adapter,
-                            &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-                            &(struct sized_buffer){ payload, ret }, HTTP_POST,
-                            "/repos/%s/%s/pulls", client->presets.owner,
-                            client->presets.repo);
+  return github_adapter_run(
+           &client->adapter, 
+           &(struct ua_resp_handle){ .ok_cb = &__log_trace },
+           &(struct sized_buffer){ payload, ret },
+           HTTP_POST, "/repos/%s/%s/pulls", 
+           client->presets.owner, 
+           client->presets.repo);
 }
 
-ORCAcode github_get_user(struct github* client, char* username,
-                         struct github_user* user)
+ORCAcode
+github_get_user(struct github *client, char *username, struct github_user* user)
 {
   log_info("===get-user===");
 
@@ -497,13 +565,19 @@ ORCAcode github_get_user(struct github* client, char* username,
 
   return github_adapter_run(
           &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = &github_user_from_json_v,
-                                    .ok_obj = &user },
-          NULL, HTTP_GET, "/users/%s", username);
+          &(struct ua_resp_handle){
+            .ok_cb = &github_user_from_json_v,
+            .ok_obj = &user
+          },
+          NULL,
+          HTTP_GET,
+          "/users/%s",
+          username);
 }
 
-ORCAcode github_get_repository(struct github* client, char* owner, char* repo,
-                               struct sized_buffer* output)
+
+ORCAcode
+github_get_repository(struct github *client, char* owner, char* repo, struct sized_buffer* output)
 {
   log_info("===get-repository===");
 
@@ -519,7 +593,14 @@ ORCAcode github_get_repository(struct github* client, char* owner, char* repo,
 
   return github_adapter_run(
           &client->adapter,
-          &(struct ua_resp_handle){ .ok_cb = &github_write_json,
-                                    .ok_obj = output },
-          NULL, HTTP_GET, "/repos/%s/%s", owner, repo);
+          &(struct ua_resp_handle){
+            .ok_cb = &github_write_json,
+            .ok_obj = output
+          },
+          NULL,
+          HTTP_GET,
+          "/repos/%s/%s",
+          owner,
+          repo
+  );
 }

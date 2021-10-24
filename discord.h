@@ -2058,7 +2058,7 @@ ORCAcode discord_list_voice_regions(struct discord *client, NTL_T(struct discord
  * @param params request parameters
  * @param p_webhook the webhook object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_create_webhook(struct discord *client, const u64_snowflake_t channel_id, struct discord_create_webhook_params *params, struct discord_webhook *p_webhook);
 /** @struct discord_create_webhook_params */
 /** @} DiscordCreateWebhook */
@@ -2074,7 +2074,7 @@ ORCAcode discord_create_webhook(struct discord *client, const u64_snowflake_t ch
  * @param channel_id the channel that the webhooks belongs to
  * @param p_webhooks a null-terminated list of webhook objects if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_get_channel_webhooks(struct discord *client, const u64_snowflake_t channel_id, NTL_T(struct discord_webhook) *p_webhooks);
 /** @} DiscordGetChannelWebhooks */
 
@@ -2089,7 +2089,7 @@ ORCAcode discord_get_channel_webhooks(struct discord *client, const u64_snowflak
  * @param guild_id the guild that the webhooks belongs to
  * @param p_webhooks a null-terminated list of webhook objects if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_get_guild_webhooks(struct discord *client, const u64_snowflake_t guild_id, NTL_T(struct discord_webhook) *p_webhooks);
 /** @} DiscordGetGuildWebhooks */
 
@@ -2104,7 +2104,7 @@ ORCAcode discord_get_guild_webhooks(struct discord *client, const u64_snowflake_
  * @param webhook_id the webhook itself
  * @param p_webhook the webhook object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_get_webhook(struct discord *client, const u64_snowflake_t webhook_id, struct discord_webhook *p_webhook);
 /** @} DiscordGetWebhook */
 
@@ -2120,7 +2120,7 @@ ORCAcode discord_get_webhook(struct discord *client, const u64_snowflake_t webho
  * @param webhook_token the webhook token
  * @param p_webhook the webhook object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_get_webhook_with_token(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[], struct discord_webhook *p_webhook);
 /** @} DiscordGetWebhookWithToken */
 
@@ -2136,7 +2136,7 @@ ORCAcode discord_get_webhook_with_token(struct discord *client, const u64_snowfl
  * @param params request parameters
  * @param p_webhook the webhook object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_modify_webhook(struct discord *client, const u64_snowflake_t webhook_id, struct discord_modify_webhook_params *params, struct discord_webhook *p_webhook);
 /** @struct discord_modify_webhook_params */
 /** @} DiscordModifyWebhook */
@@ -2154,7 +2154,7 @@ ORCAcode discord_modify_webhook(struct discord *client, const u64_snowflake_t we
  * @param params request parameters
  * @param p_webhook the webhook object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_modify_webhook_with_token(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[], struct discord_modify_webhook_with_token_params *params, struct discord_webhook *p_webhook);
 /** @struct discord_modify_webhook_with_token_params */
 /** @} DiscordModifyWebhookWithToken */
@@ -2169,7 +2169,7 @@ ORCAcode discord_modify_webhook_with_token(struct discord *client, const u64_sno
  * @param client the client created with discord_init()
  * @param webhook_id the webhook itself
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_delete_webhook(struct discord *client, const u64_snowflake_t webhook_id);
 /** @} DiscordDeleteWebhook */
 
@@ -2184,7 +2184,7 @@ ORCAcode discord_delete_webhook(struct discord *client, const u64_snowflake_t we
  * @param webhook_id the webhook itself
  * @param webhook_token the webhook token
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_delete_webhook_with_token(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[]);
 /** @} DiscordDeleteWebhookWithToken */
 
@@ -2200,7 +2200,7 @@ ORCAcode discord_delete_webhook_with_token(struct discord *client, const u64_sno
  * @param params request parameters
  * @param p_webhook the webhook object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_execute_webhook(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[], struct discord_execute_webhook_params *params, struct discord_webhook *p_webhook);
 /** @struct discord_execute_webhook_params */
 /** @} DiscordExecuteWebhook */
@@ -2218,7 +2218,7 @@ ORCAcode discord_execute_webhook(struct discord *client, const u64_snowflake_t w
  * @param message_id the message the webhook belongs to
  * @param p_message the message object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_get_webhook_message(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[], const u64_snowflake_t message_id, struct discord_message *p_message);
 /** @} DiscordGetWebhookMessage */
 
@@ -2236,7 +2236,7 @@ ORCAcode discord_get_webhook_message(struct discord *client, const u64_snowflake
  * @param params request parameters
  * @param p_message the message object if successful
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_edit_webhook_message(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[], const u64_snowflake_t message_id, struct discord_edit_webhook_message_params *params, struct discord_message *p_message);
 /** @struct discord_edit_webhook_message_params */
 /** @} DiscordEditWebhookMessage */
@@ -2253,7 +2253,7 @@ ORCAcode discord_edit_webhook_message(struct discord *client, const u64_snowflak
  * @param webhook_token the webhook token
  * @param message_id the message the webhook belongs to
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
- *  @{ */
+ */
 ORCAcode discord_delete_webhook_message(struct discord *client, const u64_snowflake_t webhook_id, const char webhook_token[], const u64_snowflake_t message_id);
 /** @} DiscordDeleteWebhookMessage */
 

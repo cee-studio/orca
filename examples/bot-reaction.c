@@ -6,40 +6,34 @@
 
 #include "discord.h"
 
-
-void on_ready(struct discord *client, const struct discord_user *bot) {
+void on_ready(struct discord* client, const struct discord_user* bot)
+{
   log_info("Reaction-Bot succesfully connected to Discord as %s#%s!",
-      bot->username, bot->discriminator);
+           bot->username, bot->discriminator);
 }
 
-void on_get_users(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
-{ 
+void on_get_users(struct discord* client, const struct discord_user* bot,
+                  const struct discord_message* msg)
+{
   if (msg->author->bot || !msg->referenced_message) return;
 
-  NTL_T(struct discord_user) users=NULL;
+  NTL_T(struct discord_user) users = NULL;
   ORCAcode code;
   code = discord_get_reactions(
-           client, 
-           msg->referenced_message->channel_id, 
-           msg->referenced_message->id, 
-           0, 
-           msg->content,
-           &(struct discord_get_reactions_params){ .limit = 25 },
-           &users);
+          client, msg->referenced_message->channel_id,
+          msg->referenced_message->id, 0, msg->content,
+          &(struct discord_get_reactions_params){ .limit = 25 }, &users);
 
   char text[DISCORD_MAX_MESSAGE_LEN];
   if (code != ORCA_OK || !users) {
     snprintf(text, sizeof(text), "Nobody reacted with '%s'!", msg->content);
   }
   else {
-    char *cur = text;
-    char *end = &text[sizeof(text)-1];
-    for (size_t i=0; users[i]; ++i) {
-      cur += snprintf(cur, end-cur, "%s (%"PRIu64")\n", \
-                users[i]->username, users[i]->id);
+    char* cur = text;
+    char* end = &text[sizeof(text) - 1];
+    for (size_t i = 0; users[i]; ++i) {
+      cur += snprintf(cur, end - cur, "%s (%" PRIu64 ")\n", users[i]->username,
+                      users[i]->id);
       if (cur >= end) break;
     }
     discord_user_list_free(users);
@@ -49,87 +43,61 @@ void on_get_users(
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void on_create(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
-{ 
-  if (msg->author->bot || !msg->referenced_message) return;
-
-  discord_create_reaction(
-      client, 
-      msg->referenced_message->channel_id, 
-      msg->referenced_message->id, 
-      0, 
-      msg->content);
-}
-
-void on_delete(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
-{ 
-  if (msg->author->bot || !msg->referenced_message) return;
-
-  discord_delete_all_reactions_for_emoji(
-      client, 
-      msg->referenced_message->channel_id, 
-      msg->referenced_message->id, 
-      0, 
-      msg->content);
-}
-
-void on_delete_all(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
-{ 
-  if (msg->author->bot || !msg->referenced_message) return;
-
-  discord_delete_all_reactions(
-      client, 
-      msg->referenced_message->channel_id, 
-      msg->referenced_message->id);
-}
-
-void on_delete_self(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
-{ 
-  if (msg->author->bot || !msg->referenced_message) return;
-
-  discord_delete_own_reaction(
-      client, 
-      msg->referenced_message->channel_id, 
-      msg->referenced_message->id,
-      0,
-      msg->content);
-}
-
-void on_delete_user(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
-{ 
-  if (msg->author->bot || !msg->referenced_message) return;
-
-  u64_snowflake_t user_id=0;
-  char emoji_name[256]="";
-  sscanf(msg->content, "%"SCNu64" %s", &user_id, emoji_name);
-
-  discord_delete_user_reaction(
-      client, 
-      msg->referenced_message->channel_id, 
-      msg->referenced_message->id,
-      user_id,
-      0,
-      emoji_name);
-}
-
-int main(int argc, char *argv[])
+void on_create(struct discord* client, const struct discord_user* bot,
+               const struct discord_message* msg)
 {
-  const char *config_file;
+  if (msg->author->bot || !msg->referenced_message) return;
+
+  discord_create_reaction(client, msg->referenced_message->channel_id,
+                          msg->referenced_message->id, 0, msg->content);
+}
+
+void on_delete(struct discord* client, const struct discord_user* bot,
+               const struct discord_message* msg)
+{
+  if (msg->author->bot || !msg->referenced_message) return;
+
+  discord_delete_all_reactions_for_emoji(client,
+                                         msg->referenced_message->channel_id,
+                                         msg->referenced_message->id, 0,
+                                         msg->content);
+}
+
+void on_delete_all(struct discord* client, const struct discord_user* bot,
+                   const struct discord_message* msg)
+{
+  if (msg->author->bot || !msg->referenced_message) return;
+
+  discord_delete_all_reactions(client, msg->referenced_message->channel_id,
+                               msg->referenced_message->id);
+}
+
+void on_delete_self(struct discord* client, const struct discord_user* bot,
+                    const struct discord_message* msg)
+{
+  if (msg->author->bot || !msg->referenced_message) return;
+
+  discord_delete_own_reaction(client, msg->referenced_message->channel_id,
+                              msg->referenced_message->id, 0, msg->content);
+}
+
+void on_delete_user(struct discord* client, const struct discord_user* bot,
+                    const struct discord_message* msg)
+{
+  if (msg->author->bot || !msg->referenced_message) return;
+
+  u64_snowflake_t user_id = 0;
+  char emoji_name[256] = "";
+  sscanf(msg->content, "%" SCNu64 " %s", &user_id, emoji_name);
+
+  discord_delete_user_reaction(client, msg->referenced_message->channel_id,
+                               msg->referenced_message->id, user_id, 0,
+                               emoji_name);
+}
+
+int main(int argc, char* argv[])
+{
+  const char* config_file;
   if (argc > 1)
     config_file = argv[1];
   else
@@ -137,7 +105,7 @@ int main(int argc, char *argv[])
 
   discord_global_init();
 
-  struct discord *client = discord_config_init(config_file);
+  struct discord* client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
   discord_set_on_ready(client, &on_ready);
@@ -167,5 +135,3 @@ int main(int argc, char *argv[])
 
   discord_global_cleanup();
 }
-
-

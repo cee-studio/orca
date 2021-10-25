@@ -1723,7 +1723,7 @@ ORCAcode discord_delete_guild(struct discord *client, const u64_snowflake_t guil
  * @brief @b GET /guilds/{guild.id}/channels
  *
  * Returns a list of guild channel objects. Does not include threads.
- * @see https://discord.com/developers/docs/resources/guild#get-guild-c
+ * @see https://discord.com/developers/docs/resources/guild#get-guild-channels
  * @param client the client created with discord_init()
  * @param guild_id the unique id of the guild to delete
  * @param p_channels the location to store the channels of the guild

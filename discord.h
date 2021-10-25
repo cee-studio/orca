@@ -1552,7 +1552,7 @@ ORCAcode discord_follow_news_channel(struct discord *client, const u64_snowflake
 ORCAcode discord_get_pinned_messages(struct discord *client, const u64_snowflake_t channel_id, NTL_T(struct discord_message) *p_messages);
 /** @} */
 
-/** @defgroup DiscordPinMessage
+/** 
  *  @{ */
 ORCAcode discord_pin_message(struct discord *client, const u64_snowflake_t channel_id, const u64_snowflake_t message_id);
 /** @} */
@@ -1723,7 +1723,7 @@ ORCAcode discord_delete_guild(struct discord *client, const u64_snowflake_t guil
  * @brief @b GET /guilds/{guild.id}/channels
  *
  * Returns a list of guild channel objects. Does not include threads.
- * @see https://discord.com/developers/docs/resources/guild#get-guild-channels
+ * @see https://discord.com/developers/docs/resources/guild#get-guild-c
  * @param client the client created with discord_init()
  * @param guild_id the unique id of the guild to delete
  * @param p_channels the location to store the channels of the guild
@@ -2260,5 +2260,19 @@ void discord_presence_add_activity(struct discord_presence_status *presence, str
 ORCAcode discord_get_guild_template(struct discord *client, char *code, struct discord_guild_template *p_template);
 /** @} */
 
+/** @defgroup DiscordCreateGuildTemplate
+ *  @{ */
+/**
+ * @brief @b POST /guilds/{guild.id}/templates
+ *
+ * Creates a template for the guild. Requires the MANAGE_GUILD permission. Returns the created guild template object on success.
+ * @param client the client created with discord_init()
+ * @param guild_id the channel to the permission deleted
+ * @param params the parameters to create the guild template
+ * @param p_template the location to store the created template at
+ * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
+ */
+ORCAcode discord_create_guild_template(struct discord *client, u64_snowflake_t guild_id, struct discord_create_guild_template_params* params, struct discord_guild_template* p_template);
+/** @} */
 
 #endif /* DISCORD_H */

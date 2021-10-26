@@ -1879,7 +1879,6 @@ ORCAcode discord_get_guild_invites(struct discord *client, const u64_snowflake_t
  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
 */
 ORCAcode discord_get_guild_vanity_url(struct discord *client, const u64_snowflake_t guild_id, struct discord_invite* p_invites);
-/** @struct discord_create_guild_vanity_url_params */
 /** @} */
 
 /** @defgroup DiscordGetGuildWelcomeScreen

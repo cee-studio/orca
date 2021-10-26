@@ -800,13 +800,13 @@ ORCAcode
 discord_get_guild_vanity_url(
   struct discord *client,
   const u64_snowflake_t guild_id,
-  struct discord_invite* p_invites)
+  struct discord_invite* p_invite)
 {
   if (!guild_id){
     log_error("Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_invites){
+  if (!p_invite){
     log_error("Missing 'p_invites'");
     return ORCA_MISSING_PARAMETER;
   }
@@ -815,7 +815,7 @@ discord_get_guild_vanity_url(
     &client->adapter,
     &(struct ua_resp_handle){
       .ok_cb = &discord_invite_from_json_v,
-      .ok_obj = p_invites
+      .ok_obj = &p_invite
     },
     NULL,
     HTTP_GET,

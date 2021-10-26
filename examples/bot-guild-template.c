@@ -39,6 +39,10 @@ void on_bot_get_guild_template(
     params.content = message_buffer;
 
     discord_create_message(client, message->channel_id, &params, &p_message);
+
+    if(response == ORCA_OK) {
+        discord_guild_template_cleanup(&template);
+    }
 }
 
 void on_bot_create_guild_template(
@@ -67,6 +71,10 @@ void on_bot_create_guild_template(
     message_params.content = message_buffer;
 
     discord_create_message(client, message->channel_id, &message_params, &p_message);
+
+    if(response == ORCA_OK) {
+        discord_guild_template_cleanup(&template);
+    }
 }
 
 int main(int argc, char *argv[])

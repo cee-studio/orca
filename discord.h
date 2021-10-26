@@ -1801,6 +1801,7 @@ ORCAcode discord_add_guild_member(struct discord *client, const u64_snowflake_t 
  * @{ */
 /**
  * @brief @b PATCH /guilds/{guild.id}/members/@me
+ * 
  * Modifies the current member in the guild. Used to modify nicknames.
  * @see https://discord.com/developers/docs/resources/guild#modify-current-member
  * @param client the client created with discord_init()
@@ -1816,7 +1817,7 @@ ORCAcode discord_modify_current_member(struct discord *client, const u64_snowfla
  *  @{ */
 /**
  * @brief @b PATCH /guilds/{guild.id}/members/@me/nick
- * Deprecated by the discord api. Use discord_modify_current_member instead
+ * @attention Deprecated by the discord api. Use discord_modify_current_member() instead
  * @see https://discord.com/developers/docs/resources/guild#modify-current-user-nick
  * @param client the client created with discord_init()
  * @param guild_id the unique id of the guild where the member exists

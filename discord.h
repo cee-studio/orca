@@ -1552,7 +1552,7 @@ ORCAcode discord_follow_news_channel(struct discord *client, const u64_snowflake
 ORCAcode discord_get_pinned_messages(struct discord *client, const u64_snowflake_t channel_id, NTL_T(struct discord_message) *p_messages);
 /** @} */
 
-/** 
+/** @defgroup DiscordPinMessage
  *  @{ */
 ORCAcode discord_pin_message(struct discord *client, const u64_snowflake_t channel_id, const u64_snowflake_t message_id);
 /** @} */
@@ -2251,7 +2251,6 @@ void discord_presence_add_activity(struct discord_presence_status *presence, str
 /** 
  * @brief @b GET /guilds/templates/{template.code}
  *
- * @see https://discord.com/developers/docs/resources/guild-template#get-guild-template
  * @param client the client created with discord_init()
  * @param code the code of the guild template
  * @param p_template the location to store the template

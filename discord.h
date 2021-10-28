@@ -1852,6 +1852,7 @@ ORCAcode discord_add_guild_member(struct discord *client, const u64_snowflake_t 
  * @param guild_id the unique id of the guild where the member exists
  * @param params the parameters sent to discord. For example the new nickname for the bot
  * @param p_member location where the updated member object is stored if successful
+ * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
  */
 ORCAcode discord_modify_current_member(struct discord *client, const u64_snowflake_t guild_id, struct discord_modify_current_member_params *params, struct discord_guild_member *p_member);
 /** @struct discord_modify_current_member_params */
@@ -1867,6 +1868,7 @@ ORCAcode discord_modify_current_member(struct discord *client, const u64_snowfla
  * @param guild_id the unique id of the guild where the member exists
  * @param params the new nickname for the bot
  * @param p_member location where the updated member object is stored if successful
+ * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
  */
 ORCAcode discord_modify_current_user_nick(struct discord *client, const u64_snowflake_t guild_id, struct discord_modify_current_user_nick_params *params, struct discord_guild_member *p_member);
 /** @struct discord_modify_current_user_nick_params */
@@ -1883,6 +1885,7 @@ ORCAcode discord_modify_current_user_nick(struct discord *client, const u64_snow
   * @param guild_id the unique id of the guild where the member exists
   * @param user_id the unique id of the user
   * @param role_id the unique id of the role to be added
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_add_guild_member_role(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id, const u64_snowflake_t role_id);
 /** @} */
@@ -1898,6 +1901,7 @@ ORCAcode discord_add_guild_member_role(struct discord *client, const u64_snowfla
   * @param guild_id the unique id of the guild where the member exists
   * @param user_id the unique id of the user
   * @param role_id the unique id of the role to be removed
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_remove_guild_member_role(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id, const u64_snowflake_t role_id);
 /** @} */
@@ -1912,6 +1916,7 @@ ORCAcode discord_remove_guild_member_role(struct discord *client, const u64_snow
   * @param client the client created with discord_init()
   * @param guild_id the guild to remove the member from
   * @param user_id the user to be removed
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_remove_guild_member(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id);
 /** @} */
@@ -1926,6 +1931,7 @@ ORCAcode discord_remove_guild_member(struct discord *client, const u64_snowflake
   * @param client the client created with discord_init()
   * @param guild_id the guild to get the list from
   * @param p_bans the list of bans
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_get_guild_bans(struct discord *client, const u64_snowflake_t guild_id, NTL_T(struct discord_ban) *p_bans);
 /** @} */
@@ -1941,6 +1947,7 @@ ORCAcode discord_get_guild_bans(struct discord *client, const u64_snowflake_t gu
   * @param guild_id the guild to return the ban from
   * @param user_id the user that is banned
   * @param p_ban the ban object
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_get_guild_ban(struct discord *client, const u64_snowflake_t guild_id, const u64_snowflake_t user_id, struct discord_ban *p_ban);
 /** @} */

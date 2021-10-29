@@ -2064,6 +2064,7 @@ ORCAcode discord_create_group_dm(struct discord *client, struct discord_create_g
   * @see https://discord.com/developers/docs/resources/user#get-user-connections
   * @param client the client created with discord_init()
   * @param p_connections the connections object
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_get_user_connections(struct discord *client, NTL_T(struct discord_connection) *p_connections);
 /** @} */
@@ -2071,12 +2072,13 @@ ORCAcode discord_get_user_connections(struct discord *client, NTL_T(struct disco
 /** @defgroup DiscordListVoiceRegions
  *  @{ */
 /** 
-  *@brief @b GET/voice/regions
+  * @brief @b GET /voice/regions
   *
   * Returns an array of voice region objects that can be used when setting a voice or stage channel's rtc_region.
   * @see https://discord.com/developers/docs/resources/voice#list-voice-regions
   * @param client the client created with discord_init()
   * @param p_voice_regions the object with voice regions
+  * @return ORCAcode for how the transfer went, ORCA_OK means a successful request
   */
 ORCAcode discord_list_voice_regions(struct discord *client, NTL_T(struct discord_voice_region) *p_voice_regions);
 /** @} */

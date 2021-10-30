@@ -275,12 +275,13 @@
       ]
     },
     {
-      "title":"Attachment Strcture",
+      "title":"Attachment Structure",
       "comment":"https://discord.com/developers/docs/resources/channel#attachment-object",
       "struct":"attachment",
       "fields":
       [
-        { "name": "file", "type":{ "base":"struct discord_file", "dec":"*" }, "loc":"multipart", "comment":"the file and its contents", "inject_if_not":null },
+        { "name": "contents", "type":{ "base":"char", "dec":"*" }, "loc":"multipart", "comment":"the file contents", "inject_if_not":null },
+
         { "name": "id", "type":{ "base":"char", "dec":"*", "converter":"snowflake" }, "inject_if_not":0, "comment":"attachment id"},
         { "name": "filename", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null, "comment":"name of file attached"},
         { "name": "description", "type":{ "base":"char", "dec":"*" }, "inject_if_not":null, "comment":"description for the file"},

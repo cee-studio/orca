@@ -821,7 +821,6 @@ discord_begin_guild_prune(
   else
     ret = sprintf(payload, "{}");
 
-
   return discord_adapter_run(
            &client->adapter,
            NULL,

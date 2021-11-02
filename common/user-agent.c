@@ -618,7 +618,7 @@ send_request(struct user_agent *ua, struct _ua_conn *conn, int *httpcode)
     resp_url, 
     (struct sized_buffer){conn->info.header.buf, conn->info.header.len},
     (struct sized_buffer){conn->info.body.buf, conn->info.body.len},
-    "HTTP_RCV_%s(%d)", http_code_print(*httpcode), httpcode);
+    "HTTP_RCV_%s(%d)", http_code_print(*httpcode), *httpcode);
   pthread_mutex_unlock(&ua->shared->lock);
 
   return ecode;

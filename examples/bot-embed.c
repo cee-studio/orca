@@ -8,16 +8,14 @@
 
 #define JSON_FILE "bot-embed.json"
 
-
-void on_ready(struct discord *client, const struct discord_user *bot) {
+void on_ready(struct discord *client, const struct discord_user *bot)
+{
   log_info("Embed-Bot succesfully connected to Discord as %s#%s!",
-      bot->username, bot->discriminator);
+           bot->username, bot->discriminator);
 }
 
-void on_from_json_init(
-  struct discord *client,
-  const struct discord_user *bot,
-  const struct discord_message *msg)
+void on_from_json_init(struct discord *client, const struct discord_user *bot,
+                       const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -26,14 +24,12 @@ void on_from_json_init(
   char *json_str = cee_load_whole_file(JSON_FILE, &json_len);
 
   /* load a embed from the json string */
-  struct discord_embed *embed=NULL;
+  struct discord_embed *embed = NULL;
   discord_embed_from_json(json_str, json_len, &embed);
   embed->timestamp = cee_timestamp_ms(); // get current timestamp
 
-  struct discord_create_message_params params = {
-    .content = "This is an embed",
-    .embed = embed
-  };
+  struct discord_create_message_params params = { .content = "This is an embed",
+                                                  .embed = embed };
   discord_create_message(client, msg->channel_id, &params, NULL);
 
   free(json_str);
@@ -42,10 +38,8 @@ void on_from_json_init(
   free(embed);
 }
 
-void on_designated_init(
-  struct discord *client, 
-  const struct discord_user *bot, 
-  const struct discord_message *msg)
+void on_designated_init(struct discord *client, const struct discord_user *bot,
+                        const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -54,39 +48,39 @@ void on_designated_init(
     .description = "Multi-REST Api library",
     .url = "https://github.com/cee-studio/orca",
     .color = 3447003,
-    .footer = &(struct discord_embed_footer){
-      .text = "github.com/cee-studio/orca",
-      .icon_url = "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/source/images/icon.svg"
-    },
-    .image = &(struct discord_embed_image){
-      .url = "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/social-preview.png?raw=true"
-    },
-    .author = &(struct discord_embed_author){
-      .name = "cee-studio",
-      .url = "https://github.com/cee-studio",
-      .icon_url = "https://cee.dev/static/images/cee.png"
-    },
-    .fields = (struct discord_embed_field*[]) {
-      &(struct discord_embed_field){
-        .name = "Want to learn more?",
-        .value = "Read our [documentation](https://cee-studio.github.io/orca/apis/discord.html#c.discord_embed)!"
-      },
-      &(struct discord_embed_field){
-        .name = "Looking for support?",
-        .value = "Join our server [here](https://discord.gg/x4hhGQYu)!"
-      },
-      (void*){ NULL } // END OF ARRAY
-    }
+    .footer =
+            &(struct discord_embed_footer){
+                    .text = "github.com/cee-studio/orca",
+                    .icon_url =
+                            "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/source/images/icon.svg" },
+    .image =
+            &(struct discord_embed_image){
+                    .url = "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/social-preview.png?raw=true" },
+    .author =
+            &(struct discord_embed_author){
+                    .name = "cee-studio",
+                    .url = "https://github.com/cee-studio",
+                    .icon_url = "https://cee.dev/static/images/cee.png" },
+    .fields =
+            (struct discord_embed_field *[]){
+                    &(struct discord_embed_field){
+                            .name = "Want to learn more?",
+                            .value =
+                                    "Read our [documentation](https://cee-studio.github.io/orca/apis/discord.html#c.discord_embed)!" },
+                    &(struct discord_embed_field){
+                            .name = "Looking for support?",
+                            .value =
+                                    "Join our server [here](https://discord.gg/x4hhGQYu)!" },
+                    (void *){ NULL } // END OF ARRAY
+            }
   };
 
   struct discord_create_message_params params = { .embed = &embed };
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void on_builder_init(
-  struct discord *client, 
-  const struct discord_user *bot, 
-  const struct discord_message *msg)
+void on_builder_init(struct discord *client, const struct discord_user *bot,
+                     const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -97,31 +91,23 @@ void on_builder_init(
   discord_embed_set_url(&embed, "https://github.com/cee-studio/orca");
 
   discord_embed_set_footer(
-    &embed, 
-    "github.com/cee-studio/orca",
-    "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/source/images/icon.svg",
-    NULL);
+          &embed, "github.com/cee-studio/orca",
+          "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/source/images/icon.svg",
+          NULL);
   discord_embed_set_image(
-    &embed, 
-    "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/social-preview.png?raw=true",
-    NULL, 
-    0, 0);
-  discord_embed_set_author(
-    &embed, 
-    "cee-studio",
-    "https://github.com/cee-studio",
-    "https://cee.dev/static/images/cee.png",
-    NULL);
+          &embed,
+          "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/social-preview.png?raw=true",
+          NULL, 0, 0);
+  discord_embed_set_author(&embed, "cee-studio",
+                           "https://github.com/cee-studio",
+                           "https://cee.dev/static/images/cee.png", NULL);
   discord_embed_add_field(
-    &embed,
-    "Want to learn more?",
-    "Read our [documentation](https://cee-studio.github.io/orca/apis/discord.html#c.discord_embed)!",
-    false);
+          &embed, "Want to learn more?",
+          "Read our [documentation](https://cee-studio.github.io/orca/apis/discord.html#c.discord_embed)!",
+          false);
   discord_embed_add_field(
-    &embed,
-    "Looking for support?",
-    "Join our server [here](https://discord.gg/x4hhGQYu)!",
-    false);
+          &embed, "Looking for support?",
+          "Join our server [here](https://discord.gg/x4hhGQYu)!", false);
 
   struct discord_create_message_params params = { .embed = &embed };
   discord_create_message(client, msg->channel_id, &params, NULL);
@@ -163,4 +149,3 @@ int main(int argc, char *argv[])
   discord_cleanup(client);
   discord_global_cleanup();
 }
-

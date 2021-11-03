@@ -11,8 +11,7 @@
 #include "github.h"
 #include "github-internal.h"
 
-ORCAcode
-github_create_fork(struct github *client, char *owner, char *repo)
+ORCAcode github_create_fork(struct github *client, char *owner, char *repo)
 {
   log_info("===create-fork===");
 
@@ -25,15 +24,8 @@ github_create_fork(struct github *client, char *owner, char *repo)
     return ORCA_MISSING_PARAMETER;
   }
 
-  return github_adapter_run(
-          &client->adapter,
-          &(struct ua_resp_handle){
-            .ok_cb = NULL,
-            .ok_obj = NULL
-          },
-          NULL,
-          HTTP_POST,
-          "/repos/%s/%s/forks",
-          owner,
-          repo);
+  return github_adapter_run(&client->adapter,
+                            &(struct ua_resp_handle){ .ok_cb = NULL,
+                                                      .ok_obj = NULL },
+                            NULL, HTTP_POST, "/repos/%s/%s/forks", owner, repo);
 }

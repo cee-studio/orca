@@ -7,21 +7,19 @@
 #include "scheduler.h"
 #include "cee-utils.h"
 
-
 struct task_s {
   bool keepalive;
 
   uint64_t timeout_ms;
   uint64_t repeat_ms;
   void *data;
-  void (*callback)(void *data);  
+  void (*callback)(void *data);
 
   pthread_t tid;
   pthread_mutex_t lock;
 };
 
-struct task_s*
-task_init()
+struct task_s *task_init()
 {
   struct task_s *new_task = calloc(1, sizeof *new_task);
   if (pthread_mutex_init(&new_task->lock, NULL))
@@ -29,16 +27,14 @@ task_init()
   return new_task;
 }
 
-void
-task_cleanup(struct task_s *task) 
+void task_cleanup(struct task_s *task)
 {
   task_stop(task);
   pthread_mutex_destroy(&task->lock);
   free(task);
 }
 
-static bool
-is_alive(struct task_s *task)
+static bool is_alive(struct task_s *task)
 {
   pthread_mutex_lock(&task->lock);
   bool alive = task->keepalive;
@@ -46,8 +42,7 @@ is_alive(struct task_s *task)
   return alive;
 }
 
-static void*
-event_run(void *p_task)
+static void *event_run(void *p_task)
 {
   struct task_s *task = p_task;
 
@@ -60,13 +55,8 @@ event_run(void *p_task)
   pthread_exit(NULL);
 }
 
-void
-task_start(
-  struct task_s *task,
-  uint64_t timeout_ms, 
-  uint64_t repeat_ms, 
-  void *data,
-  void (*callback)(void *data))
+void task_start(struct task_s *task, uint64_t timeout_ms, uint64_t repeat_ms,
+                void *data, void (*callback)(void *data))
 {
   if (!callback) return;
 
@@ -89,8 +79,7 @@ task_start(
   pthread_mutex_unlock(&task->lock);
 }
 
-void
-task_stop(struct task_s *task)
+void task_stop(struct task_s *task)
 {
   pthread_mutex_lock(&task->lock);
   task->keepalive = false;

@@ -29,9 +29,7 @@ int main(int argc, char **argv)
   char *s;
 
   char *config_file = NULL;
-  struct emit_option eo = {
-    .type = FILE_SINGLE_FILE
-  };
+  struct emit_option eo = { .type = FILE_SINGLE_FILE };
 
   char *open_mode = "w";
   NTL_T(name_t) incl_headers = NULL;
@@ -40,49 +38,49 @@ int main(int argc, char **argv)
   while (-1 != (opt = getopt(argc, argv, "ahcdfSEFOo:i:"))) {
     switch (opt) {
     case 'a':
-        open_mode = "a";
-        break;
+      open_mode = "a";
+      break;
     case 'o':
-        config_file = strdup(optarg);
-        break;
+      config_file = strdup(optarg);
+      break;
     case 'i': {
-        name_t header="";
-        snprintf(header, sizeof(name_t), "%s", optarg);
-        ntl_append2((ntl_t*)&incl_headers, sizeof(name_t), &header);
-        break; }
+      name_t header = "";
+      snprintf(header, sizeof(name_t), "%s", optarg);
+      ntl_append2((ntl_t *)&incl_headers, sizeof(name_t), &header);
+      break;
+    }
     case 'h':
-        eo.type = FILE_HEADER;
-        break;
+      eo.type = FILE_HEADER;
+      break;
     case 'c':
-        eo.type = FILE_CODE;
-        break;
+      eo.type = FILE_CODE;
+      break;
     case 'd':
-        eo.type = FILE_DECLARATION;
-        break;
+      eo.type = FILE_DECLARATION;
+      break;
     case 'f':
-        eo.type = FILE_DEFINITION;
-        break;
+      eo.type = FILE_DEFINITION;
+      break;
     case 'S':
-        eo.type = FILE_STRUCT_DECLARATION;
-        break;
+      eo.type = FILE_STRUCT_DECLARATION;
+      break;
     case 'E':
-        eo.type = FILE_ENUM_DECLARATION;
-        break;
+      eo.type = FILE_ENUM_DECLARATION;
+      break;
     case 'F':
-        eo.type = FILE_FUN_DECLARATION;
-        break;
+      eo.type = FILE_FUN_DECLARATION;
+      break;
     case 'O':
-        eo.type = FILE_OPAQUE_STRUCT_DECLARATION;
-        break;
+      eo.type = FILE_OPAQUE_STRUCT_DECLARATION;
+      break;
     default: /* '?' */
-        print_usage(argv[0]);
+      print_usage(argv[0]);
     }
   }
 
-  if (!config_file)
-    print_usage(argv[0]);
-  
-  char *file =  argv[optind];
+  if (!config_file) print_usage(argv[0]);
+
+  char *file = argv[optind];
   s = cee_load_whole_file(file, &len);
   spec_name = file;
   spec_buffer.start = s;

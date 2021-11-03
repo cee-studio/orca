@@ -7,27 +7,26 @@
 #include "discord.h"
 #include "discord-voice-connections.h"
 
-
-void on_ready(struct discord *client, const struct discord_user *bot) {
+void on_ready(struct discord *client, const struct discord_user *bot)
+{
   log_info("Voice-Bot succesfully connected to Discord as %s#%s!",
-      bot->username, bot->discriminator);
+           bot->username, bot->discriminator);
 }
 
-void on_list_voice_regions(
-    struct discord *client,
-    const struct discord_user *bot,
-    const struct discord_message *msg)
+void on_list_voice_regions(struct discord *client,
+                           const struct discord_user *bot,
+                           const struct discord_message *msg)
 {
   if (msg->author->bot) return;
-  NTL_T(struct discord_voice_region) voice_regions=NULL;
+  NTL_T(struct discord_voice_region) voice_regions = NULL;
   discord_list_voice_regions(client, &voice_regions);
   if (!voice_regions) {
     log_error("Could not obtain voice regions");
     return;
   }
 
-  struct discord_create_message_params params={};
-  for (size_t i=0; voice_regions[i]; ++i) {
+  struct discord_create_message_params params = {};
+  for (size_t i = 0; voice_regions[i]; ++i) {
     params.content = voice_regions[i]->name;
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
@@ -35,40 +34,39 @@ void on_list_voice_regions(
   discord_voice_region_list_free(voice_regions);
 }
 
-void on_voice_join(
-  struct discord *client,
-  const struct discord_user *bot,
-  const struct discord_message *msg)
+void on_voice_join(struct discord *client, const struct discord_user *bot,
+                   const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
-  int position=-1;
+  int position = -1;
   sscanf(msg->content, "%d", &position);
 
   struct discord_channel vchannel;
   discord_channel_init(&vchannel);
 
-  discord_get_channel_at_pos(client, msg->guild_id, DISCORD_CHANNEL_GUILD_VOICE, position-1, &vchannel);
+  discord_get_channel_at_pos(client, msg->guild_id, DISCORD_CHANNEL_GUILD_VOICE,
+                             position - 1, &vchannel);
 
   if (vchannel.id != 0) { // founds voice channel at pos
     discord_voice_join(client, msg->guild_id, vchannel.id, false, false);
   }
   else { // couldn't find a voice channel at pos
-    struct discord_create_message_params params = { .content = "Invalid channel position" };
+    struct discord_create_message_params params = {
+      .content = "Invalid channel position"
+    };
     discord_create_message(client, msg->channel_id, &params, NULL);
   }
   discord_channel_cleanup(&vchannel);
 }
 
-void on_voice_kick(
-  struct discord *client,
-  const struct discord_user *bot,
-  const struct discord_message *msg)
+void on_voice_kick(struct discord *client, const struct discord_user *bot,
+                   const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
-  u64_snowflake_t user_id=0;
-  sscanf(msg->content, "%"SCNu64, &user_id);
+  u64_snowflake_t user_id = 0;
+  sscanf(msg->content, "%" SCNu64, &user_id);
 
   char text[DISCORD_MAX_MESSAGE_LEN];
   if (!user_id) {
@@ -76,19 +74,20 @@ void on_voice_kick(
   }
   else {
     discord_disconnect_guild_member(client, msg->guild_id, user_id, NULL);
-    snprintf(text, sizeof(text), "<@!%"PRIu64"> has been kicked from VC", user_id);
+    snprintf(text, sizeof(text), "<@!%" PRIu64 "> has been kicked from VC",
+             user_id);
   }
 
   struct discord_create_message_params params = { .content = text };
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void log_on_voice_state_update(
-  struct discord *client,
-  const struct discord_user *bot,
-  const struct discord_voice_state *vs)
+void log_on_voice_state_update(struct discord *client,
+                               const struct discord_user *bot,
+                               const struct discord_voice_state *vs)
 {
-  log_info("User <@!%"PRIu64"> has joined <#%"PRIu64">!", vs->user_id, vs->channel_id);
+  log_info("User <@!%" PRIu64 "> has joined <#%" PRIu64 ">!", vs->user_id,
+           vs->channel_id);
 }
 
 int main(int argc, char *argv[])
@@ -117,11 +116,9 @@ int main(int argc, char *argv[])
          "\nTYPE ANY KEY TO START BOT\n");
   fgetc(stdin); // wait for input
 
-
   discord_run(client);
 
   discord_cleanup(client);
 
   discord_global_cleanup();
 }
-

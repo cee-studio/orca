@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "types.h"
 
-const char*
+const char *
 orca_strerror(ORCAcode code)
 {
   switch (code) {

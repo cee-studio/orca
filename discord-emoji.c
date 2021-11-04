@@ -6,12 +6,10 @@
 #include "discord-internal.h"
 #include "cee-utils.h"
 
-
 ORCAcode
-discord_list_guild_emojis(
-  struct discord *client, 
-  const u64_snowflake_t guild_id, 
-  NTL_T(struct discord_emoji) *p_emojis)
+discord_list_guild_emojis(struct discord *client,
+                          const u64_snowflake_t guild_id,
+                          NTL_T(struct discord_emoji) * p_emojis)
 {
   if (!guild_id) {
     log_error("Missing 'guild_id'");
@@ -22,23 +20,20 @@ discord_list_guild_emojis(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run( 
-           &client->adapter,
-           &(struct ua_resp_handle){ 
-             .ok_cb = &discord_emoji_list_from_json_v, 
-             .ok_obj = p_emojis
-           },
-           NULL,
-           HTTP_GET,
-           "/guilds/%"PRIu64"/emojis", guild_id);
+  return discord_adapter_run(
+    &client->adapter,
+    &(struct ua_resp_handle){ .ok_cb = &discord_emoji_list_from_json_v,
+                              .ok_obj = p_emojis },
+    NULL,
+    HTTP_GET,
+    "/guilds/%" PRIu64 "/emojis",
+    guild_id);
 }
 
 ORCAcode
-discord_get_guild_emoji(
-  struct discord *client, 
-  const u64_snowflake_t guild_id,
-  const u64_snowflake_t emoji_id,
-  struct discord_emoji *p_emoji)
+discord_get_guild_emoji(struct discord *client, const u64_snowflake_t guild_id,
+                        const u64_snowflake_t emoji_id,
+                        struct discord_emoji *p_emoji)
 {
   if (!guild_id) {
     log_error("Missing 'guild_id'");
@@ -53,23 +48,22 @@ discord_get_guild_emoji(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run( 
-           &client->adapter,
-           &(struct ua_resp_handle){ 
-             .ok_cb = &discord_emoji_from_json_v, 
-             .ok_obj = &p_emoji
-           },
-           NULL,
-           HTTP_GET,
-           "/guilds/%"PRIu64"/emojis/%"PRIu64, guild_id, emoji_id);
+  return discord_adapter_run(
+    &client->adapter,
+    &(struct ua_resp_handle){ .ok_cb = &discord_emoji_from_json_v,
+                              .ok_obj = &p_emoji },
+    NULL,
+    HTTP_GET,
+    "/guilds/%" PRIu64 "/emojis/%" PRIu64,
+    guild_id,
+    emoji_id);
 }
 
 ORCAcode
-discord_create_guild_emoji(
-  struct discord *client,
-  const u64_snowflake_t guild_id,
-  struct discord_create_guild_emoji_params *params,
-  struct discord_emoji *p_emoji)
+discord_create_guild_emoji(struct discord *client,
+                           const u64_snowflake_t guild_id,
+                           struct discord_create_guild_emoji_params *params,
+                           struct discord_emoji *p_emoji)
 {
   if (!guild_id) {
     log_error("Missing 'guild_id'");
@@ -80,12 +74,13 @@ discord_create_guild_emoji(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char *payload=NULL;
-  size_t ret = json_ainject(&payload, 
-                  "(name):s,(image):s,(roles):F",
-                  params->name, 
-                  params->image, 
-                  &ja_u64_list_to_json, params->roles);
+  char *payload = NULL;
+  size_t ret = json_ainject(&payload,
+                            "(name):s,(image):s,(roles):F",
+                            params->name,
+                            params->image,
+                            &ja_u64_list_to_json,
+                            params->roles);
 
   if (!payload) {
     log_error("Couldn't create JSON Payload");
@@ -93,15 +88,15 @@ discord_create_guild_emoji(
   }
 
   ORCAcode code;
-  code = discord_adapter_run(
-           &client->adapter,
-           &(struct ua_resp_handle){
-             .ok_cb = p_emoji ? &discord_emoji_from_json_v : NULL,
-             .ok_obj = &p_emoji
-           },
-           &(struct sized_buffer){ payload, ret },
-           HTTP_POST,
-           "/guilds/%"PRIu64"/emojis", guild_id);
+  code =
+    discord_adapter_run(&client->adapter,
+                        &(struct ua_resp_handle){
+                          .ok_cb = p_emoji ? &discord_emoji_from_json_v : NULL,
+                          .ok_obj = &p_emoji },
+                        &(struct sized_buffer){ payload, ret },
+                        HTTP_POST,
+                        "/guilds/%" PRIu64 "/emojis",
+                        guild_id);
 
   free(payload);
 
@@ -109,12 +104,11 @@ discord_create_guild_emoji(
 }
 
 ORCAcode
-discord_modify_guild_emoji(
-  struct discord *client,
-  const u64_snowflake_t guild_id,
-  const u64_snowflake_t emoji_id,
-  struct discord_modify_guild_emoji_params *params,
-  struct discord_emoji *p_emoji)
+discord_modify_guild_emoji(struct discord *client,
+                           const u64_snowflake_t guild_id,
+                           const u64_snowflake_t emoji_id,
+                           struct discord_modify_guild_emoji_params *params,
+                           struct discord_emoji *p_emoji)
 {
   if (!guild_id) {
     log_error("Missing 'guild_id'");
@@ -129,20 +123,22 @@ discord_modify_guild_emoji(
     return ORCA_MISSING_PARAMETER;
   }
 
-  void *A[2]={}; /* pointer availability array */
+  void *A[2] = {}; /* pointer availability array */
   if (params->name)
     A[0] = params->name;
   if (params->roles)
     A[1] = params->roles;
 
-  char *payload=NULL;
-  size_t ret = json_ainject(&payload, 
-                "(name):s"
-                "(roles):F"
-                "@arg_switches",
-                params->name,
-                &ja_u64_list_to_json, params->roles,
-                A, sizeof(A));
+  char *payload = NULL;
+  size_t ret = json_ainject(&payload,
+                            "(name):s"
+                            "(roles):F"
+                            "@arg_switches",
+                            params->name,
+                            &ja_u64_list_to_json,
+                            params->roles,
+                            A,
+                            sizeof(A));
 
   if (!payload) {
     log_error("Couldn't create JSON Payload");
@@ -150,15 +146,16 @@ discord_modify_guild_emoji(
   }
 
   ORCAcode code;
-  code = discord_adapter_run(
-           &client->adapter,
-           &(struct ua_resp_handle){
-             .ok_cb = p_emoji ? &discord_emoji_from_json_v : NULL,
-             .ok_obj = &p_emoji
-           },
-           &(struct sized_buffer){ payload, ret },
-           HTTP_PATCH,
-           "/guilds/%"PRIu64"/emojis/%"PRIu64, guild_id, emoji_id);
+  code =
+    discord_adapter_run(&client->adapter,
+                        &(struct ua_resp_handle){
+                          .ok_cb = p_emoji ? &discord_emoji_from_json_v : NULL,
+                          .ok_obj = &p_emoji },
+                        &(struct sized_buffer){ payload, ret },
+                        HTTP_PATCH,
+                        "/guilds/%" PRIu64 "/emojis/%" PRIu64,
+                        guild_id,
+                        emoji_id);
 
   free(payload);
 
@@ -166,10 +163,9 @@ discord_modify_guild_emoji(
 }
 
 ORCAcode
-discord_delete_guild_emoji(
-  struct discord *client,
-  const u64_snowflake_t guild_id,
-  const u64_snowflake_t emoji_id)
+discord_delete_guild_emoji(struct discord *client,
+                           const u64_snowflake_t guild_id,
+                           const u64_snowflake_t emoji_id)
 {
   if (!guild_id) {
     log_error("Missing 'guild_id'");
@@ -180,10 +176,11 @@ discord_delete_guild_emoji(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-           &client->adapter,
-           NULL,
-           NULL,
-           HTTP_DELETE,
-           "/guilds/%"PRIu64"/emojis/%"PRIu64, guild_id, emoji_id);
+  return discord_adapter_run(&client->adapter,
+                             NULL,
+                             NULL,
+                             HTTP_DELETE,
+                             "/guilds/%" PRIu64 "/emojis/%" PRIu64,
+                             guild_id,
+                             emoji_id);
 }

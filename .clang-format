@@ -2,7 +2,7 @@
 Language:        Cpp
 # BasedOnStyle:  Mozilla
 AccessModifierOffset: -2
-AlignAfterOpenBracket: AlwaysBreak
+AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignEscapedNewlinesLeft: false
@@ -14,15 +14,15 @@ AllowShortCaseLabelsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: TopLevel
+# AlwaysBreakAfterDefinitionReturnType: TopLevel
 AlwaysBreakAfterReturnType: TopLevelDefinitions
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
-BinPackArguments: false
+BinPackArguments: true
 BinPackParameters: false
 BraceWrapping:
   AfterClass:      true
-  AfterControlStatement: false
+  AfterControlStatement: MultiLine
   AfterEnum:       false
   AfterFunction:   true
   AfterNamespace:  false

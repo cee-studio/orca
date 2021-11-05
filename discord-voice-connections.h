@@ -66,11 +66,16 @@ typedef void (*discord_voice_codec_cb)(
     const char video_codec[]);
 
 
-struct discord_voice_cbs { /* CALLBACKS STRUCTURE */
-  discord_voice_idle_cb  on_idle; /**< triggers on every event loop iteration */
-  discord_voice_speaking_cb on_speaking; /**< triggers when a user start speaking */
-  discord_voice_client_disconnect_cb on_client_disconnect; /**< triggers when a user has disconnected from the voice channel */
-  discord_voice_codec_cb on_codec; /**< triggers when a codec is received */
+/* CALLBACKS STRUCTURE */
+struct discord_voice_cbs {
+  /** triggers on every event loop iteration */
+  discord_voice_idle_cb  on_idle;
+  /** triggers when a user start speaking */
+  discord_voice_speaking_cb on_speaking;
+  /** triggers when a user has disconnected from the voice channel */
+  discord_voice_client_disconnect_cb on_client_disconnect;
+  /** triggers when a codec is received */
+  discord_voice_codec_cb on_codec;
 
   void (*on_ready)(struct discord_voice *vc);
   void (*on_session_descriptor)(struct discord_voice *vc);
@@ -86,47 +91,72 @@ struct discord_voice_cbs { /* CALLBACKS STRUCTURE */
  * @see discord_voice_get_vc()
  */
 struct discord_voice {
-  struct logconf conf; /**< DISCORD_VOICE logging module */
-  u64_snowflake_t guild_id; /**< the session guild id @note obtained from discord_voice_join() */
-  u64_snowflake_t channel_id; /**< the session channel id @note obtained from discord_voice_join() */
+  /** DISCORD_VOICE logging module */
+  struct logconf conf;
+  /** the session guild id @note obtained from discord_voice_join() */
+  u64_snowflake_t guild_id;
+  /** the session channel id @note obtained from discord_voice_join() */
+  u64_snowflake_t channel_id;
   /** @note obtained from on_voice_server_update() */
-  char token[128]; /**< the session token @note obtained from on_voice_server_update() */
-  char new_token[128]; /**< the new session token after a voice region change @note obtained from on_voice_server_update() */
-  char new_url[512]; /**< the new url after a voice region change @note obtained from on_voice_server_update() */
+  /** the session token @note obtained from on_voice_server_update() */
+  char token[128];
+  /** the new session token after a voice region change @note obtained from on_voice_server_update() */
+  char new_token[128];
+  /** the new url after a voice region change @note obtained from on_voice_server_update() */
+  char new_url[512];
 
   /** @note obtained from on_voice_state_update() */
-  char session_id[128]; /**< the session id @note obtained from on_voice_state_update() */
-  u64_snowflake_t bot_id; /**< the bot user id @note obtained from on_voice_state_update() */
-  struct websockets *ws; /**< the websockets handle that binds to Discord Voice Connections */
+  /** the session id @note obtained from on_voice_state_update() */
+  char session_id[128];
+  /** the bot user id @note obtained from on_voice_state_update() */
+  u64_snowflake_t bot_id;
+  /** the websockets handle that binds to Discord Voice Connections */
+  struct websockets *ws;
   /** @brief handle reconnect logic */
-  struct { /* RECONNECT STRUCTURE */
-    bool enable; /**< will attempt reconnecting if true */
-    unsigned char attempt; /**< current reconnect attempt (resets to 0 when succesful) */
-    unsigned char threshold; /**< max amount of reconnects before giving up */
+  /* RECONNECT STRUCTURE */
+  struct {
+    /** will attempt reconnecting if true */
+    bool enable;
+    /** current reconnect attempt (resets to 0 when succesful) */
+    unsigned char attempt;
+    /** max amount of reconnects before giving up */
+    unsigned char threshold;
   } reconnect;
-  bool is_resumable; /**< will attempt to resume session if connection shutsdown */
+  /** will attempt to resume session if connection shutsdown */
+  bool is_resumable;
 
-  bool is_redirect; /**< redirect to a different voice server */
-  bool is_ready; /**< can start sending/receiving additional events to discord */
+  /** redirect to a different voice server */
+  bool is_redirect;
+  /** can start sending/receiving additional events to discord */
+  bool is_ready;
 
   /**
    * @see https://discord.com/developers/docs/topics/voice-connections#establishing-a-voice-websocket-connection-example-voice-ready-payload
    */
-  struct { /* VOICE PAYLOAD STRUCTURE */
-    enum discord_voice_opcodes opcode; /**<field 'op' */
-    struct sized_buffer event_data; /**<field 'd' */
+  /* VOICE PAYLOAD STRUCTURE */
+  struct {
+    /** field 'op' */
+    enum discord_voice_opcodes opcode;
+    /** field 'd' */
+    struct sized_buffer event_data;
   } payload;
 
-  struct { /* HEARTBEAT STRUCTURE */
-    u64_unix_ms_t interval_ms; /**<fixed interval between heartbeats */
-    u64_unix_ms_t tstamp; /**<start pulse timestamp in milliseconds */
+  /* HEARTBEAT STRUCTURE */
+  struct {
+    /** fixed interval between heartbeats */
+    u64_unix_ms_t interval_ms;
+    /** start pulse timestamp in milliseconds */
+    u64_unix_ms_t tstamp;
   } hbeat;
 
-  int ping_ms; /**< latency between client and websockets server, calculated by the interval between HEARTBEAT and HEARTBEAT_ACK */
+  /** latency between client and websockets server, calculated by the interval between HEARTBEAT and HEARTBEAT_ACK */
+  int ping_ms;
 
-  struct discord *p_client; /**< pointer to client this struct is part of */
+  /** pointer to client this struct is part of */
+  struct discord *p_client;
 
-  bool shutdown; /**< if true shutdown websockets connection as soon as possible */
+  /** if true shutdown websockets connection as soon as possible */
+  bool shutdown;
 
   struct {
     int ssrc;

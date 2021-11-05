@@ -27,8 +27,10 @@ struct websockets;
  * @brief Stores info on the latest transfer performed via websockets
  */
 struct ws_info {
-  struct loginfo loginfo; /**< logging info */
-  ORCAcode code; /**< how the transfer went @todo implement */
+  /** logging info */
+  struct loginfo loginfo;
+  /** how the transfer went @todo implement */
+  ORCAcode code;
 };
 
 /**
@@ -37,10 +39,14 @@ struct ws_info {
  * @see ws_get_status()
  */
 enum ws_status {
-  WS_DISCONNECTED = 0, /**< client disconnected from ws */
-  WS_CONNECTED,        /**< client connected to ws */
-  WS_DISCONNECTING,    /**< client in the process of disconnecting to ws */
-  WS_CONNECTING,       /**< client in the process of connecting from ws */
+  /** client disconnected from ws */
+  WS_DISCONNECTED = 0,
+  /** client connected to ws */
+  WS_CONNECTED,
+  /** client in the process of disconnecting to ws */
+  WS_DISCONNECTING,
+  /** client in the process of connecting from ws */
+  WS_CONNECTING,
 };
 
 /** 

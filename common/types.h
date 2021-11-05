@@ -39,25 +39,39 @@ typedef char json_char_t;
 /** @defgroup OrcaCodes
  *  @brief Error code returned by Orca REST functions
  *  @{ */
-typedef int ORCAcode;             /**< the error code datatype */
-#define ORCA_OK                 0 /**< request was a success */
-#define ORCA_HTTP_CODE         -1 /**< request wasn't succesful (2xx) */
-#define ORCA_NO_RESPONSE       -2 /**< failure connecting to API's url */
-#define ORCA_UNUSUAL_HTTP_CODE -3 /**< received a non-standard http code */
-#define ORCA_MISSING_PARAMETER -4 /**< missing a mandatory function parameter */
-#define ORCA_BAD_PARAMETER     -5 /**< unexpected value for parameter */
-#define ORCA_BAD_JSON          -6 /**< internal failure when encoding or decoding JSON */
-#define ORCA_CURLE_INTERNAL    -7 /**< curl's easy handle internal error */
-#define ORCA_CURLM_INTERNAL    -8 /**< curl's multi handle internal error */
+/** the error code datatype */
+typedef int ORCAcode;
+/** request was a success */
+#define ORCA_OK                 0
+/** request wasn't succesful */
+#define ORCA_HTTP_CODE         -1
+/** failure connecting to API's url */
+#define ORCA_NO_RESPONSE       -2
+/** received a non-standard http code */
+#define ORCA_UNUSUAL_HTTP_CODE -3
+/** missing a mandatory function parameter */
+#define ORCA_MISSING_PARAMETER -4
+/** unexpected value for parameter */
+#define ORCA_BAD_PARAMETER     -5
+/** internal failure when encoding or decoding JSON */
+#define ORCA_BAD_JSON          -6
+/** curl's easy handle internal error */
+#define ORCA_CURLE_INTERNAL    -7
+/** curl's multi handle internal error */
+#define ORCA_CURLM_INTERNAL    -8
 /** @} OrcaCodes */
 
 /** @defgroup OrcaDiscordCodes
  *  @see discord_strerror()
  *  @{ */
-#define ORCA_DISCORD_JSON_CODE  1 /**< Received a JSON error message */
-#define ORCA_DISCORD_BAD_AUTH   2 /**< Bad authentication token */
-#define ORCA_DISCORD_RATELIMIT  3 /**< Being ratelimited */
-#define ORCA_DISCORD_CONNECTION 4 /**< Couldn't establish connection to Discord */
+/** Received a JSON error message */
+#define ORCA_DISCORD_JSON_CODE  1
+/** Bad authentication token */
+#define ORCA_DISCORD_BAD_AUTH   2
+/** Being ratelimited */
+#define ORCA_DISCORD_RATELIMIT  3
+/** Couldn't establish connection to Discord */
+#define ORCA_DISCORD_CONNECTION 4
 /** @} OrcaDiscordCodes */
 
 /* Github error codes */

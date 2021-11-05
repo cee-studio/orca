@@ -39,7 +39,8 @@ struct user_agent {
    */
   struct {
     struct _ua_conn **pool;
-    size_t amt; /**< amount of connections node in pool */
+    /** amount of connections node in pool */
+    size_t amt;
   } *conn;
   /** 
    * the base_url for every conn
@@ -49,11 +50,13 @@ struct user_agent {
    * synchronize conn pool and shared ratelimiting
    */
   struct {
-    uint64_t        blockuntil_tstamp; /**< lock every active conn from conn_pool until timestamp */
+    /** lock every active conn from conn_pool until timestamp */
+    uint64_t        blockuntil_tstamp;
     pthread_mutex_t lock;
   } *shared;
 
-  struct logconf conf; /**< used for logging */
+  /** used for logging */
+  struct logconf conf;
 
   /**
    * user arbitrary data accessed by setopt_cb

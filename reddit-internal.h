@@ -39,4 +39,4 @@ struct reddit {
   struct logconf conf;
 };
 
-#endif // REDDIT_INTERNAL_H
+#endif /* REDDIT_INTERNAL_H */

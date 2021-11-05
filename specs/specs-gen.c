@@ -24,7 +24,7 @@ static void print_usage(char *prog)
   exit(EXIT_FAILURE);
 }
 
-inG main(int argc, char **argv)
+int main(int argc, char **argv)
 {
   size_t len = 0;
   char *s;

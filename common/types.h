@@ -29,9 +29,9 @@ typedef uint64_t u64_snowflake_t;
 /**
  * @brief Raw JSON string
  *
- * Used for fields that have dynamic or unreliable types. A string made out of 
- *        `json_char_t` should be used to keep a raw JSON, which can then be parsed
- *        with the assistance of a JSON library.
+ * Used for fields that have dynamic or unreliable types. A string made out of
+ *        `json_char_t` should be used to keep a raw JSON, which can then be
+ * parsed with the assistance of a JSON library.
  */
 typedef char json_char_t;
 /** @} OrcaTypes */
@@ -42,34 +42,34 @@ typedef char json_char_t;
 /** the error code datatype */
 typedef int ORCAcode;
 /** request was a success */
-#define ORCA_OK                 0
+#define ORCA_OK 0
 /** request wasn't succesful */
-#define ORCA_HTTP_CODE         -1
+#define ORCA_HTTP_CODE -1
 /** failure connecting to API's url */
-#define ORCA_NO_RESPONSE       -2
+#define ORCA_NO_RESPONSE -2
 /** received a non-standard http code */
 #define ORCA_UNUSUAL_HTTP_CODE -3
 /** missing a mandatory function parameter */
 #define ORCA_MISSING_PARAMETER -4
 /** unexpected value for parameter */
-#define ORCA_BAD_PARAMETER     -5
+#define ORCA_BAD_PARAMETER -5
 /** internal failure when encoding or decoding JSON */
-#define ORCA_BAD_JSON          -6
+#define ORCA_BAD_JSON -6
 /** curl's easy handle internal error */
-#define ORCA_CURLE_INTERNAL    -7
+#define ORCA_CURLE_INTERNAL -7
 /** curl's multi handle internal error */
-#define ORCA_CURLM_INTERNAL    -8
+#define ORCA_CURLM_INTERNAL -8
 /** @} OrcaCodes */
 
 /** @defgroup OrcaDiscordCodes
  *  @see discord_strerror()
  *  @{ */
 /** Received a JSON error message */
-#define ORCA_DISCORD_JSON_CODE  1
+#define ORCA_DISCORD_JSON_CODE 1
 /** Bad authentication token */
-#define ORCA_DISCORD_BAD_AUTH   2
+#define ORCA_DISCORD_BAD_AUTH 2
 /** Being ratelimited */
-#define ORCA_DISCORD_RATELIMIT  3
+#define ORCA_DISCORD_RATELIMIT 3
 /** Couldn't establish connection to Discord */
 #define ORCA_DISCORD_CONNECTION 4
 /** @} OrcaDiscordCodes */
@@ -78,7 +78,6 @@ typedef int ORCAcode;
 #define ORCA_GITHUB_JSON        1
 #define ORCA_GITHUB_BAD_AUTH    2
 #define ORCA_GITHUB_NOT_STARRED 404
-
 
 /** @defgroup OrcaLimits
  *  @brief Limits discovered across the web
@@ -94,7 +93,7 @@ typedef int ORCAcode;
  * @param code the ORCAcode to be explained
  * @return a string containing the code meaning
  */
-const char* orca_strerror(ORCAcode code);
+const char *orca_strerror(ORCAcode code);
 
 #ifdef __cplusplus
 }

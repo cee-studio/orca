@@ -19,15 +19,17 @@ struct slack_webapi {
 };
 
 /* ADAPTER PRIVATE FUNCTIONS */
-void slack_webapi_init(struct slack_webapi *webapi, struct logconf *conf, struct sized_buffer *token);
+void slack_webapi_init(struct slack_webapi *webapi,
+                       struct logconf *conf,
+                       struct sized_buffer *token);
 void slack_webapi_cleanup(struct slack_webapi *webapi);
 
-ORCAcode slack_webapi_run(
-  struct slack_webapi *webapi, 
-  struct sized_buffer *p_resp_body,
-  struct sized_buffer *req_body,
-  enum http_method http_method, 
-  char endpoint_fmt[], ...);
+ORCAcode slack_webapi_run(struct slack_webapi *webapi,
+                          struct sized_buffer *p_resp_body,
+                          struct sized_buffer *req_body,
+                          enum http_method http_method,
+                          char endpoint_fmt[],
+                          ...);
 
 struct slack_sm {
   struct websockets *ws;
@@ -61,7 +63,8 @@ struct slack_sm {
     slack_idle_cb on_view_submission;
   } cbs;
 
-  /** Handle context on how each event callback is executed @see slack_set_event_handler() */
+  /** Handle context on how each event callback is executed @see
+   * slack_set_event_handler() */
   slack_event_mode_cb event_handler;
 
   struct slack *p_client;

@@ -26,11 +26,14 @@ github_create_fork(struct github *client, char *owner, char *repo)
   }
 
   return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = NULL, .ok_obj = NULL },
-    NULL,
-    HTTP_POST,
-    "/repos/%s/%s/forks",
-    owner,
-    repo);
+          &client->adapter,
+          &(struct ua_resp_handle){
+            .ok_cb = NULL,
+            .ok_obj = NULL
+          },
+          NULL,
+          HTTP_POST,
+          "/repos/%s/%s/forks",
+          owner,
+          repo);
 }

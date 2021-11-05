@@ -8,12 +8,10 @@
 
 #define JSON_FILE "bot-embed.json"
 
-void on_ready(struct discord *client, const struct discord_user *bot)
-{
-  log_info(
-    "Embed-Bot succesfully connected to Discord as %s#%s!",
-    bot->username,
-    bot->discriminator);
+
+void on_ready(struct discord *client, const struct discord_user *bot) {
+  log_info("Embed-Bot succesfully connected to Discord as %s#%s!",
+      bot->username, bot->discriminator);
 }
 
 void on_from_json_init(
@@ -28,13 +26,14 @@ void on_from_json_init(
   char *json_str = cee_load_whole_file(JSON_FILE, &json_len);
 
   /* load a embed from the json string */
-  struct discord_embed *embed = NULL;
+  struct discord_embed *embed=NULL;
   discord_embed_from_json(json_str, json_len, &embed);
   embed->timestamp = cee_timestamp_ms(); // get current timestamp
 
-  struct discord_create_message_params params = { .content =
-                                                    "This is an embed",
-                                                  .embed = embed };
+  struct discord_create_message_params params = {
+    .content = "This is an embed",
+    .embed = embed
+  };
   discord_create_message(client, msg->channel_id, &params, NULL);
 
   free(json_str);
@@ -44,8 +43,8 @@ void on_from_json_init(
 }
 
 void on_designated_init(
-  struct discord *client,
-  const struct discord_user *bot,
+  struct discord *client, 
+  const struct discord_user *bot, 
   const struct discord_message *msg)
 {
   if (msg->author->bot) return;
@@ -55,32 +54,29 @@ void on_designated_init(
     .description = "Multi-REST Api library",
     .url = "https://github.com/cee-studio/orca",
     .color = 3447003,
-    .footer =
-      &(struct discord_embed_footer){
-        .text = "github.com/cee-studio/orca",
-        .icon_url = "https://raw.githubusercontent.com/cee-studio/orca-docs/"
-                    "master/docs/source/images/icon.svg" },
-    .image =
-      &(struct discord_embed_image){
-        .url = "https://github.com/cee-studio/orca-docs/blob/master/docs/"
-               "source/images/social-preview.png?raw=true" },
-    .author =
-      &(struct discord_embed_author){
-        .name = "cee-studio",
-        .url = "https://github.com/cee-studio",
-        .icon_url = "https://cee.dev/static/images/cee.png" },
-    .fields =
-      (struct discord_embed_field *[]){
-        &(struct discord_embed_field){
-          .name = "Want to learn more?",
-          .value = "Read our "
-                   "[documentation](https://cee-studio.github.io/orca/apis/"
-                   "discord.html#c.discord_embed)!" },
-        &(struct discord_embed_field){
-          .name = "Looking for support?",
-          .value = "Join our server [here](https://discord.gg/x4hhGQYu)!" },
-        NULL // END OF ARRAY
-      }
+    .footer = &(struct discord_embed_footer){
+      .text = "github.com/cee-studio/orca",
+      .icon_url = "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/source/images/icon.svg"
+    },
+    .image = &(struct discord_embed_image){
+      .url = "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/social-preview.png?raw=true"
+    },
+    .author = &(struct discord_embed_author){
+      .name = "cee-studio",
+      .url = "https://github.com/cee-studio",
+      .icon_url = "https://cee.dev/static/images/cee.png"
+    },
+    .fields = (struct discord_embed_field*[]) {
+      &(struct discord_embed_field){
+        .name = "Want to learn more?",
+        .value = "Read our [documentation](https://cee-studio.github.io/orca/apis/discord.html#c.discord_embed)!"
+      },
+      &(struct discord_embed_field){
+        .name = "Looking for support?",
+        .value = "Join our server [here](https://discord.gg/x4hhGQYu)!"
+      },
+      NULL // END OF ARRAY
+    }
   };
 
   struct discord_create_message_params params = { .embed = &embed };
@@ -88,8 +84,8 @@ void on_designated_init(
 }
 
 void on_builder_init(
-  struct discord *client,
-  const struct discord_user *bot,
+  struct discord *client, 
+  const struct discord_user *bot, 
   const struct discord_message *msg)
 {
   if (msg->author->bot) return;
@@ -101,20 +97,17 @@ void on_builder_init(
   discord_embed_set_url(&embed, "https://github.com/cee-studio/orca");
 
   discord_embed_set_footer(
-    &embed,
+    &embed, 
     "github.com/cee-studio/orca",
-    "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/"
-    "source/images/icon.svg",
+    "https://raw.githubusercontent.com/cee-studio/orca-docs/master/docs/source/images/icon.svg",
     NULL);
   discord_embed_set_image(
-    &embed,
-    "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/"
-    "social-preview.png?raw=true",
-    NULL,
-    0,
-    0);
+    &embed, 
+    "https://github.com/cee-studio/orca-docs/blob/master/docs/source/images/social-preview.png?raw=true",
+    NULL, 
+    0, 0);
   discord_embed_set_author(
-    &embed,
+    &embed, 
     "cee-studio",
     "https://github.com/cee-studio",
     "https://cee.dev/static/images/cee.png",
@@ -122,9 +115,7 @@ void on_builder_init(
   discord_embed_add_field(
     &embed,
     "Want to learn more?",
-    "Read our "
-    "[documentation](https://cee-studio.github.io/orca/apis/"
-    "discord.html#c.discord_embed)!",
+    "Read our [documentation](https://cee-studio.github.io/orca/apis/discord.html#c.discord_embed)!",
     false);
   discord_embed_add_field(
     &embed,
@@ -159,14 +150,11 @@ int main(int argc, char *argv[])
 
   printf("\n\nThis bot demonstrates how to embeds"
          " with three different methods.\n"
-         "1 - From JSON init (type !from_json_init): This is the easiest "
-         "method by far, you can use it"
+         "1 - From JSON init (type !from_json_init): This is the easiest method by far, you can use it"
          " with a JSON library of your preference.\n"
-         "2 - Designated init (type !designated_init): This is a 'clean' "
-         "initialization approach"
+         "2 - Designated init (type !designated_init): This is a 'clean' initialization approach"
          " but is not very flexible.\n"
-         "3 - Builder init (type !builder_init): This is a very flexible "
-         "approach, it relies on utility functions from discord-misc.c.\n"
+         "3 - Builder init (type !builder_init): This is a very flexible approach, it relies on utility functions from discord-misc.c.\n"
          "\nTYPE ANY KEY TO START BOT\n");
   fgetc(stdin); // wait for input
 
@@ -175,3 +163,4 @@ int main(int argc, char *argv[])
   discord_cleanup(client);
   discord_global_cleanup();
 }
+

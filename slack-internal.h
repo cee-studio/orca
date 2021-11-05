@@ -19,19 +19,15 @@ struct slack_webapi {
 };
 
 /* ADAPTER PRIVATE FUNCTIONS */
-void slack_webapi_init(
-  struct slack_webapi *webapi,
-  struct logconf *conf,
-  struct sized_buffer *token);
+void slack_webapi_init(struct slack_webapi *webapi, struct logconf *conf, struct sized_buffer *token);
 void slack_webapi_cleanup(struct slack_webapi *webapi);
 
 ORCAcode slack_webapi_run(
-  struct slack_webapi *webapi,
+  struct slack_webapi *webapi, 
   struct sized_buffer *p_resp_body,
   struct sized_buffer *req_body,
-  enum http_method http_method,
-  char endpoint_fmt[],
-  ...);
+  enum http_method http_method, 
+  char endpoint_fmt[], ...);
 
 struct slack_sm {
   struct websockets *ws;
@@ -50,19 +46,13 @@ struct slack_sm {
     // EVENT API CALLBACKS
     slack_idle_cb on_message; ///< triggers when a message is sent
     // INTERACTION CALLBACKS
-    slack_idle_cb
-      on_block_actions; ///< triggers when a block_action interaction occurs
-    slack_idle_cb on_message_actions; ///< triggers when a message_action
-                                      ///< interaction occurs
-    slack_idle_cb
-      on_view_closed; ///< triggers when a view_closed interaction occurs
-    slack_idle_cb on_view_submission; ///< triggers when a view_submission
-                                      ///< interaction occurs
+    slack_idle_cb on_block_actions; ///< triggers when a block_action interaction occurs
+    slack_idle_cb on_message_actions; ///< triggers when a message_action interaction occurs
+    slack_idle_cb on_view_closed; ///< triggers when a view_closed interaction occurs
+    slack_idle_cb on_view_submission; ///< triggers when a view_submission interaction occurs
   } cbs;
 
-  slack_event_mode_cb
-    event_handler; ///< Handle context on how each event callback is executed
-                   ///< @see slack_set_event_handler()
+  slack_event_mode_cb event_handler; ///< Handle context on how each event callback is executed @see slack_set_event_handler()
 
   struct slack *p_client;
 };

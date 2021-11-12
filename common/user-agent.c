@@ -725,7 +725,7 @@ ua_block_ms(struct user_agent *ua, const uint64_t wait_ms)
   pthread_mutex_unlock(&ua->shared->lock);
 }
 
-/* template function for performing requests */
+/* template function for performing synchronous requests */
 ORCAcode
 ua_run(struct user_agent *ua,
        struct ua_info *info,
@@ -782,6 +782,49 @@ ua_run(struct user_agent *ua,
   return code;
 }
 
+/* template function for enqueing asynchronous requests */
+ORCAcode
+ua_enqueue(struct user_agent *ua,
+           struct ua_info *info,
+           struct ua_resp_handle *resp_handle,
+           struct sized_buffer *req_body,
+           enum http_method http_method,
+           char endpoint[])
+{
+  const char *method_str = http_method_print(http_method);
+  static struct sized_buffer blank_req_body = { "", 0 };
+  if (NULL == req_body) {
+    req_body = &blank_req_body;
+  }
+
+  /* get conn that will perform the request */
+  struct _ua_conn *conn = _ua_conn_get(ua);
+  /* set conn request's url */
+  _ua_conn_set_url(ua, conn, endpoint);
+
+  char buf[1024] = "";
+  ua_reqheader_str(ua, buf, sizeof(buf));
+
+  logconf_http(&ua->conf, &conn->info.loginfo, conn->info.req_url.start,
+               (struct sized_buffer){ buf, sizeof(buf) }, *req_body,
+               "HTTP_SEND_%s", method_str);
+
+  logconf_trace(conn->conf,
+                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
+                method_str, conn->info.loginfo.counter);
+
+  /* set conn request's method */
+  _ua_conn_set_method(ua, conn, http_method, req_body);
+
+  /* enqueue conn to multiplexer */
+  CURLMcode mcode = curl_multi_add_handle(ua->mhandle, conn->ehandle);
+  if (mcode != CURLM_OK) {
+    logconf_error(&ua->conf, "%s", curl_multi_strerror(mcode));
+    return ORCA_CURLM_INTERNAL;
+  }
+  return ORCA_OK;
+}
+
 void
 ua_info_cleanup(struct ua_info *info)
 {
@@ -820,5 +863,5 @@ ua_info_get_body(struct ua_info *info)
 void
 ua_curl_multi_assign(struct user_agent *ua, const CURLM *mhandle)
 {
-  ua->mhandle = (CURLM*)mhandle;
+  ua->mhandle = (CURLM *)mhandle;
 }

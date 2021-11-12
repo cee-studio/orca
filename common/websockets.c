@@ -18,9 +18,7 @@
             mcode, curl_multi_strerror(mcode))
 
 struct websockets {
-  /**
-   * Stores info on the latest transfer performed via websockets
-   */
+  /** Stores info on the latest transfer performed via websockets */
   struct ws_info info;
   /**
    * The client connections status
@@ -43,9 +41,7 @@ struct websockets {
   CURLM *mhandle;
   CURL *ehandle;
 
-  /**
-   * Timestamp updated every ws_perform() call
-   */
+  /** Timestamp updated every ws_perform() call */
   uint64_t now_tstamp;
 
   /**
@@ -151,7 +147,7 @@ _curl_debug_trace(
   case CURLINFO_TEXT:
     fprintf(stderr, "== Info: %s", data);
     /* FALLTHROUGH */
-  default: /* in case a new one is introduced to shock us */ return 0;
+  default: return 0;
 
   case CURLINFO_HEADER_OUT: text = "=> Send header"; break;
   case CURLINFO_DATA_OUT: text = "=> Send data"; break;
@@ -220,8 +216,7 @@ static CURL *_ws_cws_new(struct websockets *ws, const char ws_protocols[]);
 static void
 _ws_set_status_nolock(struct websockets *ws, enum ws_status status)
 {
-  if ((WS_DISCONNECTING == ws->status) && (status != WS_DISCONNECTED))
-    return; /* EARLY RETURN */
+  if ((WS_DISCONNECTING == ws->status) && (status != WS_DISCONNECTED)) return;
 
   switch (status) {
   case WS_DISCONNECTED:
@@ -250,7 +245,6 @@ _ws_set_status_nolock(struct websockets *ws, enum ws_status status)
   ws->status = status;
 }
 
-/* thread-safe */
 static void
 _ws_set_status(struct websockets *ws, enum ws_status status)
 {
@@ -408,7 +402,8 @@ _ws_check_action_cb(void *p_userdata,
   case WS_ACTION_NONE:
   default: ret = 0; break;
   case WS_ACTION_END_CLOSE:
-    ret = 1; /* END WEBSOCKETS CONNECTION */
+    /* END WEBSOCKETS CONNECTION */
+    ret = 1;
     break;
   }
   ws->action = WS_ACTION_NONE;
@@ -538,11 +533,11 @@ noop_on_binary(
   return;
 }
 static void
-noop_on_ping(void *a,
-             struct websockets *ws,
-             struct ws_info *info,
-             const char *reason,
-             size_t len)
+default_on_ping(void *a,
+                struct websockets *ws,
+                struct ws_info *info,
+                const char *reason,
+                size_t len)
 {
   ws_pong(ws, &ws->info, reason, len);
 }
@@ -576,7 +571,7 @@ ws_init(struct ws_callbacks *cbs, struct logconf *conf)
   if (!new_ws->cbs.on_connect) new_ws->cbs.on_connect = &noop_on_connect;
   if (!new_ws->cbs.on_text) new_ws->cbs.on_text = &noop_on_text;
   if (!new_ws->cbs.on_binary) new_ws->cbs.on_binary = &noop_on_binary;
-  if (!new_ws->cbs.on_ping) new_ws->cbs.on_ping = &noop_on_ping;
+  if (!new_ws->cbs.on_ping) new_ws->cbs.on_ping = &default_on_ping;
   if (!new_ws->cbs.on_pong) new_ws->cbs.on_pong = &noop_on_pong;
   if (!new_ws->cbs.on_close) new_ws->cbs.on_close = &noop_on_close;
 

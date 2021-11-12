@@ -17,7 +17,7 @@ extern "C" {
 
 struct user_agent; /* forward declaration */
 
-/*possible http methods */
+/* possible http methods */
 enum http_method {
   HTTP_INVALID = -1,
   HTTP_DELETE,
@@ -52,15 +52,14 @@ typedef void(cxt_load_obj_cb)(void *cxt, char *str, size_t len, void *p_obj);
 struct ua_resp_handle {
   /** the context for cxt_ok_cb; */
   void *cxt;
-
+  /** callback called when a successful transfer occurs */
   load_obj_cb *ok_cb;
   /** the pointer to be passed to ok_cb */
   void *ok_obj;
-
+  /** callback called when a failed transfer occurs */
   load_obj_cb *err_cb;
   /** the pointer to be passed to err_cb */
   void *err_obj;
-
   /** ok callback with an execution context */
   cxt_load_obj_cb *cxt_ok_cb;
   /** err callback with an execution context */
@@ -74,7 +73,6 @@ struct ua_resp_header {
   size_t len;
   /** real size occupied in memory by buffer */
   size_t bufsize;
-
   /** array of header field/value pairs */
   struct {
     struct {

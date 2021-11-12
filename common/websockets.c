@@ -18,84 +18,70 @@
             mcode, curl_multi_strerror(mcode))
 
 struct websockets {
-  /** Stores info on the latest transfer performed via websockets */
+  /** stores info on the latest transfer performed via websockets */
   struct ws_info info;
   /**
-   * The client connections status
-   *
-   * @note #WS_CONNECTED triggered after ws_on_connect()
-   * @note #WS_DISCONNECTED triggered after complete shutdown at ws_perform()
-   * @note #WS_CONNECTING triggered at ws_start()
-   * @note #WS_DISCONNECTING triggered when closing connection
-   *        @see ws_on_close()
+   * the client connections status
+   * @note `WS_CONNECTED` triggered after ws_on_connect()
+   *       `WS_DISCONNECTED` triggered after complete shutdown at ws_perform()
+   *       `WS_CONNECTING` triggered at ws_start()
+   *       `WS_DISCONNECTING` triggered when closing connection
    * @see ws_get_status()
-   * @see _ws_set_status()
    */
   enum ws_status status;
-
-  /**
-   * CURL multi_handle used in conjuction with easy_handle
-   *        to perform non-blocking requests to a WebSockets server.
-   * @see ws_perform()
-   */
+  /** perform non-blocking transfers */
   CURLM *mhandle;
+  /** perform/receive individual WebSockets tranfers */
   CURL *ehandle;
-
-  /** Timestamp updated every ws_perform() call */
+  /** timestamp updated every ws_perform() call */
   uint64_t now_tstamp;
-
-  /**
-   * WebSockets server URL and Protocols
-   * @see ws_set_url()
-   */
+  /** WebSockets connection URL @see ws_set_url() */
   char base_url[512 + 1];
+  /** WebSockets connection protocols @see ws_set_url() */
   char protocols[126];
-
-  /**
-   * WebSockets callbacks
-   * @see websockets.h for definition
-   */
+  /** WebSockets callbacks */
   struct ws_callbacks cbs;
-
   /**
-   * Capture curl error messages
+   * capture curl error messages
    * @note should only be accessed after a error code returns
    * @see https://curl.se/libcurl/c/CURLOPT_ERRORBUFFER.html
    */
   char errbuf[CURL_ERROR_SIZE];
-
-  /**
-   * The logconf structure for logging facility
-   * @see logconf.h
-   */
+  /** the logconf structure for logging @see logconf_set_status() */
   struct logconf conf;
-
+  /** lock for functions that may be called in other threads */
   pthread_mutex_t lock;
-  /*
-   * This is used to check whether the running thread
-   * is the same as the thread that ran ws_start.
-   * Some functions can only run in the same thread
+  /**
+   * the event-loop thread id to check if some functions are
+   *        being called from the main thread
    */
   pthread_t tid;
-
   /**
-   * The user may close the active connection via ws_close()
-   * @see ws_close()
+   * user-triggered actions
+   * @note the user may close the active connection via ws_close()
    */
   enum {
+    /** no user action taking place */
     WS_ACTION_NONE = 0,
+    /** user called ws_close() */
     WS_ACTION_BEGIN_CLOSE,
+    /** succesfully closed connection after ws_close() */
     WS_ACTION_END_CLOSE
   } action;
-
+  /** close promise filled at ws_close() */
   struct {
+    /** opcode reason for closing */
     enum ws_close_reason code;
+    /** textual reason for closing */
     char reason[125 + 1];
   } pending_close;
 };
 
 static void
-dump(const char *text, FILE *stream, unsigned char *ptr, size_t size)
+_curl_debug_dump(const char *text,
+                 FILE *stream,
+                 unsigned char *ptr,
+                 size_t size)
 {
   size_t i;
   size_t c;
@@ -136,7 +122,7 @@ dump(const char *text, FILE *stream, unsigned char *ptr, size_t size)
 }
 
 static int
-_curl_debug_trace(
+_ws_curl_debug_trace(
   CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
 {
   (void)handle;
@@ -157,12 +143,12 @@ _curl_debug_trace(
   case CURLINFO_SSL_DATA_IN: text = "<= Recv SSL data"; break;
   }
 
-  dump(text, stderr, (unsigned char *)data, size);
+  _curl_debug_dump(text, stderr, (unsigned char *)data, size);
   return 0;
 }
 
 static int
-_curl_tls_check(
+_ws_curl_tls_check(
   CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
 {
   (void)handle;
@@ -444,13 +430,13 @@ _ws_cws_new(struct websockets *ws, const char ws_protocols[])
 
 #ifdef _ORCA_DEBUG_WEBSOCKETS
   ecode =
-    curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _curl_debug_trace);
+    curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _ws_curl_debug_trace);
   CURLE_CHECK(ws, ecode);
   ecode = curl_easy_setopt(new_ehandle, CURLOPT_VERBOSE, 1L);
   CURLE_CHECK(ws, ecode);
 #else
   ecode =
-    curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _curl_tls_check);
+    curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _ws_curl_tls_check);
   CURLE_CHECK(ws, ecode);
   ecode = curl_easy_setopt(new_ehandle, CURLOPT_VERBOSE, 1L);
   CURLE_CHECK(ws, ecode);

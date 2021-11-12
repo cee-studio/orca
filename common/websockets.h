@@ -9,6 +9,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include <curl/curl.h>
+
 #include "types.h" /* ORCAcode */
 #include "logconf.h" /* logging facilities */
 

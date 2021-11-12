@@ -1,4 +1,6 @@
-# ORCA-FORMATTING Starts here.
+# ORCA-FORMATTING
+# Requires clang-format 10 (at least)
+
 Language:        Cpp
 # BasedOnStyle:  Mozilla
 AccessModifierOffset: -2
@@ -15,7 +17,7 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
 # AlwaysBreakAfterDefinitionReturnType: TopLevel
-AlwaysBreakAfterReturnType: TopLevelDefinitions
+AlwaysBreakAfterReturnType: TopLevelDefinitions # TopLevelDefinitions or None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true

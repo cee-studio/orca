@@ -911,3 +911,13 @@ ws_reqheader_add(struct websockets *ws, const char field[], const char value[])
            "ws_start() must have been called prior to ws_reqheader_add()");
   cws_reqheader_add(ws->ehandle, field, value);
 }
+
+CURL* ws_curl_easy_get_handle(struct websockets *ws)
+{
+  return ws->ehandle;
+}
+
+CURLM* ws_curl_multi_get_handle(struct websockets *ws)
+{
+  return ws->mhandle;
+}

@@ -349,6 +349,22 @@ void ws_reqheader_add(struct websockets *ws,
                       const char field[],
                       const char value[]);
 
+/**
+ * @brief Get `ws` libcurl's easy handle
+ *
+ * @param ws the Websockets handle created with ws_init()
+ * @return the libcurl's easy handle used internally
+ */
+CURL* ws_curl_easy_get_handle(struct websockets *ws);
+
+/**
+ * @brief Get `ws` libcurl's multi handle
+ *
+ * @param ws the Websockets handle created with ws_init()
+ * @return the libcurl's multiplexer handle used internally
+ */
+CURLM* ws_curl_multi_get_handle(struct websockets *ws);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -564,10 +564,9 @@ _ua_conn_set_method(struct user_agent *ua,
     logconf_fatal(conn->conf, "Unknown http method (code: %d)", method);
     ABORT();
   }
-
   /* set ptr to payload that will be sent via POST/PUT/PATCH */
-  curl_easy_setopt(conn->ehandle, CURLOPT_COPYPOSTFIELDS, req_body->start);
   curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDSIZE, req_body->size);
+  curl_easy_setopt(conn->ehandle, CURLOPT_COPYPOSTFIELDS, req_body->start);
 }
 
 static void

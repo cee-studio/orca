@@ -47,7 +47,7 @@ struct websockets {
    * @see https://curl.se/libcurl/c/CURLOPT_ERRORBUFFER.html
    */
   char errbuf[CURL_ERROR_SIZE];
-  /** the logconf structure for logging @see logconf_set_status() */
+  /** the logconf structure for logging @see logconf_setup() */
   struct logconf conf;
   /** lock for functions that may be called in other threads */
   pthread_mutex_t lock;

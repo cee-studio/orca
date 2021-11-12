@@ -63,9 +63,10 @@ void on_dynamic(struct discord *client,
   discord_embed_from_json(JSON_STRING, sizeof(JSON_STRING), &embed);
   embed.timestamp = cee_timestamp_ms(); // get current timestamp
 
-  struct discord_create_message_params params = { .content =
-                                                    "This is an embed",
-                                                  .embed = &embed };
+  struct discord_create_message_params params = {
+    .content = "This is an embed",
+    .embed = &embed,
+  };
   discord_create_message(client, msg->channel_id, &params, NULL);
 
   /* must cleanup 'embed' afterwards */
@@ -87,26 +88,31 @@ void on_static(struct discord *client,
       &(struct discord_embed_footer){
         .text = "github.com/cee-studio/orca",
         .icon_url = "https://raw.githubusercontent.com/cee-studio/orca-docs/"
-                    "master/docs/source/images/icon.svg" },
+                    "master/docs/source/images/icon.svg",
+      },
     .image =
       &(struct discord_embed_image){
         .url = "https://github.com/cee-studio/orca-docs/blob/master/docs/"
-               "source/images/social-preview.png?raw=true" },
+               "source/images/social-preview.png?raw=true",
+      },
     .author =
       &(struct discord_embed_author){
         .name = "cee-studio",
         .url = "https://github.com/cee-studio",
-        .icon_url = "https://cee.dev/static/images/cee.png" },
+        .icon_url = "https://cee.dev/static/images/cee.png",
+      },
     .fields =
       (struct discord_embed_field *[]){
         &(struct discord_embed_field){
           .name = "Want to learn more?",
           .value = "Read our "
                    "[documentation](https://cee-studio.github.io/orca/apis/"
-                   "discord.html#c.discord_embed)!" },
+                   "discord.html#c.discord_embed)!",
+        },
         &(struct discord_embed_field){
           .name = "Looking for support?",
-          .value = "Join our server [here](https://discord.gg/x4hhGQYu)!" },
+          .value = "Join our server [here](https://discord.gg/x4hhGQYu)!",
+        },
         NULL // END OF ARRAY
       }
   };
@@ -180,7 +186,8 @@ int main(int argc, char *argv[])
     "1 - Dynamic-approach (type !dynamic): Load the embed from "
     "a JSON string.\n"
     "2 - Static-approach (type !static): A  clean  initialization approach "
-    "using the combination of designated initialization and compound literals.\n"
+    "using the combination of designated initialization and compound "
+    "literals.\n"
     "3 - Builder-approach (type !builder): A dynamic and flexible "
     "approach that relies on embed builder functions.\n"
     "\nTYPE ANY KEY TO START BOT\n");

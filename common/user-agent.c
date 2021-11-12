@@ -20,6 +20,8 @@
   } while (0)
 
 struct user_agent {
+  /** optional libcurl's multiplexer for performing requests asynchronously */
+  CURLM *mhandle;
   /** whether this is the original user agent or a clone */
   bool is_original;
   /** the user agent request header */
@@ -813,4 +815,10 @@ struct sized_buffer
 ua_info_get_body(struct ua_info *info)
 {
   return (struct sized_buffer){ info->body.buf, info->body.len };
+}
+
+void
+ua_curl_multi_assign(struct user_agent *ua, const CURLM *mhandle)
+{
+  ua->mhandle = (CURLM*)mhandle;
 }

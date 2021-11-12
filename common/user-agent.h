@@ -147,6 +147,15 @@ void ua_info_cleanup(struct ua_info *info);
 struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
 struct sized_buffer ua_info_get_body(struct ua_info *info);
 
+/**
+ * @brief Assign a libcurl's multiplexer handle
+ *
+ * If set, all REST transfers will be dealt with asynchronously
+ * @param ua the User-Agent handle created with ua_init()
+ * @param mhandle the libcurl's pre-initialized multiplexer
+ */
+void ua_curl_multi_assign(struct user_agent *ua, const CURLM *mhandle);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

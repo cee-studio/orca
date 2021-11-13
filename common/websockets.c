@@ -78,10 +78,10 @@ struct websockets {
 };
 
 static void
-_curl_debug_dump(const char *text,
-                 FILE *stream,
-                 unsigned char *ptr,
-                 size_t size)
+_ws_curl_debug_dump(const char *text,
+                    FILE *stream,
+                    unsigned char *ptr,
+                    size_t size)
 {
   size_t i;
   size_t c;
@@ -143,7 +143,7 @@ _ws_curl_debug_trace(
   case CURLINFO_SSL_DATA_IN: text = "<= Recv SSL data"; break;
   }
 
-  _curl_debug_dump(text, stderr, (unsigned char *)data, size);
+  _ws_curl_debug_dump(text, stderr, (unsigned char *)data, size);
   return 0;
 }
 
@@ -806,13 +806,14 @@ ws_perform(struct websockets *ws, bool *p_is_running, uint64_t wait_ms)
   mcode = curl_multi_wait(ws->mhandle, NULL, 0, wait_ms, &numfds);
   CURLM_CHECK(ws, mcode);
 
-  if (!is_running) { /* WebSockets connection is severed */
+  if (!is_running) {
+    /* WebSockets connection is severed */
     _ws_set_status(ws, WS_DISCONNECTING);
 
     /* read messages/informationals from the individual transfers */
     int msgq = 0;
     struct CURLMsg *curlmsg = curl_multi_info_read(ws->mhandle, &msgq);
-    if (curlmsg) {
+    if (curlmsg && ws->ehandle == curlmsg->easy_handle) {
       CURLcode ecode = curlmsg->data.result;
       switch (ecode) {
       case CURLE_OK:
@@ -912,12 +913,14 @@ ws_reqheader_add(struct websockets *ws, const char field[], const char value[])
   cws_reqheader_add(ws->ehandle, field, value);
 }
 
-CURL* ws_curl_easy_get_handle(struct websockets *ws)
+CURL *
+ws_curl_easy_get_handle(struct websockets *ws)
 {
   return ws->ehandle;
 }
 
-CURLM* ws_curl_multi_get_handle(struct websockets *ws)
+CURLM *
+ws_curl_multi_get_handle(struct websockets *ws)
 {
   return ws->mhandle;
 }

@@ -156,4 +156,5 @@ work_global_cleanup(void)
   threadpool_destroy(tpool, threadpool_graceful);
   /* cleanup request queue */
   pqueue_free(queue);
+  once = 0;
 }

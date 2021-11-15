@@ -9,9 +9,15 @@
 #include "discord-internal.h"
 #include "cee-utils.h"
 
+static _Bool once;
+
 static void
 _discord_init(struct discord *new_client)
 {
+  if (!once) {
+    discord_global_init();
+  }
+
   discord_adapter_init(&new_client->adapter, new_client->conf,
                        &new_client->token);
   discord_gateway_init(&new_client->gw, new_client->conf, &new_client->token);
@@ -98,12 +104,18 @@ discord_global_init()
   if (0 != curl_global_init(CURL_GLOBAL_DEFAULT)) {
     log_warn("Couldn't start libcurl's globals");
   }
+  if (work_global_init()) {
+    log_warn("Attempt duplicate global initialization");
+  }
+  once = 1;
 }
 
 void
 discord_global_cleanup()
 {
   curl_global_cleanup();
+  work_global_cleanup();
+  once = 0;
 }
 
 const char *

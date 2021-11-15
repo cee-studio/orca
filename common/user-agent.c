@@ -20,8 +20,6 @@
   } while (0)
 
 struct user_agent {
-  /** optional libcurl's multiplexer for performing requests asynchronously */
-  CURLM *mhandle;
   /** whether this is the original user agent or a clone */
   bool is_original;
   /** the user agent request header */
@@ -32,6 +30,7 @@ struct user_agent {
    *        each active conn is responsible for a HTTP request
    */
   struct {
+    /** connection pool */
     struct _ua_conn **pool;
     /** amount of connections node in pool */
     size_t amt;
@@ -40,14 +39,13 @@ struct user_agent {
   struct sized_buffer base_url;
   /** synchronize conn pool and shared ratelimiting */
   struct {
-    /** lock every active conn from conn_pool until timestamp */
+    /** lock every active conn from conn.pool until timestamp */
     uint64_t blockuntil_tstamp;
+    /** the mutex for blocking conn.pool */
     pthread_mutex_t lock;
   } * shared;
-
-  /** used for logging */
+  /** the user agent logging module */
   struct logconf conf;
-
   /**
    * user arbitrary data accessed by setopt_cb
    * @see ua_curl_easy_setopt()
@@ -442,7 +440,9 @@ _ua_conn_get(struct user_agent *ua)
 struct user_agent *
 ua_init(struct logconf *conf)
 {
-  struct user_agent *new_ua = calloc(1, sizeof *new_ua);
+  struct user_agent *new_ua;
+
+  new_ua = calloc(1, sizeof *new_ua);
   new_ua->conn = calloc(1, sizeof *new_ua->conn);
   new_ua->shared = calloc(1, sizeof *new_ua->shared);
 
@@ -601,7 +601,10 @@ _ua_conn_send(struct user_agent *ua, struct _ua_conn *conn, int *httpcode)
   CURLcode ecode;
   char *resp_url = NULL;
 
-  /* enforces global ratelimiting with ua_block_ms(); */
+  /**
+   * enforces global ratelimiting with ua_block_ms()
+   * @todo there are better solutions than this
+   */
   pthread_mutex_lock(&ua->shared->lock);
   cee_sleep_ms(ua->shared->blockuntil_tstamp - cee_timestamp_ms());
 
@@ -781,49 +784,6 @@ ua_run(struct user_agent *ua,
   return code;
 }
 
-/* template function for enqueing asynchronous requests */
-ORCAcode
-ua_enqueue(struct user_agent *ua,
-           struct ua_info *info,
-           struct ua_resp_handle *resp_handle,
-           struct sized_buffer *req_body,
-           enum http_method http_method,
-           char endpoint[])
-{
-  const char *method_str = http_method_print(http_method);
-  static struct sized_buffer blank_req_body = { "", 0 };
-  if (NULL == req_body) {
-    req_body = &blank_req_body;
-  }
-
-  /* get conn that will perform the request */
-  struct _ua_conn *conn = _ua_conn_get(ua);
-  /* set conn request's url */
-  _ua_conn_set_url(ua, conn, endpoint);
-
-  char buf[1024] = "";
-  ua_reqheader_str(ua, buf, sizeof(buf));
-
-  logconf_http(&ua->conf, &conn->info.loginfo, conn->info.req_url.start,
-               (struct sized_buffer){ buf, sizeof(buf) }, *req_body,
-               "HTTP_SEND_%s", method_str);
-
-  logconf_trace(conn->conf,
-                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
-                method_str, conn->info.loginfo.counter);
-
-  /* set conn request's method */
-  _ua_conn_set_method(ua, conn, http_method, req_body);
-
-  /* enqueue conn to multiplexer */
-  CURLMcode mcode = curl_multi_add_handle(ua->mhandle, conn->ehandle);
-  if (mcode != CURLM_OK) {
-    logconf_error(&ua->conf, "%s", curl_multi_strerror(mcode));
-    return ORCA_CURLM_INTERNAL;
-  }
-  return ORCA_OK;
-}
-
 void
 ua_info_cleanup(struct ua_info *info)
 {
@@ -857,10 +817,4 @@ struct sized_buffer
 ua_info_get_body(struct ua_info *info)
 {
   return (struct sized_buffer){ info->body.buf, info->body.len };
-}
-
-void
-ua_curl_multi_assign(struct user_agent *ua, const CURLM *mhandle)
-{
-  ua->mhandle = (CURLM *)mhandle;
 }

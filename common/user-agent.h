@@ -9,7 +9,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include <stdint.h> /* uint64_t */
 #include <curl/curl.h>
 #include "ntl.h" /* struct sized_buffer */
 #include "types.h" /* ORCAcode */
@@ -143,25 +142,9 @@ ORCAcode ua_run(struct user_agent *ua,
                 enum http_method http_method,
                 char endpoint[]);
 
-ORCAcode ua_enqueue(struct user_agent *ua,
-                    struct ua_info *info,
-                    struct ua_resp_handle *resp_handle,
-                    struct sized_buffer *req_body,
-                    enum http_method http_method,
-                    char endpoint[]);
-
 void ua_info_cleanup(struct ua_info *info);
 struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
 struct sized_buffer ua_info_get_body(struct ua_info *info);
-
-/**
- * @brief Assign a libcurl's multiplexer handle
- *
- * If set, all REST transfers will be dealt with asynchronously
- * @param ua the User-Agent handle created with ua_init()
- * @param mhandle the libcurl's pre-initialized multiplexer
- */
-void ua_curl_multi_assign(struct user_agent *ua, const CURLM *mhandle);
 
 #ifdef __cplusplus
 }

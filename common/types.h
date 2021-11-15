@@ -5,6 +5,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -59,6 +61,8 @@ typedef int ORCAcode;
 #define ORCA_CURLE_INTERNAL -7
 /** curl's multi handle internal error */
 #define ORCA_CURLM_INTERNAL -8
+/** attempt to initialize globals more than once */
+#define ORCA_GLOBAL_INIT -9
 /** @} OrcaCodes */
 
 /** @defgroup OrcaDiscordCodes

@@ -1,7 +1,6 @@
 /**
  * @file discord-internal.h
  * @author cee-studio
- * @date 18 Jun 2021
  * @brief File containing internal functions and datatypes
  */
 
@@ -10,7 +9,6 @@
 
 #include <inttypes.h>
 #include <pthread.h>
-#include "uthash.h"
 
 #include "json-actor.h"
 #include "json-actor-boxed.h"
@@ -19,7 +17,9 @@
 #include "user-agent.h"
 #include "websockets.h"
 #include "cee-utils.h"
+
 #include "threadpool.h"
+#include "uthash.h"
 
 #include "discord-voice-connections.h"
 
@@ -123,7 +123,6 @@ struct discord_bucket {
   u64_unix_ms_t reset_tstamp;
   /** timestamp of the most recent request */
   u64_unix_ms_t update_tstamp;
-
   /** synchronize buckets between threads */
   pthread_mutex_t lock;
   /** makes this structure hashable */
@@ -448,12 +447,14 @@ struct discord {
   /* @todo? create a analogous struct for gateway */
   struct discord_voice_cbs voice_cbs;
 
-  /** space for user arbitrary data @see discord_get_data() and
-   * discord_set_data() */
+  /**
+   * space for user arbitrary data
+   *        @see discord_get_data() and discord_set_data() */
   void *data;
 };
 
 struct discord_event_cxt {
+  /** the event name */
   char *event_name;
   /** the thread id */
   pthread_t tid;
@@ -461,7 +462,9 @@ struct discord_event_cxt {
   struct sized_buffer data;
   /** the discord gateway client */
   struct discord_gateway *p_gw;
+  /** the event unique id value */
   enum discord_gateway_events event;
+  /** the event callback */
   void (*on_event)(struct discord_gateway *gw, struct sized_buffer *data);
   bool is_main_thread;
 };

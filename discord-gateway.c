@@ -974,7 +974,7 @@ on_dispatch(struct discord_gateway *gw)
       .on_event = on_event,
       .is_main_thread = false
     };
-    /** @todo in case all worker threads are stuck on a infinite loop, this
+    /** @note in case all worker threads are stuck on a infinite loop, this
      *    function will essentially lock the program forever while waiting
      *    on a queue, how can we get around this? Should we? */
     int ret = threadpool_add(gw->tpool, &dispatch_run, p_cxt, 0);

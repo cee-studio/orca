@@ -977,7 +977,7 @@ on_dispatch(struct discord_gateway *gw)
     /** @note in case all worker threads are stuck on a infinite loop, this
      *    function will essentially lock the program forever while waiting
      *    on a queue, how can we get around this? Should we? */
-    int ret = threadpool_add(gw->tpool, &dispatch_run, p_cxt, 0);
+    int ret = work_run(&dispatch_run, p_cxt);
     VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
     return;
   }
@@ -1165,18 +1165,6 @@ discord_gateway_init(struct discord_gateway *gw,
 {
   struct ws_callbacks cbs;
   struct sized_buffer buf;
-  /* pre-initialize worker threads */
-  static int nthreads;
-  static int queue_size;
-  const char *val;
-
-  val = getenv("DISCORD_THREADPOOL_SIZE");
-  if (val != NULL) nthreads = atoi(val);
-  if (0 == nthreads) nthreads = 1;
-  val = getenv("DISCORD_THREADPOOL_QUEUE_SIZE");
-  if (val != NULL) queue_size = atoi(val);
-  if (0 == queue_size) queue_size = 8;
-  gw->tpool = threadpool_create(nthreads, queue_size, 0);
 
   cbs = (struct ws_callbacks){ .data = gw,
                                .on_connect = &on_connect_cb,
@@ -1245,8 +1233,6 @@ discord_gateway_cleanup(struct discord_gateway *gw)
 {
   /* cleanup WebSockets handle */
   ws_cleanup(gw->ws);
-  /* cleanup thread-pool manager */
-  threadpool_destroy(gw->tpool, threadpool_graceful);
   /* cleanup bot identification */
   if (gw->id.token) free(gw->id.token);
   free(gw->id.properties);

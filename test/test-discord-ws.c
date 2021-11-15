@@ -130,8 +130,8 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   discord_global_init();
-  setenv("DISCORD_THREADPOOL_SIZE", THREADPOOL_SIZE, 1);
-  setenv("DISCORD_THREADPOOL_QUEUE_SIZE", "128", 1);
+  setenv("ORCA_THREADPOOL_SIZE", THREADPOOL_SIZE, 1);
+  setenv("ORCA_THREADPOOL_QUEUE_SIZE", "128", 1);
 
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");

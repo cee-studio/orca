@@ -16,9 +16,9 @@
 #include "logconf.h" /* struct logconf */
 #include "user-agent.h"
 #include "websockets.h"
+#include "work.h"
 #include "cee-utils.h"
 
-#include "threadpool.h"
 #include "uthash.h"
 
 #include "discord-voice-connections.h"
@@ -278,8 +278,6 @@ struct discord_gateway {
   struct logconf conf;
   /** the websockets handle that connects to Discord */
   struct websockets *ws;
-  /** thread-pool manager */
-  threadpool_t *tpool;
 
   /** Reconnect structure */
   struct {

@@ -72,7 +72,7 @@ work_global_init(void)
   if (val != NULL) {
     queue_size = (int)strtol(val, &p_end, 10);
   }
-  if (0 == queue_size || ERANGE == errno || p_end == val) {
+  if (queue_size < 8 || ERANGE == errno || p_end == val) {
     queue_size = 8;
   }
 

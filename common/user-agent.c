@@ -35,6 +35,8 @@ struct user_agent {
     /** amount of connections node in pool */
     size_t amt;
   } * conn;
+  /** libcurl's multiplexer for async IO */
+  CURLM *mhandle;
   /** the base_url for every conn */
   struct sized_buffer base_url;
   /** synchronize conn pool and shared ratelimiting */
@@ -531,6 +533,12 @@ ua_set_url(struct user_agent *ua, const char *base_url)
   ua->base_url.size = asprintf(&ua->base_url.start, "%s", base_url);
 }
 
+void
+ua_set_curl_multi(struct user_agent *ua, CURLM *mhandle)
+{
+  ua->mhandle = mhandle;
+}
+
 /* set specific http method used for the request */
 static void
 _ua_conn_set_method(struct user_agent *ua,
@@ -801,13 +809,15 @@ ua_info_header_get(struct ua_info *info, char field[])
   struct sized_buffer h_field; /* header field */
   int i;
   for (i = 0; i < info->header.size; ++i) {
-    h_field = (struct sized_buffer){ info->header.buf +
-                                       info->header.pairs[i].field.idx,
-                                     info->header.pairs[i].field.size };
+    h_field = (struct sized_buffer){
+      info->header.buf + info->header.pairs[i].field.idx,
+      info->header.pairs[i].field.size,
+    };
     if (len == h_field.size && 0 == strncasecmp(field, h_field.start, len)) {
-      return (struct sized_buffer){ info->header.buf +
-                                      info->header.pairs[i].value.idx,
-                                    info->header.pairs[i].value.size };
+      return (struct sized_buffer){
+        info->header.buf + info->header.pairs[i].value.idx,
+        info->header.pairs[i].value.size,
+      };
     }
   }
   return (struct sized_buffer){ NULL, 0 };

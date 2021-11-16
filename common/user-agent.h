@@ -16,7 +16,7 @@ extern "C" {
 
 struct user_agent; /* forward declaration */
 
-/* possible http methods */
+/** @brief HTTP methods */
 enum http_method {
   HTTP_INVALID = -1,
   HTTP_DELETE,
@@ -42,29 +42,37 @@ https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
 #define HTTP_TOO_MANY_REQUESTS    429
 #define HTTP_GATEWAY_UNAVAILABLE  502
 
+/** Maximum amount of header fields */
 #define UA_MAX_HEADER_SIZE 100 + 1
 
-/* callback for object to be loaded by api response */
-typedef void(load_obj_cb)(char *str, size_t len, void *p_obj);
-typedef void(cxt_load_obj_cb)(void *cxt, char *str, size_t len, void *p_obj);
+/** @brief Callback for object to be loaded by api response */
+typedef void (*load_obj_cb)(char *str, size_t len, void *p_obj);
 
+/**
+ * @brief Callback for object to be loaded by api response, with a optional
+ * user context
+ */
+typedef void (*cxt_load_obj_cb)(void *cxt, char *str, size_t len, void *p_obj);
+
+/** @brief User callback to be called on request completion */
 struct ua_resp_handle {
   /** the context for cxt_ok_cb; */
   void *cxt;
   /** callback called when a successful transfer occurs */
-  load_obj_cb *ok_cb;
+  load_obj_cb ok_cb;
   /** the pointer to be passed to ok_cb */
   void *ok_obj;
   /** callback called when a failed transfer occurs */
-  load_obj_cb *err_cb;
+  load_obj_cb err_cb;
   /** the pointer to be passed to err_cb */
   void *err_obj;
   /** ok callback with an execution context */
-  cxt_load_obj_cb *cxt_ok_cb;
+  cxt_load_obj_cb cxt_ok_cb;
   /** err callback with an execution context */
-  cxt_load_obj_cb *cxt_err_cb;
+  cxt_load_obj_cb cxt_err_cb;
 };
 
+/** @brief Structure for storing the request's response header */
 struct ua_resp_header {
   /** response header buffer */
   char *buf;
@@ -85,6 +93,7 @@ struct ua_resp_header {
   int size;
 };
 
+/** @brief Structure for storing the request's response body */
 struct ua_resp_body {
   /** response body buffer */
   char *buf;
@@ -94,6 +103,7 @@ struct ua_resp_body {
   size_t bufsize;
 };
 
+/** @brief Informational handle received on request's completion */
 struct ua_info {
   /** logging informational */
   struct loginfo loginfo;
@@ -114,27 +124,131 @@ const char *http_reason_print(int httpcode);
 const char *http_method_print(enum http_method method);
 enum http_method http_method_eval(char method[]);
 
+/**
+ * @brief Add a field/value pair to the request header
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param field header's field to be added
+ * @param value field's value
+ */
 void ua_reqheader_add(struct user_agent *ua,
                       const char field[],
                       const char value[]);
+
+/**
+ * @brief Delete a field from the request header
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param field header's field to be deleted
+ */
 void ua_reqheader_del(struct user_agent *ua, const char field[]);
+
+/**
+ * @brief Get the request header as a linear string
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param buf the user buffer to be filled
+ * @param bufsize the user buffer size in bytes
+ * @return the user buffer
+ */
 char *ua_reqheader_str(struct user_agent *ua, char *buf, size_t bufsize);
 
+/**
+ * @brief Set a setup callback to be called by each libcurl's connection during
+ * initial setup
+ *
+ * @param ua the User-Handle created with ua_init()
+ * @param data user data to be passed along to setopt_cb
+ * @param setopt_cb the user callback
+ */
 void ua_curl_easy_setopt(struct user_agent *ua,
                          void *data,
-                         void(setopt_cb)(CURL *ehandle, void *data));
+                         void (*setopt_cb)(CURL *ehandle, void *data));
+/**
+ * @brief Set a MIME creation callback to be called by each libcurl's
+ * connection
+ *
+ * This sets a user-defined callback for creating multipart types, needed
+ *        if `Content-Type: multipart/form-data` is set
+ * @param ua the User-Handle created with ua_init()
+ * @param data user data to be passed along to `mime_cb`
+ * @param mime_cb the user callback
+ */
 void ua_curl_mime_setopt(struct user_agent *ua,
                          void *data,
-                         void(mime_cb)(curl_mime *mime, void *data));
+                         void (*mime_cb)(curl_mime *mime, void *data));
 
-struct user_agent *ua_init(struct logconf *config);
+/**
+ * @brief Initialize User-Agent handle
+ *
+ * @param conf pre-initialized `struct loconf` module for logging purposes
+ * @return the user agent handle
+ */
+struct user_agent *ua_init(struct logconf *conf);
+
+/**
+ * @brief Clone a User-Agent handle
+ *
+ * The clone will share connections with the original, but will have
+ *        its own unique set of URL and headers
+ * @param orig_ua the original User-Agent handle
+ * @return the User-Agent handle clone
+ * @note should call ua_cleanup() after done being used
+ */
 struct user_agent *ua_clone(struct user_agent *orig_ua);
+
+/**
+ * @brief Cleanup User-Agent handle resources
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ */
 void ua_cleanup(struct user_agent *ua);
 
+/**
+ * @brief Set the request url
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param base_url the base request url
+ */
 void ua_set_url(struct user_agent *ua, const char *base_url);
+
+/**
+ * @brief Set a libcurl's multihandle for performing asynchronous requests
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param mhandle pre-initialized multi-handle for performing
+ *        requests asynchronously
+ * @note the user is responsible for cleaning up `mhandle` resources
+ */
+void ua_set_curl_multi(struct user_agent *ua, CURLM *mhandle);
+
+/**
+ * @brief Get the request url
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @return the request url set with ua_set_url()
+ */
 const char *ua_get_url(struct user_agent *ua);
+
+/**
+ * @brief Block all on-going connections
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param wait_ms the block time in milliseconds
+ */
 void ua_block_ms(struct user_agent *ua, const uint64_t wait_ms);
 
+/**
+ * @brief Run a REST transfer
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param info optional informational handle on how the request went
+ * @param resp_handle the optional response callbacks, can be NULL
+ * @param req_body the optional request body, can be NULL
+ * @param http_method the HTTP method of this transfer (GET, POST, ...)
+ * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
+ * @return ORCAcode for how the transfer went, ORCA_OK means success.
+ */
 ORCAcode ua_run(struct user_agent *ua,
                 struct ua_info *info,
                 struct ua_resp_handle *resp_handle,
@@ -142,8 +256,28 @@ ORCAcode ua_run(struct user_agent *ua,
                 enum http_method http_method,
                 char endpoint[]);
 
+/**
+ * @brief Cleanup informational handle
+ *
+ * @param info informational handle returned from ua_run()
+ */
 void ua_info_cleanup(struct ua_info *info);
+
+/**
+ * @brief Get a value's from the response header
+ *
+ * @param info informational handle returned from ua_run()
+ * @param field the header field to fetch the value
+ * @return a sized_buffer containing the field's value
+ */
 struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
+
+/**
+ * @brief Get the response body
+ *
+ * @param info informational handle return from ua_run()
+ * @return a sized_buffer containing the response body
+ */
 struct sized_buffer ua_info_get_body(struct ua_info *info);
 
 #ifdef __cplusplus

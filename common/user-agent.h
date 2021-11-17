@@ -14,7 +14,9 @@ extern "C" {
 #include "types.h" /* ORCAcode */
 #include "logconf.h" /* logging facilities */
 
-struct user_agent; /* forward declaration */
+/* forward declaration */
+struct user_agent;
+struct ua_conn;
 
 /** @brief HTTP methods */
 enum http_method {
@@ -255,6 +257,37 @@ ORCAcode ua_run(struct user_agent *ua,
                 struct sized_buffer *req_body,
                 enum http_method http_method,
                 char endpoint[]);
+
+/**
+ * @brief Insert conn to queue's tail
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param conn the connection node to be pushed
+ */
+void ua_connq_push(struct user_agent *ua, struct ua_conn *conn);
+
+/**
+ * @brief Insert conn to queue's head
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param conn the connection node to be unshifted
+ */
+void ua_connq_unshift(struct user_agent *ua, struct ua_conn *conn);
+
+/**
+ * @brief Peek at queue head's conn
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @return the head's conn
+ */
+struct ua_conn *ua_connq_head(struct user_agent *ua);
+
+/**
+ * @brief Remove head conn from queue
+ *
+ * @param conn conn to be removed
+ */
+void ua_connq_shift(struct ua_conn *conn);
 
 /**
  * @brief Cleanup informational handle

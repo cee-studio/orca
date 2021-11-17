@@ -11,6 +11,7 @@
 
 #include "user-agent.h"
 #include "cee-utils.h"
+#include "queue.h"
 
 #define CURLE_LOG(conn, ecode)                                                \
   do {                                                                        \
@@ -31,9 +32,11 @@ struct user_agent {
    */
   struct {
     /** connection pool */
-    struct _ua_conn **pool;
+    struct ua_conn **pool;
     /** amount of connections node in pool */
     size_t amt;
+    /** pending requests queue */
+    QUEUE pending;
   } * conn;
   /** libcurl's multiplexer for async IO */
   CURLM *mhandle;
@@ -63,20 +66,25 @@ struct user_agent {
   void (*mime_cb)(curl_mime *mime, void *data2);
 };
 
-struct _ua_conn {
+struct ua_conn {
+  /** true if current conn is performing a request */
+  bool is_busy;
   /** ptr to struct user_agent conf */
   struct logconf *conf;
+  /** informational handle on how the request went */
   struct ua_info info;
   /** the curl's easy handle used to perform requests */
   CURL *ehandle;
-  /** true if current conn is performing a request */
-  bool is_busy;
+  /** resp_handle in case conn has been enqueued */
+  struct ua_resp_handle resp_handle;
   /**
    * capture curl error messages
    * @note should only be accessed after a error code returns
    * @see https://curl.se/libcurl/c/CURLOPT_ERRORBUFFER.html
    */
   char errbuf[CURL_ERROR_SIZE];
+  /** entry-node for queue insertion */
+  QUEUE entry;
 };
 
 const char *
@@ -359,10 +367,10 @@ ua_curl_mime_setopt(struct user_agent *ua,
   ua->data2 = data;
 }
 
-static struct _ua_conn *
+static struct ua_conn *
 _ua_conn_init(struct user_agent *ua)
 {
-  struct _ua_conn *new_conn = calloc(1, sizeof(struct _ua_conn));
+  struct ua_conn *new_conn = calloc(1, sizeof(struct ua_conn));
   new_conn->conf = &ua->conf;
 
   CURL *new_ehandle = curl_easy_init();
@@ -388,11 +396,13 @@ _ua_conn_init(struct user_agent *ua)
   }
   new_conn->ehandle = new_ehandle;
 
+  QUEUE_INIT(&new_conn->entry);
+
   return new_conn;
 }
 
 static void
-_ua_conn_cleanup(struct _ua_conn *conn)
+_ua_conn_cleanup(struct ua_conn *conn)
 {
   curl_easy_cleanup(conn->ehandle);
   ua_info_cleanup(&conn->info);
@@ -400,22 +410,25 @@ _ua_conn_cleanup(struct _ua_conn *conn)
 }
 
 static void
-_ua_conn_reset(struct _ua_conn *conn)
+_ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
 {
-  conn->is_busy = false;
   conn->info.httpcode = 0;
   conn->info.req_tstamp = 0;
   conn->info.body.len = 0;
   conn->info.header.len = 0;
   conn->info.header.size = 0;
   *conn->errbuf = '\0';
+  memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
+  pthread_mutex_lock(&ua->shared->lock);
+  conn->is_busy = false;
+  pthread_mutex_unlock(&ua->shared->lock);
 }
 
-static struct _ua_conn *
+static struct ua_conn *
 _ua_conn_get(struct user_agent *ua)
 {
   pthread_mutex_lock(&ua->shared->lock);
-  struct _ua_conn *ret_conn = NULL;
+  struct ua_conn *ret_conn = NULL;
 
   size_t i = 0;
   while (i < ua->conn->amt) {
@@ -460,6 +473,8 @@ ua_init(struct logconf *conf)
     logconf_fatal(&new_ua->conf, "Couldn't initialize mutex");
     ABORT();
   }
+
+  QUEUE_INIT(&new_ua->conn->pending);
 
   new_ua->is_original = true;
 
@@ -542,7 +557,7 @@ ua_set_curl_multi(struct user_agent *ua, CURLM *mhandle)
 /* set specific http method used for the request */
 static void
 _ua_conn_set_method(struct user_agent *ua,
-                    struct _ua_conn *conn,
+                    struct ua_conn *conn,
                     enum http_method method,
                     struct sized_buffer *req_body)
 {
@@ -578,7 +593,7 @@ _ua_conn_set_method(struct user_agent *ua,
 }
 
 static void
-_ua_conn_set_url(struct user_agent *ua, struct _ua_conn *conn, char endpoint[])
+_ua_conn_set_url(struct user_agent *ua, struct ua_conn *conn, char endpoint[])
 {
   size_t url_len = 2 + ua->base_url.size + strlen(endpoint);
 
@@ -604,7 +619,7 @@ _ua_conn_set_url(struct user_agent *ua, struct _ua_conn *conn, char endpoint[])
 }
 
 static CURLcode
-_ua_conn_send(struct user_agent *ua, struct _ua_conn *conn, int *httpcode)
+_ua_conn_send(struct user_agent *ua, struct ua_conn *conn, int *httpcode)
 {
   CURLcode ecode;
   char *resp_url = NULL;
@@ -634,9 +649,7 @@ _ua_conn_send(struct user_agent *ua, struct _ua_conn *conn, int *httpcode)
 }
 
 static ORCAcode
-_ua_conn_perform(struct user_agent *ua,
-                 struct _ua_conn *conn,
-                 struct ua_resp_handle *resp_handle)
+_ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
 {
   CURLcode ecode = _ua_conn_send(ua, conn, &conn->info.httpcode);
   if (ecode != CURLE_OK) {
@@ -652,15 +665,14 @@ _ua_conn_perform(struct user_agent *ua,
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
 
-    if (resp_handle) {
-      if (resp_handle->err_cb) {
-        (*resp_handle->err_cb)(conn->info.body.buf, conn->info.body.len,
-                               resp_handle->err_obj);
-      }
-      else if (resp_handle->cxt_err_cb) {
-        (*resp_handle->cxt_err_cb)(resp_handle->cxt, conn->info.body.buf,
-                                   conn->info.body.len, resp_handle->err_obj);
-      }
+    if (conn->resp_handle.err_cb) {
+      (*conn->resp_handle.err_cb)(conn->info.body.buf, conn->info.body.len,
+                                  conn->resp_handle.err_obj);
+    }
+    else if (conn->resp_handle.cxt_err_cb) {
+      (*conn->resp_handle.cxt_err_cb)(conn->resp_handle.cxt,
+                                      conn->info.body.buf, conn->info.body.len,
+                                      conn->resp_handle.err_obj);
     }
     return ORCA_HTTP_CODE;
   }
@@ -671,15 +683,14 @@ _ua_conn_perform(struct user_agent *ua,
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
 
-    if (resp_handle) {
-      if (resp_handle->err_cb) {
-        (*resp_handle->err_cb)(conn->info.body.buf, conn->info.body.len,
-                               resp_handle->err_obj);
-      }
-      else if (resp_handle->cxt_err_cb) {
-        (*resp_handle->cxt_err_cb)(resp_handle->cxt, conn->info.body.buf,
-                                   conn->info.body.len, resp_handle->err_obj);
-      }
+    if (conn->resp_handle.err_cb) {
+      (*conn->resp_handle.err_cb)(conn->info.body.buf, conn->info.body.len,
+                                  conn->resp_handle.err_obj);
+    }
+    else if (conn->resp_handle.cxt_err_cb) {
+      (*conn->resp_handle.cxt_err_cb)(conn->resp_handle.cxt,
+                                      conn->info.body.buf, conn->info.body.len,
+                                      conn->resp_handle.err_obj);
     }
     return ORCA_HTTP_CODE;
   }
@@ -698,15 +709,14 @@ _ua_conn_perform(struct user_agent *ua,
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
 
-    if (resp_handle) {
-      if (resp_handle->ok_cb) {
-        (*resp_handle->ok_cb)(conn->info.body.buf, conn->info.body.len,
-                              resp_handle->ok_obj);
-      }
-      else if (resp_handle->cxt_ok_cb) {
-        (*resp_handle->cxt_ok_cb)(resp_handle->cxt, conn->info.body.buf,
-                                  conn->info.body.len, resp_handle->ok_obj);
-      }
+    if (conn->resp_handle.ok_cb) {
+      (*conn->resp_handle.ok_cb)(conn->info.body.buf, conn->info.body.len,
+                                 conn->resp_handle.ok_obj);
+    }
+    else if (conn->resp_handle.cxt_ok_cb) {
+      (*conn->resp_handle.cxt_ok_cb)(conn->resp_handle.cxt,
+                                     conn->info.body.buf, conn->info.body.len,
+                                     conn->resp_handle.ok_obj);
     }
     return ORCA_OK;
   }
@@ -735,6 +745,44 @@ ua_block_ms(struct user_agent *ua, const uint64_t wait_ms)
   pthread_mutex_unlock(&ua->shared->lock);
 }
 
+static void
+_ua_conn_setup(struct user_agent *ua,
+               struct ua_conn *conn,
+               struct ua_info *info,
+               struct ua_resp_handle *resp_handle,
+               struct sized_buffer *req_body,
+               enum http_method http_method,
+               char endpoint[])
+{
+  const char *method_str = http_method_print(http_method);
+  static struct sized_buffer blank_req_body = { "", 0 };
+  char logbuf[1024] = "";
+
+  if (NULL == req_body) {
+    req_body = &blank_req_body;
+  }
+
+  /* set conn request's url */
+  _ua_conn_set_url(ua, conn, endpoint);
+
+  ua_reqheader_str(ua, logbuf, sizeof(logbuf));
+
+  logconf_http(&ua->conf, &conn->info.loginfo, conn->info.req_url.start,
+               (struct sized_buffer){ logbuf, sizeof(logbuf) }, *req_body,
+               "HTTP_SEND_%s", method_str);
+  logconf_trace(conn->conf,
+                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
+                method_str, conn->info.loginfo.counter);
+
+  /* set conn request's method */
+  _ua_conn_set_method(ua, conn, http_method, req_body);
+
+  /* store callback context */
+  if (resp_handle) {
+    memcpy(&conn->resp_handle, resp_handle, sizeof(struct ua_resp_handle));
+  }
+}
+
 /* template function for performing synchronous requests */
 ORCAcode
 ua_run(struct user_agent *ua,
@@ -744,33 +792,15 @@ ua_run(struct user_agent *ua,
        enum http_method http_method,
        char endpoint[])
 {
-  const char *method_str = http_method_print(http_method);
-  static struct sized_buffer blank_req_body = { "", 0 };
-  if (NULL == req_body) {
-    req_body = &blank_req_body;
-  }
-
   /* get conn that will perform the request */
-  struct _ua_conn *conn = _ua_conn_get(ua);
-  /* set conn request's url */
-  _ua_conn_set_url(ua, conn, endpoint);
+  struct ua_conn *conn = _ua_conn_get(ua);
+  /* populate conn with parameters */
+  _ua_conn_setup(ua, conn, info, resp_handle, req_body, http_method, endpoint);
 
-  char buf[1024] = "";
-  ua_reqheader_str(ua, buf, sizeof(buf));
+  /* perform blocking-IO request */
+  ORCAcode code = _ua_conn_perform(ua, conn);
 
-  logconf_http(&ua->conf, &conn->info.loginfo, conn->info.req_url.start,
-               (struct sized_buffer){ buf, sizeof(buf) }, *req_body,
-               "HTTP_SEND_%s", method_str);
-
-  logconf_trace(conn->conf,
-                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
-                method_str, conn->info.loginfo.counter);
-
-  /* set conn request's method */
-  _ua_conn_set_method(ua, conn, http_method, req_body);
-  ORCAcode code = _ua_conn_perform(ua, conn, resp_handle);
-
-  pthread_mutex_lock(&ua->shared->lock);
+  /* populate ua_info */
   if (info) {
     memcpy(info, &conn->info, sizeof(struct ua_info));
     asprintf(&info->body.buf, "%.*s", (int)conn->info.body.len,
@@ -781,15 +811,48 @@ ua_run(struct user_agent *ua,
              conn->info.req_url.start);
   }
 
-  /* reset conn for next iteration */
-  _ua_conn_reset(conn);
+  /* its assumed ua_clone() will be called to make sure 'struct user_agent' is
+   * thread-safe
+   * @todo make it a user-called function
+   */
   if (ua->mime) {
     curl_mime_free(ua->mime);
     ua->mime = NULL;
   }
-  pthread_mutex_unlock(&ua->shared->lock);
+  /* reset conn for next iteration and mark it as free to use */
+  _ua_conn_reset(ua, conn);
 
   return code;
+}
+
+void
+ua_connq_push(struct user_agent *ua, struct ua_conn *conn)
+{
+  /* insert conn to end of queue */
+  QUEUE_INSERT_TAIL(&ua->conn->pending, &conn->entry);
+}
+
+void
+ua_connq_unshift(struct user_agent *ua, struct ua_conn *conn)
+{
+  /* insert conn to start of queue */
+  QUEUE_INSERT_HEAD(&ua->conn->pending, &conn->entry);
+}
+
+struct ua_conn *
+ua_connq_head(struct user_agent *ua)
+{
+  if (QUEUE_EMPTY(&ua->conn->pending)) return NULL;
+  /* peek at the queue head's conn */
+  QUEUE *q = QUEUE_HEAD(&ua->conn->pending);
+  return QUEUE_DATA(q, struct ua_conn, entry);
+}
+
+void
+ua_connq_shift(struct ua_conn *conn)
+{
+  /* remove conn from queue */
+  QUEUE_REMOVE(&conn->entry);
 }
 
 void
@@ -808,6 +871,7 @@ ua_info_header_get(struct ua_info *info, char field[])
   const size_t len = strlen(field);
   struct sized_buffer h_field; /* header field */
   int i;
+
   for (i = 0; i < info->header.size; ++i) {
     h_field = (struct sized_buffer){
       info->header.buf + info->header.pairs[i].field.idx,

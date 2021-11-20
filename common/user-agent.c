@@ -37,8 +37,6 @@ struct user_agent {
     /** pending requests queue */
     QUEUE pending;
   } * conn;
-  /** libcurl's multiplexer for async IO */
-  CURLM *mhandle;
   /** the base_url for every conn */
   struct sized_buffer base_url;
   /** synchronize conn pool and shared ratelimiting */
@@ -47,6 +45,8 @@ struct user_agent {
     uint64_t blockuntil_tstamp;
     /** the mutex for blocking conn.pool */
     pthread_mutex_t lock;
+    /** lock for reading/writing the event-loop timestamp */
+    pthread_rwlock_t rwlock;
   } * shared;
   /** the user agent logging module */
   struct logconf conf;
@@ -63,6 +63,8 @@ struct user_agent {
   void *data2;
   curl_mime *mime;
   void (*mime_cb)(curl_mime *mime, void *data2);
+  /** timestamp updated every request received */
+  uint64_t req_tstamp;
 };
 
 struct ua_conn {
@@ -455,9 +457,10 @@ _ua_conn_get(struct user_agent *ua)
 }
 
 struct user_agent *
-ua_init(struct logconf *conf)
+ua_init(struct ua_attr *attr)
 {
   struct user_agent *new_ua;
+  struct ua_attr _attr = attr ? *attr : (struct ua_attr){};
 
   new_ua = calloc(1, sizeof *new_ua);
   new_ua->conn = calloc(1, sizeof *new_ua->conn);
@@ -469,10 +472,14 @@ ua_init(struct logconf *conf)
   ua_reqheader_add(new_ua, "Content-Type", "application/json");
   ua_reqheader_add(new_ua, "Accept", "application/json");
 
-  logconf_branch(&new_ua->conf, conf, "USER_AGENT");
+  logconf_branch(&new_ua->conf, _attr.conf, "USER_AGENT");
 
   if (pthread_mutex_init(&new_ua->shared->lock, NULL)) {
     logconf_fatal(&new_ua->conf, "Couldn't initialize mutex");
+    ABORT();
+  }
+  if (pthread_rwlock_init(&new_ua->shared->rwlock, NULL)) {
+    logconf_fatal(&new_ua->conf, "Couldn't initialize rwlock");
     ABORT();
   }
 
@@ -530,6 +537,7 @@ ua_cleanup(struct user_agent *ua)
     free(ua->conn);
 
     pthread_mutex_destroy(&ua->shared->lock);
+    pthread_rwlock_destroy(&ua->shared->rwlock);
     free(ua->shared);
     logconf_cleanup(&ua->conf);
   }
@@ -548,12 +556,6 @@ ua_set_url(struct user_agent *ua, const char *base_url)
 {
   if (ua->base_url.start) free(ua->base_url.start);
   ua->base_url.size = asprintf(&ua->base_url.start, "%s", base_url);
-}
-
-void
-ua_set_curl_multi(struct user_agent *ua, CURLM *mhandle)
-{
-  ua->mhandle = mhandle;
 }
 
 /* set specific http method used for the request */
@@ -626,26 +628,40 @@ _ua_conn_send(struct user_agent *ua, struct ua_conn *conn, int *httpcode)
   CURLcode ecode;
   char *resp_url = NULL;
 
+  pthread_mutex_lock(&ua->shared->lock);
+
   /**
    * enforces global ratelimiting with ua_block_ms()
    * @todo there are better solutions than this
    */
-  pthread_mutex_lock(&ua->shared->lock);
   cee_sleep_ms(ua->shared->blockuntil_tstamp - cee_timestamp_ms());
 
   ecode = curl_easy_perform(conn->ehandle);
+
+  /* get request timestamp */
   conn->info.req_tstamp = cee_timestamp_ms();
+  /* update last request timestamp */
+  pthread_rwlock_wrlock(&ua->rwlock);
+  ua->req_tstamp = conn->info.req_tstamp;
+  pthread_rwlock_unlock(&ua->rwlock);
+
+  pthread_mutex_unlock(&ua->shared->lock);
+
   /* get response's code */
   curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE, httpcode);
   /* get response's url */
   curl_easy_getinfo(conn->ehandle, CURLINFO_EFFECTIVE_URL, &resp_url);
 
-  logconf_http(
-    &ua->conf, &conn->info.loginfo, resp_url,
-    (struct sized_buffer){ conn->info.header.buf, conn->info.header.len },
-    (struct sized_buffer){ conn->info.body.buf, conn->info.body.len },
-    "HTTP_RCV_%s(%d)", http_code_print(*httpcode), *httpcode);
-  pthread_mutex_unlock(&ua->shared->lock);
+  logconf_http(&ua->conf, &conn->info.loginfo, resp_url,
+               (struct sized_buffer){
+                 conn->info.header.buf,
+                 conn->info.header.len,
+               },
+               (struct sized_buffer){
+                 conn->info.body.buf,
+                 conn->info.body.len,
+               },
+               "HTTP_RCV_%s(%d)", http_code_print(*httpcode), *httpcode);
 
   return ecode;
 }
@@ -743,7 +759,7 @@ void
 ua_block_ms(struct user_agent *ua, const uint64_t wait_ms)
 {
   pthread_mutex_lock(&ua->shared->lock);
-  ua->shared->blockuntil_tstamp = cee_timestamp_ms() + wait_ms;
+  ua->shared->blockuntil_tstamp = ua->req_tstamp + wait_ms;
   pthread_mutex_unlock(&ua->shared->lock);
 }
 
@@ -902,4 +918,14 @@ struct sized_buffer
 ua_info_get_body(struct ua_info *info)
 {
   return (struct sized_buffer){ info->body.buf, info->body.len };
+}
+
+uint64_t
+ua_timestamp(struct user_agent *ua)
+{
+  uint64_t req_tstamp;
+  pthread_rwlock_rdlock(&ua->rwlock);
+  req_tstamp = ua->req_tstamp;
+  pthread_rwlock_unlock(&ua->rwlock);
+  return req_tstamp;
 }

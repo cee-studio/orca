@@ -19,6 +19,13 @@ extern "C" {
 struct user_agent;
 struct ua_conn;
 
+/** @brief User-Agent handle initialization attributes */
+struct ua_attr {
+  /** pre-initialized logging module */
+  struct logconf *conf;
+};
+
+
 /** @brief HTTP methods */
 enum http_method {
   HTTP_INVALID = -1,
@@ -184,10 +191,10 @@ void ua_curl_mime_setopt(struct user_agent *ua,
 /**
  * @brief Initialize User-Agent handle
  *
- * @param conf pre-initialized `struct loconf` module for logging purposes
+ * @param attr optional attributes to override defaults
  * @return the user agent handle
  */
-struct user_agent *ua_init(struct logconf *conf);
+struct user_agent *ua_init(struct ua_attr *attr);
 
 /**
  * @brief Clone a User-Agent handle
@@ -216,16 +223,6 @@ void ua_cleanup(struct user_agent *ua);
  * @param base_url the base request url
  */
 void ua_set_url(struct user_agent *ua, const char *base_url);
-
-/**
- * @brief Set a libcurl's multihandle for performing asynchronous requests
- *
- * @param ua the User-Agent handle created with ua_init()
- * @param mhandle pre-initialized multi-handle for performing
- *        requests asynchronously
- * @note the user is responsible for cleaning up `mhandle` resources
- */
-void ua_set_curl_multi(struct user_agent *ua, CURLM *mhandle);
 
 /**
  * @brief Get the request url
@@ -327,6 +324,14 @@ struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
  * @return a sized_buffer containing the response body
  */
 struct sized_buffer ua_info_get_body(struct ua_info *info);
+
+/**
+ * @brief The most recent request performed timestamp
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @return the timestamp in milliseconds from the last request performed
+ */
+uint64_t ua_timestamp(struct user_agent *ua);
 
 #ifdef __cplusplus
 }

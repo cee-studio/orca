@@ -244,6 +244,14 @@ bool ws_pong(struct websockets *ws,
 void ws_start(struct websockets *ws);
 
 /**
+ * @brief Cleanup and reset `ws` connection resources
+ *
+ * @param ws the WebSockets handle created with ws_init()
+ * @note Helper over _ws_set_status(ws, WS_DISCONNECT)
+ */
+void ws_end(struct websockets *ws);
+
+/**
  * @brief Reads/Write available data from WebSockets
  *
  * Helper over curl_multi_perform()

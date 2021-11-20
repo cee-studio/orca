@@ -771,12 +771,46 @@ ws_start(struct websockets *ws)
 }
 
 void
+ws_end(struct websockets *ws)
+{
+  /* read messages/informationals from the individual transfers */
+  int msgq = 0;
+  struct CURLMsg *curlmsg = curl_multi_info_read(ws->mhandle, &msgq);
+  if (curlmsg && ws->ehandle == curlmsg->easy_handle) {
+    CURLcode ecode = curlmsg->data.result;
+    switch (ecode) {
+    case CURLE_OK:
+    case CURLE_ABORTED_BY_CALLBACK: /* _ws_check_action_cb() */
+      logconf_info(&ws->conf, "Disconnected gracefully");
+      break;
+    case CURLE_READ_ERROR:
+    default:
+      logconf_error(&ws->conf, "(CURLE code: %d) %s", ecode,
+                    IS_EMPTY_STRING(ws->errbuf) ? curl_easy_strerror(ecode)
+                                                : ws->errbuf);
+      logconf_error(&ws->conf, "Disconnected abruptly");
+      break;
+    }
+  }
+  else {
+    logconf_warn(&ws->conf, "Exit before establishing a connection");
+  }
+
+  curl_multi_remove_handle(ws->mhandle, ws->ehandle);
+
+  /* reset for next iteration */
+  *ws->errbuf = '\0';
+  if (ws->ehandle) {
+    cws_free(ws->ehandle);
+    ws->ehandle = NULL;
+  }
+
+  _ws_set_status(ws, WS_DISCONNECTED);
+}
+
+void
 ws_perform(struct websockets *ws, bool *p_is_running, uint64_t wait_ms)
 {
-  ASSERT_S(
-    ws->tid == pthread_self(),
-    "ws_perform() should only be called from its initialization thread");
-
   int is_running = 0;
   CURLMcode mcode;
   int numfds = 0;
@@ -806,44 +840,9 @@ ws_perform(struct websockets *ws, bool *p_is_running, uint64_t wait_ms)
   mcode = curl_multi_wait(ws->mhandle, NULL, 0, wait_ms, &numfds);
   CURLM_CHECK(ws, mcode);
 
-  if (!is_running) {
-    /* WebSockets connection is severed */
-    _ws_set_status(ws, WS_DISCONNECTING);
-
-    /* read messages/informationals from the individual transfers */
-    int msgq = 0;
-    struct CURLMsg *curlmsg = curl_multi_info_read(ws->mhandle, &msgq);
-    if (curlmsg && ws->ehandle == curlmsg->easy_handle) {
-      CURLcode ecode = curlmsg->data.result;
-      switch (ecode) {
-      case CURLE_OK:
-      case CURLE_ABORTED_BY_CALLBACK: /* _ws_check_action_cb() */
-        logconf_info(&ws->conf, "Disconnected gracefully");
-        break;
-      case CURLE_READ_ERROR:
-      default:
-        logconf_error(&ws->conf, "(CURLE code: %d) %s", ecode,
-                      IS_EMPTY_STRING(ws->errbuf) ? curl_easy_strerror(ecode)
-                                                  : ws->errbuf);
-        logconf_error(&ws->conf, "Disconnected abruptly");
-        break;
-      }
-    }
-    else {
-      logconf_warn(&ws->conf, "Exit before establishing a connection");
-    }
-
-    curl_multi_remove_handle(ws->mhandle, ws->ehandle);
-
-    /* reset for next iteration */
-    *ws->errbuf = '\0';
-    if (ws->ehandle) {
-      cws_free(ws->ehandle);
-      ws->ehandle = NULL;
-    }
-
-    _ws_set_status(ws, WS_DISCONNECTED);
-  }
+  /* tag as disconnecting if connection has been severed
+   *        user should proceed with ws_end() */
+  if (!is_running) _ws_set_status(ws, WS_DISCONNECTING);
 
   *p_is_running = is_running;
 }

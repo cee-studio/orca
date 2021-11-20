@@ -9,9 +9,9 @@ void load(char *str, size_t len, void *ptr)
   fprintf(stderr, "%.*s", (int)len, str);
 }
 
-int commit(char *base_url, struct logconf *config)
+int commit(char *base_url, struct logconf *conf)
 {
-  struct user_agent *data = ua_init(config);
+  struct user_agent *data = ua_init(&(struct ua_attr){ .conf = conf });
   ua_set_url(data, base_url);
 
   curl_global_init(CURL_GLOBAL_ALL);
@@ -38,12 +38,12 @@ int main(int argc, char *argv[])
   else
     config_file = "../config.json";
 
-  struct logconf config;
+  struct logconf conf;
   FILE *fp = fopen(config_file, "rb");
-  logconf_setup(&config, "CEE_HTTP", fp);
+  logconf_setup(&conf, "CEE_HTTP", fp);
   fclose(fp);
 
-  commit("https://cee.studio", &config);
+  commit("https://cee.studio", &conf);
 
   return 0;
 }

@@ -32,7 +32,7 @@ curl_setopt_cb(CURL *ehandle, void *p_client)
 void
 reddit_adapter_init(struct reddit_adapter *adapter, struct logconf *conf)
 {
-  adapter->ua = ua_init(conf);
+  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
   ua_set_url(adapter->ua, BASE_API_URL);
   logconf_branch(&adapter->conf, conf, "REDDIT_HTTP");
 

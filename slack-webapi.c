@@ -15,7 +15,7 @@ slack_webapi_init(struct slack_webapi *webapi,
                   struct logconf *conf,
                   struct sized_buffer *token)
 {
-  webapi->ua = ua_init(conf);
+  webapi->ua = ua_init(&(struct ua_attr){ .conf = conf });
   ua_set_url(webapi->ua, SLACK_BASE_API_URL);
   logconf_branch(&webapi->conf, conf, "SLACK_WEBAPI");
 

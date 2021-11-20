@@ -641,9 +641,9 @@ _ua_conn_send(struct user_agent *ua, struct ua_conn *conn, int *httpcode)
   /* get request timestamp */
   conn->info.req_tstamp = cee_timestamp_ms();
   /* update last request timestamp */
-  pthread_rwlock_wrlock(&ua->rwlock);
+  pthread_rwlock_wrlock(&ua->shared->rwlock);
   ua->req_tstamp = conn->info.req_tstamp;
-  pthread_rwlock_unlock(&ua->rwlock);
+  pthread_rwlock_unlock(&ua->shared->rwlock);
 
   pthread_mutex_unlock(&ua->shared->lock);
 
@@ -924,8 +924,8 @@ uint64_t
 ua_timestamp(struct user_agent *ua)
 {
   uint64_t req_tstamp;
-  pthread_rwlock_rdlock(&ua->rwlock);
+  pthread_rwlock_rdlock(&ua->shared->rwlock);
   req_tstamp = ua->req_tstamp;
-  pthread_rwlock_unlock(&ua->rwlock);
+  pthread_rwlock_unlock(&ua->shared->rwlock);
   return req_tstamp;
 }

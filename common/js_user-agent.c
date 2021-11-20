@@ -90,17 +90,17 @@ jsua_cleanup(js_State *J, void *p_ua)
 static void
 new_UserAgent(js_State *J)
 {
-  static struct logconf config = { 0 };
+  static struct logconf conf = { 0 };
   static _Bool first_run = 0;
 
   if (!first_run) {
     FILE *fp = fopen(g_config_file, "rb");
-    logconf_setup(&config, "JS_UserAgent", fp);
+    logconf_setup(&conf, "JS_UserAgent", fp);
     fclose(fp);
     first_run = 1;
   }
 
-  struct user_agent *ua = ua_init(&config);
+  struct user_agent *ua = ua_init(&(struct ua_attr){ .conf = &conf });
   if (js_isstring(J, 1)) {
     char *tmp = (char *)js_tostring(J, 1);
 

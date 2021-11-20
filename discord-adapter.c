@@ -14,7 +14,7 @@ discord_adapter_init(struct discord_adapter *adapter,
                      struct logconf *conf,
                      struct sized_buffer *token)
 {
-  adapter->ua = ua_init(conf);
+  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
   ua_set_url(adapter->ua, DISCORD_API_BASE_URL);
 
   adapter->ratelimit = calloc(1, sizeof *adapter->ratelimit);

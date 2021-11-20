@@ -144,14 +144,22 @@ struct ws_callbacks {
   void *data;
 };
 
+/** @brief WebSockets handle initialization attributes */
+struct ws_attr {
+  /** pre-initialized logging module */
+  struct logconf *conf;
+  /** pre-initialized libcurl's multi-handle */
+  CURLM *mhandle;
+};
+
 /**
  * @brief Create a new (CURL-based) WebSockets handle
  *
  * @param cbs set of functions to call back when server report events.
- * @param config optional parent logconf struct
+ * @param attr optional attributes to override defaults
  * @return newly created WebSockets handle, free with ws_cleanup()
  */
-struct websockets *ws_init(struct ws_callbacks *cbs, struct logconf *config);
+struct websockets *ws_init(struct ws_callbacks *cbs, struct ws_attr *attr);
 
 /**
  * @brief Free a WebSockets handle created with ws_init()
@@ -183,10 +191,10 @@ void ws_set_url(struct websockets *ws,
  * @param msglen the length in bytes of @a msg.
  * @return true if sent, false on errors.
  */
-bool ws_send_binary(struct websockets *ws,
-                    struct ws_info *info,
-                    const char msg[],
-                    size_t msglen);
+_Bool ws_send_binary(struct websockets *ws,
+                     struct ws_info *info,
+                     const char msg[],
+                     size_t msglen);
 /**
  * @brief Send a text message of given size.
  *
@@ -199,10 +207,10 @@ bool ws_send_binary(struct websockets *ws,
  * @param len the length in bytes of @a text.
  * @return true if sent, false on errors.
  */
-bool ws_send_text(struct websockets *ws,
-                  struct ws_info *info,
-                  const char text[],
-                  size_t len);
+_Bool ws_send_text(struct websockets *ws,
+                   struct ws_info *info,
+                   const char text[],
+                   size_t len);
 /**
  * @brief Send a PING (opcode 0x9) frame with @a reason as payload.
  *
@@ -213,10 +221,10 @@ bool ws_send_text(struct websockets *ws,
  *        strlen() on @a reason if it's not NULL.
  * @return true if sent, false on errors.
  */
-bool ws_ping(struct websockets *ws,
-             struct ws_info *info,
-             const char reason[],
-             size_t len);
+_Bool ws_ping(struct websockets *ws,
+              struct ws_info *info,
+              const char reason[],
+              size_t len);
 /**
  * @brief Send a PONG (opcode 0xA) frame with @a reason as payload.
  *
@@ -230,18 +238,19 @@ bool ws_ping(struct websockets *ws,
  *        strlen() on @a reason if it's not NULL.
  * @return true if sent, false on errors.
  */
-bool ws_pong(struct websockets *ws,
-             struct ws_info *info,
-             const char reason[],
-             size_t len);
+_Bool ws_pong(struct websockets *ws,
+              struct ws_info *info,
+              const char reason[],
+              size_t len);
 
 /**
  * @brief Signals connecting state before entering the WebSockets event loop
  *
  * @param ws the WebSockets handle created with ws_init()
+ * @param ehandle optional pointer to the newly created libcurl's easy handle
  * @note Helper over _ws_set_status(ws, WS_CONNECTING)
  */
-void ws_start(struct websockets *ws);
+void ws_start(struct websockets *ws, CURL **ret_ehandle);
 
 /**
  * @brief Cleanup and reset `ws` connection resources
@@ -254,14 +263,13 @@ void ws_end(struct websockets *ws);
 /**
  * @brief Reads/Write available data from WebSockets
  *
- * Helper over curl_multi_perform()
- *
+ * Generic helper over `curl_multi_perform()` and `curl_multi_wait()`.
  * @param ws the WebSockets handle created with ws_init()
- * @param is_running receives true if the client is running and false otherwise
  * @param wait_ms limit amount in milliseconds to wait for until activity
- * @see https://curl.se/libcurl/c/curl_multi_perform.html
+ * @return `true` if connection is still alive, `false` otherwise
+ * @note This function will call ws_timestamp_update() internally
  */
-void ws_perform(struct websockets *ws, _Bool *is_running, uint64_t wait_ms);
+_Bool ws_perform(struct websockets *ws, uint64_t wait_ms);
 
 /**
  * @brief Returns the WebSockets handle connection status
@@ -289,6 +297,13 @@ const char *ws_close_opcode_print(enum ws_close_reason opcode);
 uint64_t ws_timestamp(struct websockets *ws);
 
 /**
+ * @brief Update the WebSockets event-loop concept of "now"
+ *
+ * @param ws the WebSockets handle created with ws_init()
+ */
+void ws_timestamp_update(struct websockets *ws);
+
+/**
  * @brief Check if a WebSockets connection is alive
  *
  * This will only return true if the connection status is
@@ -297,7 +312,7 @@ uint64_t ws_timestamp(struct websockets *ws);
  * @return TRUE if WebSockets status is different than
  *        WS_DISCONNECTED, FALSE otherwise.
  */
-bool ws_is_alive(struct websockets *ws);
+_Bool ws_is_alive(struct websockets *ws);
 
 /**
  * @brief Check if WebSockets connection is functional
@@ -307,7 +322,7 @@ bool ws_is_alive(struct websockets *ws);
  * @param ws the WebSockets handle created with ws_init()
  * @return true if is functional, false otherwise
  */
-bool ws_is_functional(struct websockets *ws);
+_Bool ws_is_functional(struct websockets *ws);
 
 /**
  * @brief Thread-safe way to stop websockets connection
@@ -330,7 +345,7 @@ void ws_close(struct websockets *ws,
  * @param ws the WebSockets handle created with ws_init()
  * @return true if its the same thread, false otherwise
  */
-bool ws_same_thread(struct websockets *ws);
+_Bool ws_same_thread(struct websockets *ws);
 
 /**
  * @brief Lock WebSockets handle
@@ -356,22 +371,6 @@ int ws_unlock(struct websockets *ws);
 void ws_reqheader_add(struct websockets *ws,
                       const char field[],
                       const char value[]);
-
-/**
- * @brief Get `ws` libcurl's easy handle
- *
- * @param ws the Websockets handle created with ws_init()
- * @return the libcurl's easy handle used internally
- */
-CURL* ws_curl_easy_get_handle(struct websockets *ws);
-
-/**
- * @brief Get `ws` libcurl's multi handle
- *
- * @param ws the Websockets handle created with ws_init()
- * @return the libcurl's multiplexer handle used internally
- */
-CURLM* ws_curl_multi_get_handle(struct websockets *ws);
 
 #ifdef __cplusplus
 }

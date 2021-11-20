@@ -1163,15 +1163,16 @@ discord_gateway_init(struct discord_gateway *gw,
                      struct logconf *conf,
                      struct sized_buffer *token)
 {
-  struct ws_callbacks cbs;
   struct sized_buffer buf;
+  struct ws_callbacks cbs = {
+    .data = gw,
+    .on_connect = &on_connect_cb,
+    .on_text = &on_text_cb,
+    .on_close = &on_close_cb,
+  };
+  struct ws_attr attr = { .conf = conf };
 
-  cbs = (struct ws_callbacks){ .data = gw,
-                               .on_connect = &on_connect_cb,
-                               .on_text = &on_text_cb,
-                               .on_close = &on_close_cb };
-
-  gw->ws = ws_init(&cbs, conf);
+  gw->ws = ws_init(&cbs, &attr);
   logconf_branch(&gw->conf, conf, "DISCORD_GATEWAY");
 
   gw->reconnect = malloc(sizeof *gw->reconnect);
@@ -1254,9 +1255,7 @@ discord_gateway_cleanup(struct discord_gateway *gw)
   free(gw->user_cmd);
 }
 
-/*
- * the event loop to serve the events sent by Discord
- */
+/* the event loop to serve the events sent by Discord */
 static ORCAcode
 event_loop(struct discord_gateway *gw)
 {
@@ -1280,10 +1279,6 @@ event_loop(struct discord_gateway *gw)
     ('/' == gw->session.url[strlen(gw->session.url) - 1]) ? "" : "/");
   ASSERT_S(ret < sizeof(url), "Out of bounds write attempt");
 
-  ws_set_url(gw->ws, url, NULL);
-
-  ws_start(gw->ws);
-
   if (!gw->session.start_limit.remaining) {
     logconf_fatal(&gw->conf,
                   "Reach sessions threshold (%d),"
@@ -1293,10 +1288,11 @@ event_loop(struct discord_gateway *gw)
     return ORCA_DISCORD_RATELIMIT;
   }
 
-  bool is_running = false;
+  ws_set_url(gw->ws, url, NULL);
+
+  ws_start(gw->ws, NULL);
   while (1) {
-    ws_perform(gw->ws, &is_running, 5);
-    if (!is_running) break; /* exit event loop */
+    if (!ws_perform(gw->ws, 5)) break; /* exit event loop */
     if (!gw->status->is_ready) continue; /* wait until on_ready() */
 
     /* connection is established */
@@ -1315,34 +1311,28 @@ event_loop(struct discord_gateway *gw)
   return ORCA_OK;
 }
 
-/*
- * Discord's ws is not reliable. This function is responsible for
- * reconnection/resume/exit
- */
 ORCAcode
 discord_gateway_run(struct discord_gateway *gw)
 {
+  ORCAcode code;
+
   while (gw->reconnect->attempt < gw->reconnect->threshold) {
-    ORCAcode code;
-
     code = event_loop(gw);
-
-    if (code != ORCA_OK) return code;
-
-    if (!gw->reconnect->enable) {
+    if (code != ORCA_OK || !gw->reconnect->enable) {
       logconf_warn(&gw->conf, "Discord Gateway Shutdown");
-      return code; /* EARLY RETURN */
+      return code;
     }
     ++gw->reconnect->attempt;
     logconf_info(&gw->conf, "Reconnect attempt #%d", gw->reconnect->attempt);
   }
-  /* reset if set */
+
+  /* reset for next run */
   gw->status->is_resumable = false;
   gw->reconnect->enable = false;
   gw->reconnect->attempt = 0;
-  logconf_fatal(&gw->conf,
-                "Could not reconnect to Discord Gateway after %d tries",
+  logconf_fatal(&gw->conf, "Failed reconnecting to Discord after %d tries",
                 gw->reconnect->threshold);
+
   return ORCA_DISCORD_CONNECTION;
 }
 

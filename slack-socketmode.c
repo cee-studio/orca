@@ -279,11 +279,14 @@ slack_sm_init(struct slack_sm *sm, struct logconf *conf)
 {
   ASSERT_S(NULL != sm->p_client, "Not meant to be called standalone");
 
-  struct ws_callbacks cbs = { .data = sm,
-                              .on_connect = &on_connect_cb,
-                              .on_text = &on_text_cb,
-                              .on_close = &on_close_cb };
-  sm->ws = ws_init(&cbs, conf);
+  struct ws_callbacks cbs = {
+    .data = sm,
+    .on_connect = &on_connect_cb,
+    .on_text = &on_text_cb,
+    .on_close = &on_close_cb,
+  };
+  struct ws_attr attr = { .conf = conf };
+  sm->ws = ws_init(&cbs, &attr);
   logconf_branch(&sm->conf, conf, "SLACK_SOCKETMODE");
 
   sm->event_handler = &noop_event_handler;
@@ -305,21 +308,19 @@ slack_sm_run(struct slack *client)
   ASSERT_S(WS_DISCONNECTED == ws_get_status(sm->ws),
            "Can't run websockets recursively");
 
-  ws_start(sm->ws);
+  ws_start(sm->ws, NULL);
 
-  bool is_running = false;
   while (1) {
-    ws_perform(sm->ws, &is_running, 1);
-    if (!is_running) break; // exit event loop
-    if (!sm->is_ready) continue; // wait until on_hello()
+    if (!ws_perform(sm->ws, 5)) break; /* exit event loop */
+    if (!sm->is_ready) continue; /* wait until on_hello() */
 
-    // connection established
+    /* connection established */
 
-    /*check if timespan since first pulse is greater than
+    /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required */
     if (sm->hbeat.interval_ms < (ws_timestamp(sm->ws) - sm->hbeat.tstamp)) {
       refresh_connection(sm);
-      sm->hbeat.tstamp = ws_timestamp(sm->ws); // update heartbeat timestamp
+      sm->hbeat.tstamp = ws_timestamp(sm->ws); /* update heartbeat timestamp */
     }
   }
   ws_end(sm->ws);

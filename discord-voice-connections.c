@@ -323,16 +323,23 @@ _discord_voice_init(struct discord_voice *new_vc,
   new_vc->guild_id = guild_id;
   new_vc->channel_id = channel_id;
   new_vc->bot_id = client->gw.bot.id;
-  if (NULL == new_vc->ws) {
-    struct ws_callbacks cbs = { .data = new_vc,
-                                .on_connect = &on_connect_cb,
-                                .on_text = &on_text_cb,
-                                .on_close = &on_close_cb };
-    new_vc->ws = ws_init(&cbs, new_vc->p_client->conf);
-    new_vc->reconnect.threshold = 5; /** hard limit for now */
-    new_vc->reconnect.enable = true;
 
+  if (NULL == new_vc->ws) {
+    struct ws_callbacks cbs = {
+      .data = new_vc,
+      .on_connect = &on_connect_cb,
+      .on_text = &on_text_cb,
+      .on_close = &on_close_cb,
+    };
+    struct ws_attr attr = {
+      .conf = new_vc->p_client->conf,
+    };
+
+    new_vc->ws = ws_init(&cbs, &attr);
     logconf_branch(&new_vc->conf, client->conf, "DISCORD_VOICE");
+
+    new_vc->reconnect.threshold = 5; /**< hard limit for now */
+    new_vc->reconnect.enable = true;
   }
   reset_vc(new_vc);
 }
@@ -524,19 +531,17 @@ static void
 event_loop(struct discord_voice *vc)
 {
   struct discord *client = vc->p_client;
-  ws_start(vc->ws);
-
-  bool is_running = false;
 
   /* everything goes well, ws event_loop to serve */
   /* the ws server side events */
+  ws_start(vc->ws, NULL);
   while (1) {
-    ws_perform(vc->ws, &is_running, 100);
-    if (!is_running) break; /* exit event loop */
+    if (!ws_perform(vc->ws, 100)) break; /* exit event loop */
     if (!vc->is_ready) continue; /* wait until on_ready() */
 
     /* connection is established */
-    /*check if timespan since first pulse is greater than
+
+    /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/
     if (vc->hbeat.interval_ms < (ws_timestamp(vc->ws) - vc->hbeat.tstamp)) {
       send_heartbeat(vc);
@@ -545,6 +550,8 @@ event_loop(struct discord_voice *vc)
     if (client->voice_cbs.on_idle)
       (*client->voice_cbs.on_idle)(client, vc, &vc->p_client->gw.bot);
   }
+  ws_end(vc->ws);
+
   vc->is_ready = false;
 }
 

@@ -92,12 +92,13 @@ int main(int argc, char *argv[])
   FILE *fp;
   struct logconf conf;
   struct websockets *ws;
-  _Bool is_running = false;
-  struct ws_callbacks cbs = { .on_connect = &on_connect_cb,
-                              .on_text = &on_text_cb,
-                              .on_ping = &on_ping_cb,
-                              .on_pong = &on_pong_cb,
-                              .on_close = &on_close_cb };
+  struct ws_callbacks cbs = {
+    .on_connect = &on_connect_cb,
+    .on_text = &on_text_cb,
+    .on_ping = &on_ping_cb,
+    .on_pong = &on_pong_cb,
+    .on_close = &on_close_cb,
+  };
 
   while (-1 != (opt = getopt(argc, argv, "hu:s:e:c:"))) {
     switch (opt) {
@@ -116,17 +117,13 @@ int main(int argc, char *argv[])
   logconf_setup(&conf, "TEST", fp);
 
   /* init websockets handle */
-  ws = ws_init(&cbs, &conf);
+  ws = ws_init(&cbs, &(struct ws_attr){ .conf = &conf });
   ws_set_url(ws, url, NULL);
 
   /* run the event-loop */
-  ws_start(ws);
-#if 0 /* set custom headers */
-  ws_reqheader_add(ws, "Authorization", "foo");
-#endif
-  do {
-    ws_perform(ws, &is_running, 5);
-  } while (is_running);
+  ws_start(ws, NULL);
+  while (true == ws_perform(ws, 5))
+    ;
   ws_end(ws);
 
   ws_cleanup(ws);

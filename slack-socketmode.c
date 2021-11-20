@@ -322,4 +322,5 @@ slack_sm_run(struct slack *client)
       sm->hbeat.tstamp = ws_timestamp(sm->ws); // update heartbeat timestamp
     }
   }
+  ws_end(sm->ws);
 }

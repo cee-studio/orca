@@ -1308,6 +1308,8 @@ event_loop(struct discord_gateway *gw)
     }
     (*gw->user_cmd->cbs.on_idle)(CLIENT(gw), &gw->bot);
   }
+  ws_end(gw->ws);
+
   gw->status->is_ready = false;
 
   return ORCA_OK;

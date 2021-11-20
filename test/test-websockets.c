@@ -124,12 +124,10 @@ int main(int argc, char *argv[])
 #if 0 /* set custom headers */
   ws_reqheader_add(ws, "Authorization", "foo");
 #endif
-  while (1) {
+  do {
     ws_perform(ws, &is_running, 5);
-    if (!is_running) break; /* exit event loop */
-
-    /* connection is established */
-  }
+  } while (is_running);
+  ws_end(ws);
 
   ws_cleanup(ws);
   logconf_cleanup(&conf);

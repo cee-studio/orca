@@ -11,7 +11,6 @@
 
 #include "user-agent.h"
 #include "cee-utils.h"
-#include "queue.h"
 
 #define CURLE_LOG(conn, ecode)                                                \
   do {                                                                        \
@@ -75,7 +74,10 @@ struct ua_conn {
   struct ua_info info;
   /** the curl's easy handle used to perform requests */
   CURL *ehandle;
-  /** resp_handle in case conn has been enqueued */
+  /**
+   * request response's handle containing user callback and object
+   *        to be filled up
+   */
   struct ua_resp_handle resp_handle;
   /**
    * capture curl error messages
@@ -748,34 +750,21 @@ ua_block_ms(struct user_agent *ua, const uint64_t wait_ms)
 static void
 _ua_conn_setup(struct user_agent *ua,
                struct ua_conn *conn,
-               struct ua_info *info,
                struct ua_resp_handle *resp_handle,
-               struct sized_buffer *req_body,
+               struct sized_buffer **req_body,
                enum http_method http_method,
                char endpoint[])
 {
-  const char *method_str = http_method_print(http_method);
   static struct sized_buffer blank_req_body = { "", 0 };
-  char logbuf[1024] = "";
 
-  if (NULL == req_body) {
-    req_body = &blank_req_body;
-  }
+  /* make sure req_body point to something */
+  if (!*req_body) *req_body = &blank_req_body;
 
   /* set conn request's url */
   _ua_conn_set_url(ua, conn, endpoint);
 
-  ua_reqheader_str(ua, logbuf, sizeof(logbuf));
-
-  logconf_http(&ua->conf, &conn->info.loginfo, conn->info.req_url.start,
-               (struct sized_buffer){ logbuf, sizeof(logbuf) }, *req_body,
-               "HTTP_SEND_%s", method_str);
-  logconf_trace(conn->conf,
-                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
-                method_str, conn->info.loginfo.counter);
-
   /* set conn request's method */
-  _ua_conn_set_method(ua, conn, http_method, req_body);
+  _ua_conn_set_method(ua, conn, http_method, *req_body);
 
   /* store callback context */
   if (resp_handle) {
@@ -792,10 +781,26 @@ ua_run(struct user_agent *ua,
        enum http_method http_method,
        char endpoint[])
 {
+  struct ua_conn *conn;
+  char logbuf[1024] = "";
+  const char *method_str = http_method_print(http_method);
+
   /* get conn that will perform the request */
-  struct ua_conn *conn = _ua_conn_get(ua);
+  conn = _ua_conn_get(ua);
   /* populate conn with parameters */
-  _ua_conn_setup(ua, conn, info, resp_handle, req_body, http_method, endpoint);
+  _ua_conn_setup(ua, conn, resp_handle, &req_body, http_method, endpoint);
+
+  /* log request to be performed */
+  ua_reqheader_str(ua, logbuf, sizeof(logbuf));
+  logconf_http(&ua->conf, &conn->info.loginfo, conn->info.req_url.start,
+               (struct sized_buffer){
+                 logbuf,
+                 sizeof(logbuf),
+               },
+               *req_body, "HTTP_SEND_%s", method_str);
+  logconf_trace(conn->conf,
+                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
+                method_str, conn->info.loginfo.counter);
 
   /* perform blocking-IO request */
   ORCAcode code = _ua_conn_perform(ua, conn);
@@ -811,7 +816,7 @@ ua_run(struct user_agent *ua,
              conn->info.req_url.start);
   }
 
-  /* its assumed ua_clone() will be called before entering a thread 
+  /* its assumed ua_clone() will be called before entering a thread
    * to make sure 'struct user_agent' is thread-safe
    * @todo make it a user-called function
    */
@@ -825,34 +830,40 @@ ua_run(struct user_agent *ua,
   return code;
 }
 
-void
-ua_connq_push(struct user_agent *ua, struct ua_conn *conn)
-{
-  /* insert conn to end of queue */
-  QUEUE_INSERT_TAIL(&ua->conn->pending, &conn->entry);
-}
-
-void
-ua_connq_unshift(struct user_agent *ua, struct ua_conn *conn)
-{
-  /* insert conn to start of queue */
-  QUEUE_INSERT_HEAD(&ua->conn->pending, &conn->entry);
-}
-
+/* fill and retrieve a request's connection handle */
 struct ua_conn *
-ua_connq_head(struct user_agent *ua)
+ua_conn_prepare(struct user_agent *ua,
+                struct ua_info *info,
+#if 0 /* resp_handle->obj is very likely to be stack address */
+                struct ua_resp_handle *resp_handle,
+#endif
+                struct sized_buffer *req_body,
+                enum http_method http_method,
+                char endpoint[])
 {
-  if (QUEUE_EMPTY(&ua->conn->pending)) return NULL;
-  /* peek at the queue head's conn */
-  QUEUE *q = QUEUE_HEAD(&ua->conn->pending);
-  return QUEUE_DATA(q, struct ua_conn, entry);
+  /* get conn that will perform the request */
+  struct ua_conn *conn = _ua_conn_get(ua);
+  /* populate conn with parameters */
+  _ua_conn_setup(ua, conn, NULL, &req_body, http_method, endpoint);
+  return conn;
 }
 
-void
-ua_connq_shift(struct ua_conn *conn)
+QUEUE *
+ua_queue_get(struct user_agent *ua)
 {
-  /* remove conn from queue */
-  QUEUE_REMOVE(&conn->entry);
+  return &ua->conn->pending;
+}
+
+QUEUE *
+ua_queue_entry_get(struct ua_conn *conn)
+{
+  return &conn->entry;
+}
+
+CURL *
+ua_conn_curl_easy_get(struct ua_conn *conn)
+{
+  return conn->ehandle;
 }
 
 void

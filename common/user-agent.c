@@ -39,13 +39,15 @@ struct user_agent {
   } * conn;
   /** the base_url for every conn */
   struct sized_buffer base_url;
+  /** timestamp updated every request received */
+  uint64_t req_tstamp;
   /** synchronize conn pool and shared ratelimiting */
   struct {
     /** lock every active conn from conn.pool until timestamp */
     uint64_t blockuntil_tstamp;
-    /** the mutex for blocking conn.pool */
+    /** lock for blocking conn.pool */
     pthread_mutex_t lock;
-    /** lock for reading/writing the event-loop timestamp */
+    /** lock for reading/writing to req_tstamp */
     pthread_rwlock_t rwlock;
   } * shared;
   /** the user agent logging module */
@@ -63,8 +65,6 @@ struct user_agent {
   void *data2;
   curl_mime *mime;
   void (*mime_cb)(curl_mime *mime, void *data2);
-  /** timestamp updated every request received */
-  uint64_t req_tstamp;
 };
 
 struct ua_conn {

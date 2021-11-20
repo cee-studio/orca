@@ -811,8 +811,8 @@ ua_run(struct user_agent *ua,
              conn->info.req_url.start);
   }
 
-  /* its assumed ua_clone() will be called to make sure 'struct user_agent' is
-   * thread-safe
+  /* its assumed ua_clone() will be called before entering a thread 
+   * to make sure 'struct user_agent' is thread-safe
    * @todo make it a user-called function
    */
   if (ua->mime) {

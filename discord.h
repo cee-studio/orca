@@ -338,9 +338,8 @@ struct discord *discord_config_init(const char config_file[]);
 /**
  * @brief Clone a discord client
  *
- * This is useful in a multithreading scenario. For example, making
- *        sure each client instance has its own shared url, headers,
- *        return codes.
+ * Should be called before entering a thread, to ensure each thread
+ *        has its own client instance with unique buffers, url and headers.
  * @param orig_client the original client created with discord_init()
  * @return the original client clone
  */
@@ -355,8 +354,7 @@ void discord_cleanup(struct discord *client);
  * @brief Subscribe to Discord Gateway events
  *
  * @param client the client created with discord_init()
- * @param code the intents opcode, can be set as a bitmask operation (ex: A | B
- * | C)
+ * @param code the intents opcode, can be set as a bitmask operation
  * @see https://discord.com/developers/docs/topics/gateway#gateway-intents
  */
 void discord_add_intents(struct discord *client,

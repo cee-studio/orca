@@ -191,6 +191,8 @@ struct user_agent *ua_init(struct logconf *conf);
 /**
  * @brief Clone a User-Agent handle
  *
+ * Should be called before entering a thread, to ensure each thread
+ *        has its own `user-agent` instance with unique buffers, url and headers.
  * The clone will share connections with the original, but will have
  *        its own unique set of URL and headers
  * @param orig_ua the original User-Agent handle

@@ -810,6 +810,14 @@ void discord_set_presence(struct discord *client,
 int discord_get_ping(struct discord *client);
 
 /**
+ * @brief Get the client timestamp used as its concept of `Now`
+ *
+ * @param client the client created with discord_init()
+ * @return the timestamp in milliseconds
+ */
+uint64_t discord_timestamp(struct discord *client);
+
+/**
  * @brief Retrieve client's logging module for configuration purposes
  *
  * @param client the client created with discord_init()

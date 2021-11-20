@@ -552,6 +552,12 @@ discord_get_ping(struct discord *client)
   return ping_ms;
 }
 
+uint64_t
+discord_timestamp(struct discord *client)
+{
+  return ws_timestamp(client->gw.ws);
+}
+
 struct logconf *
 discord_get_logconf(struct discord *client)
 {

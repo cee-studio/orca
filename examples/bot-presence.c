@@ -4,15 +4,16 @@
 #include <assert.h>
 
 #include "discord.h"
-#include "cee-utils.h" /* cee_timestamp_ms() */
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void
+on_ready(struct discord *client, const struct discord_user *bot)
 {
   log_info("Presence-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
   const char *config_file;
   if (argc > 1)
@@ -43,11 +44,11 @@ int main(int argc, char *argv[])
                 },
               .status = "idle",
               .afk = false,
-              .since = cee_timestamp_ms() });
+              .since = discord_timestamp(client),
+            });
 
   discord_run(client);
 
   discord_cleanup(client);
-
   discord_global_cleanup();
 }

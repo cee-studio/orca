@@ -256,7 +256,7 @@ void on_command(struct discord *client,
 
   /* Initialize embed struct that will be loaded to  */
   struct discord_embed new_embed = {
-    .timestamp = cee_timestamp_ms(),
+    .timestamp = discord_timestamp(client),
     .color = 15844367 // gold
   };
   /* Set embed fields */

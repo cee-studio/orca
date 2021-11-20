@@ -5,7 +5,6 @@
 #include <assert.h>
 
 #include "discord.h"
-#include "cee-utils.h" // for cee_timestamp_ms()
 
 void on_ready(struct discord *client, const struct discord_user *bot)
 {

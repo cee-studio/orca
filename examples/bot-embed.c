@@ -4,7 +4,6 @@
 #include <assert.h>
 
 #include "discord.h"
-#include "cee-utils.h" /* cee_timestamp_ms() */
 
 char JSON_STRING[] =
   "{\n"
@@ -61,7 +60,7 @@ void on_dynamic(struct discord *client,
   /* load a embed from the json string */
   struct discord_embed embed;
   discord_embed_from_json(JSON_STRING, sizeof(JSON_STRING), &embed);
-  embed.timestamp = cee_timestamp_ms(); // get current timestamp
+  embed.timestamp = discord_timestamp(client); // get current timestamp
 
   struct discord_create_message_params params = {
     .content = "This is an embed",

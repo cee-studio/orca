@@ -233,14 +233,6 @@ void ua_set_url(struct user_agent *ua, const char *base_url);
 const char *ua_get_url(struct user_agent *ua);
 
 /**
- * @brief Block all on-going connections
- *
- * @param ua the User-Agent handle created with ua_init()
- * @param wait_ms the block time in milliseconds
- */
-void ua_block_ms(struct user_agent *ua, const uint64_t wait_ms);
-
-/**
  * @brief Run a REST transfer
  *
  * @param ua the User-Agent handle created with ua_init()

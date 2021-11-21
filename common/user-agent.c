@@ -43,8 +43,6 @@ struct user_agent {
   uint64_t req_tstamp;
   /** synchronize conn pool and shared ratelimiting */
   struct {
-    /** lock every active conn from conn.pool until timestamp */
-    uint64_t blockuntil_tstamp;
     /** lock for blocking conn.pool */
     pthread_mutex_t lock;
     /** lock for reading/writing to req_tstamp */
@@ -630,12 +628,6 @@ _ua_conn_send(struct user_agent *ua, struct ua_conn *conn, int *httpcode)
 
   pthread_mutex_lock(&ua->shared->lock);
 
-  /**
-   * enforces global ratelimiting with ua_block_ms()
-   * @todo there are better solutions than this
-   */
-  cee_sleep_ms(ua->shared->blockuntil_tstamp - cee_timestamp_ms());
-
   ecode = curl_easy_perform(conn->ehandle);
 
   /* get request timestamp */
@@ -752,15 +744,6 @@ _ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
   logconf_error(conn->conf, "Unusual HTTP response code: %d",
                 conn->info.httpcode);
   return ORCA_UNUSUAL_HTTP_CODE;
-}
-
-/* make the main thread wait for a specified amount of time */
-void
-ua_block_ms(struct user_agent *ua, const uint64_t wait_ms)
-{
-  pthread_mutex_lock(&ua->shared->lock);
-  ua->shared->blockuntil_tstamp = ua->req_tstamp + wait_ms;
-  pthread_mutex_unlock(&ua->shared->lock);
 }
 
 static void

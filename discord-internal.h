@@ -36,26 +36,32 @@
 struct discord_adapter {
   /** DISCORD_HTTP or DISCORD_WEBHOOK logging module */
   struct logconf conf;
-  /** The user agent handle for performing requests */
+  /** the user agent handle for performing requests */
   struct user_agent *ua;
-  /** Ratelimiting structure */
+  /** ratelimiting structure */
   struct {
     /** DISCORD_RATELIMIT logging module */
     struct logconf conf;
-    /** Endpoint/routes discovered, check a endpoint/bucket match with tree
-     * search functions */
+    /** 
+     * endpoint/routes discovered, check a endpoint/bucket match with tree
+     *        search functions
+     */
     struct discord_bucket *buckets;
-    /** Mutex used when adding to or searching for buckets */
+    /** global ratelimit */
+    u64_unix_ms_t global;
+    /** lock used when accessing or modifying 'global' */
+    pthread_rwlock_t rwlock;
+    /** lock used when adding or searching for buckets */
     pthread_mutex_t lock;
   } * ratelimit;
 
-  /** Error storage context */
+  /** error storage context */
   struct {
-    /** Informational on the latest transfer */
+    /** informational on the latest transfer */
     struct ua_info info;
     /** JSON error code on failed request */
     int jsoncode;
-    /** The entire JSON response of the error */
+    /** the entire JSON response of the error */
     char jsonstr[512];
   } err;
 };
@@ -123,7 +129,7 @@ struct discord_bucket {
   u64_unix_ms_t reset_tstamp;
   /** timestamp of the most recent request */
   u64_unix_ms_t update_tstamp;
-  /** synchronize buckets between threads */
+  /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
   /** makes this structure hashable */
   UT_hash_handle hh;

@@ -12,7 +12,9 @@ https://discord.com/developers/docs/topics/rate-limits#rate-limits */
 #include "clock.h"
 
 static struct discord_bucket *
-bucket_init(struct sized_buffer *hash, const char route[])
+bucket_init(struct discord_adapter *adapter,
+            struct sized_buffer *hash,
+            const char route[])
 {
   struct discord_bucket *new_bucket = calloc(1, sizeof *new_bucket);
   new_bucket->remaining = 1;
@@ -52,13 +54,22 @@ discord_bucket_get_cooldown(struct discord_adapter *adapter,
 {
   if (!bucket) return 0L;
 
-  u64_unix_ms_t now_tstamp = cee_timestamp_ms(), delay_ms = 0L;
+  u64_unix_ms_t now = cee_timestamp_ms();
+  u64_unix_ms_t global = 0ULL;
+  long delay_ms = 0L;
 
-  if (bucket->remaining < 1 && bucket->reset_tstamp > now_tstamp) {
-    delay_ms = bucket->reset_tstamp - now_tstamp;
+  if (bucket->remaining < 1 && bucket->reset_tstamp > now) {
+    delay_ms = (long)(bucket->reset_tstamp - now);
   }
+
+  /* check global ratelimits */
+  pthread_rwlock_rdlock(&adapter->ratelimit->rwlock);
+  global = adapter->ratelimit->global;
+  pthread_rwlock_unlock(&adapter->ratelimit->rwlock);
+  if (now < global) delay_ms = (long)(global - now);
+
   --bucket->remaining;
-  /* @todo check for global ratelimits */
+
   return delay_ms;
 }
 
@@ -108,28 +119,34 @@ parse_ratelimits(struct discord_adapter *adapter,
 
     bucket->remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
 
-    /* use the more accurate X-Ratelimit-Reset header if available,
-     * otherwise use X-Ratelimit-Reset-After */
-    if (reset.size) {
-      bucket->reset_tstamp = 1000 * strtod(reset.start, NULL);
-    }
-    else if (reset_after.size) {
-      /* calculate the reset time with Discord's date header */
-      struct sized_buffer date = ua_info_header_get(info, "date");
-      u64_unix_ms_t now_tstamp;
+    /* use X-Ratelimit-Reset-After if available, otherwise use
+     * X-Ratelimit-Reset */
+    if (reset_after.size) {
+      struct sized_buffer global = ua_info_header_get(info, "x-ratelimit-global");
+      u64_unix_ms_t reset = cee_timestamp_ms() + 1000 * strtod(reset_after.start, NULL);
 
-      if (date.size) {
-        struct PsnipClockTimespec ts;
-        psnip_clock_wall_get_time(&ts);
-        now_tstamp =
-          1000 * curl_getdate(date.start, NULL) + ts.nanoseconds / 1000000;
+      if (global.size) {
+        /* lock all buckets */
+        pthread_rwlock_wrlock(&adapter->ratelimit->rwlock);
+        adapter->ratelimit->global = reset;
+        pthread_rwlock_unlock(&adapter->ratelimit->rwlock);
       }
       else {
-        /* rely on system time to fetch current timestamp */
-        now_tstamp = cee_timestamp_ms();
+        /* lock single bucket */
+        bucket->reset_tstamp = reset;
       }
+    }
+    else if (reset.size) {
+      /* calculate the reset time with Discord's date header */
+      struct sized_buffer date = ua_info_header_get(info, "date");
+      u64_unix_ms_t server = 1000 * curl_getdate(date.start, NULL);
+      u64_unix_ms_t offset;
+      struct PsnipClockTimespec ts;
+      
+      psnip_clock_wall_get_time(&ts);
+      offset = server + ts.nanoseconds / 1000000;
       bucket->reset_tstamp =
-        now_tstamp + 1000 * strtod(reset_after.start, NULL);
+        cee_timestamp_ms() + 1000 * strtod(reset.start, NULL) - offset;
     }
 
     logconf_info(&adapter->ratelimit->conf,
@@ -169,7 +186,7 @@ match_route(struct discord_adapter *adapter,
       break;
     }
   }
-  if (!bucket) bucket = bucket_init(&hash, route);
+  if (!bucket) bucket = bucket_init(adapter, &hash, route);
 
   /*assign new route and update bucket ratelimit fields */
   logconf_debug(&adapter->ratelimit->conf,

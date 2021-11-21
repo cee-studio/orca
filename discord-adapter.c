@@ -18,6 +18,8 @@ discord_adapter_init(struct discord_adapter *adapter,
   ua_set_url(adapter->ua, DISCORD_API_BASE_URL);
 
   adapter->ratelimit = calloc(1, sizeof *adapter->ratelimit);
+  if (pthread_rwlock_init(&adapter->ratelimit->rwlock, NULL))
+    ERR("Couldn't initialize pthread rwlock");
   if (pthread_mutex_init(&adapter->ratelimit->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
 
@@ -42,6 +44,7 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
 {
   ua_cleanup(adapter->ua);
   discord_buckets_cleanup(adapter);
+  pthread_rwlock_destroy(&adapter->ratelimit->rwlock);
   pthread_mutex_destroy(&adapter->ratelimit->lock);
   free(adapter->ratelimit);
   ua_info_cleanup(&adapter->err.info);
@@ -95,6 +98,7 @@ _discord_perform_request(struct discord_adapter *adapter,
       logconf_info(&adapter->ratelimit->conf,
                    "[%.4s] RATELIMITING (wait %ld ms)", bucket->hash,
                    delay_ms);
+      /* @todo emit timer for async requests */
       cee_sleep_ms(delay_ms);
     }
 
@@ -128,34 +132,46 @@ _discord_perform_request(struct discord_adapter *adapter,
       case HTTP_TOO_MANY_REQUESTS: {
         bool is_global = false;
         char message[256] = "";
-        double retry_after = -1; /* seconds */
+        double retry_after = 1.0;
+        long delay_ms = 0L;
 
         struct sized_buffer body = ua_info_get_body(&adapter->err.info);
         json_extract(body.start, body.size,
-                     "(global):b (message):s (retry_after):lf", &is_global,
-                     message, &retry_after);
-        VASSERT_S(retry_after != -1, "(NO RETRY-AFTER INCLUDED) %s", message);
-
-        retry_after *= 1000;
+                     "(global):b (message):.*s (retry_after):lf", &is_global,
+                     sizeof(message), message, &retry_after);
 
         if (is_global) {
+          u64_unix_ms_t global;
+
+          pthread_rwlock_rdlock(&adapter->ratelimit->rwlock);
+          global = adapter->ratelimit->global;
+          pthread_rwlock_unlock(&adapter->ratelimit->rwlock);
+
+          delay_ms = global - cee_timestamp_ms();
+
           logconf_warn(&adapter->conf,
-                       "429 GLOBAL RATELIMITING (wait: %.2lf ms) : %s",
-                       retry_after, message);
-          ua_block_ms(adapter->ua, (uint64_t)retry_after);
+                       "429 GLOBAL RATELIMITING (wait: %ld ms) : %s", delay_ms,
+                       message);
         }
         else {
-          logconf_warn(&adapter->conf,
-                       "429 RATELIMITING (wait: %.2lf ms) : %s", retry_after,
-                       message);
-          cee_sleep_ms((long)retry_after);
+          delay_ms = 1000 * retry_after;
+
+          logconf_warn(&adapter->conf, "429 RATELIMITING (wait: %ld ms) : %s",
+                       delay_ms, message);
         }
+
+        /* @todo emit timer for async requests */
+        cee_sleep_ms(delay_ms);
+
         break;
       }
       default:
-        if (adapter->err.info.httpcode >=
-            500) /* server related error, retry */
-          ua_block_ms(adapter->ua, 5000); /* wait for 5 seconds */
+        if (adapter->err.info.httpcode >= 500) {
+          /* server related error, sleep for 5 seconds */
+          /* @todo emit timer for async requests
+           *       make this global wait? */
+          cee_sleep_ms(5000);
+        }
         break;
       }
     }

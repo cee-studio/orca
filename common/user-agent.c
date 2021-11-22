@@ -34,8 +34,6 @@ struct user_agent {
     struct ua_conn **pool;
     /** amount of connections node in pool */
     size_t amt;
-    /** pending requests queue */
-    QUEUE pending;
   } * conn;
   /** the base_url for every conn */
   struct sized_buffer base_url;
@@ -85,8 +83,6 @@ struct ua_conn {
    * @see https://curl.se/libcurl/c/CURLOPT_ERRORBUFFER.html
    */
   char errbuf[CURL_ERROR_SIZE];
-  /** entry-node for queue insertion */
-  QUEUE entry;
 };
 
 const char *
@@ -398,8 +394,6 @@ _ua_conn_init(struct user_agent *ua)
   }
   new_conn->ehandle = new_ehandle;
 
-  QUEUE_INIT(&new_conn->entry);
-
   return new_conn;
 }
 
@@ -480,8 +474,6 @@ ua_init(struct ua_attr *attr)
     logconf_fatal(&new_ua->conf, "Couldn't initialize rwlock");
     ABORT();
   }
-
-  QUEUE_INIT(&new_ua->conn->pending);
 
   new_ua->is_original = true;
 
@@ -827,36 +819,6 @@ ua_run(struct user_agent *ua,
   _ua_conn_reset(ua, conn);
 
   return code;
-}
-
-/* fill and retrieve a request's connection handle */
-struct ua_conn *
-ua_conn_prepare(struct user_agent *ua,
-                struct ua_info *info,
-#if 0 /* resp_handle->obj is very likely to be stack address */
-                struct ua_resp_handle *resp_handle,
-#endif
-                struct sized_buffer *req_body,
-                enum http_method http_method,
-                char endpoint[])
-{
-  /* get conn that will perform the request */
-  struct ua_conn *conn = _ua_conn_get(ua);
-  /* populate conn with parameters */
-  _ua_conn_setup(ua, conn, NULL, &req_body, http_method, endpoint);
-  return conn;
-}
-
-QUEUE *
-ua_queue_get(struct user_agent *ua)
-{
-  return &ua->conn->pending;
-}
-
-QUEUE *
-ua_queue_entry_get(struct ua_conn *conn)
-{
-  return &conn->entry;
 }
 
 CURL *

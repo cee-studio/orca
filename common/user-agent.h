@@ -13,7 +13,6 @@ extern "C" {
 #include "ntl.h" /* struct sized_buffer */
 #include "types.h" /* ORCAcode */
 #include "logconf.h" /* logging facilities */
-#include "queue.h"
 
 /* forward declaration */
 struct user_agent;
@@ -249,41 +248,6 @@ ORCAcode ua_run(struct user_agent *ua,
                 struct sized_buffer *req_body,
                 enum http_method http_method,
                 char endpoint[]);
-
-/**
- * @brief Prepare and return a connection handle
- *
- * @param ua the User-Agent handle created with ua_init()
- * @param info optional informational handle on how the request went
- * @param req_body the optional request body, can be NULL
- * @param http_method the HTTP method of this transfer (GET, POST, ...)
- * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
- * @return a connection handle ready for being executed
- */
-struct ua_conn *ua_conn_prepare(struct user_agent *ua,
-                                struct ua_info *info,
-#if 0 /* resp_handle->obj is very likely to be stack address */
-                                struct ua_resp_handle *resp_handle,
-#endif
-                                struct sized_buffer *req_body,
-                                enum http_method http_method,
-                                char endpoint[]);
-
-/**
- * @brief Get pending connections queue
- *
- * @param ua the User-Agent handle created with ua_init()
- * @return QUEUE pointer that can be manipulated with queue.h macros
- */
-QUEUE *ua_queue_get(struct user_agent *ua);
-
-/**
- * @brief Get connection queue entry
- *
- * @param conn the connection handle queue entry
- * @return QUEUE pointer that can be manipulated with queue.h macros
- */
-QUEUE *ua_queue_entry_get(struct ua_conn *conn);
 
 /**
  * @brief Get `conn` assigned libcurl's easy handle

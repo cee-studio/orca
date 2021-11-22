@@ -516,32 +516,43 @@ ua_clone(struct user_agent *orig_ua)
 void
 ua_cleanup(struct user_agent *ua)
 {
+  /* cleanup headers */
   curl_slist_free_all(ua->req_header);
 
-  if (ua->base_url.start) {
-    free(ua->base_url.start);
-  }
+  /* cleanup URL */
+  if (ua->base_url.start) free(ua->base_url.start);
 
+  /* cleaning all resources is a must if this function was called
+   *        for the original (parent) User-Agent handle */
   if (ua->is_original) {
-    QUEUE *q;
-    struct ua_conn *conn;
+    QUEUE *ua_queues[] = { &ua->connq->idle, &ua->connq->busy };
 
-    QUEUE_FOREACH(q, &ua->connq->idle) {
-      conn = QUEUE_DATA(q, struct ua_conn, entry);
-      _ua_conn_cleanup(conn);
-    }
-    QUEUE_FOREACH(q, &ua->connq->busy) {
-      conn = QUEUE_DATA(q, struct ua_conn, entry);
-      _ua_conn_cleanup(conn);
+    /* cleanup queues */
+    for (int i = 0; i < sizeof(ua_queues) / sizeof(QUEUE); ++i) {
+      QUEUE queue;
+      QUEUE *q;
+      struct ua_conn *conn;
+
+      QUEUE_MOVE(ua_queues[i], &queue);
+      while (!QUEUE_EMPTY(&queue)) {
+        q = QUEUE_HEAD(&queue);
+        conn = QUEUE_DATA(q, struct ua_conn, entry);
+        QUEUE_REMOVE(&conn->entry);
+        _ua_conn_cleanup(conn);
+      }
     }
     free(ua->connq);
 
+    /* cleanup shared locks */
     pthread_mutex_destroy(&ua->shared->lock);
     pthread_rwlock_destroy(&ua->shared->rwlock);
     free(ua->shared);
+
+    /* cleanup logging module */
     logconf_cleanup(&ua->conf);
   }
 
+  /* cleanup User-Agent handle */
   free(ua);
 }
 

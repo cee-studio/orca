@@ -11,6 +11,7 @@
 
 #include "user-agent.h"
 #include "cee-utils.h"
+#include "queue.h"
 
 #define CURLE_LOG(conn, ecode)                                                \
   do {                                                                        \
@@ -25,16 +26,18 @@ struct user_agent {
   /** the user agent request header */
   struct curl_slist *req_header;
   /**
-   * a pool of connection nodes for easy reuse
+   * queue of connection nodes for easy reuse
    * @note conns are wrappers around basic CURL functionalities,
    *        each active conn is responsible for a HTTP request
    */
   struct {
-    /** connection pool */
-    struct ua_conn **pool;
-    /** amount of connections node in pool */
-    size_t amt;
-  } * conn;
+    /** idle connections */
+    QUEUE idle;
+    /* busy connections */
+    QUEUE busy;
+    /** total amount of created connection handles  */
+    int total;
+  } * connq;
   /** the base_url for every conn */
   struct sized_buffer base_url;
   /** timestamp updated every request received */
@@ -64,8 +67,8 @@ struct user_agent {
 };
 
 struct ua_conn {
-  /** true if current conn is performing a request */
-  bool is_busy;
+  /** connection handle queue entry */
+  QUEUE entry;
   /** ptr to struct user_agent conf */
   struct logconf *conf;
   /** informational handle on how the request went */
@@ -394,6 +397,8 @@ _ua_conn_init(struct user_agent *ua)
   }
   new_conn->ehandle = new_ehandle;
 
+  QUEUE_INIT(&new_conn->entry);
+
   return new_conn;
 }
 
@@ -416,35 +421,33 @@ _ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
   *conn->errbuf = '\0';
   memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
   pthread_mutex_lock(&ua->shared->lock);
-  conn->is_busy = false;
+  /* remove from busy queue */
+  QUEUE_REMOVE(&conn->entry);
+  QUEUE_INSERT_TAIL(&ua->connq->idle, &conn->entry);
   pthread_mutex_unlock(&ua->shared->lock);
 }
 
 struct ua_conn *
 ua_conn_get(struct user_agent *ua)
 {
-  pthread_mutex_lock(&ua->shared->lock);
   struct ua_conn *ret_conn = NULL;
 
-  size_t i = 0;
-  while (i < ua->conn->amt) {
-    if (!ua->conn->pool[i]->is_busy) {
-      ret_conn = ua->conn->pool[i];
-      break;
-    }
-    ++i;
+  pthread_mutex_lock(&ua->shared->lock);
+
+  if (QUEUE_EMPTY(&ua->connq->idle)) {
+    ret_conn = _ua_conn_init(ua);
   }
-  if (!ret_conn) {
-    /* no available conn, create new */
-    ++ua->conn->amt;
-    ua->conn->pool =
-      realloc(ua->conn->pool, ua->conn->amt * sizeof *ua->conn->pool);
-    ret_conn = ua->conn->pool[ua->conn->amt - 1] = _ua_conn_init(ua);
+  else {
+    QUEUE *q = QUEUE_HEAD(&ua->connq->idle);
+    ret_conn = QUEUE_DATA(q, struct ua_conn, entry);
+    /* remove from idle queue */
+    QUEUE_REMOVE(&ret_conn->entry);
+    ++ua->connq->total;
   }
-  VASSERT_S(NULL != ret_conn, "[%s] (Internal error) Couldn't fetch conn",
-            ua->conf.id);
-  ret_conn->is_busy = true;
+  QUEUE_INSERT_TAIL(&ua->connq->busy, &ret_conn->entry);
+
   pthread_mutex_unlock(&ua->shared->lock);
+
   return ret_conn;
 }
 
@@ -455,17 +458,19 @@ ua_init(struct ua_attr *attr)
   struct ua_attr _attr = attr ? *attr : (struct ua_attr){};
 
   new_ua = calloc(1, sizeof *new_ua);
-  new_ua->conn = calloc(1, sizeof *new_ua->conn);
-  new_ua->shared = calloc(1, sizeof *new_ua->shared);
 
   /* default header */
   ua_reqheader_add(new_ua, "User-Agent",
                    "Orca (https://github.com/cee-studio/orca)");
   ua_reqheader_add(new_ua, "Content-Type", "application/json");
   ua_reqheader_add(new_ua, "Accept", "application/json");
-
   logconf_branch(&new_ua->conf, _attr.conf, "USER_AGENT");
 
+  new_ua->connq = calloc(1, sizeof *new_ua->connq);
+  QUEUE_INIT(&new_ua->connq->idle);
+  QUEUE_INIT(&new_ua->connq->busy);
+
+  new_ua->shared = calloc(1, sizeof *new_ua->shared);
   if (pthread_mutex_init(&new_ua->shared->lock, NULL)) {
     logconf_fatal(&new_ua->conf, "Couldn't initialize mutex");
     ABORT();
@@ -518,13 +523,18 @@ ua_cleanup(struct user_agent *ua)
   }
 
   if (ua->is_original) {
-    if (ua->conn->pool) {
-      size_t i;
-      for (i = 0; i < ua->conn->amt; ++i)
-        _ua_conn_cleanup(ua->conn->pool[i]);
-      free(ua->conn->pool);
+    QUEUE *q;
+    struct ua_conn *conn;
+
+    QUEUE_FOREACH(q, &ua->connq->idle) {
+      conn = QUEUE_DATA(q, struct ua_conn, entry);
+      _ua_conn_cleanup(conn);
     }
-    free(ua->conn);
+    QUEUE_FOREACH(q, &ua->connq->busy) {
+      conn = QUEUE_DATA(q, struct ua_conn, entry);
+      _ua_conn_cleanup(conn);
+    }
+    free(ua->connq);
 
     pthread_mutex_destroy(&ua->shared->lock);
     pthread_rwlock_destroy(&ua->shared->rwlock);
@@ -762,6 +772,12 @@ ua_conn_setup(struct user_agent *ua,
   }
 }
 
+CURL *
+ua_conn_curl_easy_get(struct ua_conn *conn)
+{
+  return conn->ehandle;
+}
+
 /* template function for performing synchronous requests */
 ORCAcode
 ua_run(struct user_agent *ua,
@@ -819,12 +835,6 @@ ua_run(struct user_agent *ua,
   _ua_conn_reset(ua, conn);
 
   return code;
-}
-
-CURL *
-ua_conn_curl_easy_get(struct ua_conn *conn)
-{
-  return conn->ehandle;
 }
 
 void

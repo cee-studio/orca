@@ -42,7 +42,7 @@ struct discord_adapter {
   struct {
     /** DISCORD_RATELIMIT logging module */
     struct logconf conf;
-    /** 
+    /**
      * endpoint/routes discovered, check a endpoint/bucket match with tree
      *        search functions
      */
@@ -64,6 +64,8 @@ struct discord_adapter {
     /** the entire JSON response of the error */
     char jsonstr[512];
   } err;
+  /** HTTP response callbacks */
+  struct ua_resp_handle resp_handle;
 };
 
 /**
@@ -285,7 +287,7 @@ struct discord_gateway {
   /** the websockets handle that connects to Discord */
   struct websockets *ws;
 
-  /** Reconnect structure */
+  /** reconnect structure */
   struct {
     /** will attempt reconnecting if true */
     bool enable;
@@ -295,7 +297,7 @@ struct discord_gateway {
     int threshold;
   } * reconnect;
 
-  /** Status structure */
+  /** status structure */
   struct {
     /** will attempt to resume session if connection shutsdowns */
     bool is_resumable;
@@ -328,9 +330,11 @@ struct discord_gateway {
   /** the client's user raw JSON @todo this is temporary */
   struct sized_buffer sb_bot;
 
-  /* https://discord.com/developers/docs/topics/gateway#payloads-gateway-payload-structure
+  /**
+   * response-payload structure
+   * @see
+   * https://discord.com/developers/docs/topics/gateway#payloads-gateway-payload-structure
    */
-  /** Response-payload structure */
   struct {
     /** field 'op' */
     enum discord_gateway_opcodes opcode;
@@ -342,10 +346,12 @@ struct discord_gateway {
     struct sized_buffer event_data;
   } * payload;
 
-  /* Discord expects a proccess called heartbeating in order to keep the
-   * client-server connection alive */
-  /* https://discord.com/developers/docs/topics/gateway#heartbeating */
-  /** Heartbeating (keep-alive) structure */
+  /**
+   * heartbeating (keep-alive) structure
+   * @note Discord expects a proccess called hearbeating in order to keep the
+   * client connection alive
+   * @see https://discord.com/developers/docs/topics/gateway#heartbeating
+   */
   struct {
     /** fixed interval between heartbeats */
     u64_unix_ms_t interval_ms;
@@ -355,7 +361,7 @@ struct discord_gateway {
     int ping_ms;
   } * hbeat;
 
-  /** User-Commands structure */
+  /** user-commands structure */
   struct {
     /** the prefix expected before every command @see discord_set_prefix() */
     struct sized_buffer prefix;
@@ -368,8 +374,10 @@ struct discord_gateway {
 
     /** user's callbacks */
     struct discord_gateway_cbs cbs;
-    /** context on how each event callback is executed @see
-     * discord_set_event_scheduler() */
+    /**
+     * context on how each event callback is executed
+     *          @see discord_set_event_scheduler()
+     */
     discord_event_scheduler_cb scheduler;
   } * user_cmd;
 };
@@ -434,26 +442,21 @@ struct discord {
   /** @privatesection */
   /** DISCORD logging module */
   struct logconf *conf;
-
   /** whether this is the original client or a clone */
   bool is_original;
-
   /** the bot token */
   struct sized_buffer token;
-
   /** the HTTP adapter for performing requests */
   struct discord_adapter adapter;
   /** the WebSockets handle for establishing a connection to Discord */
   struct discord_gateway gw;
   /** the WebSockets handles for establishing voice connections to Discord */
   struct discord_voice vcs[DISCORD_MAX_VOICE_CONNECTIONS];
-
-  /* @todo? create a analogous struct for gateway */
+  /** @todo create a analogous struct for gateway */
   struct discord_voice_cbs voice_cbs;
-
   /**
    * space for user arbitrary data
-   *        @see discord_get_data() and discord_set_data() */
+   * @see discord_get_data() and discord_set_data() */
   void *data;
 };
 

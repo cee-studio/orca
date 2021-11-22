@@ -1,7 +1,6 @@
 /**
  * @file discord.h
  * @author cee-studio
- * @date 27 Jul 2021
  * @brief File containing public functions and datatypes
  *
  * These symbols are organized in a intuitive fashion to be easily
@@ -21,9 +20,10 @@
 #define DISCORD_GATEWAY_URL_SUFFIX           "?v=9&encoding=json"
 #define DISCORD_VOICE_CONNECTIONS_URL_SUFFIX "?v=4"
 
-/* FORWARD DECLARATIONS */
+/* forward declarations */
 struct discord;
 struct discord_voice_cbs;
+/**/
 
 /** @defgroup DiscordLimitsSnowflake
  * @see https://discord.com/developers/docs/reference#snowflakes

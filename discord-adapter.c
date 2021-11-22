@@ -9,47 +9,6 @@
 
 #include "cee-utils.h"
 
-void
-discord_adapter_init(struct discord_adapter *adapter,
-                     struct logconf *conf,
-                     struct sized_buffer *token)
-{
-  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
-  ua_set_url(adapter->ua, DISCORD_API_BASE_URL);
-
-  adapter->ratelimit = calloc(1, sizeof *adapter->ratelimit);
-  if (pthread_rwlock_init(&adapter->ratelimit->rwlock, NULL))
-    ERR("Couldn't initialize pthread rwlock");
-  if (pthread_mutex_init(&adapter->ratelimit->lock, NULL))
-    ERR("Couldn't initialize pthread mutex");
-
-  logconf_branch(&adapter->ratelimit->conf, conf, "DISCORD_RATELIMIT");
-  if (!token->size) { /* no token means a webhook-only client */
-    logconf_branch(&adapter->conf, conf, "DISCORD_WEBHOOK");
-  }
-  else {
-    logconf_branch(&adapter->conf, conf, "DISCORD_HTTP");
-
-    char auth[128];
-    int ret =
-      snprintf(auth, sizeof(auth), "Bot %.*s", (int)token->size, token->start);
-    ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
-
-    ua_reqheader_add(adapter->ua, "Authorization", auth);
-  }
-}
-
-void
-discord_adapter_cleanup(struct discord_adapter *adapter)
-{
-  ua_cleanup(adapter->ua);
-  discord_buckets_cleanup(adapter);
-  pthread_rwlock_destroy(&adapter->ratelimit->rwlock);
-  pthread_mutex_destroy(&adapter->ratelimit->lock);
-  free(adapter->ratelimit);
-  ua_info_cleanup(&adapter->err.info);
-}
-
 /**
  * JSON ERROR CODES
  * https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
@@ -72,6 +31,53 @@ json_error_cb(char *str, size_t len, void *p_adapter)
            (int)len, str);
 }
 
+void
+discord_adapter_init(struct discord_adapter *adapter,
+                     struct logconf *conf,
+                     struct sized_buffer *token)
+{
+  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
+  ua_set_url(adapter->ua, DISCORD_API_BASE_URL);
+
+  if (!token->size) {
+    /* no token means a webhook-only client */
+    logconf_branch(&adapter->conf, conf, "DISCORD_WEBHOOK");
+  }
+  else {
+    /* bot client */
+    logconf_branch(&adapter->conf, conf, "DISCORD_HTTP");
+
+    char auth[128];
+    int ret =
+      snprintf(auth, sizeof(auth), "Bot %.*s", (int)token->size, token->start);
+    ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
+
+    ua_reqheader_add(adapter->ua, "Authorization", auth);
+  }
+  /* initialize ratelimit handler */
+  adapter->ratelimit = calloc(1, sizeof *adapter->ratelimit);
+  logconf_branch(&adapter->ratelimit->conf, conf, "DISCORD_RATELIMIT");
+  if (pthread_rwlock_init(&adapter->ratelimit->rwlock, NULL))
+    ERR("Couldn't initialize pthread rwlock");
+  if (pthread_mutex_init(&adapter->ratelimit->lock, NULL))
+    ERR("Couldn't initialize pthread mutex");
+
+  /* assign JSON error callback */
+  adapter->resp_handle.err_cb = &json_error_cb;
+  adapter->resp_handle.err_obj = adapter;
+}
+
+void
+discord_adapter_cleanup(struct discord_adapter *adapter)
+{
+  ua_cleanup(adapter->ua);
+  discord_buckets_cleanup(adapter);
+  pthread_rwlock_destroy(&adapter->ratelimit->rwlock);
+  pthread_mutex_destroy(&adapter->ratelimit->lock);
+  free(adapter->ratelimit);
+  ua_info_cleanup(&adapter->err.info);
+}
+
 static ORCAcode
 _discord_perform_request(struct discord_adapter *adapter,
                          struct ua_resp_handle *resp_handle,
@@ -85,10 +91,9 @@ _discord_perform_request(struct discord_adapter *adapter,
   long delay_ms;
   ORCAcode code;
 
-  /* if unset, set to default error handling callbacks */
-  if (resp_handle && !resp_handle->err_cb) {
-    resp_handle->err_cb = &json_error_cb;
-    resp_handle->err_obj = adapter;
+  if (resp_handle) {
+    adapter->resp_handle.ok_cb = resp_handle->ok_cb;
+    adapter->resp_handle.ok_obj = resp_handle->ok_obj;
   }
 
   do {
@@ -167,9 +172,8 @@ _discord_perform_request(struct discord_adapter *adapter,
       }
       default:
         if (adapter->err.info.httpcode >= 500) {
-          /* server related error, sleep for 5 seconds */
-          /* @todo emit timer for async requests
-           *       make this global wait? */
+          /* server related error, sleep for 5 seconds
+           * @todo emit timer for async requests */
           cee_sleep_ms(5000);
         }
         break;
@@ -193,7 +197,6 @@ discord_adapter_run(struct discord_adapter *adapter,
   va_list args;
   char endpoint[2048];
   int ret;
-
   /* Determine which ratelimit group (aka bucket) a request belongs to
    * by checking its route.
    * see:  https://discord.com/developers/docs/topics/rate-limits */

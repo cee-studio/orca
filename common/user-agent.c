@@ -420,8 +420,8 @@ _ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
   pthread_mutex_unlock(&ua->shared->lock);
 }
 
-static struct ua_conn *
-_ua_conn_get(struct user_agent *ua)
+struct ua_conn *
+ua_conn_get(struct user_agent *ua)
 {
   pthread_mutex_lock(&ua->shared->lock);
   struct ua_conn *ret_conn = NULL;
@@ -555,6 +555,8 @@ _ua_conn_set_method(struct user_agent *ua,
                     enum http_method method,
                     struct sized_buffer *req_body)
 {
+  static struct sized_buffer blank_req_body = { "", 0 };
+
   /* resets any preexisting CUSTOMREQUEST */
   curl_easy_setopt(conn->ehandle, CURLOPT_CUSTOMREQUEST, NULL);
 
@@ -581,6 +583,10 @@ _ua_conn_set_method(struct user_agent *ua,
     logconf_fatal(conn->conf, "Unknown http method (code: %d)", method);
     ABORT();
   }
+
+  /* make sure req_body point to something */
+  if (!req_body) req_body = &blank_req_body;
+
   /* set ptr to payload that will be sent via POST/PUT/PATCH */
   curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDSIZE, req_body->size);
   curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDS, req_body->start);
@@ -738,25 +744,18 @@ _ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
   return ORCA_UNUSUAL_HTTP_CODE;
 }
 
-static void
-_ua_conn_setup(struct user_agent *ua,
-               struct ua_conn *conn,
-               struct ua_resp_handle *resp_handle,
-               struct sized_buffer **req_body,
-               enum http_method http_method,
-               char endpoint[])
+void
+ua_conn_setup(struct user_agent *ua,
+              struct ua_conn *conn,
+              struct ua_resp_handle *resp_handle,
+              struct sized_buffer *req_body,
+              enum http_method http_method,
+              char endpoint[])
 {
-  static struct sized_buffer blank_req_body = { "", 0 };
-
-  /* make sure req_body point to something */
-  if (!*req_body) *req_body = &blank_req_body;
-
   /* set conn request's url */
   _ua_conn_set_url(ua, conn, endpoint);
-
   /* set conn request's method */
-  _ua_conn_set_method(ua, conn, http_method, *req_body);
-
+  _ua_conn_set_method(ua, conn, http_method, req_body);
   /* store callback context */
   if (resp_handle) {
     memcpy(&conn->resp_handle, resp_handle, sizeof(struct ua_resp_handle));
@@ -777,9 +776,9 @@ ua_run(struct user_agent *ua,
   const char *method_str = http_method_print(http_method);
 
   /* get conn that will perform the request */
-  conn = _ua_conn_get(ua);
+  conn = ua_conn_get(ua);
   /* populate conn with parameters */
-  _ua_conn_setup(ua, conn, resp_handle, &req_body, http_method, endpoint);
+  ua_conn_setup(ua, conn, resp_handle, req_body, http_method, endpoint);
 
   /* log request to be performed */
   ua_reqheader_str(ua, logbuf, sizeof(logbuf));
@@ -788,7 +787,8 @@ ua_run(struct user_agent *ua,
                  logbuf,
                  sizeof(logbuf),
                },
-               *req_body, "HTTP_SEND_%s", method_str);
+               req_body ? *req_body : (struct sized_buffer){ "", 0 },
+               "HTTP_SEND_%s", method_str);
   logconf_trace(conn->conf,
                 ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
                 method_str, conn->info.loginfo.counter);

@@ -24,7 +24,6 @@ struct ua_attr {
   struct logconf *conf;
 };
 
-
 /** @brief HTTP methods */
 enum http_method {
   HTTP_INVALID = -1,
@@ -250,7 +249,32 @@ ORCAcode ua_run(struct user_agent *ua,
                 char endpoint[]);
 
 /**
- * @brief Get `conn` assigned libcurl's easy handle
+ * @brief Get a connection handle
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @return a connection handle
+ */
+struct ua_conn *ua_conn_get(struct user_agent *ua);
+
+/**
+ * @brief Setup a connection handle
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param conn the connection handle to be modified
+ * @param resp_handle the optional response callbacks, can be NULL
+ * @param req_body the optional request body, can be NULL
+ * @param http_method the HTTP method of this transfer (GET, POST, ...)
+ * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
+ */
+void ua_conn_setup(struct user_agent *ua,
+                   struct ua_conn *conn,
+                   struct ua_resp_handle *resp_handle,
+                   struct sized_buffer *req_body,
+                   enum http_method http_method,
+                   char endpoint[]);
+
+/**
+ * @brief Get libcurl's easy handle assigned to `conn`
  *
  * @param conn the connection handle
  * @return the libcurl's easy handle

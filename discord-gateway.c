@@ -10,7 +10,7 @@
 
 /* get client from gw pointer */
 #define CLIENT(p_gw)                                                          \
-  (struct discord *)((int8_t *)(p_gw)-offsetof(struct discord, gw))
+  ((struct discord *)((int8_t *)(p_gw)-offsetof(struct discord, gw)))
 
 /* shorten event callback for maintainability purposes */
 #define ON(event, ...)                                                        \
@@ -1163,14 +1163,17 @@ discord_gateway_init(struct discord_gateway *gw,
                      struct logconf *conf,
                      struct sized_buffer *token)
 {
-  struct sized_buffer buf;
   struct ws_callbacks cbs = {
     .data = gw,
     .on_connect = &on_connect_cb,
     .on_text = &on_text_cb,
     .on_close = &on_close_cb,
   };
-  struct ws_attr attr = { .conf = conf };
+  struct ws_attr attr = {
+    .conf = conf,
+    .mhandle = CLIENT(gw)->mhandle,
+  };
+  struct sized_buffer buf;
 
   gw->ws = ws_init(&cbs, &attr);
   logconf_branch(&gw->conf, conf, "DISCORD_GATEWAY");

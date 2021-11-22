@@ -446,6 +446,8 @@ struct discord {
   bool is_original;
   /** the bot token */
   struct sized_buffer token;
+  /** custom libcurl's IO multiplexer */
+  CURLM *mhandle;
   /** the HTTP adapter for performing requests */
   struct discord_adapter adapter;
   /** the WebSockets handle for establishing a connection to Discord */
@@ -455,8 +457,9 @@ struct discord {
   /** @todo create a analogous struct for gateway */
   struct discord_voice_cbs voice_cbs;
   /**
-   * space for user arbitrary data
-   * @see discord_get_data() and discord_set_data() */
+   * keep user arbitrary data
+   * @see discord_get_data(), discord_set_data()
+   */
   void *data;
 };
 

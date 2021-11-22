@@ -18,6 +18,8 @@ _discord_init(struct discord *new_client)
     discord_global_init();
   }
 
+  new_client->mhandle = curl_multi_init();
+
   discord_adapter_init(&new_client->adapter, new_client->conf,
                        &new_client->token);
   discord_gateway_init(&new_client->gw, new_client->conf, &new_client->token);

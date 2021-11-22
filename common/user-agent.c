@@ -528,7 +528,7 @@ ua_cleanup(struct user_agent *ua)
     QUEUE *ua_queues[] = { &ua->connq->idle, &ua->connq->busy };
 
     /* cleanup queues */
-    for (int i = 0; i < sizeof(ua_queues) / sizeof(QUEUE); ++i) {
+    for (int i = 0; i < sizeof(ua_queues) / sizeof(QUEUE*); ++i) {
       QUEUE queue;
       QUEUE *q;
       struct ua_conn *conn;

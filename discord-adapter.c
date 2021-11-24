@@ -9,6 +9,10 @@
 
 #include "cee-utils.h"
 
+/* get client from adapter pointer */
+#define CLIENT(p_adapter)                                                     \
+  ((struct discord *)((int8_t *)(p_adapter)-offsetof(struct discord, adapter)))
+
 /**
  * JSON ERROR CODES
  * https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
@@ -55,23 +59,14 @@ discord_adapter_init(struct discord_adapter *adapter,
     ua_reqheader_add(adapter->ua, "Authorization", auth);
   }
   /* initialize ratelimit handler */
-  adapter->ratelimit = calloc(1, sizeof *adapter->ratelimit);
-  logconf_branch(&adapter->ratelimit->conf, conf, "DISCORD_RATELIMIT");
-  if (pthread_rwlock_init(&adapter->ratelimit->rwlock, NULL))
-    ERR("Couldn't initialize pthread rwlock");
-  if (pthread_mutex_init(&adapter->ratelimit->lock, NULL))
-    ERR("Couldn't initialize pthread mutex");
-
-  /* assign JSON error callback */
-  adapter->resp_handle.err_cb = &json_error_cb;
-  adapter->resp_handle.err_obj = adapter;
+  adapter->ratelimit = discord_ratelimit_init(&adapter->conf);
 }
 
 void
 discord_adapter_cleanup(struct discord_adapter *adapter)
 {
   ua_cleanup(adapter->ua);
-  discord_buckets_cleanup(adapter);
+  discord_ratelimit_cleanup(adapter->ratelimit);
   pthread_rwlock_destroy(&adapter->ratelimit->rwlock);
   pthread_mutex_destroy(&adapter->ratelimit->lock);
   free(adapter->ratelimit);
@@ -84,21 +79,24 @@ _discord_perform_request(struct discord_adapter *adapter,
                          struct sized_buffer *req_body,
                          enum http_method http_method,
                          char endpoint[],
-                         struct discord_bucket *bucket,
                          const char route[])
 {
   bool keepalive = true;
   long delay_ms;
   ORCAcode code;
-
+  struct discord_bucket *bucket = discord_bucket_get(adapter->ratelimit, route);
+  /* assign JSON error callback */
+  struct ua_resp_handle _resp_handle = { .err_cb = &json_error_cb,
+                                         .err_obj = adapter };
   if (resp_handle) {
-    adapter->resp_handle.ok_cb = resp_handle->ok_cb;
-    adapter->resp_handle.ok_obj = resp_handle->ok_obj;
+    _resp_handle.ok_cb = resp_handle->ok_cb;
+    _resp_handle.ok_obj = resp_handle->ok_obj;
   }
 
+  pthread_mutex_lock(&bucket->lock);
   do {
     ua_info_cleanup(&adapter->err.info);
-    delay_ms = discord_bucket_get_cooldown(adapter, bucket);
+    delay_ms = discord_bucket_get_cooldown(adapter->ratelimit, bucket);
     if (delay_ms > 0) {
       logconf_info(&adapter->ratelimit->conf,
                    "[%.4s] RATELIMITING (wait %ld ms)", bucket->hash,
@@ -107,7 +105,7 @@ _discord_perform_request(struct discord_adapter *adapter,
       cee_sleep_ms(delay_ms);
     }
 
-    code = ua_run(adapter->ua, &adapter->err.info, resp_handle, req_body,
+    code = ua_run(adapter->ua, &adapter->err.info, &_resp_handle, req_body,
                   http_method, endpoint);
 
     if (code != ORCA_HTTP_CODE) {
@@ -179,8 +177,9 @@ _discord_perform_request(struct discord_adapter *adapter,
         break;
       }
     }
-    discord_bucket_build(adapter, bucket, route, code, &adapter->err.info);
+    discord_bucket_build(adapter->ratelimit, bucket, route, code, &adapter->err.info);
   } while (keepalive);
+  pthread_mutex_unlock(&bucket->lock);
 
   return code;
 }
@@ -201,7 +200,6 @@ discord_adapter_run(struct discord_adapter *adapter,
    * by checking its route.
    * see:  https://discord.com/developers/docs/topics/rate-limits */
   const char *route;
-  struct discord_bucket *bucket;
 
   /* build the endpoint string */
   va_start(args, endpoint_fmt);
@@ -220,14 +218,6 @@ discord_adapter_run(struct discord_adapter *adapter,
   else
     route = endpoint_fmt;
 
-  if ((bucket = discord_bucket_try_get(adapter, route)) != NULL) {
-    ORCAcode code;
-    pthread_mutex_lock(&bucket->lock);
-    code = _discord_perform_request(adapter, resp_handle, req_body,
-                                    http_method, endpoint, bucket, route);
-    pthread_mutex_unlock(&bucket->lock);
-    return code;
-  }
   return _discord_perform_request(adapter, resp_handle, req_body, http_method,
-                                  endpoint, NULL, route);
+                                  endpoint, route);
 }

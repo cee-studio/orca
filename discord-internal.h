@@ -38,23 +38,8 @@ struct discord_adapter {
   struct logconf conf;
   /** the user agent handle for performing requests */
   struct user_agent *ua;
-  /** ratelimiting structure */
-  struct {
-    /** DISCORD_RATELIMIT logging module */
-    struct logconf conf;
-    /**
-     * endpoint/routes discovered, check a endpoint/bucket match with tree
-     *        search functions
-     */
-    struct discord_bucket *buckets;
-    /** global ratelimit */
-    u64_unix_ms_t global;
-    /** lock used when accessing or modifying 'global' */
-    pthread_rwlock_t rwlock;
-    /** lock used when adding or searching for buckets */
-    pthread_mutex_t lock;
-  } * ratelimit;
-
+  /** ratelimit handler structure */
+  struct discord_ratelimit *ratelimit;
   /** error storage context */
   struct {
     /** informational on the latest transfer */
@@ -64,8 +49,6 @@ struct discord_adapter {
     /** the entire JSON response of the error */
     char jsonstr[512];
   } err;
-  /** HTTP response callbacks */
-  struct ua_resp_handle resp_handle;
 };
 
 /**
@@ -108,6 +91,46 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              char endpoint_fmt[],
                              ...);
 
+struct discord_ratelimit {
+  /** DISCORD_RATELIMIT logging module */
+  struct logconf conf;
+  /** routes discovered */
+  struct discord_route *routes;
+  /** buckets discovered */
+  struct discord_bucket *buckets;
+  /** custom bucket for undefined routes */
+  struct discord_bucket *undefined;
+  /** global ratelimit */
+  u64_unix_ms_t global;
+  /** lock used when accessing or modifying 'global' */
+  pthread_rwlock_t rwlock;
+  /** lock used when adding or searching for buckets */
+  pthread_mutex_t lock;
+};
+
+/**
+ * @brief Initialize ratelimit handler
+ *
+ * @param conf optional pointer to a initialized logconf
+ */
+struct discord_ratelimit *discord_ratelimit_init(struct logconf *conf);
+
+/**
+ * @brief Free ratelimit handler
+ *
+ * @param ratelimit the ratelimit handler
+ */
+void discord_ratelimit_cleanup(struct discord_ratelimit *ratelimit);
+
+struct discord_route {
+  /** route associated with bucket */
+  char route[256];
+  /* bucket associated with route */
+  struct discord_bucket *bucket;
+  /** makes this structure hashable */
+  UT_hash_handle hh;
+};
+
 /**
  * @brief The bucket struct that will handle ratelimiting
  *
@@ -119,8 +142,6 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
  * @see https://discord.com/developers/docs/topics/rate-limits
  */
 struct discord_bucket {
-  /** this bucket 'key' */
-  char route[256];
   /** the unique hash associated with this bucket */
   char hash[128];
   /** amount of busy connections that have not yet finished its requests */
@@ -138,46 +159,39 @@ struct discord_bucket {
 };
 
 /**
- * @brief Free client buckets
- *
- * @param adapter the client adapter containinig every bucket found
- */
-void discord_buckets_cleanup(struct discord_adapter *adapter);
-
-/**
  * @brief Check bucket for ratelimit cooldown
  *
  * Check if connections from a bucket hit its threshold, and lock every
  * connection associated with the bucket until cooldown time elapses
- * @param adapter the client adapter containinig every bucket found
+ * @param ratelimit the ratelimit handler
  * @param bucket check if bucket expects a cooldown before performing a request
  * @return timespan to wait for in milliseconds
  */
-long discord_bucket_get_cooldown(struct discord_adapter *adapter,
+long discord_bucket_get_cooldown(struct discord_ratelimit *ratelimit,
                                  struct discord_bucket *bucket);
 
 /**
  * @brief Get existing bucket with @p route
  *
  * Check if bucket associated with @p route has already been discovered
- * @param adapter the handle created with discord_adapter_init()
+ * @param ratelimit the ratelimit handler
  * @param route that will be checked for a bucket match
  * @return bucket associated with route or NULL if no match found
  */
-struct discord_bucket *discord_bucket_try_get(struct discord_adapter *adapter,
-                                              const char route[]);
+struct discord_bucket *discord_bucket_get(struct discord_ratelimit *ratelimit,
+                                          const char route[]);
 
 /**
  * @brief Update the bucket with response header data
  *
- * @param adapter the handle created with discord_adapter_init()
+ * @param ratelimit the ratelimit handler
  * @param bucket NULL when bucket is first discovered
  * @param route the route associated with the bucket
  * @param code numerical information for the current transfer
  * @param info informational struct containing details on the current transfer
  * @note If the bucket was just discovered it will be created here.
  */
-void discord_bucket_build(struct discord_adapter *adapter,
+void discord_bucket_build(struct discord_ratelimit *ratelimit,
                           struct discord_bucket *bucket,
                           const char route[],
                           ORCAcode code,

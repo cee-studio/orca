@@ -108,8 +108,10 @@ discord_ratelimit_init(struct logconf *conf)
     ERR("Couldn't initialize pthread mutex");
   /* for routes that still haven't discovered a bucket match */
   ratelimit->null = _discord_bucket_init(ratelimit, "null");
+  HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->null);
   /* for routes that can't be assigned to any existing bucket */
   ratelimit->miss = _discord_bucket_init(ratelimit, "miss");
+  HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->miss);
 
   return ratelimit;
 }
@@ -266,6 +268,9 @@ discord_bucket_build(struct discord_ratelimit *ratelimit,
       pthread_mutex_lock(&ratelimit->lock);
       HASH_ADD_STR(ratelimit->routes, route, r);
       pthread_mutex_unlock(&ratelimit->lock);
+
+      logconf_debug(&ratelimit->conf, "[miss] Route '%s' doesn't include bucket", r->route);
+
       return;
     }
     else if (b == ratelimit->miss) {

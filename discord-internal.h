@@ -109,7 +109,7 @@ struct discord_ratelimit {
   /** for undefined routes */
   struct discord_bucket *null;
   /** for routes without a bucket match */
-  struct discord_bucket *missing;
+  struct discord_bucket *miss;
   /** global ratelimit */
   u64_unix_ms_t global;
   /** lock used when accessing or modifying 'global' */

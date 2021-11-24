@@ -91,6 +91,14 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              char endpoint_fmt[],
                              ...);
 
+/**
+ * @brief The ratelimiting handler structure
+ *
+ * - Initializer:
+ *   - discord_ratelimit_init()
+ * - Cleanup:
+ *   - discord_ratelimit_cleanup()
+ */
 struct discord_ratelimit {
   /** DISCORD_RATELIMIT logging module */
   struct logconf conf;
@@ -98,8 +106,10 @@ struct discord_ratelimit {
   struct discord_route *routes;
   /** buckets discovered */
   struct discord_bucket *buckets;
-  /** custom bucket for undefined routes */
-  struct discord_bucket *undefined;
+  /** for undefined routes */
+  struct discord_bucket *null;
+  /** for routes without a bucket match */
+  struct discord_bucket *missing;
   /** global ratelimit */
   u64_unix_ms_t global;
   /** lock used when accessing or modifying 'global' */
@@ -134,10 +144,12 @@ struct discord_route {
 /**
  * @brief The bucket struct that will handle ratelimiting
  *
- * - Initializer:
+ * - Get bucket:
+ *   - discord_bucket_get()
+ * - Get cooldown:
+ *   - discord_bucket_cooldown()
+ * - Add/update buckets
  *   - discord_bucket_build()
- * - Cleanup:
- *   - discord_buckets_cleanup()
  *
  * @see https://discord.com/developers/docs/topics/rate-limits
  */

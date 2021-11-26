@@ -228,7 +228,7 @@ discord_adapter_run(struct discord_adapter *adapter,
     /* safe to assume the first argument is a snowflake ID */
     va_start(args, endpoint_fmt);
     id = va_arg(args, u64_snowflake_t);
-    ret = snprintf(major, sizeof(major) - 1, "%" PRIu64, id);
+    ret = snprintf(major, sizeof(major), "%" PRIu64, id);
     ASSERT_S(ret < sizeof(major), "Out of bounds write attempt");
     va_end(args);
 

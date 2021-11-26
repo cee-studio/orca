@@ -74,7 +74,7 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
 }
 
 static ORCAcode
-_discord_perform_request(struct discord_adapter *adapter,
+_discord_adapter_request(struct discord_adapter *adapter,
                          struct ua_resp_handle *resp_handle,
                          struct sized_buffer *req_body,
                          enum http_method http_method,
@@ -84,7 +84,8 @@ _discord_perform_request(struct discord_adapter *adapter,
   bool keepalive = true;
   long delay_ms;
   ORCAcode code;
-  struct discord_bucket *bucket = discord_bucket_get(adapter->ratelimit, route);
+  struct discord_bucket *bucket =
+    discord_bucket_get(adapter->ratelimit, route);
   /* assign JSON error callback */
   struct ua_resp_handle _resp_handle = { .err_cb = &json_error_cb,
                                          .err_obj = adapter };
@@ -177,7 +178,8 @@ _discord_perform_request(struct discord_adapter *adapter,
         break;
       }
     }
-    discord_bucket_build(adapter->ratelimit, bucket, route, code, &adapter->err.info);
+    discord_bucket_build(adapter->ratelimit, bucket, route, code,
+                         &adapter->err.info);
   } while (keepalive);
   pthread_mutex_unlock(&bucket->lock);
 
@@ -193,13 +195,21 @@ discord_adapter_run(struct discord_adapter *adapter,
                     char endpoint_fmt[],
                     ...)
 {
-  va_list args;
-  char endpoint[2048];
-  int ret;
-  /* Determine which ratelimit group (aka bucket) a request belongs to
-   * by checking its route.
+  /* check endpoint for these major parameters
    * see:  https://discord.com/developers/docs/topics/rate-limits */
+  static const char CHANNEL_END[] = "/channels/%";
+  static const char GUILD_END[] = "/guilds/%";
+  static const char WEBHOOK_END[] = "/webhooks/%";
+  /* fully-formed endpoint string */
+  char endpoint[2048];
+  /* in case endpoint has a major param */
+  char major[32];
+  /* bucket key, pointer to either 'endpoint' or 'major_param' */
   const char *route;
+  /* variable arguments for endpoint formation */
+  va_list args;
+  /* snprintf OOB check */
+  int ret;
 
   /* build the endpoint string */
   va_start(args, endpoint_fmt);
@@ -207,17 +217,27 @@ discord_adapter_run(struct discord_adapter *adapter,
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
   va_end(args);
 
-  /* check if 'route' is a major parameter (channel, guild or webhook),
-   * if not use the raw endpoint_fmt as a route */
-  if (strstr(endpoint_fmt, "/channels/%"))
-    route = "@channel";
-  else if (strstr(endpoint_fmt, "/guilds/%"))
-    route = "@guild";
-  else if (strstr(endpoint_fmt, "/webhook/%"))
-    route = "@webhook";
-  else
-    route = endpoint_fmt;
+  /* determine which ratelimit group (aka bucket) a request belongs to
+   * by checking its route. */
+  if (STRNEQ(endpoint_fmt, CHANNEL_END, sizeof(CHANNEL_END) - 1)
+      || STRNEQ(endpoint_fmt, GUILD_END, sizeof(GUILD_END) - 1)
+      || STRNEQ(endpoint_fmt, WEBHOOK_END, sizeof(WEBHOOK_END) - 1))
+  {
+    u64_snowflake_t id;
 
-  return _discord_perform_request(adapter, resp_handle, req_body, http_method,
+    /* safe to assume the first argument is a snowflake ID */
+    va_start(args, endpoint_fmt);
+    id = va_arg(args, u64_snowflake_t);
+    ret = snprintf(major, sizeof(major) - 1, "%" PRIu64, id);
+    ASSERT_S(ret < sizeof(major), "Out of bounds write attempt");
+    va_end(args);
+
+    route = major;
+  }
+  else {
+    route = endpoint;
+  }
+
+  return _discord_adapter_request(adapter, resp_handle, req_body, http_method,
                                   endpoint, route);
 }

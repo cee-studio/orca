@@ -223,15 +223,13 @@ discord_adapter_run(struct discord_adapter *adapter,
       || STRNEQ(endpoint_fmt, GUILD_END, sizeof(GUILD_END) - 1)
       || STRNEQ(endpoint_fmt, WEBHOOK_END, sizeof(WEBHOOK_END) - 1))
   {
-    u64_snowflake_t id;
+    /* safe to assume strchr() won't return NULL */
+    char *start = 1 + strchr(1 + endpoint, '/'), *end = strchr(start, '/');
+    ptrdiff_t len = end - start;
 
-    /* safe to assume the first argument is a snowflake ID */
-    va_start(args, endpoint_fmt);
-    id = va_arg(args, u64_snowflake_t);
-    ret = snprintf(major, sizeof(major), "%" PRIu64, id);
-    ASSERT_S(ret < sizeof(major), "Out of bounds write attempt");
-    va_end(args);
-
+    /* copy snowflake id over to 'major' */
+    memcpy(major, start, len);
+    major[len] = '\0';
     route = major;
   }
   else {

@@ -204,7 +204,7 @@ discord_adapter_run(struct discord_adapter *adapter,
   char endpoint[2048];
   /* in case endpoint has a major param */
   char major[32];
-  /* bucket key, pointer to either 'endpoint' or 'major_param' */
+  /* bucket key, pointer to either 'endpoint' or 'major' */
   const char *route;
   /* variable arguments for endpoint formation */
   va_list args;

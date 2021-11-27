@@ -1048,7 +1048,6 @@ on_close_cb(void *p_gw,
     close_opcode_print(opcode), opcode, len, (int)len, reason);
 
   if (gw->status->shutdown) {
-    logconf_warn(&gw->conf, "Gateway was shutdown");
     gw->reconnect->enable = false;
     gw->status->is_resumable = false;
     return;
@@ -1068,7 +1067,6 @@ on_close_cb(void *p_gw,
   case DISCORD_GATEWAY_CLOSE_REASON_INVALID_INTENTS:
   case DISCORD_GATEWAY_CLOSE_REASON_INVALID_SHARD:
   case DISCORD_GATEWAY_CLOSE_REASON_DISALLOWED_INTENTS:
-    logconf_warn(&gw->conf, "Gateway was shutdown");
     gw->status->is_resumable = false;
     gw->reconnect->enable = false;
     break;

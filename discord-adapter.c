@@ -60,9 +60,9 @@ discord_adapter_init(struct discord_adapter *adapter,
   }
   /* initialize ratelimit handler */
   adapter->ratelimit = discord_ratelimit_init(&adapter->conf);
-  /* initialize queues */
-  QUEUE_INIT(&adapter->pending_requests);
-  QUEUE_INIT(&adapter->idle_requests);
+  /* initialize request queues (for async purposes) */
+  QUEUE_INIT(&adapter->queue.hold);
+  QUEUE_INIT(&adapter->queue.idle);
 }
 
 void
@@ -115,13 +115,13 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
   /* request context to be enqueued */
   struct discord_request_cxt *cxt;
 
-  if (QUEUE_EMPTY(&adapter->idle_requests)) {
+  if (QUEUE_EMPTY(&adapter->queue.idle)) {
     /* create new request handler */
     cxt = calloc(1, sizeof(struct discord_request_cxt));
   }
   else {
     /* recycle idle request handler */
-    QUEUE *q = QUEUE_HEAD(&adapter->idle_requests);
+    QUEUE *q = QUEUE_HEAD(&adapter->queue.idle);
     cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
     memset(cxt, 0, sizeof(struct discord_request_cxt));
   }
@@ -134,7 +134,72 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
 
   /* enqueue request */
   QUEUE_INIT(&cxt->entry);
-  QUEUE_INSERT_TAIL(&adapter->pending_requests, &cxt->entry);
+  QUEUE_INSERT_TAIL(&adapter->queue.hold, &cxt->entry);
+}
+
+void
+discord_adapter_prepare(struct discord_adapter *adapter)
+{
+  QUEUE *q;
+  long delay_ms;
+  struct discord_request_cxt *cxt;
+  struct ua_conn *conn;
+  CURL *ehandle;
+
+  if (QUEUE_EMPTY(&adapter->queue.hold)) return;
+
+  while (!QUEUE_EMPTY(&adapter->queue.hold)) {
+    q = QUEUE_HEAD(&adapter->queue.hold);
+    cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
+    QUEUE_REMOVE(q);
+
+    delay_ms = discord_bucket_get_cooldown(adapter->ratelimit, cxt->bucket);
+    if (delay_ms > 0) {
+      logconf_info(&adapter->ratelimit->conf,
+                   "[%.4s] RATELIMITING (timeout %ld ms)", cxt->bucket->hash,
+                   delay_ms);
+      /* TODO: register timeout callback for 'cxt' */
+      continue;
+    }
+    conn = ua_conn_get(adapter->ua);
+    ehandle = ua_conn_curl_easy_get(conn);
+    /* TODO: use CURLOPT_COPYPOSTFIELDS or a buffer pool */
+    ua_conn_setup(adapter->ua, conn, &cxt->resp_handle, &cxt->req_body,
+                  cxt->http_method, cxt->endpoint);
+    curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
+
+    /* allow curl to begin transfer */
+    curl_multi_add_handle(CLIENT(adapter)->mhandle, ehandle);
+  }
+}
+
+void
+discord_adapter_check(struct discord_adapter *adapter)
+{
+  int msgq;
+  struct CURLMsg *curlmsg;
+  struct discord_request_cxt *cxt;
+  CURLM *mhandle = CLIENT(adapter)->mhandle;
+  CURL *ehandle;
+
+  do {
+    msgq = 0;
+    curlmsg = curl_multi_info_read(mhandle, &msgq);
+    if(curlmsg && (CURLMSG_DONE == curlmsg->msg)) {
+      ehandle = curlmsg->easy_handle;
+      /* get request handler assigned to this easy handle */
+      curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
+      /* TODO: trigger cxt callback here */
+      curl_multi_remove_handle(mhandle, ehandle);
+      /* TODO: check for response status, retry transfer if necessary */
+      /* TODO: need to enqueue 'route' information */
+#if 0
+      discord_bucket_build(adapter->ratelimit, cxt->bucket, route, code, &adapter->err.info);
+#endif
+      /* insert request handler into idle queue for recycling */
+      QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
+    }
+  } while (curlmsg);
 }
 
 static ORCAcode

@@ -41,6 +41,13 @@ struct discord_adapter {
   struct user_agent *ua;
   /** ratelimit handler structure */
   struct discord_ratelimit *ratelimit;
+  /** request queues */
+  struct {
+    /** requests on hold (waiting for their turn) */
+    QUEUE hold;
+    /** unused request handles (can be recycled) */
+    QUEUE idle;
+  } queue;
   /** error storage context */
   struct {
     /** informational on the latest transfer */
@@ -50,10 +57,6 @@ struct discord_adapter {
     /** the entire JSON response of the error */
     char jsonstr[512];
   } err;
-  /** pending requests */
-  QUEUE pending_requests;
-  /** idle requests */
-  QUEUE idle_requests;
 };
 
 /**

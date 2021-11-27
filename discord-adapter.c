@@ -65,12 +65,12 @@ discord_adapter_init(struct discord_adapter *adapter,
 void
 discord_adapter_cleanup(struct discord_adapter *adapter)
 {
+  /* cleanup User-Agent handle */
   ua_cleanup(adapter->ua);
-  discord_ratelimit_cleanup(adapter->ratelimit);
-  pthread_rwlock_destroy(&adapter->ratelimit->rwlock);
-  pthread_mutex_destroy(&adapter->ratelimit->lock);
-  free(adapter->ratelimit);
+  /* cleanup request's informational handle */
   ua_info_cleanup(&adapter->err.info);
+  /* cleanup ratelimit handle */
+  discord_ratelimit_cleanup(adapter->ratelimit);
 }
 
 /* in case 'endpoint' has a major param, it will be written into 'buf' */
@@ -96,6 +96,47 @@ _discord_adapter_get_route(const char endpoint[], char buf[32])
   return endpoint;
 }
 
+void
+discord_adapter_enqueue(struct discord_adapter *adapter,
+                        struct ua_resp_handle *resp_handle,
+                        struct sized_buffer *req_body,
+                        enum http_method http_method,
+                        char endpoint[])
+{
+  /* pass to _discord_adapter_get_route() for reentrancy */
+  char buf[32];
+  /* bucket key, pointer to either 'endpoint' or 'major' */
+  const char *route = _discord_adapter_get_route(endpoint, buf);
+  /* bucket pertaining to the request */
+  struct discord_bucket *bucket =
+    discord_bucket_get(adapter->ratelimit, route);
+  /* request context to be enqueued */
+  struct discord_request_cxt *cxt;
+
+  if (!QUEUE_EMPTY(&bucket->idle_requests)) {
+    /* recycle and enqueue idle request */
+    QUEUE *q;
+
+    q = QUEUE_HEAD(&bucket->idle_requests);
+    cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
+    memset(cxt, 0, sizeof(struct discord_request_cxt));
+  }
+  else {
+    /* create new request handler */
+    cxt = calloc(1, sizeof *cxt);
+  }
+  /* populate request handler */
+  cxt->p_adapter = &(discord_clone(CLIENT(adapter))->adapter);
+  cxt->bucket = bucket;
+  if (resp_handle) cxt->resp_handle = *resp_handle;
+  if (req_body) cxt->req_body = *req_body;
+  memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
+
+  /* enqueue request */
+  QUEUE_INIT(&cxt->entry);
+  QUEUE_INSERT_TAIL(&bucket->pending_requests, &cxt->entry);
+}
+
 static ORCAcode
 _discord_adapter_request(struct discord_adapter *adapter,
                          struct ua_resp_handle *resp_handle,
@@ -107,6 +148,8 @@ _discord_adapter_request(struct discord_adapter *adapter,
   char buf[32];
   /* bucket key, pointer to either 'endpoint' or 'major' */
   const char *route = _discord_adapter_get_route(endpoint, buf);
+  /* response callbacks */
+  struct ua_resp_handle _resp_handle = {};
   /* bucket pertaining to the request */
   struct discord_bucket *bucket =
     discord_bucket_get(adapter->ratelimit, route);
@@ -116,8 +159,6 @@ _discord_adapter_request(struct discord_adapter *adapter,
   long delay_ms;
   /* orca error status */
   ORCAcode code;
-  /* response callbacks */
-  struct ua_resp_handle _resp_handle = {};
 
   _resp_handle.err_cb = &json_error_cb;
   _resp_handle.err_obj = adapter;

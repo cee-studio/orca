@@ -20,6 +20,7 @@
 #include "cee-utils.h"
 
 #include "uthash.h"
+#include "queue.h"
 
 #include "discord-voice-connections.h"
 
@@ -73,15 +74,15 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  * @brief Start a HTTP Request to Discord
  *
  * @param adapter the handle initialized with discord_adapter_init()
- * @param resp_handle the callbacks that will be triggered should the request
- * fail or succeed
- * @param req_body the body sent for methods that require (ex: POST), leave as
- * NULL if unecessary
+ * @param resp_handle the callbacks to be triggered should the request
+ *        fail or succeed
+ * @param req_body the body sent for methods that require (ex: post), leave as
+ *        null if unecessary
  * @param http_method the method in opcode format of the request being sent
  * @param endpoint the format endpoint that be appended to base_url when
- * performing a request, same behavior as printf()
+ *        performing a request, same behavior as printf()
  * @return a code for checking on how the transfer went ORCA_OK means the
- * transfer was succesful
+ *        transfer was succesful
  * @note Helper over ua_run()
  */
 ORCAcode discord_adapter_run(struct discord_adapter *adapter,
@@ -90,6 +91,24 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              enum http_method http_method,
                              char endpoint_fmt[],
                              ...);
+
+/**
+ * @brief Enqueue a request to be executed asynchronously
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param resp_handle the callbacks to be triggered should the request
+ *        fail or succeed
+ * @param req_body the body sent for methods that require (ex: post), leave as
+ *        null if unecessary
+ * @param http_method the method in opcode format of the request being sent
+ * @param endpoint the endpoint to be appended to base_url when
+ *        performing a request
+ */
+void discord_adapter_enqueue(struct discord_adapter *adapter,
+                             struct ua_resp_handle *resp_handle,
+                             struct sized_buffer *req_body,
+                             enum http_method http_method,
+                             char endpoint[]);
 
 /**
  * @brief The ratelimiting handler structure
@@ -148,6 +167,24 @@ struct discord_route {
   UT_hash_handle hh;
 };
 
+/** @brief Context in case request is scheduled to run from multiplexer */
+struct discord_request_cxt {
+  /** the discord adapter client */
+  struct discord_adapter *p_adapter;
+  /** the request's bucket */
+  struct discord_bucket *bucket;
+  /** the request's response handle */
+  struct ua_resp_handle resp_handle;
+  /** the request's request body */
+  struct sized_buffer req_body;
+  /** the request's http method */
+  enum http_method http_method;
+  /** the request's endpoint */
+  char endpoint[2048];
+  /** the request bucket's queue entry */
+  QUEUE entry;
+};
+
 /**
  * @brief The bucket struct for handling ratelimiting
  *
@@ -175,6 +212,10 @@ struct discord_bucket {
   pthread_mutex_t lock;
   /** makes this structure hashable */
   UT_hash_handle hh;
+  /** pending requests */
+  QUEUE pending_requests;
+  /** idle requests */
+  QUEUE idle_requests;
 };
 
 /**
@@ -414,6 +455,23 @@ struct discord_gateway {
 };
 
 /**
+ * @brief Context in case event is scheduled to be triggered
+ *        from the orca threadpool
+ */
+struct discord_event_cxt {
+  /** the event name */
+  char *event_name;
+  /** a copy of payload data */
+  struct sized_buffer data;
+  /** the discord gateway client */
+  struct discord_gateway *p_gw;
+  /** the event unique id value */
+  enum discord_gateway_events event;
+  /** the event callback */
+  void (*on_event)(struct discord_gateway *gw, struct sized_buffer *data);
+};
+
+/**
  * @brief Initialize the fields of Discord Gateway handle
  *
  * @param gw a pointer to the allocated handle
@@ -492,23 +550,6 @@ struct discord {
    * @see discord_get_data(), discord_set_data()
    */
   void *data;
-};
-
-/**
- * @brief Context in case event is scheduled to be triggered
- *        from the orca threadpool
- */
-struct discord_event_cxt {
-  /** the event name */
-  char *event_name;
-  /** a copy of payload data */
-  struct sized_buffer data;
-  /** the discord gateway client */
-  struct discord_gateway *p_gw;
-  /** the event unique id value */
-  enum discord_gateway_events event;
-  /** the event callback */
-  void (*on_event)(struct discord_gateway *gw, struct sized_buffer *data);
 };
 
 /* MISCELLANEOUS */

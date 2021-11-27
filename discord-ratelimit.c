@@ -170,17 +170,19 @@ discord_bucket_get(struct discord_ratelimit *ratelimit, const char route[])
   struct discord_route *r;
 
   logconf_debug(&ratelimit->conf,
-                "[?] Attempt to find matching bucket for route '%s'", route);
+                "[null] Attempt to find matching bucket for route '%s'",
+                route);
 
   pthread_mutex_lock(&ratelimit->lock);
   HASH_FIND_STR(ratelimit->routes, route, r);
   pthread_mutex_unlock(&ratelimit->lock);
 
   if (!r) {
-    logconf_debug(&ratelimit->conf,
-                  "[?] Couldn't match bucket to route '%s', will attempt to "
-                  "create a new one",
-                  route);
+    logconf_debug(
+      &ratelimit->conf,
+      "[null] Couldn't match bucket to route '%s', will attempt to "
+      "create a new one",
+      route);
     return ratelimit->null;
   }
 
@@ -269,7 +271,8 @@ discord_bucket_build(struct discord_ratelimit *ratelimit,
       HASH_ADD_STR(ratelimit->routes, route, r);
       pthread_mutex_unlock(&ratelimit->lock);
 
-      logconf_debug(&ratelimit->conf, "[miss] Route '%s' doesn't include bucket", r->route);
+      logconf_debug(&ratelimit->conf,
+                    "[miss] Route '%s' doesn't include bucket", r->route);
 
       return;
     }

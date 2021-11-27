@@ -34,7 +34,9 @@ _discord_route_cleanup(struct discord_route *r)
 }
 
 static struct discord_bucket *
-_discord_bucket_init(struct discord_ratelimit *ratelimit, const char hash[], const size_t len)
+_discord_bucket_init(struct discord_ratelimit *ratelimit,
+                     const char hash[],
+                     const size_t len)
 {
   struct discord_bucket *b;
   int ret;
@@ -105,11 +107,11 @@ discord_ratelimit_init(struct logconf *conf)
   if (pthread_mutex_init(&ratelimit->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
   /* for routes that still haven't discovered a bucket match */
-  ratelimit->null = _discord_bucket_init(ratelimit, "null", 4);
-  HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->null);
+  ratelimit->b_null = _discord_bucket_init(ratelimit, "null", 4);
+  HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->b_null);
   /* for routes that can't be assigned to any existing bucket */
-  ratelimit->miss = _discord_bucket_init(ratelimit, "miss", 4);
-  HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->miss);
+  ratelimit->b_miss = _discord_bucket_init(ratelimit, "miss", 4);
+  HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->b_miss);
 
   return ratelimit;
 }
@@ -140,7 +142,7 @@ long
 discord_bucket_get_cooldown(struct discord_ratelimit *ratelimit,
                             struct discord_bucket *b)
 {
-  if (b == ratelimit->null) return 0L;
+  if (b == ratelimit->b_null) return 0L;
 
   u64_unix_ms_t now = cee_timestamp_ms();
   u64_unix_ms_t global = 0ULL;
@@ -181,7 +183,7 @@ discord_bucket_get(struct discord_ratelimit *ratelimit, const char route[])
       "[null] Couldn't match bucket to route '%s', will attempt to "
       "create a new one",
       route);
-    return ratelimit->null;
+    return ratelimit->b_null;
   }
 
   logconf_debug(&ratelimit->conf, "[%.4s] Found a match!", r->bucket->hash);
@@ -262,14 +264,14 @@ discord_bucket_build(struct discord_ratelimit *ratelimit,
                      ORCAcode code,
                      struct ua_info *info)
 {
-  if (b == ratelimit->null) {
+  if (b == ratelimit->b_null) {
     struct sized_buffer hash = ua_info_header_get(info, "x-ratelimit-bucket");
     if (!hash.size) {
       /* Discord doesn't provide a bucket for this route.
        * assign it to a special bucket for routes without a bucket */
       struct discord_route *r;
 
-      r = _discord_route_init(ratelimit, route, ratelimit->miss);
+      r = _discord_route_init(ratelimit, route, ratelimit->b_miss);
       pthread_mutex_lock(&ratelimit->lock);
       HASH_ADD_STR(ratelimit->routes, route, r);
       pthread_mutex_unlock(&ratelimit->lock);
@@ -279,7 +281,7 @@ discord_bucket_build(struct discord_ratelimit *ratelimit,
 
       return;
     }
-    else if (b == ratelimit->miss) {
+    else if (b == ratelimit->b_miss) {
       /* nothing to do in this case */
       return;
     }

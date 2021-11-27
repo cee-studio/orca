@@ -176,6 +176,7 @@ get_dispatch_event(char event_name[])
 {
 #define RETURN_IF_MATCH(event, str)                                           \
   if (STREQ(#event, str)) return DISCORD_GATEWAY_EVENTS_##event
+
   RETURN_IF_MATCH(READY, event_name);
   RETURN_IF_MATCH(RESUMED, event_name);
   RETURN_IF_MATCH(APPLICATION_COMMAND_CREATE, event_name);
@@ -230,6 +231,7 @@ get_dispatch_event(char event_name[])
   RETURN_IF_MATCH(VOICE_SERVER_UPDATE, event_name);
   RETURN_IF_MATCH(WEBHOOKS_UPDATE, event_name);
   return DISCORD_GATEWAY_EVENTS_NONE;
+
 #undef RETURN_IF_MATCH
 }
 
@@ -484,8 +486,9 @@ on_message_create(struct discord_gateway *gw, struct sized_buffer *data)
   struct discord_message msg;
   discord_message_from_json(data->start, data->size, &msg);
 
-  if (gw->user_cmd->pool && STRNEQ(gw->user_cmd->prefix.start, msg.content,
-                                   gw->user_cmd->prefix.size))
+  if (gw->user_cmd->pool
+      && STRNEQ(gw->user_cmd->prefix.start, msg.content,
+                gw->user_cmd->prefix.size))
   {
     struct discord_gateway_cmd_cbs *cmd = NULL;
     size_t i;
@@ -695,24 +698,12 @@ static void
 dispatch_run(void *p_cxt)
 {
   struct discord_event_cxt *cxt = p_cxt;
-  cxt->tid = pthread_self();
-
-  if (cxt->is_main_thread) {
-    (*cxt->on_event)(cxt->p_gw, &cxt->data);
-
-    (*cxt->p_gw->user_cmd->cbs.on_event_raw)(CLIENT(cxt->p_gw), cxt->event,
-                                             &cxt->p_gw->sb_bot, &cxt->data);
-    return;
-  }
 
   logconf_info(&cxt->p_gw->conf,
                "Thread " ANSICOLOR("starts", ANSI_FG_RED) " to serve %s",
                cxt->event_name);
 
   (*cxt->on_event)(cxt->p_gw, &cxt->data);
-
-  (*cxt->p_gw->user_cmd->cbs.on_event_raw)(CLIENT(cxt->p_gw), cxt->event,
-                                           &cxt->p_gw->sb_bot, &cxt->data);
 
   logconf_info(&cxt->p_gw->conf,
                "Thread " ANSICOLOR("exits", ANSI_FG_RED) " from serving %s",
@@ -876,13 +867,13 @@ on_dispatch(struct discord_gateway *gw)
     /** @todo implement */
     break;
   case DISCORD_GATEWAY_EVENTS_MESSAGE_CREATE:
-    if (gw->user_cmd->pool || gw->user_cmd->cbs.sb_on_message_create ||
-        gw->user_cmd->cbs.on_message_create)
+    if (gw->user_cmd->pool || gw->user_cmd->cbs.sb_on_message_create
+        || gw->user_cmd->cbs.on_message_create)
       on_event = &on_message_create;
     break;
   case DISCORD_GATEWAY_EVENTS_MESSAGE_UPDATE:
-    if (gw->user_cmd->cbs.sb_on_message_update ||
-        gw->user_cmd->cbs.on_message_update)
+    if (gw->user_cmd->cbs.sb_on_message_update
+        || gw->user_cmd->cbs.on_message_update)
       on_event = &on_message_update;
     break;
   case DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE:
@@ -951,33 +942,22 @@ on_dispatch(struct discord_gateway *gw)
                                  &gw->payload->event_data, event);
   switch (mode) {
   case DISCORD_EVENT_IGNORE: return;
-  case DISCORD_EVENT_MAIN_THREAD: {
-    struct discord_event_cxt cxt = { .event_name = gw->payload->event_name,
-                                     .p_gw = gw,
-                                     .data = gw->payload->event_data,
-                                     .event = event,
-                                     .on_event = on_event,
-                                     .is_main_thread = true };
-    dispatch_run(&cxt);
+  case DISCORD_EVENT_MAIN_THREAD:
+    (*on_event)(gw, &gw->payload->event_data);
     return;
-  }
   case DISCORD_EVENT_WORKER_THREAD: {
-    struct discord *client_cpy = discord_clone(CLIENT(gw));
-    struct discord_event_cxt *p_cxt = malloc(sizeof *p_cxt);
-    *p_cxt = (struct discord_event_cxt){
-      .event_name = strdup(gw->payload->event_name),
-      .p_gw = &client_cpy->gw,
-      .data = { .start = strndup(gw->payload->event_data.start,
-                                 gw->payload->event_data.size),
-                .size = gw->payload->event_data.size },
-      .event = event,
-      .on_event = on_event,
-      .is_main_thread = false
-    };
-    /** @note in case all worker threads are stuck on a infinite loop, this
-     *    function will essentially lock the program forever while waiting
-     *    on a queue, how can we get around this? Should we? */
-    int ret = work_run(&dispatch_run, p_cxt);
+    /* event scheduled to run from a worker thread */
+    struct discord_event_cxt *cxt = malloc(sizeof *cxt);
+
+    cxt->event_name = strdup(gw->payload->event_name);
+    cxt->p_gw = &(discord_clone(CLIENT(gw))->gw);
+    cxt->data.size =
+      asprintf(&cxt->data.start, "%.*s", (int)gw->payload->event_data.size,
+               gw->payload->event_data.start);
+    cxt->event = event;
+    cxt->on_event = on_event;
+
+    int ret = work_run(&dispatch_run, cxt);
     VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
     return;
   }
@@ -1139,14 +1119,6 @@ noop_idle_cb(struct discord *a, const struct discord_user *b)
 {
   return;
 }
-static void
-noop_event_raw_cb(struct discord *a,
-                  enum discord_gateway_events b,
-                  struct sized_buffer *c,
-                  struct sized_buffer *d)
-{
-  return;
-}
 static enum discord_event_scheduler
 noop_scheduler(struct discord *a,
                struct discord_user *b,
@@ -1204,7 +1176,6 @@ discord_gateway_init(struct discord_gateway *gw,
   gw->user_cmd = calloc(1, sizeof *gw->user_cmd);
 
   gw->user_cmd->cbs.on_idle = &noop_idle_cb;
-  gw->user_cmd->cbs.on_event_raw = &noop_event_raw_cb;
   gw->user_cmd->scheduler = &noop_scheduler;
 
   /* fetch and store the bot info */
@@ -1298,7 +1269,7 @@ event_loop(struct discord_gateway *gw)
 
     /* connection is established */
 
-    /*check if timespan since first pulse is greater than
+    /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/
     if (gw->hbeat->interval_ms < (ws_timestamp(gw->ws) - gw->hbeat->tstamp)) {
       send_heartbeat(gw);

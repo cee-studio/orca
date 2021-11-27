@@ -133,7 +133,7 @@ struct discord_ratelimit *discord_ratelimit_init(struct logconf *conf);
 void discord_ratelimit_cleanup(struct discord_ratelimit *ratelimit);
 
 /**
- * @brief A bucket may have multiple routes pointing at it 
+ * @brief A bucket may have multiple routes pointing at it
  *
  * Bucket routes can be either one of the two:
  * 1. major parameters: channel id, guild id, webhook id
@@ -225,8 +225,6 @@ struct discord_gateway_cmd_cbs {
 struct discord_gateway_cbs {
   /** triggers on every event loop iteration */
   discord_idle_cb on_idle;
-  /** triggers for every event if set, receive its raw JSON string */
-  discord_event_raw_cb on_event_raw;
 
   /** triggers when connection first establishes */
   discord_idle_cb on_ready;
@@ -496,11 +494,13 @@ struct discord {
   void *data;
 };
 
+/**
+ * @brief Context in case event is scheduled to be triggered
+ *        from the orca threadpool
+ */
 struct discord_event_cxt {
   /** the event name */
   char *event_name;
-  /** the thread id */
-  pthread_t tid;
   /** a copy of payload data */
   struct sized_buffer data;
   /** the discord gateway client */
@@ -509,7 +509,6 @@ struct discord_event_cxt {
   enum discord_gateway_events event;
   /** the event callback */
   void (*on_event)(struct discord_gateway *gw, struct sized_buffer *data);
-  bool is_main_thread;
 };
 
 /* MISCELLANEOUS */
@@ -517,13 +516,12 @@ struct discord_event_cxt {
 /**
  * @brief Encodes a raw JSON payload to multipart data
  *
- * In order for it to be triggered, it must be set as a callback via
- * ua_curl_mime_setopt(), the Content-Type must be changed to
- * `multipart/form-data` by ua_reqheader_add(), and the HTTP method for
- * discord_adapter_run() should be `HTTP_MIMEPOST`
+ * Set as a ua_curl_mime_setopt() callback, the Content-Type must be changed to
+ *        `multipart/form-data` by ua_reqheader_add(), and the
+ *        discord_adapter_run() HTTP method must be `HTTP_MIMEPOST`
  * @param mime the pre-initialized curl_mime handler
  * @param p_cxt a `void*[2]` that expects `struct discord_attachment**` and
- * `struct sized_buffer` on each element
+ *        `struct sized_buffer` on each respective element
  */
 void _discord_params_to_mime(curl_mime *mime, void *p_cxt);
 

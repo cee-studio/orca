@@ -233,12 +233,6 @@ discord_set_on_idle(struct discord *client, discord_idle_cb callback)
 }
 
 void
-discord_set_on_event_raw(struct discord *client, discord_event_raw_cb callback)
-{
-  client->gw.user_cmd->cbs.on_event_raw = callback;
-}
-
-void
 discord_set_on_ready(struct discord *client, discord_idle_cb callback)
 {
   client->gw.user_cmd->cbs.on_ready = callback;

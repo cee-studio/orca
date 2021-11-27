@@ -98,18 +98,6 @@ typedef enum discord_event_scheduler (*discord_event_scheduler_cb)(
  */
 typedef void (*discord_idle_cb)(struct discord *client,
                                 const struct discord_user *bot);
-
-/**
- * @brief Raw Event callback
- *
- * If activated, this callback is triggered on any event.
- * It is executed after every other callback has been checked.
- * @see discord_set_on_event_raw()
- */
-typedef void (*discord_event_raw_cb)(struct discord *client,
-                                     enum discord_gateway_events event,
-                                     struct sized_buffer *sb_bot,
-                                     struct sized_buffer *event_data);
 /** @} */
 
 /** @defgroup DiscordCallbacksApplicationCommand
@@ -426,17 +414,6 @@ void discord_set_event_scheduler(struct discord *client,
 void discord_set_on_command(struct discord *client,
                             char *command,
                             discord_message_cb callback);
-/**
- * @brief Set a callback that triggers on any event the client is subscribed
- * to.
- *
- * @note the callback will be executed last, after every other has been checked
- * @note this gives the raw JSON payload associated with the event
- * @param client the client created with discord_init()
- * @param callback the callback that will be executed
- */
-void discord_set_on_event_raw(struct discord *client,
-                              discord_event_raw_cb callback);
 /**
  * @brief Set a callback that triggers at every event-loop iteration.
  *

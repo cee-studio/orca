@@ -34,14 +34,14 @@ _discord_route_cleanup(struct discord_route *r)
 }
 
 static struct discord_bucket *
-_discord_bucket_init(struct discord_ratelimit *ratelimit, const char hash[])
+_discord_bucket_init(struct discord_ratelimit *ratelimit, const char hash[], const size_t len)
 {
   struct discord_bucket *b;
   int ret;
 
   b = calloc(1, sizeof(struct discord_bucket));
   b->remaining = 1;
-  ret = snprintf(b->hash, sizeof(b->hash), "%s", hash);
+  ret = snprintf(b->hash, sizeof(b->hash), "%.*s", (int)len, hash);
   ASSERT_S(ret < sizeof(b->hash), "Out of bounds write attempt");
   if (pthread_mutex_init(&b->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
@@ -56,17 +56,15 @@ _discord_bucket_find(struct discord_ratelimit *ratelimit,
 {
   struct discord_bucket *b;
   struct discord_route *r;
-  char _hash[64] = {};
 
-  ASSERT_S(hash->size < sizeof(_hash) - 1, "Unexpected parsing error");
-  strncpy(_hash, hash->start, hash->size);
-
+  /* attempt to find bucket with key 'hash' */
   pthread_mutex_lock(&ratelimit->lock);
-  HASH_FIND_STR(ratelimit->buckets, _hash, b);
+  HASH_FIND(hh, ratelimit->buckets, hash->start, hash->size, b);
   pthread_mutex_unlock(&ratelimit->lock);
 
   if (!b) {
-    b = _discord_bucket_init(ratelimit, _hash);
+    /* couldn't find a match, create bucket and store it */
+    b = _discord_bucket_init(ratelimit, hash->start, hash->size);
 
     pthread_mutex_lock(&ratelimit->lock);
     HASH_ADD_STR(ratelimit->buckets, hash, b);
@@ -107,10 +105,10 @@ discord_ratelimit_init(struct logconf *conf)
   if (pthread_mutex_init(&ratelimit->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
   /* for routes that still haven't discovered a bucket match */
-  ratelimit->null = _discord_bucket_init(ratelimit, "null");
+  ratelimit->null = _discord_bucket_init(ratelimit, "null", 4);
   HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->null);
   /* for routes that can't be assigned to any existing bucket */
-  ratelimit->miss = _discord_bucket_init(ratelimit, "miss");
+  ratelimit->miss = _discord_bucket_init(ratelimit, "miss", 4);
   HASH_ADD_STR(ratelimit->buckets, hash, ratelimit->miss);
 
   return ratelimit;
@@ -227,21 +225,25 @@ _discord_bucket_populate(struct discord_ratelimit *ratelimit,
         pthread_rwlock_unlock(&ratelimit->rwlock);
       }
       else {
-        /* lock single bucket */
+        /* lock single bucket, timeout at discord_adapter_run() */
         b->reset_tstamp = reset;
       }
     }
     else if (reset.size) {
-      /* calculate the reset time with Discord's date header */
       struct sized_buffer date = ua_info_header_get(info, "date");
+      /* the Discord time in milliseconds */
       u64_unix_ms_t server = 1000 * curl_getdate(date.start, NULL);
+      /* the Discord time + elapsed milliseconds */
       u64_unix_ms_t offset;
+      /* get approximate elapsed milliseconds since request */
       struct PsnipClockTimespec ts;
 
+      /* reset timestamp =
+       * (system time) + (diff between Discord's reset timestamp and offset) */
       psnip_clock_wall_get_time(&ts);
       offset = server + ts.nanoseconds / 1000000;
       b->reset_tstamp =
-        cee_timestamp_ms() + 1000 * strtod(reset.start, NULL) - offset;
+        cee_timestamp_ms() + (1000 * strtod(reset.start, NULL) - offset);
     }
 
     logconf_debug(&ratelimit->conf,
@@ -263,9 +265,10 @@ discord_bucket_build(struct discord_ratelimit *ratelimit,
   if (b == ratelimit->null) {
     struct sized_buffer hash = ua_info_header_get(info, "x-ratelimit-bucket");
     if (!hash.size) {
+      /* Discord doesn't provide a bucket for this route.
+       * assign it to a special bucket for routes without a bucket */
       struct discord_route *r;
-      /* route doesn't have a bucket, assign it to a special
-       *        bucket for routes 'missing' matches */
+
       r = _discord_route_init(ratelimit, route, ratelimit->miss);
       pthread_mutex_lock(&ratelimit->lock);
       HASH_ADD_STR(ratelimit->routes, route, r);

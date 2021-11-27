@@ -73,22 +73,54 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
   ua_info_cleanup(&adapter->err.info);
 }
 
+/* in case 'endpoint' has a major param, it will be written into 'buf' */
+static const char *
+_discord_adapter_get_route(const char endpoint[], char buf[32])
+{
+  /* determine which ratelimit group (aka bucket) a request belongs to
+   * by checking its route.
+   * see:  https://discord.com/developers/docs/topics/rate-limits */
+  if (STRNEQ(endpoint, "/channels/", sizeof("/channels/") - 1)
+      || STRNEQ(endpoint, "/guilds/", sizeof("/guilds/") - 1)
+      || STRNEQ(endpoint, "/webhooks/", sizeof("/webhooks/") - 1))
+  {
+    /* safe to assume strchr() won't return NULL */
+    char *start = 1 + strchr(1 + endpoint, '/'), *end = strchr(start, '/');
+    ptrdiff_t len = end - start;
+
+    /* copy snowflake id over to buf */
+    memcpy(buf, start, len);
+    buf[len] = '\0';
+    return buf;
+  }
+  return endpoint;
+}
+
 static ORCAcode
 _discord_adapter_request(struct discord_adapter *adapter,
                          struct ua_resp_handle *resp_handle,
                          struct sized_buffer *req_body,
                          enum http_method http_method,
-                         char endpoint[],
-                         const char route[])
+                         char endpoint[])
 {
-  bool keepalive = true;
-  long delay_ms;
-  ORCAcode code;
+  /* pass to _discord_adapter_get_route() for reentrancy */
+  char buf[32];
+  /* bucket key, pointer to either 'endpoint' or 'major' */
+  const char *route = _discord_adapter_get_route(endpoint, buf);
+  /* bucket pertaining to the request */
   struct discord_bucket *bucket =
     discord_bucket_get(adapter->ratelimit, route);
-  /* assign JSON error callback */
-  struct ua_resp_handle _resp_handle = { .err_cb = &json_error_cb,
-                                         .err_obj = adapter };
+  /* in case of request failure, try again */
+  bool keepalive = true;
+  /* bucket ratelimit cooldown (in milliseconds) */
+  long delay_ms;
+  /* orca error status */
+  ORCAcode code;
+  /* response callbacks */
+  struct ua_resp_handle _resp_handle = {};
+
+  _resp_handle.err_cb = &json_error_cb;
+  _resp_handle.err_obj = adapter;
   if (resp_handle) {
     _resp_handle.ok_cb = resp_handle->ok_cb;
     _resp_handle.ok_obj = resp_handle->ok_obj;
@@ -195,17 +227,8 @@ discord_adapter_run(struct discord_adapter *adapter,
                     char endpoint_fmt[],
                     ...)
 {
-  /* check endpoint for these major parameters
-   * see:  https://discord.com/developers/docs/topics/rate-limits */
-  static const char CHANNEL_END[] = "/channels/%";
-  static const char GUILD_END[] = "/guilds/%";
-  static const char WEBHOOK_END[] = "/webhooks/%";
   /* fully-formed endpoint string */
   char endpoint[2048];
-  /* in case endpoint has a major param */
-  char major[32];
-  /* bucket key, pointer to either 'endpoint' or 'major' */
-  const char *route;
   /* variable arguments for endpoint formation */
   va_list args;
   /* snprintf OOB check */
@@ -217,25 +240,6 @@ discord_adapter_run(struct discord_adapter *adapter,
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
   va_end(args);
 
-  /* determine which ratelimit group (aka bucket) a request belongs to
-   * by checking its route. */
-  if (STRNEQ(endpoint_fmt, CHANNEL_END, sizeof(CHANNEL_END) - 1)
-      || STRNEQ(endpoint_fmt, GUILD_END, sizeof(GUILD_END) - 1)
-      || STRNEQ(endpoint_fmt, WEBHOOK_END, sizeof(WEBHOOK_END) - 1))
-  {
-    /* safe to assume strchr() won't return NULL */
-    char *start = 1 + strchr(1 + endpoint, '/'), *end = strchr(start, '/');
-    ptrdiff_t len = end - start;
-
-    /* copy snowflake id over to 'major' */
-    memcpy(major, start, len);
-    major[len] = '\0';
-    route = major;
-  }
-  else {
-    route = endpoint;
-  }
-
   return _discord_adapter_request(adapter, resp_handle, req_body, http_method,
-                                  endpoint, route);
+                                  endpoint);
 }

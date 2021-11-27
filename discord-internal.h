@@ -132,6 +132,13 @@ struct discord_ratelimit *discord_ratelimit_init(struct logconf *conf);
  */
 void discord_ratelimit_cleanup(struct discord_ratelimit *ratelimit);
 
+/**
+ * @brief A bucket may have multiple routes pointing at it 
+ *
+ * Bucket routes can be either one of the two:
+ * 1. major parameters: channel id, guild id, webhook id
+ * 2. the endpoint itself
+ */
 struct discord_route {
   /** route associated with bucket */
   char route[256];
@@ -142,7 +149,7 @@ struct discord_route {
 };
 
 /**
- * @brief The bucket struct that will handle ratelimiting
+ * @brief The bucket struct for handling ratelimiting
  *
  * - Get bucket:
  *   - discord_bucket_get()

@@ -47,9 +47,6 @@ _discord_bucket_init(struct discord_ratelimit *ratelimit,
   ASSERT_S(ret < sizeof(b->hash), "Out of bounds write attempt");
   if (pthread_mutex_init(&b->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
-  /* initialize queues */
-  QUEUE_INIT(&b->pending_requests);
-  QUEUE_INIT(&b->idle_requests);
 
   return b;
 }

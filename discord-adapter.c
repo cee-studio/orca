@@ -60,6 +60,9 @@ discord_adapter_init(struct discord_adapter *adapter,
   }
   /* initialize ratelimit handler */
   adapter->ratelimit = discord_ratelimit_init(&adapter->conf);
+  /* initialize queues */
+  QUEUE_INIT(&adapter->pending_requests);
+  QUEUE_INIT(&adapter->idle_requests);
 }
 
 void
@@ -108,33 +111,30 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
   /* bucket key, pointer to either 'endpoint' or 'major' */
   const char *route = _discord_adapter_get_route(endpoint, buf);
   /* bucket pertaining to the request */
-  struct discord_bucket *bucket =
-    discord_bucket_get(adapter->ratelimit, route);
+  struct discord_bucket *b = discord_bucket_get(adapter->ratelimit, route);
   /* request context to be enqueued */
   struct discord_request_cxt *cxt;
 
-  if (!QUEUE_EMPTY(&bucket->idle_requests)) {
-    /* recycle and enqueue idle request */
-    QUEUE *q;
-
-    q = QUEUE_HEAD(&bucket->idle_requests);
+  if (QUEUE_EMPTY(&adapter->idle_requests)) {
+    /* create new request handler */
+    cxt = calloc(1, sizeof(struct discord_request_cxt));
+  }
+  else {
+    /* recycle idle request handler */
+    QUEUE *q = QUEUE_HEAD(&adapter->idle_requests);
     cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
     memset(cxt, 0, sizeof(struct discord_request_cxt));
   }
-  else {
-    /* create new request handler */
-    cxt = calloc(1, sizeof *cxt);
-  }
   /* populate request handler */
   cxt->p_adapter = &(discord_clone(CLIENT(adapter))->adapter);
-  cxt->bucket = bucket;
+  cxt->bucket = b;
   if (resp_handle) cxt->resp_handle = *resp_handle;
   if (req_body) cxt->req_body = *req_body;
   memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
 
   /* enqueue request */
   QUEUE_INIT(&cxt->entry);
-  QUEUE_INSERT_TAIL(&bucket->pending_requests, &cxt->entry);
+  QUEUE_INSERT_TAIL(&adapter->pending_requests, &cxt->entry);
 }
 
 static ORCAcode
@@ -151,8 +151,7 @@ _discord_adapter_request(struct discord_adapter *adapter,
   /* response callbacks */
   struct ua_resp_handle _resp_handle = {};
   /* bucket pertaining to the request */
-  struct discord_bucket *bucket =
-    discord_bucket_get(adapter->ratelimit, route);
+  struct discord_bucket *b = discord_bucket_get(adapter->ratelimit, route);
   /* in case of request failure, try again */
   bool keepalive = true;
   /* bucket ratelimit cooldown (in milliseconds) */
@@ -167,14 +166,13 @@ _discord_adapter_request(struct discord_adapter *adapter,
     _resp_handle.ok_obj = resp_handle->ok_obj;
   }
 
-  pthread_mutex_lock(&bucket->lock);
+  pthread_mutex_lock(&b->lock);
   do {
     ua_info_cleanup(&adapter->err.info);
-    delay_ms = discord_bucket_get_cooldown(adapter->ratelimit, bucket);
+    delay_ms = discord_bucket_get_cooldown(adapter->ratelimit, b);
     if (delay_ms > 0) {
       logconf_info(&adapter->ratelimit->conf,
-                   "[%.4s] RATELIMITING (wait %ld ms)", bucket->hash,
-                   delay_ms);
+                   "[%.4s] RATELIMITING (wait %ld ms)", b->hash, delay_ms);
       /* @todo emit timer for async requests */
       cee_sleep_ms(delay_ms);
     }
@@ -251,10 +249,10 @@ _discord_adapter_request(struct discord_adapter *adapter,
         break;
       }
     }
-    discord_bucket_build(adapter->ratelimit, bucket, route, code,
+    discord_bucket_build(adapter->ratelimit, b, route, code,
                          &adapter->err.info);
   } while (keepalive);
-  pthread_mutex_unlock(&bucket->lock);
+  pthread_mutex_unlock(&b->lock);
 
   return code;
 }

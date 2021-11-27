@@ -50,6 +50,10 @@ struct discord_adapter {
     /** the entire JSON response of the error */
     char jsonstr[512];
   } err;
+  /** pending requests */
+  QUEUE pending_requests;
+  /** idle requests */
+  QUEUE idle_requests;
 };
 
 /**
@@ -212,10 +216,6 @@ struct discord_bucket {
   pthread_mutex_t lock;
   /** makes this structure hashable */
   UT_hash_handle hh;
-  /** pending requests */
-  QUEUE pending_requests;
-  /** idle requests */
-  QUEUE idle_requests;
 };
 
 /**

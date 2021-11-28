@@ -168,6 +168,16 @@ discord_bucket_get_cooldown(struct discord_ratelimit *ratelimit,
   return delay_ms;
 }
 
+struct discord_route *
+discord_route_get(struct discord_ratelimit *ratelimit, const char route[])
+{
+  struct discord_route *r;
+  pthread_mutex_lock(&ratelimit->lock);
+  HASH_FIND_STR(ratelimit->routes, route, r);
+  pthread_mutex_unlock(&ratelimit->lock);
+  return r;
+}
+
 /* attempt to find a bucket associated with this route */
 struct discord_bucket *
 discord_bucket_get(struct discord_ratelimit *ratelimit, const char route[])
@@ -178,9 +188,7 @@ discord_bucket_get(struct discord_ratelimit *ratelimit, const char route[])
                 "[null] Attempt to find matching bucket for route '%s'",
                 route);
 
-  pthread_mutex_lock(&ratelimit->lock);
-  HASH_FIND_STR(ratelimit->routes, route, r);
-  pthread_mutex_unlock(&ratelimit->lock);
+  r = discord_route_get(ratelimit, route);
 
   if (!r) {
     logconf_debug(

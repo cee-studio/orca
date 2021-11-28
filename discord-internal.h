@@ -174,12 +174,23 @@ struct discord_route {
   UT_hash_handle hh;
 };
 
+/**
+ * @brief Get a `struct discord_route` assigned to `route`
+ *
+ * Check if bucket associated with `route` has already been discovered
+ * @param ratelimit the ratelimit handler
+ * @param route that will be checked for a match
+ * @return `struct discord_route` associated with route or NULL if no match found
+ */
+struct discord_route *discord_route_get(struct discord_ratelimit *ratelimit,
+                                        const char route[]);
+
 /** @brief Context in case request is scheduled to run from multiplexer */
 struct discord_request_cxt {
   /** the discord adapter client */
   struct discord_adapter *p_adapter;
-  /** the request's bucket */
-  struct discord_bucket *bucket;
+  /** the request's route */
+  struct discord_route *route;
   /** the request's response handle */
   struct ua_resp_handle resp_handle;
   /** the request's request body */
@@ -234,12 +245,12 @@ long discord_bucket_get_cooldown(struct discord_ratelimit *ratelimit,
                                  struct discord_bucket *bucket);
 
 /**
- * @brief Get existing bucket with @p route
+ * @brief Get a `struct discord_bucket` assigned to `route`
  *
- * Check if bucket associated with @p route has already been discovered
  * @param ratelimit the ratelimit handler
  * @param route that will be checked for a bucket match
- * @return bucket associated with route or NULL if no match found
+ * @return bucket assigned to `route` or `ratelimit->b_null` if no match found
+ * @note helper over discord_route_get()
  */
 struct discord_bucket *discord_bucket_get(struct discord_ratelimit *ratelimit,
                                           const char route[]);

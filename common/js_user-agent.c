@@ -134,11 +134,6 @@ UserAgent_prototype_run(js_State *J)
     js_pushstring(J, info.req_url.start);
     js_setproperty(J, -2, "requestUrl");
 
-    char aux[64]; /* convert timestamp to string */
-    snprintf(aux, sizeof(aux), "%" PRIu64, info.req_tstamp);
-    js_pushstring(J, aux);
-    js_setproperty(J, -2, "requestTimestamp");
-
     struct sized_buffer body = ua_info_get_body(&info);
     js_pushstring(J, body.start);
     js_setproperty(J, -2, "responseBody");

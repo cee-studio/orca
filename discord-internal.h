@@ -180,25 +180,34 @@ struct discord_route {
  * Check if bucket associated with `route` has already been discovered
  * @param ratelimit the ratelimit handler
  * @param route that will be checked for a match
- * @return `struct discord_route` associated with route or NULL if no match found
+ * @return `struct discord_route` associated with route or NULL if no match
+ *        found
  */
 struct discord_route *discord_route_get(struct discord_ratelimit *ratelimit,
                                         const char route[]);
 
-/** @brief Context in case request is scheduled to run from multiplexer */
+/** 
+ * @brief Context in case request is scheduled to run asynchronously
+ */
 struct discord_request_cxt {
-  /** the discord adapter client */
+  /** 
+   * the discord adapter client initialized with discord_clone()
+   * @note this is a workaround so that each context can carry its own header
+   * @todo passing only a 'struct curl_slist' around should be enough
+   */
   struct discord_adapter *p_adapter;
   /** the request's route */
   struct discord_route *route;
   /** the request's response handle */
   struct ua_resp_handle resp_handle;
-  /** the request's request body */
+  /** the request's request body @note buffer is kept and recycled */
   struct sized_buffer req_body;
   /** the request's http method */
   enum http_method http_method;
   /** the request's endpoint */
   char endpoint[2048];
+  /** the connection handler assigned at discord_adapter_prepare() */
+  struct ua_conn *conn;
   /** the request bucket's queue entry */
   QUEUE entry;
 };
@@ -224,8 +233,6 @@ struct discord_bucket {
   int remaining;
   /** timestamp of when cooldown timer resets */
   u64_unix_ms_t reset_tstamp;
-  /** timestamp of the most recent request */
-  u64_unix_ms_t update_tstamp;
   /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
   /** makes this structure hashable */
@@ -557,7 +564,7 @@ struct discord {
   struct discord_gateway gw;
   /** the WebSockets handles for establishing voice connections to Discord */
   struct discord_voice vcs[DISCORD_MAX_VOICE_CONNECTIONS];
-  /** @todo create a analogous struct for gateway */
+  /** @todo create a analogous struct for Gateway's callbacks */
   struct discord_voice_cbs voice_cbs;
   /**
    * keep user arbitrary data

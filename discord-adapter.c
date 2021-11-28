@@ -99,6 +99,112 @@ _discord_adapter_get_route(const char endpoint[], char buf[32])
   return endpoint;
 }
 
+static void
+_discord_request_cxt_reset(struct discord_request_cxt *cxt)
+{
+  cxt->p_adapter = NULL;
+  cxt->route = NULL;
+  memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
+  *cxt->endpoint = '\0';
+}
+
+static void
+_discord_request_cxt_populate(struct discord_request_cxt *cxt,
+                              struct discord_adapter *adapter,
+                              struct ua_resp_handle *resp_handle,
+                              struct sized_buffer *req_body,
+                              enum http_method http_method,
+                              char endpoint[])
+{
+  /* pass to _discord_adapter_get_route() for reentrancy */
+  char buf[32];
+  /* bucket key, pointer to either 'endpoint' or 'buf' */
+  const char *route = _discord_adapter_get_route(endpoint, buf);
+  /* route pertaining to the request */
+  struct discord_route *r = discord_route_get(adapter->ratelimit, route);
+
+  cxt->p_adapter = &(discord_clone(CLIENT(adapter))->adapter);
+  cxt->route = r;
+  if (resp_handle) {
+    cxt->resp_handle = *resp_handle;
+  }
+  if (req_body) {
+    if (req_body->size > cxt->req_body.size) {
+      void *tmp = realloc(cxt->req_body.start, req_body->size);
+      ASSERT_S(tmp != NULL, "Out of memory");
+
+      cxt->req_body.start = tmp;
+      cxt->req_body.size = req_body->size;
+    }
+    memcpy(cxt->req_body.start, req_body->start, req_body->size);
+  }
+  memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
+}
+
+/* return true if there shouldn't be a retry attempt */
+static bool
+_discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
+{
+  switch (adapter->err.info.httpcode) {
+  case HTTP_FORBIDDEN:
+  case HTTP_NOT_FOUND:
+  case HTTP_BAD_REQUEST:
+    *code = ORCA_DISCORD_JSON_CODE;
+    return false;
+  case HTTP_UNAUTHORIZED:
+    logconf_fatal(&adapter->conf,
+                  "UNAUTHORIZED: Please provide a valid authentication token");
+    *code = ORCA_DISCORD_BAD_AUTH;
+    return false;
+  case HTTP_METHOD_NOT_ALLOWED:
+    logconf_fatal(&adapter->conf,
+                  "METHOD_NOT_ALLOWED: The server couldn't recognize the "
+                  "received HTTP method");
+    return false;
+  case HTTP_TOO_MANY_REQUESTS: {
+    bool is_global = false;
+    char message[256] = "";
+    double retry_after = 1.0;
+    long delay_ms = 0L;
+
+    struct sized_buffer body = ua_info_get_body(&adapter->err.info);
+    json_extract(body.start, body.size,
+                 "(global):b (message):.*s (retry_after):lf", &is_global,
+                 sizeof(message), message, &retry_after);
+
+    if (is_global) {
+      u64_unix_ms_t global;
+
+      pthread_rwlock_rdlock(&adapter->ratelimit->rwlock);
+      global = adapter->ratelimit->global;
+      pthread_rwlock_unlock(&adapter->ratelimit->rwlock);
+
+      delay_ms = global - cee_timestamp_ms();
+
+      logconf_warn(&adapter->conf,
+                   "429 GLOBAL RATELIMITING (wait: %ld ms) : %s", delay_ms,
+                   message);
+    }
+    else {
+      delay_ms = 1000 * retry_after;
+
+      logconf_warn(&adapter->conf, "429 RATELIMITING (wait: %ld ms) : %s",
+                   delay_ms, message);
+    }
+
+    cee_sleep_ms(delay_ms);
+
+    return true;
+  }
+  default:
+    if (adapter->err.info.httpcode >= 500) {
+      /* server related error, sleep for 5 seconds */
+      cee_sleep_ms(5000);
+    }
+    return true;
+  }
+}
+
 void
 discord_adapter_enqueue(struct discord_adapter *adapter,
                         struct ua_resp_handle *resp_handle,
@@ -106,12 +212,6 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
                         enum http_method http_method,
                         char endpoint[])
 {
-  /* pass to _discord_adapter_get_route() for reentrancy */
-  char buf[32];
-  /* bucket key, pointer to either 'endpoint' or 'major' */
-  const char *route = _discord_adapter_get_route(endpoint, buf);
-  /* bucket pertaining to the request */
-  struct discord_bucket *b = discord_bucket_get(adapter->ratelimit, route);
   /* request context to be enqueued */
   struct discord_request_cxt *cxt;
 
@@ -123,16 +223,12 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
     /* recycle idle request handler */
     QUEUE *q = QUEUE_HEAD(&adapter->queue.idle);
     cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
-    memset(cxt, 0, sizeof(struct discord_request_cxt));
+    _discord_request_cxt_reset(cxt);
   }
   /* populate request handler */
-  cxt->p_adapter = &(discord_clone(CLIENT(adapter))->adapter);
-  cxt->bucket = b;
-  if (resp_handle) cxt->resp_handle = *resp_handle;
-  if (req_body) cxt->req_body = *req_body;
-  memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
-
-  /* enqueue request */
+  _discord_request_cxt_populate(cxt, adapter, resp_handle, req_body,
+                                http_method, endpoint);
+  /* enqueue request handler */
   QUEUE_INIT(&cxt->entry);
   QUEUE_INSERT_TAIL(&adapter->queue.hold, &cxt->entry);
 }
@@ -140,7 +236,6 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
 void
 discord_adapter_prepare(struct discord_adapter *adapter)
 {
-  QUEUE *q;
   long delay_ms;
   struct discord_request_cxt *cxt;
   struct ua_conn *conn;
@@ -149,26 +244,26 @@ discord_adapter_prepare(struct discord_adapter *adapter)
   if (QUEUE_EMPTY(&adapter->queue.hold)) return;
 
   while (!QUEUE_EMPTY(&adapter->queue.hold)) {
-    q = QUEUE_HEAD(&adapter->queue.hold);
+    QUEUE *q = QUEUE_HEAD(&adapter->queue.hold);
     cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
     QUEUE_REMOVE(q);
 
-    delay_ms = discord_bucket_get_cooldown(adapter->ratelimit, cxt->bucket);
+    delay_ms =
+      discord_bucket_get_cooldown(adapter->ratelimit, cxt->route->bucket);
     if (delay_ms > 0) {
       logconf_info(&adapter->ratelimit->conf,
-                   "[%.4s] RATELIMITING (timeout %ld ms)", cxt->bucket->hash,
-                   delay_ms);
+                   "[%.4s] RATELIMITING (timeout %ld ms)",
+                   cxt->route->bucket->hash, delay_ms);
       /* TODO: register timeout callback for 'cxt' */
       continue;
     }
     conn = ua_conn_get(adapter->ua);
     ehandle = ua_conn_curl_easy_get(conn);
-    /* TODO: use CURLOPT_COPYPOSTFIELDS or a buffer pool */
-    ua_conn_setup(adapter->ua, conn, &cxt->resp_handle, &cxt->req_body,
+    ua_conn_setup(cxt->p_adapter->ua, conn, &cxt->resp_handle, &cxt->req_body,
                   cxt->http_method, cxt->endpoint);
+    /* link 'cxt' to 'ehandle' for easy retrieval */
     curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
-
-    /* allow curl to begin transfer */
+    /* let curl begin transfer */
     curl_multi_add_handle(CLIENT(adapter)->mhandle, ehandle);
   }
 }
@@ -181,23 +276,28 @@ discord_adapter_check(struct discord_adapter *adapter)
   struct discord_request_cxt *cxt;
   CURLM *mhandle = CLIENT(adapter)->mhandle;
   CURL *ehandle;
+  ORCAcode code;
 
   do {
     msgq = 0;
     curlmsg = curl_multi_info_read(mhandle, &msgq);
-    if(curlmsg && (CURLMSG_DONE == curlmsg->msg)) {
+    if (curlmsg && (CURLMSG_DONE == curlmsg->msg)) {
+      code = ORCA_OK;
       ehandle = curlmsg->easy_handle;
       /* get request handler assigned to this easy handle */
       curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
       /* TODO: trigger cxt callback here */
       curl_multi_remove_handle(mhandle, ehandle);
-      /* TODO: check for response status, retry transfer if necessary */
-      /* TODO: need to enqueue 'route' information */
-#if 0
-      discord_bucket_build(adapter->ratelimit, cxt->bucket, route, code, &adapter->err.info);
-#endif
-      /* insert request handler into idle queue for recycling */
-      QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
+      if (_discord_adapter_get_status(adapter, &code)) {
+        /* TODO: set retry transfer callback */
+        QUEUE_INSERT_HEAD(&adapter->queue.hold, &cxt->entry);
+      }
+      else {
+        /* insert request handler into idle queue for recycling */
+        QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
+      }
+      discord_bucket_build(adapter->ratelimit, cxt->route->bucket,
+                           cxt->route->route, code, &cxt->p_adapter->err.info);
     }
   } while (curlmsg);
 }
@@ -238,7 +338,6 @@ _discord_adapter_request(struct discord_adapter *adapter,
     if (delay_ms > 0) {
       logconf_info(&adapter->ratelimit->conf,
                    "[%.4s] RATELIMITING (wait %ld ms)", b->hash, delay_ms);
-      /* @todo emit timer for async requests */
       cee_sleep_ms(delay_ms);
     }
 
@@ -249,70 +348,7 @@ _discord_adapter_request(struct discord_adapter *adapter,
       keepalive = false;
     }
     else {
-      switch (adapter->err.info.httpcode) {
-      case HTTP_FORBIDDEN:
-      case HTTP_NOT_FOUND:
-      case HTTP_BAD_REQUEST:
-        keepalive = false;
-        code = ORCA_DISCORD_JSON_CODE;
-        break;
-      case HTTP_UNAUTHORIZED:
-        keepalive = false;
-        logconf_fatal(
-          &adapter->conf,
-          "UNAUTHORIZED: Please provide a valid authentication token");
-        code = ORCA_DISCORD_BAD_AUTH;
-        break;
-      case HTTP_METHOD_NOT_ALLOWED:
-        keepalive = false;
-        logconf_fatal(&adapter->conf,
-                      "METHOD_NOT_ALLOWED: The server couldn't recognize the "
-                      "received HTTP method");
-        break;
-      case HTTP_TOO_MANY_REQUESTS: {
-        bool is_global = false;
-        char message[256] = "";
-        double retry_after = 1.0;
-        long delay_ms = 0L;
-
-        struct sized_buffer body = ua_info_get_body(&adapter->err.info);
-        json_extract(body.start, body.size,
-                     "(global):b (message):.*s (retry_after):lf", &is_global,
-                     sizeof(message), message, &retry_after);
-
-        if (is_global) {
-          u64_unix_ms_t global;
-
-          pthread_rwlock_rdlock(&adapter->ratelimit->rwlock);
-          global = adapter->ratelimit->global;
-          pthread_rwlock_unlock(&adapter->ratelimit->rwlock);
-
-          delay_ms = global - cee_timestamp_ms();
-
-          logconf_warn(&adapter->conf,
-                       "429 GLOBAL RATELIMITING (wait: %ld ms) : %s", delay_ms,
-                       message);
-        }
-        else {
-          delay_ms = 1000 * retry_after;
-
-          logconf_warn(&adapter->conf, "429 RATELIMITING (wait: %ld ms) : %s",
-                       delay_ms, message);
-        }
-
-        /* @todo emit timer for async requests */
-        cee_sleep_ms(delay_ms);
-
-        break;
-      }
-      default:
-        if (adapter->err.info.httpcode >= 500) {
-          /* server related error, sleep for 5 seconds
-           * @todo emit timer for async requests */
-          cee_sleep_ms(5000);
-        }
-        break;
-      }
+      keepalive = _discord_adapter_get_status(adapter, &code);
     }
     discord_bucket_build(adapter->ratelimit, b, route, code,
                          &adapter->err.info);

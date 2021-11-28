@@ -281,6 +281,18 @@ void ua_conn_setup(struct user_agent *ua,
                    char endpoint[]);
 
 /**
+ * @brief Fetch information about previous request
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param conn the connection that performed a request
+ * @param info handle containing information on previous request
+ * @return ORCAcode for how the transfer went, ORCA_OK means success.
+ */
+ORCAcode ua_conn_get_results(struct user_agent *ua,
+                             struct ua_conn *conn,
+                             struct ua_info *info);
+
+/**
  * @brief Get libcurl's easy handle assigned to `conn`
  *
  * @param conn the connection handle
@@ -291,14 +303,14 @@ CURL *ua_conn_curl_easy_get(struct ua_conn *conn);
 /**
  * @brief Cleanup informational handle
  *
- * @param info informational handle returned from ua_run()
+ * @param info handle containing information on previous request
  */
 void ua_info_cleanup(struct ua_info *info);
 
 /**
  * @brief Get a value's from the response header
  *
- * @param info informational handle returned from ua_run()
+ * @param info handle containing information on previous request
  * @param field the header field to fetch the value
  * @return a sized_buffer containing the field's value
  */
@@ -308,7 +320,7 @@ const struct sized_buffer ua_info_header_get(struct ua_info *info,
 /**
  * @brief Get the response body
  *
- * @param info informational handle return from ua_run()
+ * @param info handle containing information on previous request
  * @return a sized_buffer containing the response body
  */
 const struct sized_buffer ua_info_get_body(struct ua_info *info);

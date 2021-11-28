@@ -129,10 +129,10 @@ UserAgent_prototype_run(js_State *J)
   js_newobject(J);
   {
     js_pushnumber(J, (double)info.httpcode);
-    js_setproperty(J, -2, "httpcode");
+    js_setproperty(J, -2, "httpCode");
 
-    js_pushstring(J, info.req_url.start);
-    js_setproperty(J, -2, "requestUrl");
+    js_pushstring(J, http_method_print(info.method));
+    js_setproperty(J, -2, "httpMethod");
 
     struct sized_buffer body = ua_info_get_body(&info);
     js_pushstring(J, body.start);

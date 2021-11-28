@@ -50,8 +50,8 @@ https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
 #define HTTP_TOO_MANY_REQUESTS    429
 #define HTTP_GATEWAY_UNAVAILABLE  502
 
-/** Maximum amount of header fields */
-#define UA_MAX_HEADER_SIZE 100 + 1
+/** Maximum amount of header pairs */
+#define UA_MAX_HEADER_PAIRS 100 + 1
 
 /** @brief Callback for object to be loaded by api response */
 typedef void (*load_obj_cb)(char *str, size_t len, void *p_obj);
@@ -96,9 +96,9 @@ struct ua_resp_header {
       /** length of individual field or value */
       size_t size;
     } field, value;
-  } pairs[UA_MAX_HEADER_SIZE];
-  /** number of elements initialized in `pairs` */
-  int size;
+  } pairs[UA_MAX_HEADER_PAIRS];
+  /** amount of pairs initialized */
+  int n_pairs;
 };
 
 /** @brief Structure for storing the request's response body */
@@ -115,10 +115,10 @@ struct ua_resp_body {
 struct ua_info {
   /** logging informational */
   struct loginfo loginfo;
+  /** last used HTTP method */
+  enum http_method method;
   /** the HTTP response code */
   int httpcode;
-  /** request URL */
-  struct sized_buffer req_url;
   /** total elapsed time for request completion (in micro-seconds) */
   curl_off_t time_us;
   /** the response header */
@@ -237,7 +237,7 @@ const char *ua_get_url(struct user_agent *ua);
  * @param info optional informational handle on how the request went
  * @param resp_handle the optional response callbacks, can be NULL
  * @param req_body the optional request body, can be NULL
- * @param http_method the HTTP method of this transfer (GET, POST, ...)
+ * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  * @return ORCAcode for how the transfer went, ORCA_OK means success.
  */
@@ -245,7 +245,7 @@ ORCAcode ua_run(struct user_agent *ua,
                 struct ua_info *info,
                 struct ua_resp_handle *resp_handle,
                 struct sized_buffer *req_body,
-                enum http_method http_method,
+                enum http_method method,
                 char endpoint[]);
 
 /**
@@ -270,14 +270,14 @@ void ua_conn_stop(struct user_agent *ua, struct ua_conn *conn);
  * @param conn the connection handle to be modified
  * @param resp_handle the optional response callbacks, can be NULL
  * @param req_body the optional request body, can be NULL
- * @param http_method the HTTP method of this transfer (GET, POST, ...)
+ * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  */
 void ua_conn_setup(struct user_agent *ua,
                    struct ua_conn *conn,
                    struct ua_resp_handle *resp_handle,
                    struct sized_buffer *req_body,
-                   enum http_method http_method,
+                   enum http_method method,
                    char endpoint[]);
 
 /**
@@ -302,7 +302,8 @@ void ua_info_cleanup(struct ua_info *info);
  * @param field the header field to fetch the value
  * @return a sized_buffer containing the field's value
  */
-struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
+const struct sized_buffer ua_info_header_get(struct ua_info *info,
+                                             char field[]);
 
 /**
  * @brief Get the response body
@@ -310,7 +311,7 @@ struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
  * @param info informational handle return from ua_run()
  * @return a sized_buffer containing the response body
  */
-struct sized_buffer ua_info_get_body(struct ua_info *info);
+const struct sized_buffer ua_info_get_body(struct ua_info *info);
 
 #ifdef __cplusplus
 }

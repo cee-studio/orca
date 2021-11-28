@@ -119,8 +119,8 @@ struct ua_info {
   int httpcode;
   /** request URL */
   struct sized_buffer req_url;
-  /** timestamp of when the request completed */
-  uint64_t req_tstamp;
+  /** total elapsed time for request completion (in micro-seconds) */
+  curl_off_t time_us;
   /** the response header */
   struct ua_resp_header header;
   /** the response body */
@@ -249,12 +249,19 @@ ORCAcode ua_run(struct user_agent *ua,
                 char endpoint[]);
 
 /**
- * @brief Get a connection handle
+ * @brief Get a connection handle and mark it as running
  *
  * @param ua the User-Agent handle created with ua_init()
  * @return a connection handle
  */
-struct ua_conn *ua_conn_get(struct user_agent *ua);
+struct ua_conn *ua_conn_start(struct user_agent *ua);
+
+/**
+ * @brief Reset a connection handle and mark it as idle
+ *
+ * @param the User-Agent handle created with ua_init()
+ */
+void ua_conn_stop(struct user_agent *ua, struct ua_conn *conn);
 
 /**
  * @brief Setup a connection handle
@@ -304,14 +311,6 @@ struct sized_buffer ua_info_header_get(struct ua_info *info, char field[]);
  * @return a sized_buffer containing the response body
  */
 struct sized_buffer ua_info_get_body(struct ua_info *info);
-
-/**
- * @brief The most recent request performed timestamp
- *
- * @param ua the User-Agent handle created with ua_init()
- * @return the timestamp in milliseconds from the last request performed
- */
-uint64_t ua_timestamp(struct user_agent *ua);
 
 #ifdef __cplusplus
 }

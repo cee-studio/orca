@@ -40,14 +40,10 @@ struct user_agent {
   } * connq;
   /** the base_url for every conn */
   struct sized_buffer base_url;
-  /** timestamp updated every request received */
-  uint64_t req_tstamp;
   /** synchronize conn pool and shared ratelimiting */
   struct {
     /** lock for blocking conn.pool */
     pthread_mutex_t lock;
-    /** lock for reading/writing to req_tstamp */
-    pthread_rwlock_t rwlock;
   } * shared;
   /** the user agent logging module */
   struct logconf conf;
@@ -92,18 +88,30 @@ const char *
 http_code_print(int httpcode)
 {
   switch (httpcode) {
-  case HTTP_OK: return "OK";
-  case HTTP_CREATED: return "CREATED";
-  case HTTP_NO_CONTENT: return "NO_CONTENT";
-  case HTTP_NOT_MODIFIED: return "NOT_MODIFIED";
-  case HTTP_BAD_REQUEST: return "BAD_REQUEST";
-  case HTTP_UNAUTHORIZED: return "UNAUTHORIZED";
-  case HTTP_FORBIDDEN: return "FORBIDDEN";
-  case HTTP_NOT_FOUND: return "NOT_FOUND";
-  case HTTP_METHOD_NOT_ALLOWED: return "METHOD_NOT_ALLOWED";
-  case HTTP_UNPROCESSABLE_ENTITY: return "UNPROCESSABLE_ENTITY";
-  case HTTP_TOO_MANY_REQUESTS: return "TOO_MANY_REQUESTS";
-  case HTTP_GATEWAY_UNAVAILABLE: return "GATEWAY_UNAVAILABLE";
+  case HTTP_OK:
+    return "OK";
+  case HTTP_CREATED:
+    return "CREATED";
+  case HTTP_NO_CONTENT:
+    return "NO_CONTENT";
+  case HTTP_NOT_MODIFIED:
+    return "NOT_MODIFIED";
+  case HTTP_BAD_REQUEST:
+    return "BAD_REQUEST";
+  case HTTP_UNAUTHORIZED:
+    return "UNAUTHORIZED";
+  case HTTP_FORBIDDEN:
+    return "FORBIDDEN";
+  case HTTP_NOT_FOUND:
+    return "NOT_FOUND";
+  case HTTP_METHOD_NOT_ALLOWED:
+    return "METHOD_NOT_ALLOWED";
+  case HTTP_UNPROCESSABLE_ENTITY:
+    return "UNPROCESSABLE_ENTITY";
+  case HTTP_TOO_MANY_REQUESTS:
+    return "TOO_MANY_REQUESTS";
+  case HTTP_GATEWAY_UNAVAILABLE:
+    return "GATEWAY_UNAVAILABLE";
   default:
     if (httpcode >= 500) return "5xx_SERVER_ERROR";
     if (httpcode >= 400) return "4xx_CLIENT_ERROR";
@@ -118,8 +126,10 @@ const char *
 http_reason_print(int httpcode)
 {
   switch (httpcode) {
-  case HTTP_OK: return "The request was completed succesfully.";
-  case HTTP_CREATED: return "The entity was created succesfully.";
+  case HTTP_OK:
+    return "The request was completed succesfully.";
+  case HTTP_CREATED:
+    return "The entity was created succesfully.";
   case HTTP_NO_CONTENT:
     return "The request completed succesfully but returned no content.";
   case HTTP_NOT_MODIFIED:
@@ -136,7 +146,8 @@ http_reason_print(int httpcode)
     return "The resource at the location specified doesn't exist.";
   case HTTP_METHOD_NOT_ALLOWED:
     return "The HTTP method used is not valid for the location specified.";
-  case HTTP_TOO_MANY_REQUESTS: return "You got ratelimited.";
+  case HTTP_TOO_MANY_REQUESTS:
+    return "You got ratelimited.";
   case HTTP_GATEWAY_UNAVAILABLE:
     return "There was not a gateway available to process your request. Wait a "
            "bit and retry.";
@@ -162,14 +173,21 @@ const char *
 http_method_print(enum http_method method)
 {
   switch (method) {
-  case HTTP_DELETE: return "DELETE";
-  case HTTP_GET: return "GET";
-  case HTTP_POST: return "POST";
-  case HTTP_MIMEPOST: return "MIMEPOST";
-  case HTTP_PATCH: return "PATCH";
-  case HTTP_PUT: return "PUT";
+  case HTTP_DELETE:
+    return "DELETE";
+  case HTTP_GET:
+    return "GET";
+  case HTTP_POST:
+    return "POST";
+  case HTTP_MIMEPOST:
+    return "MIMEPOST";
+  case HTTP_PATCH:
+    return "PATCH";
+  case HTTP_PUT:
+    return "PUT";
   case HTTP_INVALID:
-  default: return "INVALID_HTTP_METHOD";
+  default:
+    return "INVALID_HTTP_METHOD";
   }
 }
 
@@ -199,8 +217,8 @@ ua_reqheader_add(struct user_agent *ua, const char field[], const char value[])
   while (NULL != node) {
     if (!(ptr = strchr(node->data, ':')))
       ERR("Missing ':' in header:\n\t%s", node->data);
-    if (field_len == ptr - node->data &&
-        0 == strncasecmp(node->data, field, field_len))
+    if (field_len == ptr - node->data
+        && 0 == strncasecmp(node->data, field, field_len))
     {
       if (strlen(node->data) < ret) {
         free(node->data);
@@ -229,8 +247,8 @@ ua_reqheader_del(struct user_agent *ua, const char field[])
   char *ptr;
   if (!(ptr = strchr(node->data, ':')))
     ERR("Missing ':' in header: %s", node->data);
-  if (field_len == ptr - node->data &&
-      0 == strncasecmp(node->data, field, field_len))
+  if (field_len == ptr - node->data
+      && 0 == strncasecmp(node->data, field, field_len))
   {
     free(node->data);
     free(node);
@@ -243,8 +261,8 @@ ua_reqheader_del(struct user_agent *ua, const char field[])
     if (node->next) {
       if (!(ptr = strchr(node->next->data, ':')))
         ERR("Missing ':' in header: %s", node->next->data);
-      if (field_len == ptr - node->next->data &&
-          0 == strncasecmp(node->next->data, field, field_len))
+      if (field_len == ptr - node->next->data
+          && 0 == strncasecmp(node->next->data, field, field_len))
       {
         free(node->next->data);
         free(node->next);
@@ -391,10 +409,9 @@ _ua_conn_init(struct user_agent *ua)
                    &_ua_conn_respheader_cb);
   /* set ptr to response header to be filled at callback */
   curl_easy_setopt(new_ehandle, CURLOPT_HEADERDATA, &new_conn->info.header);
-  /* execute user-defined curl_easy_setopts */
-  if (ua->setopt_cb) {
-    (*ua->setopt_cb)(new_ehandle, ua->data);
-  }
+  /* setup easy handle with user callback */
+  if (ua->setopt_cb) (*ua->setopt_cb)(new_ehandle, ua->data);
+
   new_conn->ehandle = new_ehandle;
 
   QUEUE_INIT(&new_conn->entry);
@@ -410,25 +427,8 @@ _ua_conn_cleanup(struct ua_conn *conn)
   free(conn);
 }
 
-static void
-_ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
-{
-  conn->info.httpcode = 0;
-  conn->info.req_tstamp = 0;
-  conn->info.body.len = 0;
-  conn->info.header.len = 0;
-  conn->info.header.size = 0;
-  *conn->errbuf = '\0';
-  memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
-  pthread_mutex_lock(&ua->shared->lock);
-  /* remove from busy queue */
-  QUEUE_REMOVE(&conn->entry);
-  QUEUE_INSERT_TAIL(&ua->connq->idle, &conn->entry);
-  pthread_mutex_unlock(&ua->shared->lock);
-}
-
 struct ua_conn *
-ua_conn_get(struct user_agent *ua)
+ua_conn_start(struct user_agent *ua)
 {
   struct ua_conn *ret_conn = NULL;
 
@@ -436,19 +436,45 @@ ua_conn_get(struct user_agent *ua)
 
   if (QUEUE_EMPTY(&ua->connq->idle)) {
     ret_conn = _ua_conn_init(ua);
+    ++ua->connq->total;
   }
   else {
     QUEUE *q = QUEUE_HEAD(&ua->connq->idle);
     ret_conn = QUEUE_DATA(q, struct ua_conn, entry);
     /* remove from idle queue */
     QUEUE_REMOVE(&ret_conn->entry);
-    ++ua->connq->total;
   }
   QUEUE_INSERT_TAIL(&ua->connq->busy, &ret_conn->entry);
 
   pthread_mutex_unlock(&ua->shared->lock);
 
   return ret_conn;
+}
+
+void
+ua_conn_stop(struct user_agent *ua, struct ua_conn *conn)
+{
+  /* reset conn fields for next iteration */
+  conn->info.httpcode = 0;
+  conn->info.time_us = 0;
+  conn->info.body.len = 0;
+  conn->info.header.len = 0;
+  conn->info.header.size = 0;
+  *conn->errbuf = '\0';
+  memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
+
+  /* move conn from 'busy' to 'idle' queue */
+  pthread_mutex_lock(&ua->shared->lock);
+  QUEUE_REMOVE(&conn->entry);
+  QUEUE_INSERT_TAIL(&ua->connq->idle, &conn->entry);
+  pthread_mutex_unlock(&ua->shared->lock);
+
+  /* its assumed ua_clone() will be called before entering a thread
+   * to make sure 'struct user_agent' is thread-safe */
+  if (ua->mime) {
+    curl_mime_free(ua->mime);
+    ua->mime = NULL;
+  }
 }
 
 struct user_agent *
@@ -473,10 +499,6 @@ ua_init(struct ua_attr *attr)
   new_ua->shared = calloc(1, sizeof *new_ua->shared);
   if (pthread_mutex_init(&new_ua->shared->lock, NULL)) {
     logconf_fatal(&new_ua->conf, "Couldn't initialize mutex");
-    ABORT();
-  }
-  if (pthread_rwlock_init(&new_ua->shared->rwlock, NULL)) {
-    logconf_fatal(&new_ua->conf, "Couldn't initialize rwlock");
     ABORT();
   }
 
@@ -528,7 +550,7 @@ ua_cleanup(struct user_agent *ua)
     QUEUE *ua_queues[] = { &ua->connq->idle, &ua->connq->busy };
 
     /* cleanup queues */
-    for (int i = 0; i < sizeof(ua_queues) / sizeof(QUEUE*); ++i) {
+    for (int i = 0; i < sizeof(ua_queues) / sizeof(QUEUE *); ++i) {
       QUEUE queue;
       QUEUE *q;
       struct ua_conn *conn;
@@ -545,7 +567,6 @@ ua_cleanup(struct user_agent *ua)
 
     /* cleanup shared locks */
     pthread_mutex_destroy(&ua->shared->lock);
-    pthread_rwlock_destroy(&ua->shared->rwlock);
     free(ua->shared);
 
     /* cleanup logging module */
@@ -585,8 +606,12 @@ _ua_conn_set_method(struct user_agent *ua,
   case HTTP_DELETE:
     curl_easy_setopt(conn->ehandle, CURLOPT_CUSTOMREQUEST, "DELETE");
     break;
-  case HTTP_GET: curl_easy_setopt(conn->ehandle, CURLOPT_HTTPGET, 1L); return;
-  case HTTP_POST: curl_easy_setopt(conn->ehandle, CURLOPT_POST, 1L); break;
+  case HTTP_GET:
+    curl_easy_setopt(conn->ehandle, CURLOPT_HTTPGET, 1L);
+    return;
+  case HTTP_POST:
+    curl_easy_setopt(conn->ehandle, CURLOPT_POST, 1L);
+    break;
   case HTTP_MIMEPOST:
     ASSERT_S(NULL != ua->mime_cb, "Missing 'ua->mime_cb' callback");
     ASSERT_S(NULL == ua->mime, "'ua->mime' not freed");
@@ -639,27 +664,21 @@ _ua_conn_set_url(struct user_agent *ua, struct ua_conn *conn, char endpoint[])
   logconf_trace(conn->conf, "Request URL: %s", conn->info.req_url.start);
 }
 
-static CURLcode
-_ua_conn_send(struct user_agent *ua, struct ua_conn *conn, int *httpcode)
+static ORCAcode
+_ua_conn_check_status(struct user_agent *ua,
+                      struct ua_conn *conn,
+                      struct ua_info *info)
 {
-  CURLcode ecode;
+  /* response URL */
   char *resp_url = NULL;
-
-  pthread_mutex_lock(&ua->shared->lock);
-
-  ecode = curl_easy_perform(conn->ehandle);
+  /* return code */
+  ORCAcode code;
 
   /* get request timestamp */
-  conn->info.req_tstamp = cee_timestamp_ms();
-  /* update last request timestamp */
-  pthread_rwlock_wrlock(&ua->shared->rwlock);
-  ua->req_tstamp = conn->info.req_tstamp;
-  pthread_rwlock_unlock(&ua->shared->rwlock);
-
-  pthread_mutex_unlock(&ua->shared->lock);
-
+  curl_easy_getinfo(conn->ehandle, CURLINFO_TOTAL_TIME_T, &conn->info.time_us);
   /* get response's code */
-  curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE, httpcode);
+  curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE,
+                    &conn->info.httpcode);
   /* get response's url */
   curl_easy_getinfo(conn->ehandle, CURLINFO_EFFECTIVE_URL, &resp_url);
 
@@ -672,19 +691,8 @@ _ua_conn_send(struct user_agent *ua, struct ua_conn *conn, int *httpcode)
                  conn->info.body.buf,
                  conn->info.body.len,
                },
-               "HTTP_RCV_%s(%d)", http_code_print(*httpcode), *httpcode);
-
-  return ecode;
-}
-
-static ORCAcode
-_ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
-{
-  CURLcode ecode = _ua_conn_send(ua, conn, &conn->info.httpcode);
-  if (ecode != CURLE_OK) {
-    CURLE_LOG(conn, ecode);
-    return ORCA_CURLE_INTERNAL;
-  }
+               "HTTP_RCV_%s(%d)", http_code_print(conn->info.httpcode),
+               conn->info.httpcode);
 
   /* triggers response callbacks */
   if (conn->info.httpcode >= 500 && conn->info.httpcode < 600) {
@@ -703,9 +711,9 @@ _ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
                                       conn->info.body.buf, conn->info.body.len,
                                       conn->resp_handle.err_obj);
     }
-    return ORCA_HTTP_CODE;
+    code = ORCA_HTTP_CODE;
   }
-  if (conn->info.httpcode >= 400) {
+  else if (conn->info.httpcode >= 400) {
     logconf_error(
       conn->conf,
       ANSICOLOR("CLIENT ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
@@ -721,17 +729,17 @@ _ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
                                       conn->info.body.buf, conn->info.body.len,
                                       conn->resp_handle.err_obj);
     }
-    return ORCA_HTTP_CODE;
+    code = ORCA_HTTP_CODE;
   }
-  if (conn->info.httpcode >= 300) {
+  else if (conn->info.httpcode >= 300) {
     logconf_warn(
       conn->conf,
       ANSICOLOR("REDIRECTING", ANSI_FG_YELLOW) " (%d)%s - %s [@@@_%zu_@@@]",
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
-    return ORCA_HTTP_CODE;
+    code = ORCA_HTTP_CODE;
   }
-  if (conn->info.httpcode >= 200) {
+  else if (conn->info.httpcode >= 200) {
     logconf_info(
       conn->conf,
       ANSICOLOR("SUCCESS", ANSI_FG_GREEN) " (%d)%s - %s [@@@_%zu_@@@]",
@@ -747,22 +755,37 @@ _ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
                                      conn->info.body.buf, conn->info.body.len,
                                      conn->resp_handle.ok_obj);
     }
-    return ORCA_OK;
+    code = ORCA_OK;
   }
-  if (conn->info.httpcode >= 100) {
+  else if (conn->info.httpcode >= 100) {
     logconf_info(
       conn->conf, ANSICOLOR("INFO", ANSI_FG_GRAY) " (%d)%s - %s [@@@_%zu_@@@]",
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
-    return conn->info.httpcode;
+    code = ORCA_HTTP_CODE;
   }
-  if (!conn->info.httpcode) {
+  else if (conn->info.httpcode > 0) {
+    logconf_error(conn->conf, "Unusual HTTP response code: %d",
+                  conn->info.httpcode);
+    code = ORCA_UNUSUAL_HTTP_CODE;
+  }
+  else {
     logconf_error(conn->conf, "No http response received by libcurl");
-    return ORCA_NO_RESPONSE;
+    code = ORCA_NO_RESPONSE;
   }
-  logconf_error(conn->conf, "Unusual HTTP response code: %d",
-                conn->info.httpcode);
-  return ORCA_UNUSUAL_HTTP_CODE;
+
+  /* populate ua_info */
+  if (info) {
+    memcpy(info, &conn->info, sizeof(struct ua_info));
+    asprintf(&info->body.buf, "%.*s", (int)conn->info.body.len,
+             conn->info.body.buf);
+    asprintf(&info->header.buf, "%.*s", (int)conn->info.header.len,
+             conn->info.header.buf);
+    asprintf(&info->req_url.start, "%.*s", (int)conn->info.req_url.size,
+             conn->info.req_url.start);
+  }
+
+  return code;
 }
 
 void
@@ -798,12 +821,14 @@ ua_run(struct user_agent *ua,
        enum http_method http_method,
        char endpoint[])
 {
+  CURLcode ecode;
+  ORCAcode code;
   struct ua_conn *conn;
   char logbuf[1024] = "";
   const char *method_str = http_method_print(http_method);
 
   /* get conn that will perform the request */
-  conn = ua_conn_get(ua);
+  conn = ua_conn_start(ua);
   /* populate conn with parameters */
   ua_conn_setup(ua, conn, resp_handle, req_body, http_method, endpoint);
 
@@ -821,29 +846,17 @@ ua_run(struct user_agent *ua,
                 method_str, conn->info.loginfo.counter);
 
   /* perform blocking-IO request */
-  ORCAcode code = _ua_conn_perform(ua, conn);
-
-  /* populate ua_info */
-  if (info) {
-    memcpy(info, &conn->info, sizeof(struct ua_info));
-    asprintf(&info->body.buf, "%.*s", (int)conn->info.body.len,
-             conn->info.body.buf);
-    asprintf(&info->header.buf, "%.*s", (int)conn->info.header.len,
-             conn->info.header.buf);
-    asprintf(&info->req_url.start, "%.*s", (int)conn->info.req_url.size,
-             conn->info.req_url.start);
+  ecode = curl_easy_perform(conn->ehandle);
+  if (ecode != CURLE_OK) {
+    CURLE_LOG(conn, ecode);
+    return ORCA_CURLE_INTERNAL;
   }
 
-  /* its assumed ua_clone() will be called before entering a thread
-   * to make sure 'struct user_agent' is thread-safe
-   * @todo make it a user-called function
-   */
-  if (ua->mime) {
-    curl_mime_free(ua->mime);
-    ua->mime = NULL;
-  }
+  /* check request status and call user-callbacks accordingly */
+  code = _ua_conn_check_status(ua, conn, info);
+
   /* reset conn for next iteration and mark it as free to use */
-  _ua_conn_reset(ua, conn);
+  ua_conn_stop(ua, conn);
 
   return code;
 }
@@ -884,14 +897,4 @@ struct sized_buffer
 ua_info_get_body(struct ua_info *info)
 {
   return (struct sized_buffer){ info->body.buf, info->body.len };
-}
-
-uint64_t
-ua_timestamp(struct user_agent *ua)
-{
-  uint64_t req_tstamp;
-  pthread_rwlock_rdlock(&ua->shared->rwlock);
-  req_tstamp = ua->req_tstamp;
-  pthread_rwlock_unlock(&ua->shared->rwlock);
-  return req_tstamp;
 }

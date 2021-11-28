@@ -212,61 +212,59 @@ _discord_bucket_populate(struct discord_ratelimit *ratelimit,
                          ORCAcode code,
                          struct ua_info *info)
 {
+  struct sized_buffer reset, remaining, reset_after;
+
   if (code != ORCA_OK) {
     logconf_debug(&ratelimit->conf, "[%.4s] Request failed", b->hash);
+    return;
   }
-  else if (b->update_tstamp <= info->req_tstamp) {
-    /* fetch header individual fields */
-    struct sized_buffer reset = ua_info_header_get(info, "x-ratelimit-reset"),
-                        remaining =
-                          ua_info_header_get(info, "x-ratelimit-remaining"),
-                        reset_after =
-                          ua_info_header_get(info, "x-ratelimit-reset-after");
 
-    b->remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
+  /* fetch header individual fields */
+  reset = ua_info_header_get(info, "x-ratelimit-reset");
+  remaining = ua_info_header_get(info, "x-ratelimit-remaining");
+  reset_after = ua_info_header_get(info, "x-ratelimit-reset-after");
 
-    /* use X-Ratelimit-Reset-After if available, otherwise use
-     * X-Ratelimit-Reset */
-    if (reset_after.size) {
-      struct sized_buffer global =
-        ua_info_header_get(info, "x-ratelimit-global");
-      u64_unix_ms_t reset =
-        cee_timestamp_ms() + 1000 * strtod(reset_after.start, NULL);
+  b->remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
 
-      if (global.size) {
-        /* lock all buckets */
-        pthread_rwlock_wrlock(&ratelimit->rwlock);
-        ratelimit->global = reset;
-        pthread_rwlock_unlock(&ratelimit->rwlock);
-      }
-      else {
-        /* lock single bucket, timeout at discord_adapter_run() */
-        b->reset_tstamp = reset;
-      }
+  /* use X-Ratelimit-Reset-After if available, otherwise use
+   * X-Ratelimit-Reset */
+  if (reset_after.size) {
+    struct sized_buffer global =
+      ua_info_header_get(info, "x-ratelimit-global");
+    u64_unix_ms_t reset =
+      cee_timestamp_ms() + 1000 * strtod(reset_after.start, NULL);
+
+    if (global.size) {
+      /* lock all buckets */
+      pthread_rwlock_wrlock(&ratelimit->rwlock);
+      ratelimit->global = reset;
+      pthread_rwlock_unlock(&ratelimit->rwlock);
     }
-    else if (reset.size) {
-      struct sized_buffer date = ua_info_header_get(info, "date");
-      /* the Discord time in milliseconds */
-      u64_unix_ms_t server = 1000 * curl_getdate(date.start, NULL);
-      /* the Discord time + elapsed milliseconds */
-      u64_unix_ms_t offset;
-      /* get approximate elapsed milliseconds since request */
-      struct PsnipClockTimespec ts;
-
-      /* reset timestamp =
-       * (system time) + (diff between Discord's reset timestamp and offset) */
-      psnip_clock_wall_get_time(&ts);
-      offset = server + ts.nanoseconds / 1000000;
-      b->reset_tstamp =
-        cee_timestamp_ms() + (1000 * strtod(reset.start, NULL) - offset);
+    else {
+      /* lock single bucket, timeout at discord_adapter_run() */
+      b->reset_tstamp = reset;
     }
-
-    logconf_debug(&ratelimit->conf,
-                  "[%.4s] Reset = %" PRIu64 " ; Remaining = %d", b->hash,
-                  b->reset_tstamp, b->remaining);
-
-    b->update_tstamp = info->req_tstamp;
   }
+  else if (reset.size) {
+    struct sized_buffer date = ua_info_header_get(info, "date");
+    /* the Discord time in milliseconds */
+    u64_unix_ms_t server = 1000 * curl_getdate(date.start, NULL);
+    /* get approximate elapsed time since request */
+    struct PsnipClockTimespec ts;
+    /* the Discord time + request's elapsed time */
+    u64_unix_ms_t offset;
+
+    psnip_clock_wall_get_time(&ts);
+    offset = server + ts.nanoseconds / 1000000;
+    /* reset timestamp =
+     * (system time) + (diff between Discord's reset timestamp and offset) */
+    b->reset_tstamp =
+      cee_timestamp_ms() + (1000 * strtod(reset.start, NULL) - offset);
+  }
+
+  logconf_debug(&ratelimit->conf,
+                "[%.4s] Reset = %" PRIu64 " | Remaining = %d", b->hash,
+                b->reset_tstamp, b->remaining);
 }
 
 /* Attempt to build and/or update bucket's rate limiting information. */

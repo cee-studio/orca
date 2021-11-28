@@ -102,10 +102,12 @@ _discord_adapter_get_route(const char endpoint[], char buf[32])
 static void
 _discord_request_cxt_reset(struct discord_request_cxt *cxt)
 {
+  discord_cleanup(CLIENT(cxt->p_adapter));
   cxt->p_adapter = NULL;
   cxt->route = NULL;
   memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
+  cxt->conn = NULL;
 }
 
 static void
@@ -126,7 +128,7 @@ _discord_request_cxt_populate(struct discord_request_cxt *cxt,
   cxt->p_adapter = &(discord_clone(CLIENT(adapter))->adapter);
   cxt->route = r;
   if (resp_handle) {
-    cxt->resp_handle = *resp_handle;
+    memcpy(&cxt->resp_handle, resp_handle, sizeof(cxt->resp_handle));
   }
   if (req_body) {
     if (req_body->size > cxt->req_body.size) {
@@ -218,6 +220,7 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
   if (QUEUE_EMPTY(&adapter->queue.idle)) {
     /* create new request handler */
     cxt = calloc(1, sizeof(struct discord_request_cxt));
+    QUEUE_INIT(&cxt->entry);
   }
   else {
     /* recycle idle request handler */
@@ -228,20 +231,16 @@ discord_adapter_enqueue(struct discord_adapter *adapter,
   /* populate request handler */
   _discord_request_cxt_populate(cxt, adapter, resp_handle, req_body,
                                 http_method, endpoint);
-  /* enqueue request handler */
-  QUEUE_INIT(&cxt->entry);
+  /* put request handler on hold */
   QUEUE_INSERT_TAIL(&adapter->queue.hold, &cxt->entry);
 }
 
 void
 discord_adapter_prepare(struct discord_adapter *adapter)
 {
-  long delay_ms;
   struct discord_request_cxt *cxt;
-  struct ua_conn *conn;
   CURL *ehandle;
-
-  if (QUEUE_EMPTY(&adapter->queue.hold)) return;
+  long delay_ms;
 
   while (!QUEUE_EMPTY(&adapter->queue.hold)) {
     QUEUE *q = QUEUE_HEAD(&adapter->queue.hold);
@@ -257,10 +256,10 @@ discord_adapter_prepare(struct discord_adapter *adapter)
       /* TODO: register timeout callback for 'cxt' */
       continue;
     }
-    conn = ua_conn_get(adapter->ua);
-    ehandle = ua_conn_curl_easy_get(conn);
-    ua_conn_setup(cxt->p_adapter->ua, conn, &cxt->resp_handle, &cxt->req_body,
-                  cxt->http_method, cxt->endpoint);
+    cxt->conn = ua_conn_start(adapter->ua);
+    ehandle = ua_conn_curl_easy_get(cxt->conn);
+    ua_conn_setup(cxt->p_adapter->ua, cxt->conn, &cxt->resp_handle,
+                  &cxt->req_body, cxt->http_method, cxt->endpoint);
     /* link 'cxt' to 'ehandle' for easy retrieval */
     curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
     /* let curl begin transfer */
@@ -271,7 +270,6 @@ discord_adapter_prepare(struct discord_adapter *adapter)
 void
 discord_adapter_check(struct discord_adapter *adapter)
 {
-  int msgq;
   struct CURLMsg *curlmsg;
   struct discord_request_cxt *cxt;
   CURLM *mhandle = CLIENT(adapter)->mhandle;
@@ -279,7 +277,7 @@ discord_adapter_check(struct discord_adapter *adapter)
   ORCAcode code;
 
   do {
-    msgq = 0;
+    int msgq = 0;
     curlmsg = curl_multi_info_read(mhandle, &msgq);
     if (curlmsg && (CURLMSG_DONE == curlmsg->msg)) {
       code = ORCA_OK;
@@ -287,17 +285,20 @@ discord_adapter_check(struct discord_adapter *adapter)
       /* get request handler assigned to this easy handle */
       curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
       /* TODO: trigger cxt callback here */
-      curl_multi_remove_handle(mhandle, ehandle);
-      if (_discord_adapter_get_status(adapter, &code)) {
-        /* TODO: set retry transfer callback */
+      if (_discord_adapter_get_status(cxt->p_adapter, &code)) {
+        /* insert request handler back to hold queue for retry */
         QUEUE_INSERT_HEAD(&adapter->queue.hold, &cxt->entry);
       }
       else {
+        /* mark connection handle as idle */
+        ua_conn_stop(adapter->ua, cxt->conn);
         /* insert request handler into idle queue for recycling */
         QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
       }
       discord_bucket_build(adapter->ratelimit, cxt->route->bucket,
                            cxt->route->route, code, &cxt->p_adapter->err.info);
+      /* this easy handle is done polling for IO */
+      curl_multi_remove_handle(mhandle, ehandle);
     }
   } while (curlmsg);
 }

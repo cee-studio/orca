@@ -164,12 +164,12 @@ _discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
                   "received HTTP method");
     return false;
   case HTTP_TOO_MANY_REQUESTS: {
+    struct sized_buffer body = ua_info_get_body(&adapter->err.info);
     bool is_global = false;
     char message[256] = "";
     double retry_after = 1.0;
     long delay_ms = 0L;
 
-    struct sized_buffer body = ua_info_get_body(&adapter->err.info);
     json_extract(body.start, body.size,
                  "(global):b (message):.*s (retry_after):lf", &is_global,
                  sizeof(message), message, &retry_after);
@@ -277,29 +277,42 @@ discord_adapter_check(struct discord_adapter *adapter)
   ORCAcode code;
 
   do {
+    bool retry;
     int msgq = 0;
     curlmsg = curl_multi_info_read(mhandle, &msgq);
+
     if (curlmsg && (CURLMSG_DONE == curlmsg->msg)) {
-      code = ORCA_OK;
       ehandle = curlmsg->easy_handle;
       /* get request handler assigned to this easy handle */
       curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
-      /* TODO: trigger cxt callback here */
-      if (_discord_adapter_get_status(cxt->p_adapter, &code)) {
-        /* insert request handler back to hold queue for retry */
-        QUEUE_INSERT_HEAD(&adapter->queue.hold, &cxt->entry);
-      }
-      else {
-        /* mark connection handle as idle */
-        ua_conn_stop(adapter->ua, cxt->conn);
-        /* insert request handler into idle queue for recycling */
-        QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
-      }
+      ua_info_cleanup(&cxt->p_adapter->err.info);
+
+      /* check request results and call user-callbacks accordingly */
+      code = ua_conn_get_results(cxt->p_adapter->ua, cxt->conn,
+                                 &cxt->p_adapter->err.info);
+
+      /* reset conn for next iteration */
+      ua_conn_stop(adapter->ua, cxt->conn);
+
+      retry = (ORCA_HTTP_CODE == code)
+                ? _discord_adapter_get_status(cxt->p_adapter, &code)
+                : false;
+
       discord_bucket_build(adapter->ratelimit, cxt->route->bucket,
                            cxt->route->route, code, &cxt->p_adapter->err.info);
-      /* this easy handle is done polling for IO */
-      curl_multi_remove_handle(mhandle, ehandle);
     }
+
+    if (retry) {
+      /* add request handler to 'hold' queue for retry */
+      QUEUE_INSERT_HEAD(&adapter->queue.hold, &cxt->entry);
+    }
+    else {
+      /* TODO: trigger cxt callback here */
+      /* add request handler to 'idle' queue for recycling */
+      QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
+    }
+    /* this easy handle is done polling for IO */
+    curl_multi_remove_handle(mhandle, ehandle);
   } while (curlmsg);
 }
 
@@ -319,7 +332,7 @@ _discord_adapter_request(struct discord_adapter *adapter,
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(adapter->ratelimit, route);
   /* in case of request failure, try again */
-  bool keepalive = true;
+  bool retry;
   /* bucket ratelimit cooldown (in milliseconds) */
   long delay_ms;
   /* orca error status */
@@ -345,15 +358,13 @@ _discord_adapter_request(struct discord_adapter *adapter,
     code = ua_run(adapter->ua, &adapter->err.info, &_resp_handle, req_body,
                   http_method, endpoint);
 
-    if (code != ORCA_HTTP_CODE) {
-      keepalive = false;
-    }
-    else {
-      keepalive = _discord_adapter_get_status(adapter, &code);
-    }
+    retry = (ORCA_HTTP_CODE == code)
+              ? _discord_adapter_get_status(adapter, &code)
+              : false;
+
     discord_bucket_build(adapter->ratelimit, b, route, code,
                          &adapter->err.info);
-  } while (keepalive);
+  } while (retry);
   pthread_mutex_unlock(&b->lock);
 
   return code;

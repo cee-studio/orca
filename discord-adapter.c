@@ -141,7 +141,7 @@ _discord_request_cxt_populate(struct discord_request_cxt *cxt,
   memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
 }
 
-/* return true if there shouldn't be a retry attempt */
+/* return true if there should be a retry attempt */
 static bool
 _discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
 {

@@ -91,6 +91,8 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  * @return a code for checking on how the transfer went ORCA_OK means the
  *        transfer was succesful
  * @note Helper over ua_run()
+ * @note if async is set then this function will not perform the request
+ *        immediately
  */
 ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              struct ua_resp_handle *resp_handle,
@@ -98,24 +100,6 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              enum http_method http_method,
                              char endpoint_fmt[],
                              ...);
-
-/**
- * @brief Enqueue a request to be executed asynchronously
- *
- * @param adapter the handle initialized with discord_adapter_init()
- * @param resp_handle the callbacks to be triggered should the request
- *        fail or succeed
- * @param req_body the body sent for methods that require (ex: post), leave as
- *        null if unecessary
- * @param http_method the method in opcode format of the request being sent
- * @param endpoint the endpoint to be appended to base_url when
- *        performing a request
- */
-void discord_adapter_enqueue(struct discord_adapter *adapter,
-                             struct ua_resp_handle *resp_handle,
-                             struct sized_buffer *req_body,
-                             enum http_method http_method,
-                             char endpoint[]);
 
 /**
  * @brief The ratelimiting handler structure
@@ -186,16 +170,18 @@ struct discord_route {
 struct discord_route *discord_route_get(struct discord_ratelimit *ratelimit,
                                         const char route[]);
 
-/** 
+/**
  * @brief Context in case request is scheduled to run asynchronously
  */
-struct discord_request_cxt {
-  /** 
+struct discord_request {
+  /**
    * the discord adapter client initialized with discord_clone()
    * @note this is a workaround so that each context can carry its own header
    * @todo passing only a 'struct curl_slist' around should be enough
    */
-  struct discord_adapter *p_adapter;
+  struct discord_adapter *adapter;
+  /** the callback to be triggered on request completion */
+  discord_async_cb callback;
   /** the request's route */
   struct discord_route *route;
   /** the request's response handle */
@@ -479,13 +465,13 @@ struct discord_gateway {
  * @brief Context in case event is scheduled to be triggered
  *        from the orca threadpool
  */
-struct discord_event_cxt {
+struct discord_event {
   /** the event name */
   char *event_name;
   /** a copy of payload data */
   struct sized_buffer data;
   /** the discord gateway client */
-  struct discord_gateway *p_gw;
+  struct discord_gateway *gw;
   /** the event unique id value */
   enum discord_gateway_events event;
   /** the event callback */
@@ -515,7 +501,7 @@ void discord_gateway_cleanup(struct discord_gateway *gw);
  *
  * @param gw the handle initialized with discord_gateway_init()
  * @return ORCAcode for how the run went, ORCA_OK means nothing out of the
- * ordinary
+ *        ordinary
  */
 ORCAcode discord_gateway_run(struct discord_gateway *gw);
 
@@ -554,6 +540,13 @@ struct discord {
   struct logconf *conf;
   /** whether this is the original client or a clone */
   bool is_original;
+  /** async handling struct */
+  struct {
+    /** if true then next request will be dealt with asynchronously */
+    bool enable;
+    /** optional callback to be triggered on completion */
+    discord_async_cb callback;
+  } async;
   /** the bot token */
   struct sized_buffer token;
   /** custom libcurl's IO multiplexer */

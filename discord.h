@@ -75,6 +75,20 @@ struct discord_voice_cbs;
 /* see specs/discord/ for specs */
 #include "specs-code/discord/one-specs.h"
 
+/**
+ * @brief return value of discord_set_event_scheduler() callback
+ *
+ * @see discord_set_event_scheduler()
+ */
+typedef enum discord_event_scheduler {
+  /** this event has been handled */
+  DISCORD_EVENT_IGNORE,
+  /** handle this event in main thread */
+  DISCORD_EVENT_MAIN_THREAD,
+  /** handle this event in a worker thread */
+  DISCORD_EVENT_WORKER_THREAD
+} discord_event_scheduler_t;
+
 /** @defgroup DiscordCallbacksGeneral
  * @brief General-purpose callbacks
  *  @{ */
@@ -82,16 +96,26 @@ struct discord_voice_cbs;
  * @brief Event Handling Mode callback
  *
  * A very important callback that enables the user with a fine-grained control
- * of how each event is handled: blocking, non-blocking or ignored
- *
+ *        of how each event is handled: blocking, non-blocking or ignored
  * @see discord_set_event_scheduler()
  * @see discord_gateway_events
  */
-typedef enum discord_event_scheduler (*discord_event_scheduler_cb)(
+typedef discord_event_scheduler_t (*discord_event_scheduler_cb)(
   struct discord *client,
   struct discord_user *bot,
   struct sized_buffer *event_data,
   enum discord_gateway_events event);
+
+/**
+ * @brief Async callback
+ *
+ * Callback triggered when the request it has been assigned to is completed
+ * @see discord_set_async()
+ */
+typedef void (*discord_async_cb)(struct discord *client,
+                                 const struct discord_user *bot,
+                                 const void *p_obj,
+                                 ORCAcode code);
 
 /**
  * @brief Idle callback
@@ -368,19 +392,6 @@ void discord_remove_intents(struct discord *client,
  * @see discord_set_on_command()
  */
 void discord_set_prefix(struct discord *client, char *prefix);
-/**
- * @brief return value of discord_set_event_scheduler() callback
- *
- * @see discord_set_event_scheduler()
- */
-enum discord_event_scheduler {
-  /** this event has been handled */
-  DISCORD_EVENT_IGNORE,
-  /** handle this event in main thread */
-  DISCORD_EVENT_MAIN_THREAD,
-  /** handle this event in a worker thread */
-  DISCORD_EVENT_WORKER_THREAD
-};
 
 /**
  * @brief Provides the user with a fine-grained control of the Discord's
@@ -393,7 +404,7 @@ enum discord_event_scheduler {
  * @param fn the function that will be executed
  * @warning The user is responsible for providing his own locking mechanism to
  * avoid race-condition on sensitive data.
- * @see enum discord_event_scheduler
+ * @see discord_event_scheduler_t
  * @see enum discord_gateway_events
  */
 void discord_set_event_scheduler(struct discord *client,
@@ -767,6 +778,16 @@ void *discord_set_data(struct discord *client, void *data);
  *        his data from race conditions
  */
 void *discord_get_data(struct discord *client);
+
+/**
+ * @brief Toggle next request to run asynchronously
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback to be executed on request completion
+ * @return a pointer to the original client (for one-liner statements)
+ */
+struct discord *discord_set_async(struct discord *client,
+                                  discord_async_cb callback);
 
 /**
  * @brief Set the Client presence state
@@ -1913,8 +1934,8 @@ ORCAcode discord_follow_news_channel(
  *  @{ */
 ORCAcode discord_get_pinned_messages(struct discord *client,
                                      const u64_snowflake_t channel_id,
-                                     NTL_T(struct discord_message) *
-                                       p_messages);
+                                     NTL_T(struct discord_message)
+                                       * p_messages);
 /** @} */
 
 /** @defgroup DiscordPinMessage
@@ -2046,8 +2067,8 @@ ORCAcode discord_remove_thread_member(struct discord *client,
  *  @{ */
 ORCAcode discord_list_thread_members(struct discord *client,
                                      const u64_snowflake_t channel_id,
-                                     NTL_T(struct discord_thread_member) *
-                                       p_thread_members);
+                                     NTL_T(struct discord_thread_member)
+                                       * p_thread_members);
 /** @} */
 
 /** @defgroup DiscordListActiveThreads
@@ -2222,8 +2243,8 @@ ORCAcode discord_delete_guild(struct discord *client,
  */
 ORCAcode discord_get_guild_channels(struct discord *client,
                                     const u64_snowflake_t guild_id,
-                                    NTL_T(struct discord_channel) *
-                                      p_channels);
+                                    NTL_T(struct discord_channel)
+                                      * p_channels);
 /** @} */
 
 /** @defgroup DiscordCreateGuildChannel
@@ -2707,8 +2728,8 @@ ORCAcode sb_discord_get_current_user(struct discord *client,
 /** @defgroup DiscordGetCurrentUserGuilds
  *  @{ */
 ORCAcode discord_get_current_user_guilds(struct discord *client,
-                                         NTL_T(struct discord_guild) *
-                                           p_guilds);
+                                         NTL_T(struct discord_guild)
+                                           * p_guilds);
 /** @} */
 
 /** @defgroup DiscordLeaveGuild
@@ -2746,8 +2767,8 @@ ORCAcode discord_create_group_dm(struct discord *client,
  * request
  */
 ORCAcode discord_get_user_connections(struct discord *client,
-                                      NTL_T(struct discord_connection) *
-                                        p_connections);
+                                      NTL_T(struct discord_connection)
+                                        * p_connections);
 /** @} */
 
 /** @defgroup DiscordListVoiceRegions
@@ -2764,8 +2785,8 @@ ORCAcode discord_get_user_connections(struct discord *client,
  * request
  */
 ORCAcode discord_list_voice_regions(struct discord *client,
-                                    NTL_T(struct discord_voice_region) *
-                                      p_voice_regions);
+                                    NTL_T(struct discord_voice_region)
+                                      * p_voice_regions);
 /** @} */
 
 /** @defgroup DiscordCreateWebhook
@@ -2807,8 +2828,8 @@ ORCAcode discord_create_webhook(struct discord *client,
  */
 ORCAcode discord_get_channel_webhooks(struct discord *client,
                                       const u64_snowflake_t channel_id,
-                                      NTL_T(struct discord_webhook) *
-                                        p_webhooks);
+                                      NTL_T(struct discord_webhook)
+                                        * p_webhooks);
 /** @} */
 
 /** @defgroup DiscordGetGuildWebhooks
@@ -2828,8 +2849,8 @@ ORCAcode discord_get_channel_webhooks(struct discord *client,
  */
 ORCAcode discord_get_guild_webhooks(struct discord *client,
                                     const u64_snowflake_t guild_id,
-                                    NTL_T(struct discord_webhook) *
-                                      p_webhooks);
+                                    NTL_T(struct discord_webhook)
+                                      * p_webhooks);
 /** @} */
 
 /** @defgroup DiscordGetWebhook
@@ -3110,8 +3131,8 @@ void discord_embed_add_field(struct discord_embed *embed,
 
 /** @defgroup DiscordMiscChannel
  *  @{ */
-void discord_overwrite_append(NTL_T(struct discord_overwrite) *
-                                permission_overwrites,
+void discord_overwrite_append(NTL_T(struct discord_overwrite)
+                                * permission_overwrites,
                               u64_snowflake_t id,
                               int type,
                               enum discord_bitwise_permission_flags allow,

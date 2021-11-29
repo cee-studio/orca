@@ -124,7 +124,8 @@ const char *
 discord_strerror(ORCAcode code, struct discord *client)
 {
   switch (code) {
-  default: return orca_strerror(code);
+  default:
+    return orca_strerror(code);
   case ORCA_DISCORD_JSON_CODE:
     if (client) return client->adapter.err.jsonstr;
     return "Discord JSON Error Code: Failed request";
@@ -147,6 +148,14 @@ void *
 discord_get_data(struct discord *client)
 {
   return client->data;
+}
+
+struct discord *
+discord_set_async(struct discord *client, discord_async_cb callback)
+{
+  client->async.enable = true;
+  client->async.callback = callback;
+  return client;
 }
 
 void
@@ -215,8 +224,8 @@ discord_set_on_command(struct discord *client,
   client->gw.user_cmd->pool[client->gw.user_cmd->amt - 1].size = (size_t)len;
   client->gw.user_cmd->pool[client->gw.user_cmd->amt - 1].cb = callback;
 
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -402,8 +411,8 @@ discord_set_on_message_create(struct discord *client,
                               discord_message_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_create = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -411,8 +420,8 @@ discord_set_on_sb_message_create(struct discord *client,
                                  discord_sb_message_cb callback)
 {
   client->gw.user_cmd->cbs.sb_on_message_create = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -420,8 +429,8 @@ discord_set_on_message_update(struct discord *client,
                               discord_message_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_update = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -429,8 +438,8 @@ discord_set_on_sb_message_update(struct discord *client,
                                  discord_sb_message_cb callback)
 {
   client->gw.user_cmd->cbs.sb_on_message_update = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -438,8 +447,8 @@ discord_set_on_message_delete(struct discord *client,
                               discord_message_delete_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_delete = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -447,8 +456,8 @@ discord_set_on_message_delete_bulk(struct discord *client,
                                    discord_message_delete_bulk_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_delete_bulk = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES |
-                                DISCORD_GATEWAY_DIRECT_MESSAGES);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
+                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
 void
@@ -456,8 +465,8 @@ discord_set_on_message_reaction_add(struct discord *client,
                                     discord_message_reaction_add_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_reaction_add = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS |
-                                DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS
+                                | DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
 }
 
 void
@@ -465,8 +474,8 @@ discord_set_on_message_reaction_remove(
   struct discord *client, discord_message_reaction_remove_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_reaction_remove = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS |
-                                DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS
+                                | DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
 }
 
 void
@@ -474,8 +483,8 @@ discord_set_on_message_reaction_remove_all(
   struct discord *client, discord_message_reaction_remove_all_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_reaction_remove_all = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS |
-                                DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS
+                                | DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
 }
 
 void
@@ -483,8 +492,8 @@ discord_set_on_message_reaction_remove_emoji(
   struct discord *client, discord_message_reaction_remove_emoji_cb callback)
 {
   client->gw.user_cmd->cbs.on_message_reaction_remove_emoji = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS |
-                                DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
+  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGE_REACTIONS
+                                | DISCORD_GATEWAY_DIRECT_MESSAGE_REACTIONS);
 }
 
 void

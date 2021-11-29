@@ -48,11 +48,13 @@ discord_adapter_init(struct discord_adapter *adapter,
     logconf_branch(&adapter->conf, conf, "DISCORD_WEBHOOK");
   }
   else {
+    char auth[128];
+    int ret;
+
     /* bot client */
     logconf_branch(&adapter->conf, conf, "DISCORD_HTTP");
 
-    char auth[128];
-    int ret =
+    ret =
       snprintf(auth, sizeof(auth), "Bot %.*s", (int)token->size, token->start);
     ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
 
@@ -100,10 +102,10 @@ _discord_adapter_get_route(const char endpoint[], char buf[32])
 }
 
 static void
-_discord_request_cxt_reset(struct discord_request_cxt *cxt)
+_discord_request_reset(struct discord_request *cxt)
 {
-  discord_cleanup(CLIENT(cxt->p_adapter));
-  cxt->p_adapter = NULL;
+  discord_cleanup(CLIENT(cxt->adapter));
+  cxt->adapter = NULL;
   cxt->route = NULL;
   memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
@@ -111,12 +113,12 @@ _discord_request_cxt_reset(struct discord_request_cxt *cxt)
 }
 
 static void
-_discord_request_cxt_populate(struct discord_request_cxt *cxt,
-                              struct discord_adapter *adapter,
-                              struct ua_resp_handle *resp_handle,
-                              struct sized_buffer *req_body,
-                              enum http_method http_method,
-                              char endpoint[])
+_discord_request_populate(struct discord_request *cxt,
+                          struct discord_adapter *adapter,
+                          struct ua_resp_handle *resp_handle,
+                          struct sized_buffer *req_body,
+                          enum http_method http_method,
+                          char endpoint[])
 {
   /* pass to _discord_adapter_get_route() for reentrancy */
   char buf[32];
@@ -125,7 +127,7 @@ _discord_request_cxt_populate(struct discord_request_cxt *cxt,
   /* route pertaining to the request */
   struct discord_route *r = discord_route_get(adapter->ratelimit, route);
 
-  cxt->p_adapter = &(discord_clone(CLIENT(adapter))->adapter);
+  cxt->adapter = &(discord_clone(CLIENT(adapter))->adapter);
   cxt->route = r;
   if (resp_handle) {
     memcpy(&cxt->resp_handle, resp_handle, sizeof(cxt->resp_handle));
@@ -207,45 +209,50 @@ _discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
   }
 }
 
-void
-discord_adapter_enqueue(struct discord_adapter *adapter,
-                        struct ua_resp_handle *resp_handle,
-                        struct sized_buffer *req_body,
-                        enum http_method http_method,
-                        char endpoint[])
+/* enqueue a request to be executed asynchronously */
+static ORCAcode
+_discord_adapter_enqueue(struct discord_adapter *adapter,
+                         struct ua_resp_handle *resp_handle,
+                         struct sized_buffer *req_body,
+                         enum http_method http_method,
+                         char endpoint[])
 {
   /* request context to be enqueued */
-  struct discord_request_cxt *cxt;
+  struct discord_request *cxt;
 
   if (QUEUE_EMPTY(&adapter->queue.idle)) {
     /* create new request handler */
-    cxt = calloc(1, sizeof(struct discord_request_cxt));
+    cxt = calloc(1, sizeof(struct discord_request));
     QUEUE_INIT(&cxt->entry);
   }
   else {
     /* recycle idle request handler */
     QUEUE *q = QUEUE_HEAD(&adapter->queue.idle);
-    cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
-    _discord_request_cxt_reset(cxt);
+    QUEUE_REMOVE(q);
+    cxt = QUEUE_DATA(q, struct discord_request, entry);
+    _discord_request_reset(cxt);
   }
   /* populate request handler */
-  _discord_request_cxt_populate(cxt, adapter, resp_handle, req_body,
-                                http_method, endpoint);
+  _discord_request_populate(cxt, adapter, resp_handle, req_body, http_method,
+                            endpoint);
   /* put request handler on hold */
   QUEUE_INSERT_TAIL(&adapter->queue.hold, &cxt->entry);
+  return ORCA_OK;
 }
 
 void
 discord_adapter_prepare(struct discord_adapter *adapter)
 {
-  struct discord_request_cxt *cxt;
+  struct discord_request *cxt;
   CURL *ehandle;
   long delay_ms;
 
   while (!QUEUE_EMPTY(&adapter->queue.hold)) {
     QUEUE *q = QUEUE_HEAD(&adapter->queue.hold);
-    cxt = QUEUE_DATA(q, struct discord_request_cxt, entry);
+    cxt = QUEUE_DATA(q, struct discord_request, entry);
     QUEUE_REMOVE(q);
+    /* TODO: move 'q' to a tmp QUEUE */
+    /* TODO: pthread_mutex_try_lock(&cxt->route->bucket->lock) */
 
     delay_ms =
       discord_bucket_get_cooldown(adapter->ratelimit, cxt->route->bucket);
@@ -258,20 +265,23 @@ discord_adapter_prepare(struct discord_adapter *adapter)
     }
     cxt->conn = ua_conn_start(adapter->ua);
     ehandle = ua_conn_curl_easy_get(cxt->conn);
-    ua_conn_setup(cxt->p_adapter->ua, cxt->conn, &cxt->resp_handle,
+    ua_conn_setup(cxt->adapter->ua, cxt->conn, &cxt->resp_handle,
                   &cxt->req_body, cxt->http_method, cxt->endpoint);
     /* link 'cxt' to 'ehandle' for easy retrieval */
     curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
     /* let curl begin transfer */
     curl_multi_add_handle(CLIENT(adapter)->mhandle, ehandle);
+    /* remove 'q' from the tmp QUEUE */
+    /* TODO: pthread_mutex_unlock(&cxt->route->bucket->lock) */
   }
+  /* TODO: if not empty, prepend 'hold' queue with tmp QUEUE */
 }
 
 void
 discord_adapter_check(struct discord_adapter *adapter)
 {
   struct CURLMsg *curlmsg;
-  struct discord_request_cxt *cxt;
+  struct discord_request *cxt;
   CURLM *mhandle = CLIENT(adapter)->mhandle;
   CURL *ehandle;
   ORCAcode code;
@@ -285,21 +295,21 @@ discord_adapter_check(struct discord_adapter *adapter)
       ehandle = curlmsg->easy_handle;
       /* get request handler assigned to this easy handle */
       curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
-      ua_info_cleanup(&cxt->p_adapter->err.info);
+      ua_info_cleanup(&cxt->adapter->err.info);
 
       /* check request results and call user-callbacks accordingly */
-      code = ua_conn_get_results(cxt->p_adapter->ua, cxt->conn,
-                                 &cxt->p_adapter->err.info);
+      code = ua_conn_get_results(cxt->adapter->ua, cxt->conn,
+                                 &cxt->adapter->err.info);
 
       /* reset conn for next iteration */
       ua_conn_stop(adapter->ua, cxt->conn);
 
       retry = (ORCA_HTTP_CODE == code)
-                ? _discord_adapter_get_status(cxt->p_adapter, &code)
+                ? _discord_adapter_get_status(cxt->adapter, &code)
                 : false;
 
       discord_bucket_build(adapter->ratelimit, cxt->route->bucket,
-                           cxt->route->route, code, &cxt->p_adapter->err.info);
+                           cxt->route->route, code, &cxt->adapter->err.info);
     }
 
     if (retry) {
@@ -307,7 +317,10 @@ discord_adapter_check(struct discord_adapter *adapter)
       QUEUE_INSERT_HEAD(&adapter->queue.hold, &cxt->entry);
     }
     else {
-      /* TODO: trigger cxt callback here */
+      if (cxt->callback) {
+        (*cxt->callback)(CLIENT(adapter), &CLIENT(adapter)->gw.bot, NULL,
+                         code);
+      }
       /* add request handler to 'idle' queue for recycling */
       QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
     }
@@ -383,7 +396,7 @@ discord_adapter_run(struct discord_adapter *adapter,
   char endpoint[2048];
   /* variable arguments for endpoint formation */
   va_list args;
-  /* snprintf OOB check */
+  /* vsnprintf OOB check */
   int ret;
 
   /* build the endpoint string */
@@ -392,6 +405,12 @@ discord_adapter_run(struct discord_adapter *adapter,
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
   va_end(args);
 
+  if (true == CLIENT(adapter)->async.enable) {
+    /* disable async for next request */
+    CLIENT(adapter)->async.enable = false;
+    return _discord_adapter_enqueue(adapter, resp_handle, req_body,
+                                    http_method, endpoint);
+  }
   return _discord_adapter_request(adapter, resp_handle, req_body, http_method,
                                   endpoint);
 }

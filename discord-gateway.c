@@ -697,21 +697,21 @@ on_ready(struct discord_gateway *gw, struct sized_buffer *data)
 static void
 dispatch_run(void *p_cxt)
 {
-  struct discord_event_cxt *cxt = p_cxt;
+  struct discord_event *cxt = p_cxt;
 
-  logconf_info(&cxt->p_gw->conf,
+  logconf_info(&cxt->gw->conf,
                "Thread " ANSICOLOR("starts", ANSI_FG_RED) " to serve %s",
                cxt->event_name);
 
-  (*cxt->on_event)(cxt->p_gw, &cxt->data);
+  (*cxt->on_event)(cxt->gw, &cxt->data);
 
-  logconf_info(&cxt->p_gw->conf,
+  logconf_info(&cxt->gw->conf,
                "Thread " ANSICOLOR("exits", ANSI_FG_RED) " from serving %s",
                cxt->event_name);
 
   free(cxt->event_name);
   free(cxt->data.start);
-  discord_cleanup(CLIENT(cxt->p_gw));
+  discord_cleanup(CLIENT(cxt->gw));
   free(cxt);
 }
 
@@ -941,16 +941,17 @@ on_dispatch(struct discord_gateway *gw)
   mode = gw->user_cmd->scheduler(CLIENT(gw), &gw->bot,
                                  &gw->payload->event_data, event);
   switch (mode) {
-  case DISCORD_EVENT_IGNORE: return;
+  case DISCORD_EVENT_IGNORE:
+    return;
   case DISCORD_EVENT_MAIN_THREAD:
     (*on_event)(gw, &gw->payload->event_data);
     return;
   case DISCORD_EVENT_WORKER_THREAD: {
     /* event scheduled to run from a worker thread */
-    struct discord_event_cxt *cxt = malloc(sizeof *cxt);
+    struct discord_event *cxt = malloc(sizeof *cxt);
 
     cxt->event_name = strdup(gw->payload->event_name);
-    cxt->p_gw = &(discord_clone(CLIENT(gw))->gw);
+    cxt->gw = &(discord_clone(CLIENT(gw))->gw);
     cxt->data.size =
       asprintf(&cxt->data.start, "%.*s", (int)gw->payload->event_data.size,
                gw->payload->event_data.start);
@@ -961,7 +962,8 @@ on_dispatch(struct discord_gateway *gw)
     VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
     return;
   }
-  default: ERR("Unknown event handling mode (code: %d)", mode);
+  default:
+    ERR("Unknown event handling mode (code: %d)", mode);
   }
 }
 
@@ -1102,11 +1104,21 @@ on_text_cb(void *p_gw,
     info->loginfo.counter);
 
   switch (gw->payload->opcode) {
-  case DISCORD_GATEWAY_DISPATCH: on_dispatch(gw); break;
-  case DISCORD_GATEWAY_INVALID_SESSION: on_invalid_session(gw); break;
-  case DISCORD_GATEWAY_RECONNECT: on_reconnect(gw); break;
-  case DISCORD_GATEWAY_HELLO: on_hello(gw); break;
-  case DISCORD_GATEWAY_HEARTBEAT_ACK: on_heartbeat_ack(gw); break;
+  case DISCORD_GATEWAY_DISPATCH:
+    on_dispatch(gw);
+    break;
+  case DISCORD_GATEWAY_INVALID_SESSION:
+    on_invalid_session(gw);
+    break;
+  case DISCORD_GATEWAY_RECONNECT:
+    on_reconnect(gw);
+    break;
+  case DISCORD_GATEWAY_HELLO:
+    on_hello(gw);
+    break;
+  case DISCORD_GATEWAY_HEARTBEAT_ACK:
+    on_heartbeat_ack(gw);
+    break;
   default:
     logconf_error(&gw->conf, "Not yet implemented Gateway Event (code: %d)",
                   gw->payload->opcode);

@@ -1284,9 +1284,10 @@ discord_gateway_cleanup(struct discord_gateway *gw)
   free(gw->user_cmd);
 }
 
-/* the event loop to serve the events sent by Discord */
+/* the event loop to serve the events sent by Discord 
+ * TODO: move to discord-loop.c */
 static ORCAcode
-event_loop(struct discord_gateway *gw)
+_discord_gateway_loop(struct discord_gateway *gw)
 {
   /* get gateway bot info */
   struct sized_buffer json = { 0 };
@@ -1324,10 +1325,16 @@ event_loop(struct discord_gateway *gw)
 
   ws_start(gw->ws, NULL);
   while (1) {
+    /* prepare pending requests */
+    discord_adapter_prepare(&CLIENT(gw)->adapter);
+
     if (!ws_perform(gw->ws, 5)) break; /* exit event loop */
     if (!gw->status->is_ready) continue; /* wait until on_ready() */
 
     /* connection is established */
+
+    /* check for requests completion */
+    discord_adapter_check(&CLIENT(gw)->adapter);
 
     /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/
@@ -1349,7 +1356,7 @@ discord_gateway_run(struct discord_gateway *gw)
   ORCAcode code;
 
   while (gw->reconnect->attempt < gw->reconnect->threshold) {
-    code = event_loop(gw);
+    code = _discord_gateway_loop(gw);
     if (code != ORCA_OK || !gw->reconnect->enable) {
       logconf_warn(&gw->conf, "Discord Gateway Shutdown");
       return code;

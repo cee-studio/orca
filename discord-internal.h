@@ -85,7 +85,7 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  *        fail or succeed
  * @param req_body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
- * @param http_method the method in opcode format of the request being sent
+ * @param method the method in opcode format of the request being sent
  * @param endpoint the format endpoint that be appended to base_url when
  *        performing a request, same behavior as printf()
  * @return a code for checking on how the transfer went ORCA_OK means the
@@ -97,9 +97,23 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
 ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              struct ua_resp_handle *resp_handle,
                              struct sized_buffer *req_body,
-                             enum http_method http_method,
+                             enum http_method method,
                              char endpoint_fmt[],
                              ...);
+
+/**
+ * @brief Prepare pending async requests
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ */
+void discord_adapter_prepare(struct discord_adapter *adapter);
+
+/**
+ * @brief Check requests status
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ */
+void discord_adapter_check(struct discord_adapter *adapter);
 
 /**
  * @brief The ratelimiting handler structure
@@ -182,16 +196,20 @@ struct discord_request {
   struct discord_adapter *adapter;
   /** the callback to be triggered on request completion */
   discord_async_cb callback;
-  /** the request's route */
-  struct discord_route *route;
+  /** the request's bucket */
+  struct discord_bucket *bucket;
   /** the request's response handle */
   struct ua_resp_handle resp_handle;
   /** the request's request body @note buffer is kept and recycled */
   struct sized_buffer req_body;
   /** the request's http method */
-  enum http_method http_method;
+  enum http_method method;
   /** the request's endpoint */
   char endpoint[2048];
+  /** helper buf for _discord_adapter_get_route() */
+  char _buf[32];
+  /** the request's route */
+  const char *route;
   /** the connection handler assigned at discord_adapter_prepare() */
   struct ua_conn *conn;
   /** the request bucket's queue entry */

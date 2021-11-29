@@ -106,7 +106,7 @@ _discord_request_reset(struct discord_request *cxt)
 {
   discord_cleanup(CLIENT(cxt->adapter));
   cxt->adapter = NULL;
-  cxt->route = NULL;
+  cxt->bucket = NULL;
   memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
   cxt->conn = NULL;
@@ -117,23 +117,19 @@ _discord_request_populate(struct discord_request *cxt,
                           struct discord_adapter *adapter,
                           struct ua_resp_handle *resp_handle,
                           struct sized_buffer *req_body,
-                          enum http_method http_method,
+                          enum http_method method,
                           char endpoint[])
 {
-  /* pass to _discord_adapter_get_route() for reentrancy */
-  char buf[32];
-  /* bucket key, pointer to either 'endpoint' or 'buf' */
-  const char *route = _discord_adapter_get_route(endpoint, buf);
-  /* route pertaining to the request */
-  struct discord_route *r = discord_route_get(adapter->ratelimit, route);
-
   cxt->adapter = &(discord_clone(CLIENT(adapter))->adapter);
-  cxt->route = r;
+  cxt->method = method;
   if (resp_handle) {
+    /* copy response handle */
     memcpy(&cxt->resp_handle, resp_handle, sizeof(cxt->resp_handle));
   }
   if (req_body) {
+    /* copy request body */
     if (req_body->size > cxt->req_body.size) {
+      /* needs to increase buffer size */
       void *tmp = realloc(cxt->req_body.start, req_body->size);
       ASSERT_S(tmp != NULL, "Out of memory");
 
@@ -142,7 +138,12 @@ _discord_request_populate(struct discord_request *cxt,
     }
     memcpy(cxt->req_body.start, req_body->start, req_body->size);
   }
+  /* copy endpoint over to cxt */
   memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
+  /* bucket key, pointer to either 'endpoint' or 'buf' */
+  cxt->route = _discord_adapter_get_route(cxt->endpoint, cxt->_buf);
+  /* bucket pertaining to the request */
+  cxt->bucket = discord_bucket_get(adapter->ratelimit, cxt->route);
 }
 
 /* return true if there should be a retry attempt */
@@ -214,7 +215,7 @@ static ORCAcode
 _discord_adapter_enqueue(struct discord_adapter *adapter,
                          struct ua_resp_handle *resp_handle,
                          struct sized_buffer *req_body,
-                         enum http_method http_method,
+                         enum http_method method,
                          char endpoint[])
 {
   /* request context to be enqueued */
@@ -233,7 +234,7 @@ _discord_adapter_enqueue(struct discord_adapter *adapter,
     _discord_request_reset(cxt);
   }
   /* populate request handler */
-  _discord_request_populate(cxt, adapter, resp_handle, req_body, http_method,
+  _discord_request_populate(cxt, adapter, resp_handle, req_body, method,
                             endpoint);
   /* put request handler on hold */
   QUEUE_INSERT_TAIL(&adapter->queue.hold, &cxt->entry);
@@ -252,27 +253,26 @@ discord_adapter_prepare(struct discord_adapter *adapter)
     cxt = QUEUE_DATA(q, struct discord_request, entry);
     QUEUE_REMOVE(q);
     /* TODO: move 'q' to a tmp QUEUE */
-    /* TODO: pthread_mutex_try_lock(&cxt->route->bucket->lock) */
+    /* TODO: pthread_mutex_try_lock(&cxt->bucket->lock) */
 
-    delay_ms =
-      discord_bucket_get_cooldown(adapter->ratelimit, cxt->route->bucket);
+    delay_ms = discord_bucket_get_cooldown(adapter->ratelimit, cxt->bucket);
     if (delay_ms > 0) {
       logconf_info(&adapter->ratelimit->conf,
-                   "[%.4s] RATELIMITING (timeout %ld ms)",
-                   cxt->route->bucket->hash, delay_ms);
+                   "[%.4s] RATELIMITING (timeout %ld ms)", cxt->bucket->hash,
+                   delay_ms);
       /* TODO: register timeout callback for 'cxt' */
       continue;
     }
     cxt->conn = ua_conn_start(adapter->ua);
     ehandle = ua_conn_curl_easy_get(cxt->conn);
     ua_conn_setup(cxt->adapter->ua, cxt->conn, &cxt->resp_handle,
-                  &cxt->req_body, cxt->http_method, cxt->endpoint);
+                  &cxt->req_body, cxt->method, cxt->endpoint);
     /* link 'cxt' to 'ehandle' for easy retrieval */
     curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
     /* let curl begin transfer */
     curl_multi_add_handle(CLIENT(adapter)->mhandle, ehandle);
     /* remove 'q' from the tmp QUEUE */
-    /* TODO: pthread_mutex_unlock(&cxt->route->bucket->lock) */
+    /* TODO: pthread_mutex_unlock(&cxt->bucket->lock) */
   }
   /* TODO: if not empty, prepend 'hold' queue with tmp QUEUE */
 }
@@ -291,26 +291,27 @@ discord_adapter_check(struct discord_adapter *adapter)
     int msgq = 0;
     curlmsg = curl_multi_info_read(mhandle, &msgq);
 
-    if (curlmsg && (CURLMSG_DONE == curlmsg->msg)) {
-      ehandle = curlmsg->easy_handle;
-      /* get request handler assigned to this easy handle */
-      curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
-      ua_info_cleanup(&cxt->adapter->err.info);
+    if (!curlmsg) break;
+    if (CURLMSG_DONE != curlmsg->msg) continue;
 
-      /* check request results and call user-callbacks accordingly */
-      code = ua_conn_get_results(cxt->adapter->ua, cxt->conn,
-                                 &cxt->adapter->err.info);
+    ehandle = curlmsg->easy_handle;
+    /* get request handler assigned to this easy handle */
+    curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
+    ua_info_cleanup(&cxt->adapter->err.info);
 
-      /* reset conn for next iteration */
-      ua_conn_stop(adapter->ua, cxt->conn);
+    /* check request results and call user-callbacks accordingly */
+    code = ua_conn_get_results(cxt->adapter->ua, cxt->conn,
+                               &cxt->adapter->err.info);
 
-      retry = (ORCA_HTTP_CODE == code)
-                ? _discord_adapter_get_status(cxt->adapter, &code)
-                : false;
+    /* reset conn for next iteration */
+    ua_conn_stop(adapter->ua, cxt->conn);
 
-      discord_bucket_build(adapter->ratelimit, cxt->route->bucket,
-                           cxt->route->route, code, &cxt->adapter->err.info);
-    }
+    retry = (ORCA_HTTP_CODE == code)
+              ? _discord_adapter_get_status(cxt->adapter, &code)
+              : false;
+
+    discord_bucket_build(adapter->ratelimit, cxt->bucket, cxt->route, code,
+                         &cxt->adapter->err.info);
 
     if (retry) {
       /* add request handler to 'hold' queue for retry */
@@ -333,7 +334,7 @@ static ORCAcode
 _discord_adapter_request(struct discord_adapter *adapter,
                          struct ua_resp_handle *resp_handle,
                          struct sized_buffer *req_body,
-                         enum http_method http_method,
+                         enum http_method method,
                          char endpoint[])
 {
   /* pass to _discord_adapter_get_route() for reentrancy */
@@ -369,7 +370,7 @@ _discord_adapter_request(struct discord_adapter *adapter,
     }
 
     code = ua_run(adapter->ua, &adapter->err.info, &_resp_handle, req_body,
-                  http_method, endpoint);
+                  method, endpoint);
 
     retry = (ORCA_HTTP_CODE == code)
               ? _discord_adapter_get_status(adapter, &code)
@@ -388,7 +389,7 @@ ORCAcode
 discord_adapter_run(struct discord_adapter *adapter,
                     struct ua_resp_handle *resp_handle,
                     struct sized_buffer *req_body,
-                    enum http_method http_method,
+                    enum http_method method,
                     char endpoint_fmt[],
                     ...)
 {
@@ -408,9 +409,10 @@ discord_adapter_run(struct discord_adapter *adapter,
   if (true == CLIENT(adapter)->async.enable) {
     /* disable async for next request */
     CLIENT(adapter)->async.enable = false;
-    return _discord_adapter_enqueue(adapter, resp_handle, req_body,
-                                    http_method, endpoint);
+    /* enqueue request */
+    return _discord_adapter_enqueue(adapter, resp_handle, req_body, method,
+                                    endpoint);
   }
-  return _discord_adapter_request(adapter, resp_handle, req_body, http_method,
+  return _discord_adapter_request(adapter, resp_handle, req_body, method,
                                   endpoint);
 }

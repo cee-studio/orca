@@ -54,30 +54,18 @@ https://en.wikipedia.org/wiki/List_of_HTTP_status_codes */
 #define UA_MAX_HEADER_PAIRS 100 + 1
 
 /** @brief Callback for object to be loaded by api response */
-typedef void (*load_obj_cb)(char *str, size_t len, void *p_obj);
-
-/**
- * @brief Callback for object to be loaded by api response, with a optional
- * user context
- */
-typedef void (*cxt_load_obj_cb)(void *cxt, char *str, size_t len, void *p_obj);
+typedef void (*ua_load_obj_cb)(char *str, size_t len, void *p_obj);
 
 /** @brief User callback to be called on request completion */
 struct ua_resp_handle {
-  /** the context for cxt_ok_cb; */
-  void *cxt;
   /** callback called when a successful transfer occurs */
-  load_obj_cb ok_cb;
+  ua_load_obj_cb ok_cb;
   /** the pointer to be passed to ok_cb */
   void *ok_obj;
   /** callback called when a failed transfer occurs */
-  load_obj_cb err_cb;
+  ua_load_obj_cb err_cb;
   /** the pointer to be passed to err_cb */
   void *err_obj;
-  /** ok callback with an execution context */
-  cxt_load_obj_cb cxt_ok_cb;
-  /** err callback with an execution context */
-  cxt_load_obj_cb cxt_err_cb;
 };
 
 /** @brief Structure for storing the request's response header */

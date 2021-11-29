@@ -731,11 +731,6 @@ ua_conn_get_results(struct user_agent *ua,
       (*conn->resp_handle.err_cb)(conn->info.body.buf, conn->info.body.len,
                                   conn->resp_handle.err_obj);
     }
-    else if (conn->resp_handle.cxt_err_cb) {
-      (*conn->resp_handle.cxt_err_cb)(conn->resp_handle.cxt,
-                                      conn->info.body.buf, conn->info.body.len,
-                                      conn->resp_handle.err_obj);
-    }
     code = ORCA_HTTP_CODE;
   }
   else if (conn->info.httpcode >= 400) {
@@ -748,11 +743,6 @@ ua_conn_get_results(struct user_agent *ua,
     if (conn->resp_handle.err_cb) {
       (*conn->resp_handle.err_cb)(conn->info.body.buf, conn->info.body.len,
                                   conn->resp_handle.err_obj);
-    }
-    else if (conn->resp_handle.cxt_err_cb) {
-      (*conn->resp_handle.cxt_err_cb)(conn->resp_handle.cxt,
-                                      conn->info.body.buf, conn->info.body.len,
-                                      conn->resp_handle.err_obj);
     }
     code = ORCA_HTTP_CODE;
   }
@@ -774,11 +764,6 @@ ua_conn_get_results(struct user_agent *ua,
     if (conn->resp_handle.ok_cb) {
       (*conn->resp_handle.ok_cb)(conn->info.body.buf, conn->info.body.len,
                                  conn->resp_handle.ok_obj);
-    }
-    else if (conn->resp_handle.cxt_ok_cb) {
-      (*conn->resp_handle.cxt_ok_cb)(conn->resp_handle.cxt,
-                                     conn->info.body.buf, conn->info.body.len,
-                                     conn->resp_handle.ok_obj);
     }
     code = ORCA_OK;
   }

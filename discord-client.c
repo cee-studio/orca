@@ -560,7 +560,10 @@ discord_get_ping(struct discord *client)
 uint64_t
 discord_timestamp(struct discord *client)
 {
-  return ws_timestamp(client->gw.ws);
+  /* get WebSockets internal timestamp if available */
+  if (WS_CONNECTED == ws_get_status(client->gw.ws))
+    return ws_timestamp(client->gw.ws);
+  return cee_timestamp_ms();
 }
 
 struct logconf *

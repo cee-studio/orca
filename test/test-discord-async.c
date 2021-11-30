@@ -52,6 +52,37 @@ void on_ping(struct discord *client,
                          NULL);
 }
 
+void on_spam1(struct discord *client,
+              const struct discord_user *bot,
+              const struct discord_message *msg)
+{
+  if (msg->author->bot) return;
+
+  char text[32];
+  for (int i=0; i < 5; ++i) {
+    struct discord_create_message_params params = { .content = text };
+
+    snprintf(text, sizeof(text), "%d", i);
+    discord_create_message(client, msg->channel_id, &params, NULL);
+  }
+}
+
+void on_spam2(struct discord *client,
+              const struct discord_user *bot,
+              const struct discord_message *msg)
+{
+  if (msg->author->bot) return;
+
+  char text[32];
+  for (int i=0; i < 5; ++i) {
+    struct discord_create_message_params params = { .content = text };
+
+    snprintf(text, sizeof(text), "%d", i);
+    discord_set_async(client, on_message);
+    discord_create_message(client, msg->channel_id, &params, NULL);
+  }
+}
+
 int main(int argc, char *argv[])
 {
   const char *config_file;
@@ -68,6 +99,8 @@ int main(int argc, char *argv[])
   discord_set_on_ready(client, &on_ready);
   discord_set_on_command(client, "disconnect", &on_disconnect);
   discord_set_on_command(client, "ping", &on_ping);
+  discord_set_on_command(client, "spam1", &on_spam1);
+  discord_set_on_command(client, "spam2", &on_spam2);
 
   discord_run(client);
 

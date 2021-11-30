@@ -147,11 +147,16 @@ long
 discord_bucket_get_cooldown(struct discord_ratelimit *ratelimit,
                             struct discord_bucket *b)
 {
+  /* current timestamp */
+  u64_unix_ms_t now;
+  /* global delay */
+  u64_unix_ms_t global;
+  /* total delay */
+  long delay_ms = 0L;
+
   if (b == ratelimit->b_null) return 0L;
 
-  u64_unix_ms_t now = cee_timestamp_ms();
-  u64_unix_ms_t global = 0ULL;
-  long delay_ms = 0L;
+  now = cee_timestamp_ms();
 
   if (b->remaining < 1 && b->reset_tstamp > now) {
     delay_ms = (long)(b->reset_tstamp - now);
@@ -209,40 +214,32 @@ discord_bucket_get(struct discord_ratelimit *ratelimit, const char route[])
 static void
 _discord_bucket_populate(struct discord_ratelimit *ratelimit,
                          struct discord_bucket *b,
-                         ORCAcode code,
                          struct ua_info *info)
 {
   struct sized_buffer reset, remaining, reset_after;
 
-  if (code != ORCA_OK) {
-    logconf_debug(&ratelimit->conf, "[%.4s] Request failed", b->hash);
-    return;
-  }
-
-  /* fetch header individual fields */
+  /* fetch individual header fields */
   reset = ua_info_header_get(info, "x-ratelimit-reset");
-  remaining = ua_info_header_get(info, "x-ratelimit-remaining");
   reset_after = ua_info_header_get(info, "x-ratelimit-reset-after");
-
-  b->remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
+  remaining = ua_info_header_get(info, "x-ratelimit-remaining");
 
   /* use X-Ratelimit-Reset-After if available, otherwise use
    * X-Ratelimit-Reset */
   if (reset_after.size) {
     struct sized_buffer global =
       ua_info_header_get(info, "x-ratelimit-global");
-    u64_unix_ms_t reset =
+    u64_unix_ms_t reset_tstamp =
       cee_timestamp_ms() + 1000 * strtod(reset_after.start, NULL);
 
     if (global.size) {
       /* lock all buckets */
       pthread_rwlock_wrlock(&ratelimit->rwlock);
-      ratelimit->global = reset;
+      ratelimit->global = reset_tstamp;
       pthread_rwlock_unlock(&ratelimit->rwlock);
     }
     else {
       /* lock single bucket, timeout at discord_adapter_run() */
-      b->reset_tstamp = reset;
+      b->reset_tstamp = reset_tstamp;
     }
   }
   else if (reset.size) {
@@ -262,6 +259,9 @@ _discord_bucket_populate(struct discord_ratelimit *ratelimit,
       cee_timestamp_ms() + (1000 * strtod(reset.start, NULL) - offset);
   }
 
+  /* get remaining buckets */
+  b->remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
+
   logconf_debug(&ratelimit->conf,
                 "[%.4s] Reset = %" PRIu64 " | Remaining = %d", b->hash,
                 b->reset_tstamp, b->remaining);
@@ -272,14 +272,13 @@ void
 discord_bucket_build(struct discord_ratelimit *ratelimit,
                      struct discord_bucket *b,
                      const char route[],
-                     ORCAcode code,
                      struct ua_info *info)
 {
   if (b == ratelimit->b_null) {
     struct sized_buffer hash = ua_info_header_get(info, "x-ratelimit-bucket");
     if (!hash.size) {
-      /* Discord doesn't provide a bucket for this route.
-       * assign it to a special bucket for routes without a bucket */
+      /* Discord doesn't provide a bucket for this route,
+       * assign it to a special bucket for leftover routes */
       struct discord_route *r;
 
       r = _discord_route_init(ratelimit, route, ratelimit->b_miss);
@@ -292,13 +291,14 @@ discord_bucket_build(struct discord_ratelimit *ratelimit,
 
       return;
     }
-    else if (b == ratelimit->b_miss) {
-      /* nothing to do in this case */
-      return;
-    }
+
     /* first time using route, create and/or assign a bucket to it */
     b = _discord_bucket_find(ratelimit, &hash, route);
   }
+  else if (b == ratelimit->b_miss) {
+    /* leftover route, nothing to do in this case */
+    return;
+  }
   /* update the bucket rate limit values */
-  _discord_bucket_populate(ratelimit, b, code, info);
+  _discord_bucket_populate(ratelimit, b, info);
 }

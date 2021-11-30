@@ -65,6 +65,7 @@ discord_adapter_init(struct discord_adapter *adapter,
   /* initialize request queues (for async purposes) */
   QUEUE_INIT(&adapter->queue.hold);
   QUEUE_INIT(&adapter->queue.idle);
+  heap_init(&adapter->queue.heap);
 }
 
 void
@@ -76,6 +77,7 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
   ua_info_cleanup(&adapter->err.info);
   /* cleanup ratelimit handle */
   discord_ratelimit_cleanup(adapter->ratelimit);
+  /* TODO: cleanup queues */
 }
 
 /* in case 'endpoint' has a major param, it will be written into 'buf' */
@@ -120,8 +122,9 @@ _discord_request_populate(struct discord_request *cxt,
                           enum http_method method,
                           char endpoint[])
 {
-  cxt->adapter = &(discord_clone(CLIENT(adapter))->adapter);
   cxt->method = method;
+  cxt->callback = CLIENT(adapter)->async.callback;
+  cxt->adapter = &(discord_clone(CLIENT(adapter))->adapter);
   if (resp_handle) {
     /* copy response handle */
     memcpy(&cxt->resp_handle, resp_handle, sizeof(cxt->resp_handle));
@@ -184,7 +187,7 @@ _discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
       global = adapter->ratelimit->global;
       pthread_rwlock_unlock(&adapter->ratelimit->rwlock);
 
-      delay_ms = global - cee_timestamp_ms();
+      delay_ms = global - discord_timestamp(CLIENT(adapter));
 
       logconf_warn(&adapter->conf,
                    "429 GLOBAL RATELIMITING (wait: %ld ms) : %s", delay_ms,
@@ -197,6 +200,7 @@ _discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
                    delay_ms, message);
     }
 
+    /* TODO: this will block the event-loop even for non-global ratelimits */
     cee_sleep_ms(delay_ms);
 
     return true;
@@ -204,7 +208,7 @@ _discord_adapter_get_status(struct discord_adapter *adapter, ORCAcode *code)
   default:
     if (adapter->err.info.httpcode >= 500) {
       /* server related error, sleep for 5 seconds */
-      cee_sleep_ms(5000);
+      /* TODO: implement retry up to X amount logic */
     }
     return true;
   }
@@ -310,7 +314,7 @@ discord_adapter_check(struct discord_adapter *adapter)
               ? _discord_adapter_get_status(cxt->adapter, &code)
               : false;
 
-    discord_bucket_build(adapter->ratelimit, cxt->bucket, cxt->route, code,
+    discord_bucket_build(adapter->ratelimit, cxt->bucket, cxt->route,
                          &cxt->adapter->err.info);
 
     if (retry) {
@@ -376,8 +380,7 @@ _discord_adapter_request(struct discord_adapter *adapter,
               ? _discord_adapter_get_status(adapter, &code)
               : false;
 
-    discord_bucket_build(adapter->ratelimit, b, route, code,
-                         &adapter->err.info);
+    discord_bucket_build(adapter->ratelimit, b, route, &adapter->err.info);
   } while (retry);
   pthread_mutex_unlock(&b->lock);
 

@@ -240,8 +240,8 @@ struct discord_bucket {
   int remaining;
   /** timestamp of when cooldown timer resets */
   u64_unix_ms_t reset_tstamp;
-  /** previous timestamp for when headers arrive out of order */
-  u64_unix_ms_t prev_tstamp;
+  /** Discord's server time */
+  u64_unix_ms_t server;
   /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
   /** makes this structure hashable */

@@ -216,12 +216,25 @@ _discord_bucket_populate(struct discord_ratelimit *ratelimit,
                          struct discord_bucket *b,
                          struct ua_info *info)
 {
-  struct sized_buffer reset, remaining, reset_after;
+  struct sized_buffer reset, remaining, reset_after, date;
+  u64_unix_ms_t _server;
+  int _remaining;
 
   /* fetch individual header fields */
   reset = ua_info_header_get(info, "x-ratelimit-reset");
   reset_after = ua_info_header_get(info, "x-ratelimit-reset-after");
   remaining = ua_info_header_get(info, "x-ratelimit-remaining");
+  date = ua_info_header_get(info, "date");
+
+  /* remaining requests before ratelimiting */
+  _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
+  /* Discord's server time in milliseconds */
+  _server = 1000 * curl_getdate(date.start, NULL);
+
+  if (_remaining > b->remaining && _server <= b->server) {
+    /* avoid populating bucket with out of order requests */
+    return;
+  }
 
   /* use X-Ratelimit-Reset-After if available, otherwise use
    * X-Ratelimit-Reset */
@@ -243,24 +256,21 @@ _discord_bucket_populate(struct discord_ratelimit *ratelimit,
     }
   }
   else if (reset.size) {
-    struct sized_buffer date = ua_info_header_get(info, "date");
-    /* the Discord time in milliseconds */
-    u64_unix_ms_t server = 1000 * curl_getdate(date.start, NULL);
     /* get approximate elapsed time since request */
     struct PsnipClockTimespec ts;
     /* the Discord time + request's elapsed time */
     u64_unix_ms_t offset;
 
     psnip_clock_wall_get_time(&ts);
-    offset = server + ts.nanoseconds / 1000000;
+    offset = _server + ts.nanoseconds / 1000000;
     /* reset timestamp =
      * (system time) + (diff between Discord's reset timestamp and offset) */
     b->reset_tstamp =
       cee_timestamp_ms() + (1000 * strtod(reset.start, NULL) - offset);
   }
 
-  /* get remaining buckets */
-  b->remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
+  b->remaining = _remaining;
+  b->server = _server;
 
   logconf_debug(&ratelimit->conf,
                 "[%.4s] Reset = %" PRIu64 " | Remaining = %d", b->hash,

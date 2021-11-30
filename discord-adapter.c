@@ -65,7 +65,32 @@ discord_adapter_init(struct discord_adapter *adapter,
   /* initialize request queues (for async purposes) */
   QUEUE_INIT(&adapter->queue.hold);
   QUEUE_INIT(&adapter->queue.idle);
+#if 0
   heap_init(&adapter->queue.heap);
+#endif
+}
+
+static void _discord_request_cleanup(struct discord_request *cxt);
+
+static void
+_discord_adapter_queues_cleanup(struct discord_adapter *adapter)
+{
+  QUEUE *queues[] = { &adapter->queue.hold, &adapter->queue.idle };
+  int i;
+
+  for (i = 0; i < sizeof(queues) / sizeof(QUEUE *); ++i) {
+    QUEUE queue;
+    QUEUE *q;
+    struct discord_request *cxt;
+
+    QUEUE_MOVE(queues[i], &queue);
+    while (!QUEUE_EMPTY(&queue)) {
+      q = QUEUE_HEAD(&queue);
+      cxt = QUEUE_DATA(q, struct discord_request, entry);
+      QUEUE_REMOVE(&cxt->entry);
+      _discord_request_cleanup(cxt);
+    }
+  }
 }
 
 void
@@ -77,7 +102,8 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
   ua_info_cleanup(&adapter->err.info);
   /* cleanup ratelimit handle */
   discord_ratelimit_cleanup(adapter->ratelimit);
-  /* TODO: cleanup queues */
+  /* cleanup queues */
+  _discord_adapter_queues_cleanup(adapter);
 }
 
 /* in case 'endpoint' has a major param, it will be written into 'buf' */
@@ -112,6 +138,14 @@ _discord_request_reset(struct discord_request *cxt)
   memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
   cxt->conn = NULL;
+}
+
+static void
+_discord_request_cleanup(struct discord_request *cxt)
+{
+  if (cxt->req_body.start) free(cxt->req_body.start);
+  _discord_request_reset(cxt);
+  free(cxt);
 }
 
 static void
@@ -233,8 +267,8 @@ _discord_adapter_enqueue(struct discord_adapter *adapter,
   else {
     /* recycle idle request handler */
     QUEUE *q = QUEUE_HEAD(&adapter->queue.idle);
-    QUEUE_REMOVE(q);
     cxt = QUEUE_DATA(q, struct discord_request, entry);
+    QUEUE_REMOVE(&cxt->entry);
     _discord_request_reset(cxt);
   }
   /* populate request handler */
@@ -255,7 +289,7 @@ discord_adapter_prepare(struct discord_adapter *adapter)
   while (!QUEUE_EMPTY(&adapter->queue.hold)) {
     QUEUE *q = QUEUE_HEAD(&adapter->queue.hold);
     cxt = QUEUE_DATA(q, struct discord_request, entry);
-    QUEUE_REMOVE(q);
+    QUEUE_REMOVE(&cxt->entry);
     /* TODO: move 'q' to a tmp QUEUE */
     /* TODO: pthread_mutex_try_lock(&cxt->bucket->lock) */
 
@@ -264,7 +298,8 @@ discord_adapter_prepare(struct discord_adapter *adapter)
       logconf_info(&adapter->ratelimit->conf,
                    "[%.4s] RATELIMITING (timeout %ld ms)", cxt->bucket->hash,
                    delay_ms);
-      /* TODO: register timeout callback for 'cxt' */
+      /* TODO: register timeout callback for 'cxt' (make idle for now) */
+      QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
       continue;
     }
     cxt->conn = ua_conn_start(adapter->ua);

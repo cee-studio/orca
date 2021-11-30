@@ -265,14 +265,30 @@ on_text_cb(void *p_vc,
     opcode_print(vc->payload.opcode), len);
 
   switch (vc->payload.opcode) {
-  case DISCORD_VOICE_READY: on_ready(vc); break;
-  case DISCORD_VOICE_SESSION_DESCRIPTION: on_session_description(vc); break;
-  case DISCORD_VOICE_SPEAKING: on_speaking(vc); break;
-  case DISCORD_VOICE_HEARTBEAT_ACK: on_heartbeat_ack(vc); break;
-  case DISCORD_VOICE_HELLO: on_hello(vc); break;
-  case DISCORD_VOICE_RESUMED: on_resumed(vc); break;
-  case DISCORD_VOICE_CLIENT_DISCONNECT: on_client_disconnect(vc); break;
-  case DISCORD_VOICE_CODEC: on_codec(vc); break;
+  case DISCORD_VOICE_READY:
+    on_ready(vc);
+    break;
+  case DISCORD_VOICE_SESSION_DESCRIPTION:
+    on_session_description(vc);
+    break;
+  case DISCORD_VOICE_SPEAKING:
+    on_speaking(vc);
+    break;
+  case DISCORD_VOICE_HEARTBEAT_ACK:
+    on_heartbeat_ack(vc);
+    break;
+  case DISCORD_VOICE_HELLO:
+    on_hello(vc);
+    break;
+  case DISCORD_VOICE_RESUMED:
+    on_resumed(vc);
+    break;
+  case DISCORD_VOICE_CLIENT_DISCONNECT:
+    on_client_disconnect(vc);
+    break;
+  case DISCORD_VOICE_CODEC:
+    on_codec(vc);
+    break;
   default:
     logconf_error(&vc->conf, "Not yet implemented Voice Event(code: %d)",
                   vc->payload.opcode);
@@ -332,11 +348,11 @@ _discord_voice_init(struct discord_voice *new_vc,
       .on_close = &on_close_cb,
     };
     struct ws_attr attr = {
-      .conf = new_vc->p_client->conf,
+      .conf = &client->conf,
     };
 
     new_vc->ws = ws_init(&cbs, &attr);
-    logconf_branch(&new_vc->conf, client->conf, "DISCORD_VOICE");
+    logconf_branch(&new_vc->conf, &client->conf, "DISCORD_VOICE");
 
     new_vc->reconnect.threshold = 5; /**< hard limit for now */
     new_vc->reconnect.enable = true;
@@ -463,7 +479,7 @@ discord_voice_join(struct discord *client,
   pthread_mutex_unlock(&client_lock);
 
   if (!vc) {
-    logconf_error(client->conf,
+    logconf_error(&client->conf,
                   "All VC are busy, cannot send VOICE_STATE_UPDATE");
     /* run out of vcs connections, report error to users */
     return DISCORD_VOICE_EXHAUST_CAPACITY;
@@ -511,7 +527,7 @@ _discord_on_voice_state_update(struct discord *client,
   if (!vc) {
     if (vs->channel_id) {
       logconf_fatal(
-        client->conf,
+        &client->conf,
         "This should not happen, cannot find a discord_voice object");
       /* report this */
     }
@@ -618,7 +634,7 @@ _discord_on_voice_server_update(struct discord *client,
 
   pthread_mutex_unlock(&client_lock);
   if (!vc) {
-    logconf_fatal(client->conf, "Couldn't match voice server to client");
+    logconf_fatal(&client->conf, "Couldn't match voice server to client");
     return;
   }
 
@@ -717,9 +733,8 @@ noop_on_udp_server_connected(struct discord_voice *a)
 void
 discord_voice_connections_init(struct discord *client)
 {
-  client->gw.user_cmd->cbs.on_voice_state_update = noop_voice_state_update_cb;
-  client->gw.user_cmd->cbs.on_voice_server_update =
-    noop_voice_server_update_cb;
+  client->gw.cmds.cbs.on_voice_state_update = noop_voice_state_update_cb;
+  client->gw.cmds.cbs.on_voice_server_update = noop_voice_server_update_cb;
 
   client->voice_cbs.on_idle = noop_idle_cb;
   client->voice_cbs.on_ready = noop_on_ready;

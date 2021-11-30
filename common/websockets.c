@@ -109,8 +109,8 @@ _ws_curl_debug_dump(const char *text,
       fprintf(stream, "%c",
               (ptr[i + c] >= 0x20) && (ptr[i + c] < 0x80) ? ptr[i + c] : '.');
       /* check again for 0D0A, to avoid an extra \n if it's at width */
-      if ((i + c + 2 < size) && ptr[i + c + 1] == 0x0D &&
-          ptr[i + c + 2] == 0x0A) {
+      if ((i + c + 2 < size) && ptr[i + c + 1] == 0x0D
+          && ptr[i + c + 2] == 0x0A) {
         i += (c + 3 - width);
         break;
       }
@@ -124,22 +124,35 @@ static int
 _ws_curl_debug_trace(
   CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
 {
+  const char *text;
   (void)handle;
   (void)userp;
 
-  const char *text;
   switch (type) {
   case CURLINFO_TEXT:
     fprintf(stderr, "== Info: %s", data);
     /* FALLTHROUGH */
-  default: return 0;
+  default:
+    return 0;
 
-  case CURLINFO_HEADER_OUT: text = "=> Send header"; break;
-  case CURLINFO_DATA_OUT: text = "=> Send data"; break;
-  case CURLINFO_SSL_DATA_OUT: text = "=> Send SSL data"; break;
-  case CURLINFO_HEADER_IN: text = "<= Recv header"; break;
-  case CURLINFO_DATA_IN: text = "<= Recv data"; break;
-  case CURLINFO_SSL_DATA_IN: text = "<= Recv SSL data"; break;
+  case CURLINFO_HEADER_OUT:
+    text = "=> Send header";
+    break;
+  case CURLINFO_DATA_OUT:
+    text = "=> Send data";
+    break;
+  case CURLINFO_SSL_DATA_OUT:
+    text = "=> Send SSL data";
+    break;
+  case CURLINFO_HEADER_IN:
+    text = "<= Recv header";
+    break;
+  case CURLINFO_DATA_IN:
+    text = "<= Recv data";
+    break;
+  case CURLINFO_SSL_DATA_IN:
+    text = "<= Recv SSL data";
+    break;
   }
 
   _ws_curl_debug_dump(text, stderr, (unsigned char *)data, size);
@@ -150,13 +163,16 @@ static int
 _ws_curl_tls_check(
   CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
 {
+  struct websockets *ws = userp;
   (void)handle;
   (void)data;
   (void)size;
 
-  if (CURLINFO_TEXT == type && strstr(data, "close notify (256)")) {
-    char reason[] = "TLS ended connection with a close notify (256)";
-    ws_close(userp, WS_CLOSE_REASON_ABRUPTLY, reason, sizeof(reason) - 1);
+  if (CURLINFO_TEXT == type && WS_CONNECTED == ws->status
+      && strstr(data, "close notify (256)"))
+  {
+    const char reason[] = "TLS ended connection with a close notify (256)";
+    ws_close(ws, WS_CLOSE_REASON_ABRUPTLY, reason, sizeof(reason));
   }
   return 0;
 }
@@ -180,7 +196,8 @@ ws_close_opcode_print(enum ws_close_reason opcode)
     CASE_RETURN_STR(WS_CLOSE_REASON_IANA_REGISTRY_END);
     CASE_RETURN_STR(WS_CLOSE_REASON_PRIVATE_START);
     CASE_RETURN_STR(WS_CLOSE_REASON_PRIVATE_END);
-  default: return NULL;
+  default:
+    return NULL;
   }
 }
 
@@ -192,7 +209,8 @@ _ws_status_print(enum ws_status status)
     CASE_RETURN_STR(WS_CONNECTED);
     CASE_RETURN_STR(WS_DISCONNECTING);
     CASE_RETURN_STR(WS_CONNECTING);
-  default: return NULL;
+  default:
+    return NULL;
   }
 }
 
@@ -397,7 +415,9 @@ _ws_check_action_cb(void *p_userdata,
     _ws_close(ws, ws->pending_close.code, ws->pending_close.reason);
   /* fall-through */
   case WS_ACTION_NONE:
-  default: ret = 0; break;
+  default:
+    ret = 0;
+    break;
   case WS_ACTION_END_CLOSE:
     /* END WEBSOCKETS CONNECTION */
     ret = 1;

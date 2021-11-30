@@ -11,7 +11,7 @@ ORCAcode
 discord_get_current_user(struct discord *client, struct discord_user *p_user)
 {
   if (!p_user) {
-    logconf_error(client->conf, "Missing 'p_user'");
+    logconf_error(&client->conf, "Missing 'p_user'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -28,11 +28,11 @@ discord_get_user(struct discord *client,
                  struct discord_user *p_user)
 {
   if (!user_id) {
-    logconf_error(client->conf, "Missing 'user_id'");
+    logconf_error(&client->conf, "Missing 'user_id'");
     return ORCA_MISSING_PARAMETER;
   }
   if (!p_user) {
-    logconf_error(client->conf, "Missing 'p_user'");
+    logconf_error(&client->conf, "Missing 'p_user'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -49,7 +49,7 @@ discord_modify_current_user(struct discord *client,
                             struct discord_user *p_user)
 {
   if (!params) {
-    logconf_error(client->conf, "Missing 'params'");
+    logconf_error(&client->conf, "Missing 'params'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -77,7 +77,7 @@ sb_discord_get_current_user(struct discord *client,
                             struct sized_buffer *p_sb_user)
 {
   if (!p_sb_user) {
-    logconf_error(client->conf, "Missing 'p_sb_user'");
+    logconf_error(&client->conf, "Missing 'p_sb_user'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -93,7 +93,7 @@ discord_get_current_user_guilds(struct discord *client,
                                 NTL_T(struct discord_guild) * p_guilds)
 {
   if (!p_guilds) {
-    logconf_error(client->conf, "Missing 'p_guilds'");
+    logconf_error(&client->conf, "Missing 'p_guilds'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -108,7 +108,7 @@ ORCAcode
 discord_leave_guild(struct discord *client, const u64_snowflake_t guild_id)
 {
   if (!guild_id) {
-    logconf_error(client->conf, "Missing 'guild_id'");
+    logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -123,7 +123,7 @@ discord_create_dm(struct discord *client,
                   struct discord_channel *p_dm_channel)
 {
   if (!params) {
-    logconf_error(client->conf, "Missing 'params'");
+    logconf_error(&client->conf, "Missing 'params'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -145,15 +145,15 @@ discord_create_group_dm(struct discord *client,
                         struct discord_channel *p_dm_channel)
 {
   if (!params) {
-    logconf_error(client->conf, "Missing 'params'");
+    logconf_error(&client->conf, "Missing 'params'");
     return ORCA_MISSING_PARAMETER;
   }
   if (!params->access_tokens) {
-    logconf_error(client->conf, "Missing 'params.access_tokens'");
+    logconf_error(&client->conf, "Missing 'params.access_tokens'");
     return ORCA_MISSING_PARAMETER;
   }
   if (!params->nicks) {
-    logconf_error(client->conf, "Missing 'params.nicks'");
+    logconf_error(&client->conf, "Missing 'params.nicks'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -174,7 +174,7 @@ discord_get_user_connections(struct discord *client,
                              NTL_T(struct discord_connection) * p_connections)
 {
   if (!p_connections) {
-    logconf_error(client->conf, "Missing 'p_connections'");
+    logconf_error(&client->conf, "Missing 'p_connections'");
     return ORCA_MISSING_PARAMETER;
   }
 

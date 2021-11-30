@@ -21,6 +21,7 @@
 
 #include "uthash.h"
 #include "queue.h"
+#include "heap-inl.h"
 
 #include "discord-voice-connections.h"
 
@@ -47,6 +48,8 @@ struct discord_adapter {
     QUEUE hold;
     /** unused request handles (can be recycled) */
     QUEUE idle;
+    /** timeout requests (ratelimiting) */
+    struct heap heap;
   } queue;
   /** error storage context */
   struct {
@@ -237,6 +240,8 @@ struct discord_bucket {
   int remaining;
   /** timestamp of when cooldown timer resets */
   u64_unix_ms_t reset_tstamp;
+  /** previous timestamp for when headers arrive out of order */
+  u64_unix_ms_t prev_tstamp;
   /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
   /** makes this structure hashable */
@@ -272,14 +277,12 @@ struct discord_bucket *discord_bucket_get(struct discord_ratelimit *ratelimit,
  * @param ratelimit the ratelimit handler
  * @param bucket NULL when bucket is first discovered
  * @param route the route associated with the bucket
- * @param code numerical information for the current transfer
  * @param info informational struct containing details on the current transfer
  * @note If the bucket was just discovered it will be created here.
  */
 void discord_bucket_build(struct discord_ratelimit *ratelimit,
                           struct discord_bucket *bucket,
                           const char route[],
-                          ORCAcode code,
                           struct ua_info *info);
 
 struct discord_gateway_cmd_cbs {
@@ -409,7 +412,6 @@ struct discord_gateway {
   /** the session id (for resuming lost connections) */
   char session_id[512];
   struct {
-    char *url;
     int shards;
     struct discord_session_start_limit start_limit;
     /** active concurrent sessions */
@@ -438,10 +440,10 @@ struct discord_gateway {
     /** field 's' */
     int seq;
     /** field 't' */
-    char event_name[64];
+    char name[64];
     /** field 'd' */
-    struct sized_buffer event_data;
-  } * payload;
+    struct sized_buffer data;
+  } payload;
 
   /**
    * heartbeating (keep-alive) structure
@@ -456,7 +458,7 @@ struct discord_gateway {
     u64_unix_ms_t tstamp;
     /** latency calculated by HEARTBEAT and HEARTBEAT_ACK interval */
     int ping_ms;
-  } * hbeat;
+  } hbeat;
 
   /** user-commands structure */
   struct {
@@ -476,7 +478,7 @@ struct discord_gateway {
      *          @see discord_set_event_scheduler()
      */
     discord_event_scheduler_cb scheduler;
-  } * user_cmd;
+  } cmds;
 };
 
 /**
@@ -485,7 +487,7 @@ struct discord_gateway {
  */
 struct discord_event {
   /** the event name */
-  char *event_name;
+  char *name;
   /** a copy of payload data */
   struct sized_buffer data;
   /** the discord gateway client */
@@ -555,7 +557,7 @@ void discord_gateway_reconnect(struct discord_gateway *gw, bool resume);
 struct discord {
   /** @privatesection */
   /** DISCORD logging module */
-  struct logconf *conf;
+  struct logconf conf;
   /** whether this is the original client or a clone */
   bool is_original;
   /** async handling struct */

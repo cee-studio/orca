@@ -33,6 +33,19 @@ void on_disconnect(struct discord *client,
   discord_shutdown(client);
 }
 
+void on_reconnect(struct discord *client,
+                  const struct discord_user *bot,
+                  const struct discord_message *msg)
+{
+  if (msg->author->bot) return;
+
+  struct discord_create_message_params params = { .content =
+                                                    "Reconnecting ..." };
+  discord_create_message(client, msg->channel_id, &params, NULL);
+
+  discord_reconnect(client, true);
+}
+
 void on_spam(struct discord *client,
              const struct discord_user *bot,
              const struct discord_message *msg)
@@ -142,6 +155,7 @@ int main(int argc, char *argv[])
   discord_set_prefix(client, "!");
   discord_set_on_ready(client, &on_ready);
   discord_set_on_command(client, "disconnect", &on_disconnect);
+  discord_set_on_command(client, "reconnect", &on_reconnect);
   discord_set_on_command(client, "spam", &on_spam);
   discord_set_on_command(client, "stop", &on_stop);
   discord_set_on_command(client, "force_error", &on_force_error);

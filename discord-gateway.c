@@ -998,16 +998,23 @@ static void
 on_invalid_session(struct discord_gateway *gw)
 {
   const char *reason;
+  enum ws_close_reason opcode;
 
   gw->status->shutdown = true;
   gw->status->is_resumable =
     strncmp(gw->payload.data.start, "false", gw->payload.data.size);
   gw->reconnect->enable = true;
 
-  reason = gw->status->is_resumable ? "Invalid session, will attempt to resume"
-                                    : "Invalid session, can't resume";
+  if (gw->status->is_resumable) {
+    reason = "Invalid session, will attempt to resume";
+    opcode = WS_CLOSE_REASON_NO_REASON;
+  }
+  else {
+    reason = "Invalid session, can't resume";
+    opcode = WS_CLOSE_REASON_NORMAL;
+  }
 
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, SIZE_MAX);
+  ws_close(gw->ws, opcode, reason, SIZE_MAX);
 }
 
 static void
@@ -1019,7 +1026,7 @@ on_reconnect(struct discord_gateway *gw)
   gw->status->is_resumable = true;
   gw->reconnect->enable = true;
 
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
+  ws_close(gw->ws, WS_CLOSE_REASON_NO_REASON, reason, sizeof(reason));
 }
 
 static void
@@ -1352,10 +1359,12 @@ void
 discord_gateway_shutdown(struct discord_gateway *gw)
 {
   const char reason[] = "Client triggered shutdown";
+
   /* TODO: pthread_rwlock_wrlock() */
+  gw->reconnect->enable = false;
   gw->status->shutdown = true;
   gw->status->is_resumable = false;
-  gw->reconnect->enable = false;
+
   ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
@@ -1363,9 +1372,14 @@ void
 discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
 {
   const char reason[] = "Client triggered reconnect";
+  enum ws_close_reason opcode;
+
   /* TODO: pthread_rwlock_wrlock() */
+  gw->reconnect->enable = true;
   gw->status->shutdown = true;
   gw->status->is_resumable = resume;
-  gw->reconnect->enable = true;
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
+  opcode = gw->status->is_resumable ? WS_CLOSE_REASON_NO_REASON
+                                    : WS_CLOSE_REASON_NORMAL;
+
+  ws_close(gw->ws, opcode, reason, sizeof(reason));
 }

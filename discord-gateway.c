@@ -171,7 +171,7 @@ static void
 on_hello(struct discord_gateway *gw)
 {
   gw->hbeat.interval_ms = 0;
-  gw->hbeat.tstamp = cee_timestamp_ms();
+  gw->hbeat.tstamp = ws_timestamp(gw->ws);
 
   json_extract(gw->payload.data.start, gw->payload.data.size,
                "(heartbeat_interval):ld", &gw->hbeat.interval_ms);
@@ -1034,7 +1034,7 @@ on_heartbeat_ack(struct discord_gateway *gw)
 {
   /* get request / response interval in milliseconds */
   /* TODO: pthread_rwlock_wrlock() */
-  gw->hbeat.ping_ms = cee_timestamp_ms() - gw->hbeat.tstamp;
+  gw->hbeat.ping_ms = ws_timestamp(gw->ws) - gw->hbeat.tstamp;
   logconf_trace(&gw->conf, "PING: %d ms", gw->hbeat.ping_ms);
 }
 

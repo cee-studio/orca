@@ -13,6 +13,20 @@
 #define CLIENT(p_adapter)                                                     \
   ((struct discord *)((int8_t *)(p_adapter)-offsetof(struct discord, adapter)))
 
+/* get request context from heap node */
+#define CXT(p_node)                                                           \
+  ((struct discord_request *)((int8_t *)(p_node)-offsetof(                    \
+    struct discord_request, node)))
+
+static int
+timer_less_than(const struct heap_node *ha, const struct heap_node *hb)
+{
+  const struct discord_request *a = CXT(ha);
+  const struct discord_request *b = CXT(hb);
+
+  return a->timeout_ms <= b->timeout_ms;
+}
+
 /**
  * JSON ERROR CODES
  * https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
@@ -40,7 +54,10 @@ discord_adapter_init(struct discord_adapter *adapter,
                      struct logconf *conf,
                      struct sized_buffer *token)
 {
-  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
+  struct ua_attr attr = { 0 };
+
+  attr.conf = conf;
+  adapter->ua = ua_init(&attr);
   ua_set_url(adapter->ua, DISCORD_API_BASE_URL);
 
   if (!token->size) {
@@ -65,9 +82,7 @@ discord_adapter_init(struct discord_adapter *adapter,
   /* initialize request queues (for async purposes) */
   QUEUE_INIT(&adapter->queue.hold);
   QUEUE_INIT(&adapter->queue.idle);
-#if 0
   heap_init(&adapter->queue.heap);
-#endif
 }
 
 static void _discord_request_cleanup(struct discord_request *cxt);
@@ -279,6 +294,25 @@ _discord_adapter_enqueue(struct discord_adapter *adapter,
   return ORCA_OK;
 }
 
+/* handle request timeouts */
+void
+discord_adapter_timeouts(struct discord_adapter *adapter)
+{
+  struct discord_request *cxt;
+  struct heap_node *node;
+
+  while (1) {
+    node = heap_min(&adapter->queue.heap);
+    if (!node) break;
+
+    cxt = CXT(node);
+    if (cxt->timeout_ms > discord_timestamp(CLIENT(adapter))) break;
+
+    heap_remove(&adapter->queue.heap, node, timer_less_than);
+    QUEUE_INSERT_HEAD(&adapter->queue.hold, &cxt->entry);
+  }
+}
+
 void
 discord_adapter_prepare(struct discord_adapter *adapter)
 {
@@ -298,10 +332,14 @@ discord_adapter_prepare(struct discord_adapter *adapter)
       logconf_info(&adapter->ratelimit->conf,
                    "[%.4s] RATELIMITING (timeout %ld ms)", cxt->bucket->hash,
                    delay_ms);
-      /* TODO: register timeout callback for 'cxt' (make idle for now) */
-      QUEUE_INSERT_TAIL(&adapter->queue.idle, &cxt->entry);
+
+      cxt->timeout_ms = delay_ms + discord_timestamp(CLIENT(adapter));
+      heap_insert(&adapter->queue.heap, &cxt->node, &timer_less_than);
       continue;
     }
+
+    --cxt->bucket->remaining;
+
     cxt->conn = ua_conn_start(adapter->ua);
     ehandle = ua_conn_curl_easy_get(cxt->conn);
     ua_conn_setup(cxt->adapter->ua, cxt->conn, &cxt->resp_handle,
@@ -407,6 +445,8 @@ _discord_adapter_request(struct discord_adapter *adapter,
                    "[%.4s] RATELIMITING (wait %ld ms)", b->hash, delay_ms);
       cee_sleep_ms(delay_ms);
     }
+
+    --b->remaining;
 
     code = ua_run(adapter->ua, &adapter->err.info, &_resp_handle, req_body,
                   method, endpoint);

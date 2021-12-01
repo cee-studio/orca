@@ -1296,6 +1296,9 @@ _discord_gateway_loop(struct discord_gateway *gw)
 
   ws_start(gw->ws, NULL);
   while (1) {
+    /* enqueue requests with pending timeouts */
+    discord_adapter_timeouts(&CLIENT(gw)->adapter);
+
     /* prepare pending requests */
     discord_adapter_prepare(&CLIENT(gw)->adapter);
 

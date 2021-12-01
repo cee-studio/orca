@@ -103,6 +103,12 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              enum http_method method,
                              char endpoint_fmt[],
                              ...);
+/**
+ * @brief Enqueue requests with pending timeouts
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ */
+void discord_adapter_timeouts(struct discord_adapter *adapter);
 
 /**
  * @brief Prepare pending async requests
@@ -217,6 +223,10 @@ struct discord_request {
   struct ua_conn *conn;
   /** the request bucket's queue entry */
   QUEUE entry;
+  /** the min-heap node (for timeouts) */
+  struct heap_node node;
+  /** the timeout timestamp */
+  u64_unix_ms_t timeout_ms;
 };
 
 /**
@@ -236,6 +246,8 @@ struct discord_bucket {
   char hash[128];
   /** amount of busy connections that have not yet finished its requests */
   int busy;
+  /** maximum connections this bucket can handle before ratelimit */
+  int limit;
   /** connections this bucket can do before waiting for cooldown */
   int remaining;
   /** timestamp of when cooldown timer resets */

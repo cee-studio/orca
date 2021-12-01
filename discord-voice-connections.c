@@ -8,40 +8,52 @@
 #include "discord-voice-connections.h"
 #include "cee-utils.h"
 
+/* TODO: use a per-client lock instead */
 static pthread_mutex_t client_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static const char *
 opcode_print(enum discord_voice_opcodes opcode)
 {
-  const char *str = discord_voice_opcodes_print(opcode);
-  if (NULL == str) str = "Invalid Voice opcode";
+  const char *str;
+
+  str = discord_voice_opcodes_print(opcode);
+  if (NULL == str) {
+    log_warn("Invalid Voice opcode (code: %d)", opcode);
+    str = "Invalid Voice opcode";
+  }
   return str;
 }
 
 static const char *
 close_opcode_print(enum discord_voice_close_event_codes opcode)
 {
-  const char *str = discord_voice_close_event_codes_print(opcode);
+  const char *str;
+
+  str = discord_voice_close_event_codes_print(opcode);
   if (str) return str;
+
   str = ws_close_opcode_print((enum ws_close_reason)opcode);
   if (str) return str;
+
   return "Unknown WebSockets close opcode";
 }
 
 static void
 send_resume(struct discord_voice *vc)
 {
+  char payload[1024];
+  int ret;
+
   vc->is_resumable = false; /* reset */
 
-  char payload[1024];
-  int ret = json_inject(payload, sizeof(payload),
-                        "(op):7" /* RESUME OPCODE */
-                        "(d):{"
-                        "(server_id):s_as_u64"
-                        "(session_id):s"
-                        "(token):s"
-                        "}",
-                        &vc->guild_id, vc->session_id, vc->token);
+  ret = json_inject(payload, sizeof(payload),
+                    "(op):7" /* RESUME OPCODE */
+                    "(d):{"
+                    "(server_id):s_as_u64"
+                    "(session_id):s"
+                    "(token):s"
+                    "}",
+                    &vc->guild_id, vc->session_id, vc->token);
   ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
 
   logconf_info(
@@ -54,15 +66,17 @@ static void
 send_identify(struct discord_voice *vc)
 {
   char payload[1024];
-  int ret = json_inject(payload, sizeof(payload),
-                        "(op):0" /* IDENTIFY OPCODE */
-                        "(d):{"
-                        "(server_id):s_as_u64"
-                        "(user_id):s_as_u64"
-                        "(session_id):s"
-                        "(token):s"
-                        "}",
-                        &vc->guild_id, &vc->bot_id, vc->session_id, vc->token);
+  int ret;
+
+  ret = json_inject(payload, sizeof(payload),
+                    "(op):0" /* IDENTIFY OPCODE */
+                    "(d):{"
+                    "(server_id):s_as_u64"
+                    "(user_id):s_as_u64"
+                    "(session_id):s"
+                    "(token):s"
+                    "}",
+                    &vc->guild_id, &vc->bot_id, vc->session_id, vc->token);
   ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
 
   logconf_info(
@@ -74,9 +88,10 @@ send_identify(struct discord_voice *vc)
 static void
 on_hello(struct discord_voice *vc)
 {
+  float hbeat_interval = 0.0;
+
   vc->hbeat.tstamp = cee_timestamp_ms();
 
-  float hbeat_interval = 0.0;
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(heartbeat_interval):f", &hbeat_interval);
   ASSERT_S(hbeat_interval > 0.0, "Invalid heartbeat_ms");
@@ -92,11 +107,12 @@ on_hello(struct discord_voice *vc)
 static void
 on_ready(struct discord_voice *vc)
 {
+  struct discord *client = vc->p_client;
+
   logconf_info(&vc->conf, "Succesfully started a Discord Voice session!");
   vc->is_ready = true;
   vc->reconnect.attempt = 0;
 
-  struct discord *client = vc->p_client;
   if (client->voice_cbs.on_ready) {
     client->voice_cbs.on_ready(vc);
   }
@@ -106,6 +122,7 @@ static void
 on_session_description(struct discord_voice *vc)
 {
   struct discord *client = vc->p_client;
+
   if (client->voice_cbs.on_session_descriptor) {
     client->voice_cbs.on_session_descriptor(vc);
   }
@@ -115,10 +132,11 @@ static void
 on_speaking(struct discord_voice *vc)
 {
   struct discord *client = vc->p_client;
-  if (!client->voice_cbs.on_speaking) return;
-
   u64_snowflake_t user_id;
   int speaking = 0, delay = 0, ssrc = 0;
+
+  if (!client->voice_cbs.on_speaking) return;
+
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(user_id):s_as_u64"
                "(speaking):d"
@@ -157,10 +175,10 @@ static void
 on_codec(struct discord_voice *vc)
 {
   struct discord *client = vc->p_client;
+  char audio_codec[64] = { 0 }, video_codec[64] = { 0 };
 
   if (!client->voice_cbs.on_codec) return;
 
-  char audio_codec[64] = { 0 }, video_codec[64] = { 0 };
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(audio_codec):s, (video_codec):s", &audio_codec, &video_codec);
 
@@ -183,6 +201,7 @@ on_connect_cb(void *p_vc,
               const char *ws_protocols)
 {
   struct discord_voice *vc = p_vc;
+
   logconf_info(&vc->conf, "Connected, WS-Protocols: '%s'", ws_protocols);
 }
 
@@ -204,9 +223,8 @@ on_close_cb(void *p_vc,
     close_opcode_print(opcode), opcode, len, (int)len, reason);
 
   if (vc->shutdown) {
-    logconf_info(&vc->conf, "Voice was shutdown");
-    vc->is_resumable = false;
-    vc->reconnect.enable = false;
+    /* user-triggered shutdown */
+    vc->shutdown = false;
     return;
   }
 
@@ -302,8 +320,10 @@ static void
 send_heartbeat(struct discord_voice *vc)
 {
   char payload[64];
-  int ret = json_inject(payload, sizeof(payload), "(op):3, (d):ld",
-                        &vc->hbeat.interval_ms);
+  int ret;
+
+  ret = json_inject(payload, sizeof(payload), "(op):3, (d):ld",
+                    &vc->hbeat.interval_ms);
   ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
 
   logconf_info(
@@ -455,13 +475,13 @@ discord_voice_join(struct discord *client,
                    bool self_mute,
                    bool self_deaf)
 {
+  bool found_a_running_vcs = false;
+  struct discord_voice *vc = NULL;
+  int i;
+
   if (!ws_is_functional(client->gw.ws)) return DISCORD_VOICE_ERROR;
 
-  bool found_a_running_vcs = false;
   pthread_mutex_lock(&client_lock);
-  struct discord_voice *vc = NULL;
-
-  int i;
   for (i = 0; i < DISCORD_MAX_VOICE_CONNECTIONS; ++i) {
     if (0 == client->vcs[i].guild_id) {
       vc = client->vcs + i;
@@ -503,10 +523,10 @@ void
 _discord_on_voice_state_update(struct discord *client,
                                struct discord_voice_state *vs)
 {
-  pthread_mutex_lock(&client_lock);
   struct discord_voice *vc = NULL;
-
   int i;
+
+  pthread_mutex_lock(&client_lock);
   for (i = 0; i < DISCORD_MAX_VOICE_CONNECTIONS; ++i) {
     if (vs->guild_id == client->vcs[i].guild_id) {
       vc = client->vcs + i;
@@ -622,41 +642,44 @@ _discord_on_voice_server_update(struct discord *client,
                                 char *endpoint)
 {
   struct discord_voice *vc = NULL;
-  pthread_mutex_lock(&client_lock);
-
+  int ret;
   int i;
+
+  pthread_mutex_lock(&client_lock);
   for (i = 0; i < DISCORD_MAX_VOICE_CONNECTIONS; ++i) {
     if (guild_id == client->vcs[i].guild_id) {
       vc = client->vcs + i;
       break;
     }
   }
-
   pthread_mutex_unlock(&client_lock);
+
   if (!vc) {
     logconf_fatal(&client->conf, "Couldn't match voice server to client");
     return;
   }
 
-  int ret;
   ret = snprintf(vc->new_token, sizeof(vc->new_token), "%s", token);
   ASSERT_S(ret < sizeof(vc->new_token), "Out of bounds write attempt");
   ret = snprintf(vc->new_url, sizeof(vc->new_url),
                  "wss://%s" DISCORD_VOICE_CONNECTIONS_URL_SUFFIX, endpoint);
   ASSERT_S(ret < sizeof(vc->new_url), "Out of bounds write attempt");
 
-  /* @todo: replace with the more reliable thread alive check */
+  /* TODO: replace with the more reliable thread alive check */
   if (ws_is_alive(vc->ws)) {
     /* exits the current event_loop to redirect */
+    const char reason[] = "Attempt to redirect";
+
     vc->is_redirect = true;
-    ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, "", 0);
+    ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
   }
   else {
+    pthread_t tid;
+
     memcpy(vc->token, vc->new_token, sizeof(vc->new_token));
     ws_set_url(vc->ws, vc->new_url, NULL);
 
-    /** @todo replace with a threadpool */
-    pthread_t tid;
+    /** TODO: replace with a threadpool */
     if (pthread_create(&tid, NULL, &start_voice_ws_thread, vc))
       ERR("Couldn't create thread");
     if (pthread_detach(tid)) ERR("Couldn't detach thread");
@@ -733,6 +756,8 @@ noop_on_udp_server_connected(struct discord_voice *a)
 void
 discord_voice_connections_init(struct discord *client)
 {
+  int i;
+
   client->gw.cmds.cbs.on_voice_state_update = noop_voice_state_update_cb;
   client->gw.cmds.cbs.on_voice_server_update = noop_voice_server_update_cb;
 
@@ -744,7 +769,6 @@ discord_voice_connections_init(struct discord *client)
   client->voice_cbs.on_speaking = noop_on_speaking;
   client->voice_cbs.on_udp_server_connected = noop_on_udp_server_connected;
 
-  int i;
   for (i = 0; i < DISCORD_MAX_VOICE_CONNECTIONS; ++i) {
     client->vcs[i].p_voice_cbs = &client->voice_cbs;
   }
@@ -753,20 +777,31 @@ discord_voice_connections_init(struct discord *client)
 void
 discord_voice_shutdown(struct discord_voice *vc)
 {
-  vc->reconnect.enable = false;
-  vc->is_resumable = false;
-  vc->shutdown = true;
-  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, "", 0);
+  const char reason[] = "Client triggered voice shutdown";
 
+  vc->reconnect.enable = false;
+  vc->shutdown = true;
+  vc->is_resumable = false;
+
+  /* TODO: check if send_voice_state_update() is not being ignored because of
+   * ws_close() */
   send_voice_state_update(vc, vc->guild_id, 0, false, false);
+  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
 void
 discord_voice_reconnect(struct discord_voice *vc, bool resume)
 {
+  const char reason[] = "Client triggered voice reconnect";
+  enum ws_close_reason opcode;
+
   vc->reconnect.enable = true;
+  vc->shutdown = true;
   vc->is_resumable = resume;
-  ws_close(vc->ws, WS_CLOSE_REASON_NORMAL, "", 0);
+  opcode =
+    vc->is_resumable ? WS_CLOSE_REASON_NO_REASON : WS_CLOSE_REASON_NORMAL;
+
+  ws_close(vc->ws, opcode, reason, sizeof(reason));
 }
 
 bool

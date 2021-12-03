@@ -94,8 +94,9 @@ _discord_bucket_init(struct discord_ratelimit *rlimit,
 }
 
 static struct discord_bucket *
-_discord_bucket_find(struct discord_ratelimit *rlimit,
-                     const struct sized_buffer *hash)
+_discord_bucket_get_match(struct discord_ratelimit *rlimit,
+                          const struct sized_buffer *hash,
+                          struct ua_info *info)
 {
   struct discord_bucket *b;
 
@@ -103,6 +104,16 @@ _discord_bucket_find(struct discord_ratelimit *rlimit,
   pthread_mutex_lock(&rlimit->global->lock);
   HASH_FIND(hh, rlimit->buckets, hash->start, hash->size, b);
   pthread_mutex_unlock(&rlimit->global->lock);
+
+  /* create bucket if it doesn't exist yet */
+  if (!b) {
+    struct sized_buffer limit = ua_info_header_get(info, "x-ratelimit-limit");
+    int _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
+
+    b = _discord_bucket_init(rlimit, _limit, hash->start, hash->size);
+
+    logconf_debug(&rlimit->conf, "[%.4s] Create bucket", b->hash);
+  }
 
   return b;
 }
@@ -307,6 +318,33 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
                 b->hash, b->reset_tstamp, b->remaining);
 }
 
+/* in case of asynchronous requests, check if successive requests with
+ * undefined buckets can be matched to a new route */
+static void
+_discord_bucket_undefined_filter(struct discord_ratelimit *rlimit,
+                                 struct discord_bucket *b,
+                                 const char endpoint[])
+{
+  struct discord_request *cxt;
+  QUEUE queue;
+  QUEUE *q;
+
+  QUEUE_MOVE(&rlimit->b_null->pending, &queue);
+  while (!QUEUE_EMPTY(&queue)) {
+    q = QUEUE_HEAD(&queue);
+    QUEUE_REMOVE(q);
+
+    cxt = QUEUE_DATA(q, struct discord_request, entry);
+    if (0 == strcmp(cxt->endpoint, endpoint)) {
+      QUEUE_INSERT_TAIL(&b->pending, q);
+      cxt->bucket = b;
+    }
+    else {
+      QUEUE_INSERT_TAIL(&rlimit->b_null->pending, q);
+    }
+  }
+}
+
 /* attempt to create and/or update bucket's values */
 void
 discord_bucket_build(struct discord_ratelimit *rlimit,
@@ -324,35 +362,17 @@ discord_bucket_build(struct discord_ratelimit *rlimit,
     struct sized_buffer hash = ua_info_header_get(info, "x-ratelimit-bucket");
     struct discord_route *r;
 
-    if (!hash.size) {
-      /* route has no bucket, match it to 'b_miss' */
-      r = _discord_route_init(rlimit, endpoint, rlimit->b_miss);
-
-      logconf_debug(&rlimit->conf, "[miss] Route '%s' has no bucket",
-                    r->route);
-
-      return;
-    }
-
-    /* try to get a bucket match for route */
-    b = _discord_bucket_find(rlimit, &hash);
-
-    /* if bucket doesn't exist yet create new */
-    if (!b) {
-      struct sized_buffer limit =
-        ua_info_header_get(info, "x-ratelimit-limit");
-      int _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
-
-      b = _discord_bucket_init(rlimit, _limit, hash.start, hash.size);
-
-      logconf_debug(&rlimit->conf, "[%.4s] Create bucket", b->hash);
-    }
+    /* match bucket with hash (from discovered or create a new one) */
+    b = hash.size ? _discord_bucket_get_match(rlimit, &hash, info)
+                  : rlimit->b_miss;
 
     /* match route to bucket */
     r = _discord_route_init(rlimit, endpoint, b);
 
     logconf_debug(&rlimit->conf, "[%.4s] Match route '%s' to bucket", b->hash,
                   r->route);
+
+    _discord_bucket_undefined_filter(rlimit, b, endpoint);
   }
 
   /* update bucket's values */

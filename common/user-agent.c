@@ -454,15 +454,31 @@ ua_conn_start(struct user_agent *ua)
   return ret_conn;
 }
 
+static void
+_ua_info_reset(struct ua_info *info)
+{
+  info->httpcode = 0;
+  info->time_us = 0;
+  info->body.len = 0;
+  info->header.len = 0;
+  info->header.n_pairs = 0;
+}
+
+static void
+_ua_info_populate(struct ua_info *dest, struct ua_info *src)
+{
+  memcpy(dest, src, sizeof(struct ua_info));
+  dest->body.len =
+    asprintf(&dest->body.buf, "%.*s", (int)src->body.len, src->body.buf);
+  dest->header.len =
+    asprintf(&dest->header.buf, "%.*s", (int)src->header.len, src->header.buf);
+}
+
 void
 ua_conn_stop(struct user_agent *ua, struct ua_conn *conn)
 {
   /* reset conn fields for next iteration */
-  conn->info.httpcode = 0;
-  conn->info.time_us = 0;
-  conn->info.body.len = 0;
-  conn->info.header.len = 0;
-  conn->info.header.n_pairs = 0;
+  _ua_info_reset(&conn->info);
   *conn->errbuf = '\0';
   memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
 
@@ -784,14 +800,7 @@ ua_conn_get_results(struct user_agent *ua,
     code = ORCA_NO_RESPONSE;
   }
 
-  /* populate ua_info */
-  if (info) {
-    memcpy(info, &conn->info, sizeof(struct ua_info));
-    asprintf(&info->body.buf, "%.*s", (int)conn->info.body.len,
-             conn->info.body.buf);
-    asprintf(&info->header.buf, "%.*s", (int)conn->info.header.len,
-             conn->info.header.buf);
-  }
+  if (info) _ua_info_populate(info, &conn->info);
 
   return code;
 }

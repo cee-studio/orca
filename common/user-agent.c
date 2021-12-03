@@ -443,9 +443,10 @@ ua_conn_start(struct user_agent *ua)
   }
   else {
     QUEUE *q = QUEUE_HEAD(&ua->connq->idle);
+    QUEUE_REMOVE(q);
+
     ret_conn = QUEUE_DATA(q, struct ua_conn, entry);
     /* remove from idle queue */
-    QUEUE_REMOVE(&ret_conn->entry);
   }
   QUEUE_INSERT_TAIL(&ua->connq->busy, &ret_conn->entry);
 
@@ -475,18 +476,12 @@ _ua_info_populate(struct ua_info *dest, struct ua_info *src)
 }
 
 void
-ua_conn_stop(struct user_agent *ua, struct ua_conn *conn)
+ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
 {
   /* reset conn fields for next iteration */
   _ua_info_reset(&conn->info);
   *conn->errbuf = '\0';
   memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
-
-  /* move conn from 'busy' to 'idle' queue */
-  pthread_mutex_lock(&ua->connq->lock);
-  QUEUE_REMOVE(&conn->entry);
-  QUEUE_INSERT_TAIL(&ua->connq->idle, &conn->entry);
-  pthread_mutex_unlock(&ua->connq->lock);
 
   /* its assumed ua_clone() will be called before entering a thread
    * to make sure 'struct user_agent' is thread-safe */
@@ -494,6 +489,18 @@ ua_conn_stop(struct user_agent *ua, struct ua_conn *conn)
     curl_mime_free(ua->mime);
     ua->mime = NULL;
   }
+}
+
+void
+ua_conn_stop(struct user_agent *ua, struct ua_conn *conn)
+{
+  ua_conn_reset(ua, conn);
+
+  /* move conn from 'busy' to 'idle' queue */
+  pthread_mutex_lock(&ua->connq->lock);
+  QUEUE_REMOVE(&conn->entry);
+  QUEUE_INSERT_TAIL(&ua->connq->idle, &conn->entry);
+  pthread_mutex_unlock(&ua->connq->lock);
 }
 
 struct user_agent *
@@ -528,7 +535,7 @@ ua_init(struct ua_attr *attr)
 struct user_agent *
 ua_clone(struct user_agent *orig_ua)
 {
-  struct user_agent *clone_ua = malloc(sizeof(struct user_agent));
+  struct user_agent *clone_ua = calloc(1, sizeof(struct user_agent));
 
   pthread_mutex_lock(&orig_ua->connq->lock);
   memcpy(clone_ua, orig_ua, sizeof(struct user_agent));
@@ -576,8 +583,9 @@ ua_cleanup(struct user_agent *ua)
       QUEUE_MOVE(ua_queues[i], &queue);
       while (!QUEUE_EMPTY(&queue)) {
         q = QUEUE_HEAD(&queue);
+        QUEUE_REMOVE(q);
+
         conn = QUEUE_DATA(q, struct ua_conn, entry);
-        QUEUE_REMOVE(&conn->entry);
         _ua_conn_cleanup(conn);
       }
     }

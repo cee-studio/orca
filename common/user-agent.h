@@ -245,9 +245,20 @@ ORCAcode ua_run(struct user_agent *ua,
 struct ua_conn *ua_conn_start(struct user_agent *ua);
 
 /**
- * @brief Reset a connection handle and mark it as idle
+ * @brief Reset a connection handle fields
  *
- * @param the User-Agent handle created with ua_init()
+ * @param ua the User-Agent handle created with ua_init()
+ * @param conn connection handle to be reset
+ * @warning this won't deactivate the handle, for that purpose check
+ *        ua_conn_stop()
+ */
+void ua_conn_reset(struct user_agent *ua, struct ua_conn *conn);
+
+/**
+ * @brief Stop a connection handle and mark it as idle
+ *
+ * @param ua the User-Agent handle created with ua_init()
+ * @param conn connection handle to be deactivated
  */
 void ua_conn_stop(struct user_agent *ua, struct ua_conn *conn);
 

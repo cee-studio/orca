@@ -304,8 +304,8 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
 
 /* send a standalone request to update stale bucket values */
 static void
-_discord_request_run_single(struct discord_ratelimit *rlimit,
-                            struct discord_bucket *b)
+_discord_request_send_single(struct discord_ratelimit *rlimit,
+                             struct discord_bucket *b)
 {
   struct discord_request *cxt;
   QUEUE *q;
@@ -332,11 +332,9 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
     cxt = QUEUE_DATA(q, struct discord_request, entry);
     QUEUE_REMOVE(&cxt->entry);
 
-    if (discord_bucket_timeout(rlimit, b, cxt)) {
-      /* wait for timeout and bucket value update */
-      break;
-    }
-
+    /* timeout request if ratelimiting is neccessary */
+    if (discord_bucket_timeout(rlimit, b, cxt)) break;
+  
     _discord_request_start_async(rlimit, cxt);
   };
 }
@@ -351,13 +349,13 @@ discord_request_check_pending_async(struct discord_ratelimit *rlimit)
     /* skip busy and idle buckets */
     if (b->busy || QUEUE_EMPTY(&b->pending)) continue;
 
-    /* check if bucket is outdated */
+    /* if bucket is outdated then its necessary to send a single
+     *      request to fetch updated values */
     if (b->reset_tstamp < discord_timestamp(CLIENT(rlimit))) {
-      /* perform a standalone request first and update bucket values */
-      _discord_request_run_single(rlimit, b);
+      _discord_request_send_single(rlimit, b);
       continue;
     }
-
+    /* send remainder or trigger timeout */
     _discord_request_send_batch(rlimit, b);
   }
 }
@@ -406,6 +404,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     }
     else {
       if (cxt->callback) (*cxt->callback)(client, &client->gw.bot, NULL, code);
+
       /* add request handler to 'idle' queue for recycling */
       QUEUE_INSERT_TAIL(&client->adapter.idle, &cxt->entry);
     }

@@ -1303,18 +1303,20 @@ _discord_gateway_loop(struct discord_gateway *gw)
 
   ws_start(gw->ws, NULL);
   while (1) {
-    /* check and execute pending timeouts */
-    discord_ratelimit_run_timeouts(&CLIENT(gw)->adapter.rlimit);
-    /* prepare pending requests */
-    discord_ratelimit_prepare_requests(&CLIENT(gw)->adapter.rlimit);
+    discord_request_check_timeouts_async(&CLIENT(gw)->adapter.rlimit);
+    discord_request_check_pending_async(&CLIENT(gw)->adapter.rlimit);
 
-    if (!ws_perform(gw->ws, 5)) break; /* exit event loop */
-    if (!gw->status->is_ready) continue; /* wait until on_ready() */
+    if (!ws_perform(gw->ws, 5)) {
+      /* severed connection */
+      break;
+    }
 
-    /* connection is established */
+    discord_request_check_results_async(&CLIENT(gw)->adapter.rlimit);
 
-    /* check for requests completion */
-    discord_adapter_check_requests(&CLIENT(gw)->adapter);
+    if (!gw->status->is_ready) {
+      /* wait until on_ready() */
+      continue;
+    }
 
     /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/

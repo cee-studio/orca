@@ -1303,11 +1303,10 @@ _discord_gateway_loop(struct discord_gateway *gw)
 
   ws_start(gw->ws, NULL);
   while (1) {
-    /* enqueue requests with pending timeouts */
-    discord_adapter_timeouts(&CLIENT(gw)->adapter);
-
+    /* check and execute pending timeouts */
+    discord_ratelimit_run_timeouts(&CLIENT(gw)->adapter.rlimit);
     /* prepare pending requests */
-    discord_adapter_prepare(&CLIENT(gw)->adapter);
+    discord_ratelimit_prepare_requests(&CLIENT(gw)->adapter.rlimit);
 
     if (!ws_perform(gw->ws, 5)) break; /* exit event loop */
     if (!gw->status->is_ready) continue; /* wait until on_ready() */
@@ -1315,7 +1314,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
     /* connection is established */
 
     /* check for requests completion */
-    discord_adapter_check(&CLIENT(gw)->adapter);
+    discord_adapter_check_requests(&CLIENT(gw)->adapter);
 
     /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/

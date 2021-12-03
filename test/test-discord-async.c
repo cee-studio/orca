@@ -74,7 +74,7 @@ void on_spam2(struct discord *client,
   if (msg->author->bot) return;
 
   char text[32];
-  for (int i=0; i < 5; ++i) {
+  for (int i=0; i < 7; ++i) {
     struct discord_create_message_params params = { .content = text };
 
     snprintf(text, sizeof(text), "%d", i);

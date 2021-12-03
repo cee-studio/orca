@@ -29,10 +29,6 @@ timer_less_than(const struct heap_node *ha, const struct heap_node *hb)
 static void
 _discord_request_reset(struct discord_request *cxt)
 {
-  struct discord *clone = CLIENT(&cxt->adapter->rlimit);
-
-  discord_cleanup(clone);
-  cxt->adapter = NULL;
   cxt->bucket = NULL;
   memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
@@ -59,7 +55,6 @@ _discord_request_populate(struct discord_request *cxt,
 
   cxt->method = method;
   cxt->callback = client->async.callback;
-  cxt->adapter = &(discord_clone(client)->adapter);
 
   if (resp_handle) {
     /* copy response handle */
@@ -84,10 +79,26 @@ _discord_request_populate(struct discord_request *cxt,
   cxt->bucket = discord_bucket_get(&adapter->rlimit, cxt->endpoint);
 }
 
+static void
+_discord_request_set_timeout(struct discord_ratelimit *rlimit,
+                             u64_unix_ms_t timeout,
+                             struct discord_request *cxt)
+{
+  cxt->timeout_ms = timeout;
+  heap_insert(&rlimit->timeouts, &cxt->node, &timer_less_than);
+}
+
 /* return true if there should be a retry attempt */
 static bool
-_discord_request_status(struct discord_adapter *adapter, ORCAcode *code)
+_discord_request_status(struct discord_adapter *adapter,
+                        ORCAcode *code,
+                        struct discord_request *cxt)
 {
+  if (*code != ORCA_HTTP_CODE) {
+    /* ORCA_OK or internal error */
+    return false;
+  }
+
   switch (adapter->err.info.httpcode) {
   case HTTP_FORBIDDEN:
   case HTTP_NOT_FOUND:
@@ -106,6 +117,7 @@ _discord_request_status(struct discord_adapter *adapter, ORCAcode *code)
     return false;
   case HTTP_TOO_MANY_REQUESTS: {
     struct sized_buffer body = ua_info_get_body(&adapter->err.info);
+    struct discord *client = CLIENT(&adapter->rlimit);
     bool is_global = false;
     char message[256] = "";
     double retry_after = 1.0;
@@ -116,7 +128,6 @@ _discord_request_status(struct discord_adapter *adapter, ORCAcode *code)
                  sizeof(message), message, &retry_after);
 
     if (is_global) {
-      struct discord *client = CLIENT(&adapter->rlimit);
       u64_unix_ms_t global;
 
       global = discord_ratelimit_get_global_wait(&adapter->rlimit);
@@ -125,40 +136,60 @@ _discord_request_status(struct discord_adapter *adapter, ORCAcode *code)
       logconf_warn(&adapter->conf,
                    "429 GLOBAL RATELIMITING (wait: %ld ms) : %s", delay_ms,
                    message);
-    }
-    else {
-      delay_ms = 1000 * retry_after;
 
-      logconf_warn(&adapter->conf, "429 RATELIMITING (wait: %ld ms) : %s",
+      /* TODO: this blocks the event loop, which means Gateway's heartbeating
+       * won't work */
+      cee_sleep_ms(delay_ms);
+
+      return true;
+    }
+
+    delay_ms = 1000 * retry_after;
+
+    if (cxt) {
+      /* non-blocking timeout */
+      u64_unix_ms_t timeout = discord_timestamp(client) + delay_ms;
+
+      logconf_warn(&adapter->conf, "429 RATELIMITING (timeout: %ld ms) : %s",
                    delay_ms, message);
+
+      _discord_request_set_timeout(&adapter->rlimit, timeout, cxt);
+
+      /* _discord_request_set_timeout() already enqueues for retry */
+      return false;
     }
 
-    /* TODO: this will block the event-loop even for non-global ratelimits */
+    logconf_warn(&adapter->conf, "429 RATELIMITING (wait: %ld ms) : %s",
+                 delay_ms, message);
+
     cee_sleep_ms(delay_ms);
 
     return true;
   }
   default:
     if (adapter->err.info.httpcode >= 500) {
-      /* server related error, sleep for 5 seconds */
-      /* TODO: implement retry up to X amount logic */
+      /* TODO: server error, implement retry up to X amount logic */
     }
     return true;
   }
 }
 
-void
-discord_request_set_timeout(struct discord_ratelimit *rlimit,
-                            u64_unix_ms_t timeout,
-                            struct discord_request *cxt)
+/* true if a timeout has been set, false otherwise */
+static bool
+_discord_request_timeout(struct discord_ratelimit *rlimit,
+                         struct discord_request *cxt)
 {
-  cxt->timeout_ms = timeout;
+  u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
+  u64_unix_ms_t timeout = discord_bucket_get_timeout(rlimit, cxt->bucket);
 
-  /* mark bucket as busy as we need to update its values before
-   *        proceeding with the rest of requests */
-  ++cxt->bucket->busy;
+  if (now > timeout) return false;
 
-  heap_insert(&rlimit->timeouts, &cxt->node, &timer_less_than);
+  logconf_info(&rlimit->conf, "[%.4s] RATELIMITING (timeout %ld ms)",
+               cxt->bucket->hash, timeout - now);
+
+  _discord_request_set_timeout(rlimit, timeout, cxt);
+
+  return true;
 }
 
 /* enqueue a request to be executed asynchronously */
@@ -179,8 +210,9 @@ discord_request_perform_async(struct discord_adapter *adapter,
   else {
     /* recycle idle request handler */
     QUEUE *q = QUEUE_HEAD(&adapter->idle);
+    QUEUE_REMOVE(q);
+
     cxt = QUEUE_DATA(q, struct discord_request, entry);
-    QUEUE_REMOVE(&cxt->entry);
 
     _discord_request_reset(cxt);
   }
@@ -227,10 +259,10 @@ discord_request_perform(struct discord_adapter *adapter,
   struct ua_resp_handle _resp_handle = {};
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(&adapter->rlimit, endpoint);
-  /* in case of request failure, try again */
-  bool retry;
   /* orca error status */
   ORCAcode code;
+  /* in case of request failure, try again */
+  bool retry;
 
   _resp_handle.err_cb = &json_error_cb;
   _resp_handle.err_obj = adapter;
@@ -242,19 +274,43 @@ discord_request_perform(struct discord_adapter *adapter,
   pthread_mutex_lock(&b->lock);
   do {
     ua_info_cleanup(&adapter->err.info);
+
     discord_bucket_cooldown(&adapter->rlimit, b);
 
     code = ua_run(adapter->ua, &adapter->err.info, &_resp_handle, req_body,
                   method, endpoint);
 
-    retry = (ORCA_HTTP_CODE == code) ? _discord_request_status(adapter, &code)
-                                     : false;
+    retry = _discord_request_status(adapter, &code, NULL);
 
     discord_bucket_build(&adapter->rlimit, b, endpoint, &adapter->err.info);
   } while (retry);
   pthread_mutex_unlock(&b->lock);
 
   return code;
+}
+
+/* add a request to libcurl's multi handle */
+static void
+_discord_request_start_async(struct discord_ratelimit *rlimit,
+                             struct discord_request *cxt)
+{
+  struct discord *client = CLIENT(rlimit);
+  CURL *ehandle;
+
+  /* TODO: turn below into a user-agent.c function? */
+  cxt->conn = ua_conn_start(client->adapter.ua);
+  ehandle = ua_conn_curl_easy_get(cxt->conn);
+  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle, &cxt->req_body,
+                cxt->method, cxt->endpoint);
+
+  /* link 'cxt' to 'ehandle' for easy retrieval */
+  curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
+
+  /* initiate libcurl transfer */
+  curl_multi_add_handle(client->mhandle, ehandle);
+
+  --cxt->bucket->remaining;
+  ++cxt->bucket->busy;
 }
 
 /* check and enqueue requests that have been timed out */
@@ -270,36 +326,14 @@ discord_request_check_timeouts_async(struct discord_ratelimit *rlimit)
 
     cxt = CXT(node);
     if (cxt->timeout_ms > discord_timestamp(CLIENT(rlimit))) {
-      /* timeout haven't been reached yet */
+      /* current timestamp is lesser than lowest timeout */
       break;
     }
 
     heap_remove(&rlimit->timeouts, node, &timer_less_than);
+
     QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
   }
-}
-
-/* add a request to libcurl's multi handle */
-static void
-_discord_request_start_async(struct discord_ratelimit *rlimit,
-                             struct discord_request *cxt)
-{
-  CURLM *mhandle = CLIENT(rlimit)->mhandle;
-  CURL *ehandle;
-
-  --cxt->bucket->remaining;
-  ++cxt->bucket->busy;
-  /* TODO: turn below into a user-agent.c function? */
-  cxt->conn = ua_conn_start(cxt->adapter->ua);
-  ehandle = ua_conn_curl_easy_get(cxt->conn);
-  ua_conn_setup(cxt->adapter->ua, cxt->conn, &cxt->resp_handle, &cxt->req_body,
-                cxt->method, cxt->endpoint);
-
-  /* link 'cxt' to 'ehandle' for easy retrieval */
-  curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
-
-  /* initiate libcurl transfer */
-  curl_multi_add_handle(mhandle, ehandle);
 }
 
 /* send a standalone request to update stale bucket values */
@@ -311,8 +345,10 @@ _discord_request_send_single(struct discord_ratelimit *rlimit,
   QUEUE *q;
 
   q = QUEUE_HEAD(&b->pending);
+  QUEUE_REMOVE(q);
+  QUEUE_INIT(q);
+
   cxt = QUEUE_DATA(q, struct discord_request, entry);
-  QUEUE_REMOVE(&cxt->entry);
 
   b->remaining = 1;
 
@@ -329,12 +365,14 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
 
   while (b->remaining > 0 && !QUEUE_EMPTY(&b->pending)) {
     q = QUEUE_HEAD(&b->pending);
-    cxt = QUEUE_DATA(q, struct discord_request, entry);
-    QUEUE_REMOVE(&cxt->entry);
+    QUEUE_REMOVE(q);
+    QUEUE_INIT(q);
 
-    /* timeout request if ratelimiting is neccessary */
-    if (discord_bucket_timeout(rlimit, b, cxt)) break;
-  
+    cxt = QUEUE_DATA(q, struct discord_request, entry);
+
+    /* timeout request if ratelimiting is necessary */
+    if (_discord_request_timeout(rlimit, cxt)) break;
+
     _discord_request_start_async(rlimit, cxt);
   };
 }
@@ -380,30 +418,29 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     ehandle = curlmsg->easy_handle;
     /* get request handler assigned to this easy handle */
     curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
-    ua_info_cleanup(&cxt->adapter->err.info);
+    ua_info_cleanup(&client->adapter.err.info);
 
     /* check request results and call user-callbacks accordingly */
-    code = ua_conn_get_results(cxt->adapter->ua, cxt->conn,
-                               &cxt->adapter->err.info);
+    code = ua_conn_get_results(client->adapter.ua, cxt->conn,
+                               &client->adapter.err.info);
 
-    /* reset conn for next iteration */
-    ua_conn_stop(client->adapter.ua, cxt->conn);
-
-    retry = (ORCA_HTTP_CODE == code)
-              ? _discord_request_status(cxt->adapter, &code)
-              : false;
+    retry = _discord_request_status(&client->adapter, &code, cxt);
 
     discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
-                         &cxt->adapter->err.info);
-
-    --cxt->bucket->busy;
+                         &client->adapter.err.info);
 
     if (retry) {
+      /* reset conn for next iteration */
+      ua_conn_reset(client->adapter.ua, cxt->conn);
+
       /* add request handler to 'pending' queue for retry */
       QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
     }
     else {
       if (cxt->callback) (*cxt->callback)(client, &client->gw.bot, NULL, code);
+
+      /* set conn as idle for recycling */
+      ua_conn_stop(client->adapter.ua, cxt->conn);
 
       /* add request handler to 'idle' queue for recycling */
       QUEUE_INSERT_TAIL(&client->adapter.idle, &cxt->entry);
@@ -411,6 +448,8 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
 
     /* this easy handle is done */
     curl_multi_remove_handle(client->mhandle, ehandle);
+
+    --cxt->bucket->busy;
 
   } while (curlmsg);
 }

@@ -34,6 +34,7 @@
  *   - discord_ratelimit_cleanup()
  */
 struct discord_ratelimit {
+  /* TODO: add content type field */
   /** DISCORD_RATELIMIT logging module */
   struct logconf conf;
   /** routes discovered */
@@ -183,12 +184,6 @@ struct discord_route {
  *   - discord_request_set_timeout()
  */
 struct discord_request {
-  /**
-   * the discord adapter client initialized with discord_clone()
-   * @note this is a workaround so that each context can carry its own header
-   * @todo passing only a 'struct curl_slist' around should be enough
-   */
-  struct discord_adapter *adapter;
   /** the callback to be triggered on request completion */
   discord_async_cb callback;
   /** the request's bucket */
@@ -257,19 +252,6 @@ ORCAcode discord_request_perform_async(struct discord_adapter *adapter,
                                        char endpoint[]);
 
 /**
- * @brief Delay a request until `timeout`
- *
- * This will block all requests from `cxt` bucket until the request has been
- *        performed.
- * @param rlimit the ratelimit handler
- * @param timeout delay request until `timeout` timestamp
- * @param cxt the request to be delayed
- */
-void discord_request_set_timeout(struct discord_ratelimit *rlimit,
-                                 u64_unix_ms_t timeout,
-                                 struct discord_request *cxt);
-
-/**
  * @brief Check and execute timed-out requests
  *
  * @param rlimit the ratelimit handler
@@ -329,17 +311,14 @@ struct discord_bucket {
 };
 
 /**
- * @brief Trigger bucket pending timeout
+ * @brief Return bucket timeout timestamp
  *
  * @param rlimit the ratelimit handler
- * @param bucket the bucket to me timed out
- * @param cxt the request to be delayed in case of a timeout
- * @return `true` if timeout and `false` otherwise
- * @note non-blocking function
+ * @param b the bucket to be checked for time out
+ * @return the timeout timestamp
  */
-bool discord_bucket_timeout(struct discord_ratelimit *rlimit,
-                            struct discord_bucket *b,
-                            struct discord_request *cxt);
+u64_unix_ms_t discord_bucket_get_timeout(struct discord_ratelimit *rlimit,
+                                         struct discord_bucket *b);
 
 /**
  * @brief Trigger bucket pending cooldown

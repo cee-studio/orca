@@ -18,7 +18,7 @@ https://discord.com/developers/docs/topics/rate-limits#rate-limits */
 
 /* in case 'endpoint' has a major param, it will be written into 'buf' */
 static const char *
-_discord_bucket_get_route(const char endpoint[], char buf[32])
+_discord_ratelimit_get_route(const char endpoint[], char buf[32])
 {
   /* determine which ratelimit group (aka bucket) a request belongs to
    * by checking its route.
@@ -45,7 +45,7 @@ _discord_route_init(struct discord_ratelimit *rlimit,
                     struct discord_bucket *b)
 {
   char buf[32]; /* for reentrancy, stores 'major' parameter */
-  const char *route = _discord_bucket_get_route(endpoint, buf);
+  const char *route = _discord_ratelimit_get_route(endpoint, buf);
   struct discord_route *r;
   int ret;
 
@@ -181,9 +181,9 @@ discord_ratelimit_get_global_wait(struct discord_ratelimit *rlimit)
 }
 
 /* return ratelimit timeout timestamp for this bucket */
-static u64_unix_ms_t
-_discord_bucket_get_timeout(struct discord_ratelimit *rlimit,
-                            struct discord_bucket *b)
+u64_unix_ms_t
+discord_bucket_get_timeout(struct discord_ratelimit *rlimit,
+                           struct discord_bucket *b)
 {
   u64_unix_ms_t global = discord_ratelimit_get_global_wait(rlimit);
   u64_unix_ms_t reset = (b->remaining < 1) ? b->reset_tstamp : 0ULL;
@@ -191,40 +191,13 @@ _discord_bucket_get_timeout(struct discord_ratelimit *rlimit,
   return (global > reset) ? global : reset;
 }
 
-/* true if a timeout has been set, false otherwise */
-bool
-discord_bucket_timeout(struct discord_ratelimit *rlimit,
-                       struct discord_bucket *b,
-                       struct discord_request *cxt)
-{
-  u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
-  u64_unix_ms_t timeout = _discord_bucket_get_timeout(rlimit, b);
-
-  if (now > timeout) return false;
-
-  logconf_info(&rlimit->conf, "[%.4s] RATELIMITING (timeout %ld ms)", b->hash,
-               timeout - now);
-
-  discord_request_set_timeout(rlimit, timeout, cxt);
-
-  return true;
-}
-
-static long
-_discord_bucket_get_cooldown(struct discord_ratelimit *rlimit,
-                             struct discord_bucket *b)
-{
-  u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
-  u64_unix_ms_t reset = _discord_bucket_get_timeout(rlimit, b);
-
-  return (long)(reset - now);
-}
-
 void
 discord_bucket_cooldown(struct discord_ratelimit *rlimit,
                         struct discord_bucket *b)
 {
-  long delay_ms = _discord_bucket_get_cooldown(rlimit, b);
+  u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
+  u64_unix_ms_t reset = discord_bucket_get_timeout(rlimit, b);
+  long delay_ms = (long)(reset - now);
 
   if (delay_ms > 0) {
     /* block thread's runtime for delay amount */
@@ -253,20 +226,17 @@ struct discord_bucket *
 discord_bucket_get(struct discord_ratelimit *rlimit, const char endpoint[])
 {
   char buf[32]; /* for reentrancy, stores 'major' parameter */
-  const char *route = _discord_bucket_get_route(endpoint, buf);
+  const char *route = _discord_ratelimit_get_route(endpoint, buf);
   struct discord_route *r = _discord_route_get(rlimit, route);
 
-  logconf_debug(&rlimit->conf,
-                "[null] Attempt to find matching bucket for route '%s'",
-                route);
   if (r) {
-    logconf_debug(&rlimit->conf, "[%.4s] Found a match!", r->bucket->hash);
+    logconf_debug(&rlimit->conf, "[%.4s] Found a bucket match for route '%s'!",
+                  r->bucket->hash, route);
     return r->bucket;
   }
 
   logconf_debug(&rlimit->conf,
-                "[null] Couldn't match bucket to route '%s', will attempt to "
-                "create a new one",
+                "[null] Couldn't match any discovered bucket to route '%s'",
                 route);
 
   return rlimit->b_null;

@@ -44,32 +44,40 @@ on_disconnect(struct discord *client,
 }
 
 void
+reconnect(struct discord *client,
+          const struct discord_user *bot,
+          const void *p_obj,
+          ORCAcode code)
+{
+  discord_reconnect(client, true);
+}
+
+void
+on_reconnect(struct discord *client,
+             const struct discord_user *bot,
+             const struct discord_message *msg)
+{
+  if (msg->author->bot) return;
+
+  discord_create_message(discord_set_async(client,
+                                           &(struct discord_async_attr){
+                                             .callback = &reconnect,
+                                             .high_priority = true,
+                                           }),
+                         msg->channel_id,
+                         &(struct discord_create_message_params){
+                           .content = "Reconnecting ...",
+                         },
+                         NULL);
+}
+
+void
 send_msg(struct discord *client,
          const struct discord_user *bot,
          const void *p_obj,
          ORCAcode code)
 {
   log_trace("SUCCESS!");
-}
-
-void
-on_ping(struct discord *client,
-        const struct discord_user *bot,
-        const struct discord_message *msg)
-{
-  if (msg->author->bot) return;
-
-  char text[256];
-  sprintf(text, "Ping: %d", discord_get_ping(client));
-  discord_create_message(discord_set_async(client,
-                                           &(struct discord_async_attr){
-                                             .callback = &send_msg,
-                                           }),
-                         msg->channel_id,
-                         &(struct discord_create_message_params){
-                           .content = text,
-                         },
-                         NULL);
 }
 
 void
@@ -98,7 +106,7 @@ on_spam2(struct discord *client,
   if (msg->author->bot) return;
 
   char text[32];
-  for (int i = 0; i < 1024; ++i) {
+  for (int i = 0; i < 100; ++i) {
     snprintf(text, sizeof(text), "%d", i);
     discord_create_message(discord_set_async(client,
                                              &(struct discord_async_attr){
@@ -128,7 +136,7 @@ main(int argc, char *argv[])
   discord_set_prefix(client, "!");
   discord_set_on_ready(client, &on_ready);
   discord_set_on_command(client, "disconnect", &on_disconnect);
-  discord_set_on_command(client, "ping", &on_ping);
+  discord_set_on_command(client, "reconnect", &on_reconnect);
   discord_set_on_command(client, "spam1", &on_spam1);
   discord_set_on_command(client, "spam2", &on_spam2);
 

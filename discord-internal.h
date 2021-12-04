@@ -260,6 +260,14 @@ void discord_request_check_pending_async(struct discord_ratelimit *rlimit);
 void discord_request_check_results_async(struct discord_ratelimit *rlimit);
 
 /**
+ * @brief Stop all on-going, pending and timed-out requests
+ *
+ * The requests will be moved over to client 'idle' queue
+ * @param rlimit the ratelimit handler
+ */
+void discord_request_stop_all(struct discord_ratelimit *rlimit);
+
+/**
  * @brief The bucket struct for handling ratelimiting
  *
  * - Get bucket:
@@ -280,16 +288,16 @@ struct discord_bucket {
   int limit;
   /** connections this bucket can do before waiting for cooldown */
   int remaining;
-  /** bucket busy requests */
-  int busy;
   /** timestamp of when cooldown timer resets */
   u64_unix_ms_t reset_tstamp;
   /** Discord's server time */
   u64_unix_ms_t server;
   /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
-  /** pending bucket's requests */
-  QUEUE pending;
+  /** pending requests */
+  QUEUE wait;
+  /** busy requests */
+  QUEUE busy;
   /** makes this structure hashable */
   UT_hash_handle hh;
 };

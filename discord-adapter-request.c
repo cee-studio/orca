@@ -224,9 +224,9 @@ discord_request_perform_async(struct discord_adapter *adapter,
                             endpoint);
 
   if (cxt->attr.high_priority)
-    QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
+    QUEUE_INSERT_HEAD(&cxt->bucket->wait, &cxt->entry);
   else
-    QUEUE_INSERT_TAIL(&cxt->bucket->pending, &cxt->entry);
+    QUEUE_INSERT_TAIL(&cxt->bucket->wait, &cxt->entry);
 
   return ORCA_OK;
 }
@@ -315,7 +315,7 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
   curl_multi_add_handle(client->mhandle, ehandle);
 
   --cxt->bucket->remaining;
-  ++cxt->bucket->busy;
+  QUEUE_INSERT_TAIL(&cxt->bucket->busy, &cxt->entry);
 }
 
 /* check and enqueue requests that have been timed out */
@@ -337,7 +337,7 @@ discord_request_check_timeouts_async(struct discord_ratelimit *rlimit)
 
     heap_remove(&rlimit->timeouts, node, &timer_less_than);
 
-    QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
+    QUEUE_INSERT_HEAD(&cxt->bucket->wait, &cxt->entry);
   }
 }
 
@@ -349,7 +349,7 @@ _discord_request_send_single(struct discord_ratelimit *rlimit,
   struct discord_request *cxt;
   QUEUE *q;
 
-  q = QUEUE_HEAD(&b->pending);
+  q = QUEUE_HEAD(&b->wait);
   QUEUE_REMOVE(q);
   QUEUE_INIT(q);
 
@@ -368,8 +368,8 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
   struct discord_request *cxt;
   QUEUE *q;
 
-  while (b->remaining > 0 && !QUEUE_EMPTY(&b->pending)) {
-    q = QUEUE_HEAD(&b->pending);
+  while (b->remaining > 0 && !QUEUE_EMPTY(&b->wait)) {
+    q = QUEUE_HEAD(&b->wait);
     QUEUE_REMOVE(q);
     QUEUE_INIT(q);
 
@@ -390,7 +390,7 @@ discord_request_check_pending_async(struct discord_ratelimit *rlimit)
   /* iterate over buckets in search of pending requests */
   for (b = rlimit->buckets; b != NULL; b = b->hh.next) {
     /* skip busy and idle buckets */
-    if (b->busy || QUEUE_EMPTY(&b->pending)) continue;
+    if (!QUEUE_EMPTY(&b->busy) || QUEUE_EMPTY(&b->wait)) continue;
 
     /* if bucket is outdated then its necessary to send a single
      *      request to fetch updated values */
@@ -434,12 +434,17 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
                          &client->adapter.err.info);
 
+    /* this easy handle is done polling */
+    curl_multi_remove_handle(client->mhandle, ehandle);
+    /* remove from 'busy' queue */
+    QUEUE_REMOVE(&cxt->entry);
+
     if (retry) {
       /* reset conn for next iteration */
       ua_conn_reset(client->adapter.ua, cxt->conn);
 
-      /* add request handler to 'pending' queue for retry */
-      QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
+      /* add request handler to 'wait' queue for retry */
+      QUEUE_INSERT_HEAD(&cxt->bucket->wait, &cxt->entry);
     }
     else {
       if (cxt->attr.callback) {
@@ -452,11 +457,43 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
       /* add request handler to 'idle' queue for recycling */
       QUEUE_INSERT_TAIL(&client->adapter.idle, &cxt->entry);
     }
-
-    /* this easy handle is done */
-    curl_multi_remove_handle(client->mhandle, ehandle);
-
-    --cxt->bucket->busy;
-
   } while (curlmsg);
+}
+
+void
+discord_request_stop_all(struct discord_ratelimit *rlimit)
+{
+  struct discord *client = CLIENT(rlimit);
+  struct discord_request *cxt;
+  struct discord_bucket *b;
+  struct heap_node *node;
+  QUEUE queue;
+  QUEUE *q;
+
+  /* cancel pending timeouts */
+  while ((node = heap_min(&rlimit->timeouts)) != NULL) {
+    heap_remove(&rlimit->timeouts, node, &timer_less_than);
+
+    cxt = CXT(node);
+    QUEUE_INSERT_TAIL(&client->adapter.idle, &cxt->entry);
+  }
+
+  for (b = rlimit->buckets; b != NULL; b = b->hh.next) {
+    /* cancel on-going transfers */
+    QUEUE_MOVE(&b->busy, &queue);
+    while (!QUEUE_EMPTY(&queue)) {
+      q = QUEUE_HEAD(&queue);
+      QUEUE_REMOVE(q);
+
+      cxt = QUEUE_DATA(q, struct discord_request, entry);
+      curl_multi_remove_handle(client->mhandle,
+                               ua_conn_curl_easy_get(cxt->conn));
+
+      QUEUE_INSERT_TAIL(&client->adapter.idle, q);
+    }
+
+    /* cancel pending tranfers */
+    QUEUE_MOVE(&b->wait, &queue);
+    QUEUE_ADD(&client->adapter.idle, &queue);
+  }
 }

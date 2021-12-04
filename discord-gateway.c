@@ -1366,6 +1366,8 @@ discord_gateway_shutdown(struct discord_gateway *gw)
   gw->status->shutdown = true;
   gw->status->is_resumable = false;
 
+  discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
+
   ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
@@ -1381,6 +1383,8 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
   gw->status->is_resumable = resume;
   opcode = gw->status->is_resumable ? WS_CLOSE_REASON_NO_REASON
                                     : WS_CLOSE_REASON_NORMAL;
+
+  discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
 
   ws_close(gw->ws, opcode, reason, sizeof(reason));
 }

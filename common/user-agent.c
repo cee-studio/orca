@@ -840,7 +840,7 @@ ua_conn_curl_easy_get(struct ua_conn *conn)
 }
 
 static ORCAcode
-_us_conn_perform(struct user_agent *ua, struct ua_conn *conn)
+_ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
 {
   CURLcode ecode;
 
@@ -870,7 +870,7 @@ ua_run(struct user_agent *ua,
   ua_conn_setup(ua, conn, resp_handle, req_body, method, endpoint);
 
   /* perform blocking request */
-  if ((code = _us_conn_perform(ua, conn)) != ORCA_OK) {
+  if ((code = _ua_conn_perform(ua, conn)) != ORCA_OK) {
     return code;
   }
 

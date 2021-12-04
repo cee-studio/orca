@@ -153,10 +153,14 @@ discord_get_data(struct discord *client)
 }
 
 struct discord *
-discord_set_async(struct discord *client, discord_async_cb callback)
+discord_set_async(struct discord *client, struct discord_async_attr *attr)
 {
   client->async.enable = true;
-  client->async.callback = callback;
+  if (attr)
+    memcpy(&client->async.attr, attr, sizeof(struct discord_async_attr));
+  else
+    memset(&client->async.attr, 0, sizeof(struct discord_async_attr));
+
   return client;
 }
 

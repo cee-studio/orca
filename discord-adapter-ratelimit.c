@@ -42,7 +42,7 @@ _discord_ratelimit_get_route(const char endpoint[], char buf[32])
 static struct discord_bucket *
 _discord_bucket_init(struct discord_ratelimit *rlimit,
                      const char route[],
-                     struct sized_buffer *hash,
+                     const struct sized_buffer *hash,
                      const int limit)
 {
   struct discord_bucket *b;
@@ -134,7 +134,7 @@ _discord_bucket_cleanup(struct discord_bucket *b)
 void
 discord_ratelimit_init(struct discord_ratelimit *rlimit, struct logconf *conf)
 {
-  struct sized_buffer hash;
+  const struct sized_buffer hash = { "null", 4 };
 
   logconf_branch(&rlimit->conf, conf, "DISCORD_RATELIMIT");
 
@@ -146,9 +146,7 @@ discord_ratelimit_init(struct discord_ratelimit *rlimit, struct logconf *conf)
     ERR("Couldn't initialize pthread mutex");
 
   /* for routes that still haven't discovered a bucket match */
-  hash.start = "null";
-  hash.size = 4;
-  rlimit->b_null = _discord_bucket_init(rlimit, "null", &hash, 1);
+  rlimit->b_null = _discord_bucket_init(rlimit, "", &hash, 1);
 
   /* initialize min-heap for handling request timeouts */
   heap_init(&rlimit->timeouts);

@@ -164,8 +164,8 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
  *   - discord_request_set_timeout()
  */
 struct discord_request {
-  /** the callback to be triggered on request completion */
-  discord_async_cb callback;
+  /** async attributes */
+  struct discord_async_attr attr;
   /** the request's bucket */
   struct discord_bucket *bucket;
   /** the request's response handle */
@@ -216,6 +216,7 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  * @brief Enqueue a request to be performed asynchronously
  *
  * @param adapter the handle initialized with discord_adapter_init()
+ * @param attr attributes for asynchronous task
  * @param resp_handle the callbacks to be triggered should the request
  *        fail or succeed
  * @param req_body the body sent for methods that require (ex: post), leave as
@@ -226,6 +227,7 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  *        request has been successfully enqueued
  */
 ORCAcode discord_request_perform_async(struct discord_adapter *adapter,
+                                       struct discord_async_attr *attr,
                                        struct ua_resp_handle *resp_handle,
                                        struct sized_buffer *req_body,
                                        enum http_method method,
@@ -611,12 +613,12 @@ struct discord {
   struct logconf conf;
   /** whether this is the original client or a clone */
   bool is_original;
-  /** async handling struct */
+  /** async handler */
   struct {
     /** if true then next request will be dealt with asynchronously */
     bool enable;
-    /** optional callback to be triggered on completion */
-    discord_async_cb callback;
+    /** additional behavior config */
+    struct discord_async_attr attr;
   } async;
   /** the bot token */
   struct sized_buffer token;

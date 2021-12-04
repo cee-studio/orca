@@ -46,15 +46,18 @@ discord_request_cleanup(struct discord_request *cxt)
 static void
 _discord_request_populate(struct discord_request *cxt,
                           struct discord_adapter *adapter,
+                          struct discord_async_attr *attr,
                           struct ua_resp_handle *resp_handle,
                           struct sized_buffer *req_body,
                           enum http_method method,
                           char endpoint[])
 {
-  struct discord *client = CLIENT(&adapter->rlimit);
-
   cxt->method = method;
-  cxt->callback = client->async.callback;
+
+  if (attr)
+    memcpy(&cxt->attr, attr, sizeof(struct discord_async_attr));
+  else
+    memset(&cxt->attr, 0, sizeof(struct discord_async_attr));
 
   if (resp_handle) {
     /* copy response handle */
@@ -195,6 +198,7 @@ _discord_request_timeout(struct discord_ratelimit *rlimit,
 /* enqueue a request to be executed asynchronously */
 ORCAcode
 discord_request_perform_async(struct discord_adapter *adapter,
+                              struct discord_async_attr *attr,
                               struct ua_resp_handle *resp_handle,
                               struct sized_buffer *req_body,
                               enum http_method method,
@@ -207,7 +211,7 @@ discord_request_perform_async(struct discord_adapter *adapter,
     cxt = calloc(1, sizeof(struct discord_request));
   }
   else {
-    /* recycle idle request handler */
+    /* get from idle requests queue */
     QUEUE *q = QUEUE_HEAD(&adapter->idle);
     QUEUE_REMOVE(q);
 
@@ -216,11 +220,13 @@ discord_request_perform_async(struct discord_adapter *adapter,
   }
   QUEUE_INIT(&cxt->entry);
 
-  /* populate request handler */
-  _discord_request_populate(cxt, adapter, resp_handle, req_body, method,
+  _discord_request_populate(cxt, adapter, attr, resp_handle, req_body, method,
                             endpoint);
 
-  QUEUE_INSERT_TAIL(&cxt->bucket->pending, &cxt->entry);
+  if (cxt->attr.high_priority)
+    QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
+  else
+    QUEUE_INSERT_TAIL(&cxt->bucket->pending, &cxt->entry);
 
   return ORCA_OK;
 }
@@ -299,8 +305,8 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
   /* TODO: turn below into a user-agent.c function? */
   cxt->conn = ua_conn_start(client->adapter.ua);
   ehandle = ua_conn_curl_easy_get(cxt->conn);
-  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle, &cxt->req_body,
-                cxt->method, cxt->endpoint);
+  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle,
+                &cxt->req_body, cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
@@ -436,7 +442,9 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
       QUEUE_INSERT_HEAD(&cxt->bucket->pending, &cxt->entry);
     }
     else {
-      if (cxt->callback) (*cxt->callback)(client, &client->gw.bot, NULL, code);
+      if (cxt->attr.callback) {
+        cxt->attr.callback(client, &client->gw.bot, NULL, code);
+      }
 
       /* set conn as idle for recycling */
       ua_conn_stop(client->adapter.ua, cxt->conn);

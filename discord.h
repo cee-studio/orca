@@ -780,14 +780,26 @@ void *discord_set_data(struct discord *client, void *data);
 void *discord_get_data(struct discord *client);
 
 /**
- * @brief Toggle next request to run asynchronously
+ * @brief Set behavior for async task
+ *
+ * @see discord_set_async()
+ */
+struct discord_async_attr {
+  /** optional callback to be triggered on completion */
+  discord_async_cb callback;
+  /** if true the request will be dealt with as soon as possible */
+  bool high_priority;
+};
+
+/**
+ * @brief Set next request to run asynchronously
  *
  * @param client the client created with discord_init()
- * @param callback the callback to be executed on request completion
- * @return a pointer to the original client (for one-liner statements)
+ * @param attr attributes of the asynchronous task
+ * @return a pointer to the original client (for one-line statements)
  */
 struct discord *discord_set_async(struct discord *client,
-                                  discord_async_cb callback);
+                                  struct discord_async_attr *attr);
 
 /**
  * @brief Set the Client presence state

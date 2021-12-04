@@ -65,15 +65,16 @@ _discord_request_populate(struct discord_request *cxt,
   }
   if (req_body) {
     /* copy request body */
-    if (req_body->size > cxt->req_body.size) {
+    if (req_body->size > cxt->req_body.memsize) {
       /* needs to increase buffer size */
       void *tmp = realloc(cxt->req_body.start, req_body->size);
       ASSERT_S(tmp != NULL, "Out of memory");
 
       cxt->req_body.start = tmp;
-      cxt->req_body.size = req_body->size;
+      cxt->req_body.memsize = req_body->size;
     }
     memcpy(cxt->req_body.start, req_body->start, req_body->size);
+    cxt->req_body.size = req_body->size;
   }
   /* copy endpoint over to cxt */
   memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
@@ -300,13 +301,18 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
                              struct discord_request *cxt)
 {
   struct discord *client = CLIENT(rlimit);
+  struct sized_buffer req_body;
   CURL *ehandle;
 
   /* TODO: turn below into a user-agent.c function? */
   cxt->conn = ua_conn_start(client->adapter.ua);
   ehandle = ua_conn_curl_easy_get(cxt->conn);
+
+  req_body.start = cxt->req_body.start;
+  req_body.size = cxt->req_body.size;
+
   ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle,
-                &cxt->req_body, cxt->method, cxt->endpoint);
+                &req_body, cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);

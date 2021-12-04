@@ -171,7 +171,11 @@ struct discord_request {
   /** the request's response handle */
   struct ua_resp_handle resp_handle;
   /** the request's request body @note buffer is kept and recycled */
-  struct sized_buffer req_body;
+  struct {
+    char *start;
+    size_t size;
+    size_t memsize;
+  } req_body;
   /** the request's http method */
   enum http_method method;
   /** the request's endpoint */

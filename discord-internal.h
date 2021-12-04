@@ -37,10 +37,10 @@ struct discord_ratelimit {
   /* TODO: add content type field */
   /** DISCORD_RATELIMIT logging module */
   struct logconf conf;
-  /** routes discovered */
-  struct discord_route *routes;
   /** buckets discovered */
   struct discord_bucket *buckets;
+  /** for undefined routes */
+  struct discord_bucket *b_null;
   /* global resources */
   struct {
     /** global ratelimit */
@@ -50,10 +50,6 @@ struct discord_ratelimit {
     /** global lock */
     pthread_mutex_t lock;
   } * global;
-  /** for undefined routes */
-  struct discord_bucket *b_null;
-  /** for routes without a bucket match */
-  struct discord_bucket *b_miss;
   /* request timeouts */
   struct heap timeouts;
 };
@@ -155,22 +151,6 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              enum http_method method,
                              char endpoint_fmt[],
                              ...);
-
-/**
- * @brief A bucket may have multiple routes pointing at it
- *
- * Bucket routes can be either one of the two:
- * 1. major parameters: channel id, guild id, webhook id
- * 2. the endpoint itself
- */
-struct discord_route {
-  /** route associated with bucket */
-  char route[256];
-  /* bucket associated with route */
-  struct discord_bucket *bucket;
-  /** makes this structure hashable */
-  UT_hash_handle hh;
-};
 
 /**
  * @brief Context for requests that are scheduled to run asynchronously
@@ -290,8 +270,10 @@ void discord_request_check_results_async(struct discord_ratelimit *rlimit);
  * @see https://discord.com/developers/docs/topics/rate-limits
  */
 struct discord_bucket {
-  /** the unique hash associated with this bucket */
-  char hash[128];
+  /** the route associated with this bucket */
+  char route[128];
+  /** the hash associated with this bucket (logging purposes) */
+  char hash[64];
   /** maximum connections this bucket can handle before ratelimit */
   int limit;
   /** connections this bucket can do before waiting for cooldown */

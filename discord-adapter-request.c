@@ -205,7 +205,6 @@ discord_request_perform_async(struct discord_adapter *adapter,
   if (QUEUE_EMPTY(&adapter->idle)) {
     /* create new request handler */
     cxt = calloc(1, sizeof(struct discord_request));
-    QUEUE_INIT(&cxt->entry);
   }
   else {
     /* recycle idle request handler */
@@ -213,9 +212,9 @@ discord_request_perform_async(struct discord_adapter *adapter,
     QUEUE_REMOVE(q);
 
     cxt = QUEUE_DATA(q, struct discord_request, entry);
-
     _discord_request_reset(cxt);
   }
+  QUEUE_INIT(&cxt->entry);
 
   /* populate request handler */
   _discord_request_populate(cxt, adapter, resp_handle, req_body, method,

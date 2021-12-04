@@ -702,6 +702,9 @@ ua_conn_setup(struct user_agent *ua,
               enum http_method method,
               char endpoint[])
 {
+  char logbuf[1024] = "";
+  const char *method_str;
+
   /* set conn request's url */
   _ua_conn_set_url(ua, conn, endpoint);
   /* set conn request's method */
@@ -710,6 +713,23 @@ ua_conn_setup(struct user_agent *ua,
   if (resp_handle) {
     memcpy(&conn->resp_handle, resp_handle, sizeof(struct ua_resp_handle));
   }
+
+  /* log request to be sent */
+  method_str = http_method_print(conn->info.method);
+
+  ua_reqheader_str(ua, logbuf, sizeof(logbuf));
+
+  logconf_http(&ua->conf, &conn->info.loginfo, conn->req_url.start,
+               (struct sized_buffer){
+                 logbuf,
+                 sizeof(logbuf),
+               },
+               *conn->req_body, "HTTP_SEND_%s", method_str);
+
+  logconf_trace(conn->conf,
+                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
+                method_str, conn->info.loginfo.counter);
+
 }
 
 /* get request results */
@@ -820,25 +840,9 @@ ua_conn_curl_easy_get(struct ua_conn *conn)
 }
 
 static ORCAcode
-_ua_conn_sync_perform(struct user_agent *ua, struct ua_conn *conn)
+_us_conn_perform(struct user_agent *ua, struct ua_conn *conn)
 {
   CURLcode ecode;
-  char logbuf[1024] = "";
-  const char *method_str = http_method_print(conn->info.method);
-
-  /* log request to be performed */
-  ua_reqheader_str(ua, logbuf, sizeof(logbuf));
-
-  logconf_http(&ua->conf, &conn->info.loginfo, conn->req_url.start,
-               (struct sized_buffer){
-                 logbuf,
-                 sizeof(logbuf),
-               },
-               *conn->req_body, "HTTP_SEND_%s", method_str);
-
-  logconf_trace(conn->conf,
-                ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
-                method_str, conn->info.loginfo.counter);
 
   ecode = curl_easy_perform(conn->ehandle);
   if (ecode != CURLE_OK) {
@@ -865,10 +869,11 @@ ua_run(struct user_agent *ua,
   /* populate conn with parameters */
   ua_conn_setup(ua, conn, resp_handle, req_body, method, endpoint);
 
-  /* perform blocking-IO request */
-  if ((code = _ua_conn_sync_perform(ua, conn)) != ORCA_OK) {
+  /* perform blocking request */
+  if ((code = _us_conn_perform(ua, conn)) != ORCA_OK) {
     return code;
   }
+
   /* check request results and call user-callbacks accordingly */
   code = ua_conn_get_results(ua, conn, info);
 

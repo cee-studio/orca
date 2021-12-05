@@ -232,13 +232,13 @@ discord_bucket_get(struct discord_ratelimit *rlimit, const char endpoint[])
   struct discord_bucket *b = _discord_bucket_find(rlimit, route);
 
   if (b) {
-    logconf_debug(&rlimit->conf, "[%.4s] Found a bucket match for route '%s'!",
+    logconf_trace(&rlimit->conf, "[%.4s] Found a bucket match for route '%s'!",
                   b->hash, b->route);
 
     return b;
   }
 
-  logconf_debug(&rlimit->conf,
+  logconf_trace(&rlimit->conf,
                 "[null] Couldn't match any discovered bucket to route '%s'",
                 route);
 
@@ -355,8 +355,8 @@ discord_bucket_build(struct discord_ratelimit *rlimit,
       return;
     }
 
-    logconf_debug(&rlimit->conf, "[%.4s] Match route '%s' to bucket", b->hash,
-                  b->route);
+    logconf_info(&rlimit->conf, "[%.4s] Match route '%s' to bucket", b->hash,
+                 b->route);
 
     _discord_bucket_undefined_filter(rlimit, b, endpoint);
   }

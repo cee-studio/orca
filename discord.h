@@ -444,7 +444,7 @@ void discord_set_on_command(struct discord *client,
  */
 void discord_set_on_commands(struct discord *client,
                              discord_message_cb callback,
-                             ...)
+                             ...);
 
 /**
  * @brief Set a callback that triggers on any event the client is subscribed

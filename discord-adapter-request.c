@@ -63,6 +63,7 @@ _discord_request_populate(struct discord_request *cxt,
     /* copy response handle */
     memcpy(&cxt->resp_handle, resp_handle, sizeof(cxt->resp_handle));
   }
+
   if (req_body) {
     /* copy request body */
     if (req_body->size > cxt->req_body.memsize) {
@@ -76,6 +77,7 @@ _discord_request_populate(struct discord_request *cxt,
     memcpy(cxt->req_body.start, req_body->start, req_body->size);
     cxt->req_body.size = req_body->size;
   }
+
   /* copy endpoint over to cxt */
   memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
 
@@ -311,8 +313,8 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
   req_body.start = cxt->req_body.start;
   req_body.size = cxt->req_body.size;
 
-  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle,
-                &req_body, cxt->method, cxt->endpoint);
+  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle, &req_body,
+                cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
@@ -320,7 +322,6 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
   /* initiate libcurl transfer */
   curl_multi_add_handle(client->mhandle, ehandle);
 
-  --cxt->bucket->remaining;
   QUEUE_INSERT_TAIL(&cxt->bucket->busy, &cxt->entry);
 }
 
@@ -373,8 +374,11 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
 {
   struct discord_request *cxt;
   QUEUE *q;
+  int i;
 
-  while (b->remaining > 0 && !QUEUE_EMPTY(&b->wait)) {
+  for (i = b->remaining; i > 0; --i) {
+    if (QUEUE_EMPTY(&b->wait)) break;
+
     q = QUEUE_HEAD(&b->wait);
     QUEUE_REMOVE(q);
     QUEUE_INIT(q);
@@ -385,7 +389,7 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
     if (_discord_request_timeout(rlimit, cxt)) break;
 
     _discord_request_start_async(rlimit, cxt);
-  };
+  }
 }
 
 void
@@ -395,7 +399,7 @@ discord_request_check_pending_async(struct discord_ratelimit *rlimit)
 
   /* iterate over buckets in search of pending requests */
   for (b = rlimit->buckets; b != NULL; b = b->hh.next) {
-    /* skip busy and idle buckets */
+    /* skip busy and non-pending buckets */
     if (!QUEUE_EMPTY(&b->busy) || QUEUE_EMPTY(&b->wait)) continue;
 
     /* if bucket is outdated then its necessary to send a single
@@ -404,6 +408,7 @@ discord_request_check_pending_async(struct discord_ratelimit *rlimit)
       _discord_request_send_single(rlimit, b);
       continue;
     }
+
     /* send remainder or trigger timeout */
     _discord_request_send_batch(rlimit, b);
   }
@@ -463,7 +468,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
       /* add request handler to 'idle' queue for recycling */
       QUEUE_INSERT_TAIL(&client->adapter.idle, &cxt->entry);
     }
-  } while (curlmsg);
+  } while (1);
 }
 
 void

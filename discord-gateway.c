@@ -1303,14 +1303,13 @@ _discord_gateway_loop(struct discord_gateway *gw)
 
   ws_start(gw->ws, NULL);
   while (1) {
-    discord_request_check_timeouts_async(&CLIENT(gw)->adapter.rlimit);
-    discord_request_check_pending_async(&CLIENT(gw)->adapter.rlimit);
-
     if (!ws_perform(gw->ws, 5)) {
       /* severed connection */
       break;
     }
 
+    discord_request_check_timeouts_async(&CLIENT(gw)->adapter.rlimit);
+    discord_request_check_pending_async(&CLIENT(gw)->adapter.rlimit);
     discord_request_check_results_async(&CLIENT(gw)->adapter.rlimit);
 
     if (!gw->status->is_ready) {
@@ -1384,6 +1383,7 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
   opcode = gw->status->is_resumable ? WS_CLOSE_REASON_NO_REASON
                                     : WS_CLOSE_REASON_NORMAL;
 
+  /* TODO: pause connections for retry instead of stopping them */
   discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
 
   ws_close(gw->ws, opcode, reason, sizeof(reason));

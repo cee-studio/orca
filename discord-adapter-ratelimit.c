@@ -107,8 +107,6 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
     _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
 
     b = _discord_bucket_init(rlimit, route, &hash, _limit);
-
-    logconf_debug(&rlimit->conf, "[%.4s] Create bucket", b->hash);
   }
 
   return b;
@@ -254,8 +252,8 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
 {
   /* fetch individual header fields */
   struct sized_buffer reset, remaining, reset_after, date;
-  /* Discord's server time in milliseconds */
-  u64_unix_ms_t _server;
+  /* 'now' timestamp */
+  u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
   /* remaining requests before ratelimiting */
   int _remaining;
 
@@ -265,18 +263,16 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
   date = ua_info_header_get(info, "date");
 
   _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
-  _server = 1000 * curl_getdate(date.start, NULL);
 
-  /* skip populating bucket with unordered responses */
-  if (_remaining > b->remaining && _server <= b->server) return;
+  /* skip out of order responses */
+  if (_remaining > b->remaining && now < b->reset_tstamp) return;
 
   /* use X-Ratelimit-Reset-After if available, otherwise use
    * X-Ratelimit-Reset */
   if (reset_after.size) {
     struct sized_buffer global =
       ua_info_header_get(info, "x-ratelimit-global");
-    u64_unix_ms_t reset_tstamp =
-      cee_timestamp_ms() + 1000 * strtod(reset_after.start, NULL);
+    u64_unix_ms_t reset_tstamp = now + 1000 * strtod(reset_after.start, NULL);
 
     if (global.size) {
       /* lock all buckets */
@@ -292,22 +288,24 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
   else if (reset.size) {
     /* get approximate elapsed time since request */
     struct PsnipClockTimespec ts;
+    /* the Discord time in milliseconds */
+    u64_unix_ms_t server;
     /* the Discord time + request's elapsed time */
     u64_unix_ms_t offset;
 
+    server = 1000 * curl_getdate(date.start, NULL);
     psnip_clock_wall_get_time(&ts);
-    offset = _server + ts.nanoseconds / 1000000;
+    offset = server + ts.nanoseconds / 1000000;
     /* reset timestamp =
      * (system time) + (diff between Discord's reset timestamp and offset) */
-    b->reset_tstamp =
-      cee_timestamp_ms() + (1000 * strtod(reset.start, NULL) - offset);
+    b->reset_tstamp = now + (1000 * strtod(reset.start, NULL) - offset);
   }
 
   b->remaining = _remaining;
-  b->server = _server;
 
-  logconf_debug(&rlimit->conf, "[%.4s] Reset = %" PRIu64 " | Remaining = %d",
-                b->hash, b->reset_tstamp, b->remaining);
+  logconf_debug(&rlimit->conf,
+                "[%.4s] Remaining = %d | Reset = %" PRIu64 " (%ld ms)",
+                b->hash, b->remaining, b->reset_tstamp, b->reset_tstamp - now);
 }
 
 /* in case of asynchronous requests, check if successive requests with
@@ -350,13 +348,13 @@ discord_bucket_build(struct discord_ratelimit *rlimit,
     b = _discord_bucket_get_match(rlimit, endpoint, info);
     if (b == rlimit->b_null) {
       logconf_debug(&rlimit->conf, "[null] No bucket match for route '%s'",
-                    b->route);
+                    endpoint);
 
       return;
     }
 
-    logconf_info(&rlimit->conf, "[%.4s] Match route '%s' to bucket", b->hash,
-                 b->route);
+    logconf_debug(&rlimit->conf, "[%.4s] Bucket match for route '%s'", b->hash,
+                  b->route);
 
     _discord_bucket_undefined_filter(rlimit, b, endpoint);
   }

@@ -97,16 +97,18 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
 
   /* create bucket if it doesn't exist yet */
   if (!b) {
-    struct sized_buffer hash, limit;
-    int _limit;
+    struct sized_buffer hash = ua_info_header_get(info, "x-ratelimit-bucket");
 
-    hash = ua_info_header_get(info, "x-ratelimit-bucket");
-    if (!hash.size) return rlimit->b_null;
+    if (!hash.size) {
+      /* bucket not specified */
+      b = rlimit->b_null;
+    }
+    else {
+      struct sized_buffer limit = ua_info_header_get(info, "x-ratelimit-limit");
+      int _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
 
-    limit = ua_info_header_get(info, "x-ratelimit-limit");
-    _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
-
-    b = _discord_bucket_init(rlimit, route, &hash, _limit);
+      b = _discord_bucket_init(rlimit, route, &hash, _limit);
+    }
   }
 
   return b;
@@ -251,7 +253,7 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
                          struct ua_info *info)
 {
   /* fetch individual header fields */
-  struct sized_buffer reset, remaining, reset_after, date;
+  struct sized_buffer reset, remaining, reset_after;
   /* 'now' timestamp */
   u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
   /* remaining requests before ratelimiting */
@@ -260,7 +262,6 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
   reset = ua_info_header_get(info, "x-ratelimit-reset");
   reset_after = ua_info_header_get(info, "x-ratelimit-reset-after");
   remaining = ua_info_header_get(info, "x-ratelimit-remaining");
-  date = ua_info_header_get(info, "date");
 
   _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
 
@@ -286,6 +287,7 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
     }
   }
   else if (reset.size) {
+    struct sized_buffer date = ua_info_header_get(info, "date");
     /* get approximate elapsed time since request */
     struct PsnipClockTimespec ts;
     /* the Discord time in milliseconds */
@@ -297,7 +299,7 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
     psnip_clock_wall_get_time(&ts);
     offset = server + ts.nanoseconds / 1000000;
     /* reset timestamp =
-     * (system time) + (diff between Discord's reset timestamp and offset) */
+     *   (system time) + (diff between Discord's reset timestamp and offset) */
     b->reset_tstamp = now + (1000 * strtod(reset.start, NULL) - offset);
   }
 

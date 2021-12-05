@@ -205,6 +205,24 @@ discord_set_on_command(struct discord *client,
                                 DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
+void discord_set_on_commands(struct discord *client,
+                             discord_message_cb callback,
+                             ...)
+{
+    char *command = NULL;
+    va_list commands = {0};
+
+    va_start(commands, callback);
+    command = va_arg(commands, char*);
+
+    while(command != NULL) {
+        discord_set_on_command(client, command, callback);
+        command = va_arg(commands, char*);
+    }
+
+    va_end(commands);
+}
+
 void
 discord_set_event_scheduler(struct discord *client,
                             discord_event_scheduler_cb callback)

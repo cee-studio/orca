@@ -1082,11 +1082,8 @@ on_close_cb(void *p_gw,
     ANSICOLOR("CLOSE %s", ANSI_FG_RED) " (code: %4d, %zu bytes): '%.*s'",
     close_opcode_print(opcode), opcode, len, (int)len, reason);
 
-  if (gw->status->shutdown) {
-    /* user-triggered shutdown */
-    gw->status->shutdown = false;
-    return;
-  }
+  /* user-triggered shutdown */
+  if (gw->status->shutdown) return;
 
   switch (opcode) {
   case DISCORD_GATEWAY_CLOSE_REASON_UNKNOWN_ERROR:
@@ -1325,6 +1322,11 @@ _discord_gateway_loop(struct discord_gateway *gw)
       break;
     }
 
+    if (gw->status->shutdown) {
+      /* wait until connection shutsdown */
+      continue;
+    }
+
     discord_request_check_timeouts_async(&client->adapter.rlimit);
     discord_request_check_pending_async(&client->adapter.rlimit);
     discord_request_check_results_async(&client->adapter.rlimit);
@@ -1344,6 +1346,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
   }
   ws_end(gw->ws);
 
+  gw->status->shutdown = false;
   gw->status->is_ready = false;
 
   return ORCA_OK;

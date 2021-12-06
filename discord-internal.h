@@ -266,10 +266,18 @@ void discord_request_check_results_async(struct discord_ratelimit *rlimit);
 /**
  * @brief Stop all on-going, pending and timed-out requests
  *
- * The requests will be moved over to client 'idle' queue
+ * The requests will be moved over to client's 'idleq' queue
  * @param rlimit the ratelimit handler
  */
 void discord_request_stop_all(struct discord_ratelimit *rlimit);
+
+/**
+ * @brief Pause all on-going timed-out requests
+ *
+ * The requests will be moved over to bucket's 'waitq' queue
+ * @param rlimit the ratelimit handler
+ */
+void discord_request_pause_all(struct discord_ratelimit *rlimit);
 
 /**
  * @brief The bucket struct for handling ratelimiting

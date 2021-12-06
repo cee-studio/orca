@@ -427,7 +427,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
   CURL *ehandle;
   ORCAcode code;
 
-  do {
+  while (1) {
     bool retry;
     int msgq = 0;
     curlmsg = curl_multi_info_read(client->mhandle, &msgq);
@@ -435,8 +435,8 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     if (!curlmsg) break;
     if (CURLMSG_DONE != curlmsg->msg) continue;
 
-    ehandle = curlmsg->easy_handle;
     /* get request handler assigned to this easy handle */
+    ehandle = curlmsg->easy_handle;
     curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
     ua_info_cleanup(&client->adapter.err.info);
 
@@ -455,9 +455,6 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     QUEUE_REMOVE(&cxt->entry);
 
     if (retry) {
-      /* reset conn for next iteration */
-      ua_conn_reset(client->adapter.ua, cxt->conn);
-
       /* add request handler to 'waitq' queue for retry */
       QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
     }
@@ -465,14 +462,11 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
       if (cxt->attr.callback) {
         cxt->attr.callback(client, &client->gw.bot, NULL, code);
       }
-
-      /* set conn as idle for recycling */
+      /* set for recycling */
       ua_conn_stop(client->adapter.ua, cxt->conn);
-
-      /* add request handler to 'idleq' queue for recycling */
       QUEUE_INSERT_TAIL(&client->adapter.idleq, &cxt->entry);
     }
-  } while (1);
+  }
 }
 
 void
@@ -482,33 +476,76 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
   struct discord_request *cxt;
   struct discord_bucket *b;
   struct heap_node *node;
-  QUEUE queue;
   QUEUE *q;
 
   /* cancel pending timeouts */
   while ((node = heap_min(&rlimit->timeouts)) != NULL) {
-    heap_remove(&rlimit->timeouts, node, &timer_less_than);
-
     cxt = CXT(node);
+
+    heap_remove(&rlimit->timeouts, node, &timer_less_than);
+    cxt->bucket->freeze = false;
+
     QUEUE_INSERT_TAIL(&client->adapter.idleq, &cxt->entry);
   }
 
+  /* cancel bucket's on-going transfers */
   for (b = rlimit->buckets; b != NULL; b = b->hh.next) {
-    /* cancel on-going transfers */
-    QUEUE_MOVE(&b->busyq, &queue);
-    while (!QUEUE_EMPTY(&queue)) {
-      q = QUEUE_HEAD(&queue);
+    CURL *ehandle;
+
+    while (!QUEUE_EMPTY(&b->busyq)) {
+      q = QUEUE_HEAD(&b->busyq);
       QUEUE_REMOVE(q);
 
       cxt = QUEUE_DATA(q, struct discord_request, entry);
-      curl_multi_remove_handle(client->mhandle,
-                               ua_conn_curl_easy_get(cxt->conn));
+      ehandle = ua_conn_curl_easy_get(cxt->conn);
 
+      curl_multi_remove_handle(client->mhandle, ehandle);
+
+      /* set for recycling */
+      ua_conn_stop(client->adapter.ua, cxt->conn);
       QUEUE_INSERT_TAIL(&client->adapter.idleq, q);
     }
 
     /* cancel pending tranfers */
-    QUEUE_MOVE(&b->waitq, &queue);
-    QUEUE_ADD(&client->adapter.idleq, &queue);
+    QUEUE_ADD(&client->adapter.idleq, &b->waitq);
+    QUEUE_INIT(&b->waitq);
+  }
+}
+
+void
+discord_request_pause_all(struct discord_ratelimit *rlimit)
+{
+  struct discord *client = CLIENT(rlimit);
+  struct discord_request *cxt;
+  struct discord_bucket *b;
+  struct heap_node *node;
+  QUEUE *q;
+
+  /* move pending timeouts to bucket's waitq */
+  while ((node = heap_min(&rlimit->timeouts)) != NULL) {
+    cxt = CXT(node);
+
+    heap_remove(&rlimit->timeouts, node, &timer_less_than);
+    cxt->bucket->freeze = false;
+
+    QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
+  }
+
+  /* cancel bucket's on-going transfers and move them to waitq for
+   *        resuming */
+  for (b = rlimit->buckets; b != NULL; b = b->hh.next) {
+    CURL *ehandle;
+
+    while (!QUEUE_EMPTY(&b->busyq)) {
+      q = QUEUE_HEAD(&b->busyq);
+      QUEUE_REMOVE(q);
+
+      cxt = QUEUE_DATA(q, struct discord_request, entry);
+      ehandle = ua_conn_curl_easy_get(cxt->conn);
+
+      curl_multi_remove_handle(client->mhandle, ehandle);
+
+      QUEUE_INSERT_HEAD(&b->waitq, q);
+    }
   }
 }

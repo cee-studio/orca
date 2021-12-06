@@ -543,13 +543,9 @@ struct websockets *
 ws_init(struct ws_callbacks *cbs, struct ws_attr *attr)
 {
   struct websockets *new_ws;
-  struct ws_attr _attr =
-    attr ? *attr : (struct ws_attr){ .mhandle = curl_multi_init() };
 
   new_ws = calloc(1, sizeof *new_ws);
-  new_ws->mhandle = _attr.mhandle ? _attr.mhandle : curl_multi_init();
-
-  logconf_branch(&new_ws->conf, _attr.conf, "WEBSOCKETS");
+  logconf_branch(&new_ws->conf, attr ? attr->conf : NULL, "WEBSOCKETS");
 
   new_ws->cbs = *cbs;
   /** respond ping with a pong by default */
@@ -592,7 +588,7 @@ ws_set_url(struct websockets *ws,
 void
 ws_cleanup(struct websockets *ws)
 {
-  curl_multi_cleanup(ws->mhandle);
+  if (ws->mhandle) curl_multi_cleanup(ws->mhandle);
   if (ws->ehandle) cws_free(ws->ehandle);
   pthread_mutex_destroy(&ws->lock);
   pthread_rwlock_destroy(&ws->rwlock);
@@ -744,7 +740,7 @@ ws_pong(struct websockets *ws,
 }
 
 void
-ws_start(struct websockets *ws, CURL **ret_ehandle)
+ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
 {
   ws->tid = pthread_self(); /* save the starting thread */
   memset(&ws->pending_close, 0, sizeof ws->pending_close);
@@ -758,11 +754,15 @@ ws_start(struct websockets *ws, CURL **ret_ehandle)
             "[%s] (Internal error) Attempt to reconnect without properly "
             "closing the connection",
             ws->conf.id);
+
   ws->ehandle = _ws_cws_new(ws, ws->protocols);
+  ws->mhandle = curl_multi_init();
   curl_multi_add_handle(ws->mhandle, ws->ehandle);
+
   _ws_set_status(ws, WS_CONNECTING);
 
   if (ret_ehandle) *ret_ehandle = ws->ehandle;
+  if (ret_mhandle) *ret_mhandle = ws->mhandle;
 }
 
 void
@@ -803,6 +803,10 @@ ws_end(struct websockets *ws)
   if (ws->ehandle) {
     cws_free(ws->ehandle);
     ws->ehandle = NULL;
+  }
+  if (ws->mhandle) {
+    curl_multi_cleanup(ws->mhandle);
+    ws->mhandle = NULL;
   }
 
   _ws_set_status(ws, WS_DISCONNECTED);

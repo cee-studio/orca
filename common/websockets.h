@@ -148,8 +148,6 @@ struct ws_callbacks {
 struct ws_attr {
   /** pre-initialized logging module */
   struct logconf *conf;
-  /** pre-initialized libcurl's multi-handle */
-  CURLM *mhandle;
 };
 
 /**
@@ -248,9 +246,10 @@ _Bool ws_pong(struct websockets *ws,
  *
  * @param ws the WebSockets handle created with ws_init()
  * @param ehandle optional pointer to the newly created libcurl's easy handle
+ * @param mhandle optional pointer to the newly created libcurl's multi handle
  * @note Helper over _ws_set_status(ws, WS_CONNECTING)
  */
-void ws_start(struct websockets *ws, CURL **ret_ehandle);
+void ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle);
 
 /**
  * @brief Cleanup and reset `ws` connection resources

@@ -13,26 +13,23 @@ struct spam_cxt {
   unsigned long long counter;
 };
 
-void
-on_ready(struct discord *client, const struct discord_user *me)
+void on_ready(struct discord *client, const struct discord_user *me)
 {
   log_info("Succesfully connected to Discord as %s#%s!", me->username,
            me->discriminator);
 }
 
-void
-shutdown(struct discord *client,
-         const struct discord_user *bot,
-         const void *p_obj,
-         ORCAcode code)
+void shutdown(struct discord *client,
+              const struct discord_user *bot,
+              const void *p_obj,
+              ORCAcode code)
 {
   discord_shutdown(client);
 }
 
-void
-on_disconnect(struct discord *client,
-              const struct discord_user *bot,
-              const struct discord_message *msg)
+void on_disconnect(struct discord *client,
+                   const struct discord_user *bot,
+                   const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -48,19 +45,17 @@ on_disconnect(struct discord *client,
                          NULL);
 }
 
-void
-reconnect(struct discord *client,
-          const struct discord_user *bot,
-          const void *p_obj,
-          ORCAcode code)
+void reconnect(struct discord *client,
+               const struct discord_user *bot,
+               const void *p_obj,
+               ORCAcode code)
 {
   discord_reconnect(client, true);
 }
 
-void
-on_reconnect(struct discord *client,
-             const struct discord_user *bot,
-             const struct discord_message *msg)
+void on_reconnect(struct discord *client,
+                  const struct discord_user *bot,
+                  const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -76,12 +71,32 @@ on_reconnect(struct discord *client,
                          NULL);
 }
 
-void checkpoint(struct discord *client,
+void send_batch(struct discord *client,
                 const struct discord_user *bot,
                 const void *p_obj,
                 ORCAcode code)
 {
-  log_trace("SUCCESS!");
+  struct spam_cxt *cxt = discord_get_data(client);
+  char text[32];
+
+  for (int i = 0; i < 128; ++i) {
+    snprintf(text, sizeof(text), "%d", i);
+    discord_create_message(discord_set_async(client, NULL), cxt->channel_id,
+                           &(struct discord_create_message_params){
+                             .content = text,
+                           },
+                           NULL);
+  }
+
+  discord_create_message(discord_set_async(client,
+                                           &(struct discord_async_attr){
+                                             .callback = &send_batch,
+                                           }),
+                         cxt->channel_id,
+                         &(struct discord_create_message_params){
+                           .content = "CHECKPOINT",
+                         },
+                         NULL);
 }
 
 void on_spam(struct discord *client,
@@ -90,19 +105,10 @@ void on_spam(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  char text[32];
-  for (int i = 0; i < 100; ++i) {
-    snprintf(text, sizeof(text), "%d", i);
-    discord_create_message(discord_set_async(client,
-                                             &(struct discord_async_attr){
-                                               .callback = &checkpoint,
-                                             }),
-                           msg->channel_id,
-                           &(struct discord_create_message_params){
-                             .content = text,
-                           },
-                           NULL);
-  }
+  struct spam_cxt *cxt = discord_get_data(client);
+  cxt->channel_id = msg->channel_id;
+
+  send_batch(client, bot, NULL, ORCA_OK);
 }
 
 void send_msg(struct discord *client,

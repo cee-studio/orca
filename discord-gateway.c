@@ -14,7 +14,7 @@
 
 /* shorten event callback for maintainability purposes */
 #define ON(event, ...)                                                        \
-  (*gw->cmds.cbs.on_##event)(CLIENT(gw), &gw->bot, ##__VA_ARGS__)
+  gw->cmds.cbs.on_##event(CLIENT(gw), &gw->bot, ##__VA_ARGS__)
 
 static void
 sized_buffer_from_json(char *json, size_t len, void *data)
@@ -43,28 +43,28 @@ _discord_gateway_close(struct discord_gateway *gw,
 ORCAcode
 discord_get_gateway(struct discord *client, struct sized_buffer *p_json)
 {
-  struct ua_resp_handle resp_handle = { &sized_buffer_from_json, p_json };
+  struct ua_resp_handle handle = { &sized_buffer_from_json, p_json };
 
   if (!p_json) {
     logconf_error(&client->conf, "Missing 'p_json'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &resp_handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
                              "/gateway");
 }
 
 ORCAcode
 discord_get_gateway_bot(struct discord *client, struct sized_buffer *p_json)
 {
-  struct ua_resp_handle resp_handle = { &sized_buffer_from_json, p_json };
+  struct ua_resp_handle handle = { &sized_buffer_from_json, p_json };
 
   if (!p_json) {
     logconf_error(&client->conf, "Missing 'p_json'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &resp_handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
                              "/gateway/bot");
 }
 
@@ -99,13 +99,13 @@ close_opcode_print(enum discord_gateway_close_opcodes opcode)
 static void
 send_resume(struct discord_gateway *gw)
 {
-  char payload[1024];
+  char buf[1024];
   size_t ret;
   struct ws_info info = { 0 };
 
   gw->status->is_resumable = false; /* reset */
 
-  ret = json_inject(payload, sizeof(payload),
+  ret = json_inject(buf, sizeof(buf),
                     "(op):6" /* RESUME OPCODE */
                     "(d):{"
                     "(token):s"
@@ -113,9 +113,9 @@ send_resume(struct discord_gateway *gw)
                     "(seq):d"
                     "}",
                     gw->id.token, gw->session_id, &gw->payload.seq);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
-  ws_send_text(gw->ws, &info, payload, ret);
+  ws_send_text(gw->ws, &info, buf, ret);
 
   logconf_info(
     &gw->conf,
@@ -126,7 +126,7 @@ send_resume(struct discord_gateway *gw)
 static void
 send_identify(struct discord_gateway *gw)
 {
-  char payload[1024];
+  char buf[1024];
   size_t ret;
   struct ws_info info = { 0 };
 
@@ -141,13 +141,13 @@ send_identify(struct discord_gateway *gw)
     gw->session.concurrent = 0;
   }
 
-  ret = json_inject(payload, sizeof(payload),
+  ret = json_inject(buf, sizeof(buf),
                     "(op):2" /* IDENTIFY OPCODE */
                     "(d):F",
                     &discord_identify_to_json, &gw->id);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
-  ws_send_text(gw->ws, &info, payload, ret);
+  ws_send_text(gw->ws, &info, buf, ret);
 
   logconf_info(
     &gw->conf,
@@ -164,15 +164,14 @@ send_identify(struct discord_gateway *gw)
 static void
 send_heartbeat(struct discord_gateway *gw)
 {
-  char payload[64];
+  char buf[64];
   int ret;
   struct ws_info info = { 0 };
 
-  ret =
-    json_inject(payload, sizeof(payload), "(op):1,(d):d", &gw->payload.seq);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ret = json_inject(buf, sizeof(buf), "(op):1,(d):d", &gw->payload.seq);
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
-  ws_send_text(gw->ws, &info, payload, ret);
+  ws_send_text(gw->ws, &info, buf, ret);
 
   logconf_info(
     &gw->conf,
@@ -555,7 +554,7 @@ on_message_create(struct discord_gateway *gw, struct sized_buffer *data)
         ++msg.content;
       }
 
-      (*cmd->cb)(CLIENT(gw), &gw->bot, &msg);
+      cmd->cb(CLIENT(gw), &gw->bot, &msg);
 
       msg.content = tmp; /* retrieve original ptr */
     }
@@ -565,8 +564,8 @@ on_message_create(struct discord_gateway *gw, struct sized_buffer *data)
   }
 
   if (gw->cmds.cbs.sb_on_message_create) /* @todo temporary */
-    (*gw->cmds.cbs.sb_on_message_create)(CLIENT(gw), &gw->bot, &gw->sb_bot,
-                                         &msg, data);
+    gw->cmds.cbs.sb_on_message_create(CLIENT(gw), &gw->bot, &gw->sb_bot, &msg,
+                                      data);
   else if (gw->cmds.cbs.on_message_create)
     ON(message_create, &msg);
 
@@ -581,8 +580,8 @@ on_message_update(struct discord_gateway *gw, struct sized_buffer *data)
   discord_message_from_json(data->start, data->size, &msg);
 
   if (gw->cmds.cbs.sb_on_message_update)
-    (*gw->cmds.cbs.sb_on_message_update)(CLIENT(gw), &gw->bot, &gw->sb_bot,
-                                         &msg, data);
+    gw->cmds.cbs.sb_on_message_update(CLIENT(gw), &gw->bot, &gw->sb_bot, &msg,
+                                      data);
   else if (gw->cmds.cbs.on_message_update)
     ON(message_update, &msg);
 
@@ -705,6 +704,7 @@ static void
 on_voice_state_update(struct discord_gateway *gw, struct sized_buffer *data)
 {
   struct discord_voice_state vs;
+
   discord_voice_state_from_json(data->start, data->size, &vs);
 
   if (vs.user_id == gw->bot.id) {
@@ -985,7 +985,7 @@ on_dispatch(struct discord_gateway *gw)
   case DISCORD_EVENT_IGNORE:
     return;
   case DISCORD_EVENT_MAIN_THREAD:
-    (*on_event)(gw, &gw->payload.data);
+    on_event(gw, &gw->payload.data);
     return;
   case DISCORD_EVENT_WORKER_THREAD: {
     /* event scheduled to run from a worker thread */
@@ -1145,7 +1145,7 @@ on_text_cb(void *p_gw,
     &gw->conf,
     ANSICOLOR("RCV",
               ANSI_FG_BRIGHT_YELLOW) " %s%s%s (%zu bytes) [@@@_%zu_@@@]",
-    opcode_print(gw->payload.opcode), (*gw->payload.name) ? " -> " : "",
+    opcode_print(gw->payload.opcode), *gw->payload.name ? " -> " : "",
     gw->payload.name, len, info->loginfo.counter);
 
   switch (gw->payload.opcode) {
@@ -1323,7 +1323,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
     }
 
     if (gw->status->shutdown) {
-      /* wait until connection shutsdown */
+      /* wait until connection shutdown */
       continue;
     }
 

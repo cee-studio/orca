@@ -12,6 +12,10 @@ discord_get_global_application_commands(
   const u64_snowflake_t application_id,
   NTL_T(struct discord_application_command) * p_app_cmds)
 {
+  struct ua_resp_handle handle = {
+    &discord_application_command_list_from_json_v, p_app_cmds
+  };
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -21,12 +25,9 @@ discord_get_global_application_commands(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb =
-                                &discord_application_command_list_from_json_v,
-                              .ok_obj = p_app_cmds },
-    NULL, HTTP_GET, "/applications/%" PRIu64 "/commands", application_id);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+                             "/applications/%" PRIu64 "/commands",
+                             application_id);
 }
 
 ORCAcode
@@ -36,6 +37,13 @@ discord_create_global_application_command(
   struct discord_create_global_application_command_params *params,
   struct discord_application_command *p_app_cmd)
 {
+  struct ua_resp_handle handle = {
+    p_app_cmd ? &discord_application_command_from_json_v : NULL,
+    p_app_cmd,
+  };
+  struct sized_buffer body;
+  char buf[4096];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -53,17 +61,13 @@ discord_create_global_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[4096];
-  size_t ret = discord_create_global_application_command_params_to_json(
-    payload, sizeof(payload), params);
+  body.size = discord_create_global_application_command_params_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = p_app_cmd ? &discord_application_command_from_json_v : NULL,
-      .ok_obj = p_app_cmd },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST,
-    "/applications/%" PRIu64 "/commands", application_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+                             "/applications/%" PRIu64 "/commands",
+                             application_id);
 }
 
 ORCAcode
@@ -73,6 +77,9 @@ discord_get_global_application_command(
   const u64_snowflake_t command_id,
   struct discord_application_command *p_app_cmd)
 {
+  struct ua_resp_handle handle = { &discord_application_command_from_json_v,
+                                   p_app_cmd };
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -86,12 +93,9 @@ discord_get_global_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = &discord_application_command_from_json_v, .ok_obj = p_app_cmd },
-    NULL, HTTP_GET, "/applications/%" PRIu64 "/commands/%" PRIu64,
-    application_id, command_id);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+                             "/applications/%" PRIu64 "/commands/%" PRIu64,
+                             application_id, command_id);
 }
 
 ORCAcode
@@ -102,6 +106,13 @@ discord_edit_global_application_command(
   struct discord_edit_global_application_command_params *params,
   struct discord_application_command *p_app_cmd)
 {
+  struct ua_resp_handle handle = {
+    p_app_cmd ? &discord_application_command_from_json_v : NULL,
+    p_app_cmd,
+  };
+  struct sized_buffer body;
+  char buf[4096];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -111,17 +122,13 @@ discord_edit_global_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[4096];
-  size_t ret = discord_edit_global_application_command_params_to_json(
-    payload, sizeof(payload), params);
+  body.size = discord_edit_global_application_command_params_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = p_app_cmd ? &discord_application_command_from_json_v : NULL,
-      .ok_obj = p_app_cmd },
-    &(struct sized_buffer){ payload, ret }, HTTP_PATCH,
-    "/applications/%" PRIu64 "/commands/%" PRIu64, application_id, command_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+                             "/applications/%" PRIu64 "/commands/%" PRIu64,
+                             application_id, command_id);
 }
 
 ORCAcode
@@ -150,6 +157,13 @@ discord_bulk_overwrite_global_application_command(
   NTL_T(struct discord_application_command) params,
   NTL_T(struct discord_application_command) * p_app_cmds)
 {
+  struct ua_resp_handle handle = {
+    p_app_cmds ? &discord_application_command_list_from_json_v : NULL,
+    p_app_cmds
+  };
+  struct sized_buffer body;
+  char buf[8192];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -159,18 +173,13 @@ discord_bulk_overwrite_global_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[8192];
-  size_t ret =
-    discord_application_command_list_to_json(payload, sizeof(payload), params);
+  body.size =
+    discord_application_command_list_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb =
-        p_app_cmds ? &discord_application_command_list_from_json_v : NULL,
-      .ok_obj = p_app_cmds },
-    &(struct sized_buffer){ payload, ret }, HTTP_PUT,
-    "/applications/%" PRIu64 "/commands", application_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+                             "/applications/%" PRIu64 "/commands",
+                             application_id);
 }
 
 ORCAcode
@@ -180,6 +189,10 @@ discord_get_guild_application_commands(
   const u64_snowflake_t guild_id,
   NTL_T(struct discord_application_command) * p_app_cmds)
 {
+  struct ua_resp_handle handle = {
+    &discord_application_command_list_from_json_v, p_app_cmds
+  };
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -193,13 +206,10 @@ discord_get_guild_application_commands(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb =
-                                &discord_application_command_list_from_json_v,
-                              .ok_obj = p_app_cmds },
-    NULL, HTTP_GET, "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands",
-    application_id, guild_id);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands",
+                             application_id, guild_id);
 }
 
 ORCAcode
@@ -210,6 +220,13 @@ discord_create_guild_application_command(
   struct discord_create_guild_application_command_params *params,
   struct discord_application_command *p_app_cmd)
 {
+  struct ua_resp_handle handle = {
+    p_app_cmd ? &discord_application_command_from_json_v : NULL,
+    p_app_cmd,
+  };
+  struct sized_buffer body;
+  char buf[4096];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -231,18 +248,14 @@ discord_create_guild_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[4096];
-  size_t ret = discord_create_guild_application_command_params_to_json(
-    payload, sizeof(payload), params);
+  body.size = discord_create_guild_application_command_params_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = p_app_cmd ? &discord_application_command_from_json_v : NULL,
-      .ok_obj = p_app_cmd },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands", application_id,
-    guild_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands",
+                             application_id, guild_id);
 }
 
 ORCAcode
@@ -253,6 +266,9 @@ discord_get_guild_application_command(
   const u64_snowflake_t command_id,
   struct discord_application_command *p_app_cmd)
 {
+  struct ua_resp_handle handle = { &discord_application_command_from_json_v,
+                                   p_app_cmd };
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -270,13 +286,10 @@ discord_get_guild_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = &discord_application_command_from_json_v, .ok_obj = p_app_cmd },
-    NULL, HTTP_GET,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands/%" PRIu64,
-    application_id, guild_id, command_id);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands/%" PRIu64,
+                             application_id, guild_id, command_id);
 }
 
 ORCAcode
@@ -288,6 +301,13 @@ discord_edit_guild_application_command(
   struct discord_edit_guild_application_command_params *params,
   struct discord_application_command *p_app_cmd)
 {
+  struct ua_resp_handle handle = {
+    p_app_cmd ? &discord_application_command_from_json_v : NULL,
+    p_app_cmd,
+  };
+  struct sized_buffer body;
+  char buf[4096];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -301,18 +321,14 @@ discord_edit_guild_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[4096];
-  size_t ret = discord_edit_guild_application_command_params_to_json(
-    payload, sizeof(payload), params);
+  body.size = discord_edit_guild_application_command_params_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = p_app_cmd ? &discord_application_command_from_json_v : NULL,
-      .ok_obj = p_app_cmd },
-    &(struct sized_buffer){ payload, ret }, HTTP_PATCH,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands/%" PRIu64,
-    application_id, guild_id, command_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands/%" PRIu64,
+                             application_id, guild_id, command_id);
 }
 
 ORCAcode
@@ -348,6 +364,13 @@ discord_bulk_overwrite_guild_application_command(
   NTL_T(struct discord_application_command) params,
   NTL_T(struct discord_application_command) * p_app_cmds)
 {
+  struct ua_resp_handle handle = {
+    p_app_cmds ? &discord_application_command_list_from_json_v : NULL,
+    p_app_cmds
+  };
+  struct sized_buffer body;
+  char buf[8192];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -361,19 +384,14 @@ discord_bulk_overwrite_guild_application_command(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[8192];
-  size_t ret =
-    discord_application_command_list_to_json(payload, sizeof(payload), params);
+  body.size =
+    discord_application_command_list_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb =
-        p_app_cmds ? &discord_application_command_list_from_json_v : NULL,
-      .ok_obj = p_app_cmds },
-    &(struct sized_buffer){ payload, ret }, HTTP_PUT,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands", application_id,
-    guild_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands",
+                             application_id, guild_id);
 }
 
 ORCAcode
@@ -383,6 +401,11 @@ discord_get_guild_application_command_permissions(
   const u64_snowflake_t guild_id,
   NTL_T(struct discord_guild_application_command_permissions) * p_permissions)
 {
+  struct ua_resp_handle handle = {
+    &discord_guild_application_command_permissions_list_from_json_v,
+    p_permissions
+  };
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -396,14 +419,10 @@ discord_get_guild_application_command_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = &discord_guild_application_command_permissions_list_from_json_v,
-      .ok_obj = p_permissions },
-    NULL, HTTP_GET,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands/permissions",
-    application_id, guild_id);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands/permissions",
+                             application_id, guild_id);
 }
 
 ORCAcode
@@ -414,6 +433,10 @@ discord_get_application_command_permissions(
   const u64_snowflake_t command_id,
   struct discord_guild_application_command_permissions *p_permissions)
 {
+  struct ua_resp_handle handle = {
+    &discord_guild_application_command_permissions_from_json_v, p_permissions
+  };
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -431,15 +454,10 @@ discord_get_application_command_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = &discord_guild_application_command_permissions_from_json_v,
-      .ok_obj = p_permissions },
-    NULL, HTTP_GET,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands/%" PRIu64
-    "/permissions",
-    application_id, guild_id, command_id);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands/%" PRIu64 "/permissions",
+                             application_id, guild_id, command_id);
 }
 
 ORCAcode
@@ -451,6 +469,14 @@ discord_edit_application_command_permissions(
   struct discord_edit_application_command_permissions_params *params,
   struct discord_guild_application_command_permissions *p_permissions)
 {
+  struct ua_resp_handle handle = {
+    p_permissions ? &discord_guild_application_command_permissions_from_json_v
+                  : NULL,
+    p_permissions
+  };
+  struct sized_buffer body;
+  char buf[8192];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -464,21 +490,14 @@ discord_edit_application_command_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[8192];
-  size_t ret = discord_edit_application_command_permissions_params_to_json(
-    payload, sizeof(payload), params);
+  body.size = discord_edit_application_command_permissions_params_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb = p_permissions
-                 ? &discord_guild_application_command_permissions_from_json_v
-                 : NULL,
-      .ok_obj = p_permissions },
-    &(struct sized_buffer){ payload, ret }, HTTP_PUT,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands/%" PRIu64
-    "/permissions",
-    application_id, guild_id, command_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands/%" PRIu64 "/permissions",
+                             application_id, guild_id, command_id);
 }
 
 ORCAcode
@@ -489,6 +508,15 @@ discord_batch_edit_application_command_permissions(
   NTL_T(struct discord_guild_application_command_permissions) params,
   NTL_T(struct discord_guild_application_command_permissions) * p_permissions)
 {
+  struct ua_resp_handle handle = {
+    p_permissions
+      ? &discord_guild_application_command_permissions_list_from_json_v
+      : NULL,
+    p_permissions
+  };
+  struct sized_buffer body;
+  char buf[8192];
+
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
@@ -502,19 +530,12 @@ discord_batch_edit_application_command_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[8192];
-  size_t ret = discord_guild_application_command_permissions_list_to_json(
-    payload, sizeof(payload), params);
+  body.size = discord_guild_application_command_permissions_list_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){
-      .ok_cb =
-        p_permissions
-          ? &discord_guild_application_command_permissions_list_from_json_v
-          : NULL,
-      .ok_obj = p_permissions },
-    &(struct sized_buffer){ payload, ret }, HTTP_PUT,
-    "/applications/%" PRIu64 "/guilds/%" PRIu64 "/commands/permissions",
-    application_id, guild_id);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+                             "/applications/%" PRIu64 "/guilds/%" PRIu64
+                             "/commands/permissions",
+                             application_id, guild_id);
 }

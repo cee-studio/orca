@@ -12,6 +12,10 @@ discord_get_invite(struct discord *client,
                    struct discord_get_invite_params *params,
                    struct discord_invite *p_invite)
 {
+  struct ua_resp_handle handle = { &discord_invite_from_json_v, p_invite };
+  struct sized_buffer body;
+  char buf[1024];
+
   if (!invite_code) {
     logconf_error(&client->conf, "Missing 'invite_code'");
     return ORCA_MISSING_PARAMETER;
@@ -25,16 +29,11 @@ discord_get_invite(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  char payload[1024];
-  size_t ret =
-    discord_get_invite_params_to_json(payload, sizeof(payload), params);
+  body.size = discord_get_invite_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &discord_invite_from_json_v,
-                              .ok_obj = p_invite },
-    &(struct sized_buffer){ payload, ret }, HTTP_GET, "/invites/%s",
-    invite_code);
+  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_GET,
+                             "/invites/%s", invite_code);
 }
 
 ORCAcode
@@ -42,15 +41,15 @@ discord_delete_invite(struct discord *client,
                       char *invite_code,
                       struct discord_invite *p_invite)
 {
+  struct ua_resp_handle handle = { p_invite ? &discord_invite_from_json_v
+                                            : NULL,
+                                   p_invite };
+
   if (!invite_code) {
     logconf_error(&client->conf, "Missing 'invite_code'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb =
-                                p_invite ? &discord_invite_from_json_v : NULL,
-                              .ok_obj = p_invite },
-    NULL, HTTP_DELETE, "/invites/%s", invite_code);
+  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_DELETE,
+                             "/invites/%s", invite_code);
 }

@@ -93,8 +93,7 @@ discord_adapter_run(struct discord_adapter *adapter,
   if (true == CLIENT(adapter)->async.enable) {
     struct discord_async_attr *attr = &CLIENT(adapter)->async.attr;
 
-    /* reset */
-    CLIENT(adapter)->async.enable = false;
+    CLIENT(adapter)->async.enable = false; /* reset */
 
     return discord_request_perform_async(adapter, attr, resp_handle, req_body,
                                          method, endpoint);

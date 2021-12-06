@@ -36,8 +36,7 @@ discord_modify_channel(struct discord *client,
                                              : NULL,
                                    p_channel };
   struct sized_buffer body;
-  char payload[1024];
-  size_t ret;
+  char buf[1024];
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -48,10 +47,8 @@ discord_modify_channel(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret =
-    discord_modify_channel_params_to_json(payload, sizeof(payload), params);
-  body.start = payload;
-  body.size = ret;
+  body.size = discord_modify_channel_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
                              "/channels/%" PRIu64, channel_id);
@@ -162,9 +159,8 @@ discord_create_message(struct discord *client,
                                              : NULL,
                                    p_message };
   struct sized_buffer body;
-  char payload[16384]; /**< @todo dynamic buffer */
+  char buf[16384]; /**< @todo dynamic buffer */
   ORCAcode code;
-  size_t ret;
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -175,10 +171,8 @@ discord_create_message(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret =
-    discord_create_message_params_to_json(payload, sizeof(payload), params);
-  body.start = payload;
-  body.size = ret;
+  body.size = discord_create_message_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   if (!params->attachments) {
     /* content-type is application/json */
@@ -482,8 +476,7 @@ discord_edit_message(struct discord *client,
                                              : NULL,
                                    p_message };
   struct sized_buffer body;
-  char payload[16384]; /**< @todo dynamic buffer */
-  size_t ret;
+  char buf[16384]; /**< @todo dynamic buffer */
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -498,9 +491,8 @@ discord_edit_message(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret = discord_edit_message_params_to_json(payload, sizeof(payload), params);
-  body.start = payload;
-  body.size = ret;
+  body.size = discord_edit_message_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
                              "/channels/%" PRIu64 "/messages/%" PRIu64,
@@ -534,11 +526,10 @@ discord_bulk_delete_messages(struct discord *client,
 {
   u64_unix_ms_t now = discord_timestamp(client);
   struct sized_buffer body;
-  char *payload = NULL;
-  size_t count;
-  size_t ret;
-  int i;
+  char *buf = NULL;
   ORCAcode code;
+  size_t count;
+  int i;
 
   if (!messages) {
     logconf_error(&client->conf, "Missing 'messages'");
@@ -560,11 +551,11 @@ discord_bulk_delete_messages(struct discord *client,
     }
   }
 
-  ret = json_ainject(&payload, "(messages):F", ja_u64_list_to_json, messages);
-  body.start = payload;
-  body.size = ret;
+  body.size =
+    json_ainject(&buf, "(messages):F", ja_u64_list_to_json, messages);
+  body.start = buf;
 
-  if (!payload) {
+  if (!buf) {
     logconf_error(&client->conf, "Couldn't create JSON Payload");
     return ORCA_BAD_JSON;
   }
@@ -573,7 +564,7 @@ discord_bulk_delete_messages(struct discord *client,
                              "/channels/%" PRIu64 "/messages/bulk-delete",
                              channel_id);
 
-  free(payload);
+  free(buf);
 
   return code;
 }
@@ -586,8 +577,7 @@ discord_edit_channel_permissions(
   struct discord_edit_channel_permissions_params *params)
 {
   struct sized_buffer body;
-  char payload[1024];
-  size_t ret;
+  char buf[1024];
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -602,10 +592,9 @@ discord_edit_channel_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret = discord_edit_channel_permissions_params_to_json(
-    payload, sizeof(payload), params);
-  body.start = payload;
-  body.size = ret;
+  body.size =
+    discord_edit_channel_permissions_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, NULL, &body, HTTP_PUT,
                              "/channels/%" PRIu64 "/permissions/%" PRIu64,
@@ -644,7 +633,7 @@ discord_create_channel_invite(
                                             : NULL,
                                    p_invite };
   struct sized_buffer body;
-  char payload[1024];
+  char buf[1024];
   size_t ret;
 
   if (!channel_id) {
@@ -653,11 +642,11 @@ discord_create_channel_invite(
   }
 
   if (params)
-    ret = discord_create_channel_invite_params_to_json(
-      payload, sizeof(payload), params);
+    ret =
+      discord_create_channel_invite_params_to_json(buf, sizeof(buf), params);
   else
-    ret = sprintf(payload, "{}");
-  body.start = payload;
+    ret = sprintf(buf, "{}");
+  body.start = buf;
   body.size = ret;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
@@ -694,8 +683,7 @@ discord_follow_news_channel(struct discord *client,
                                      : NULL,
                                    p_followed_channel };
   struct sized_buffer body;
-  char payload[256]; /* should be more than enough for this */
-  size_t ret;
+  char buf[256]; /* should be more than enough for this */
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -706,10 +694,9 @@ discord_follow_news_channel(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret = discord_follow_news_channel_params_to_json(payload, sizeof(payload),
-                                                   params);
-  body.start = payload;
-  body.size = ret;
+  body.size =
+    discord_follow_news_channel_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/followers", channel_id);
@@ -795,8 +782,7 @@ discord_group_dm_add_recipient(
   struct discord_group_dm_add_recipient_params *params)
 {
   struct sized_buffer body;
-  char payload[1024];
-  size_t ret;
+  char buf[1024];
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -811,10 +797,9 @@ discord_group_dm_add_recipient(
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret = discord_group_dm_add_recipient_params_to_json(payload, sizeof(payload),
-                                                      params);
-  body.start = payload;
-  body.size = ret;
+  body.size =
+    discord_group_dm_add_recipient_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, NULL, &body, HTTP_PUT,
                              "/channels/%" PRIu64 "/recipients/%" PRIu64,
@@ -852,8 +837,7 @@ discord_start_thread_with_message(
                                              : NULL,
                                    p_channel };
   struct sized_buffer body;
-  char payload[1024];
-  size_t ret;
+  char buf[1024];
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -868,10 +852,9 @@ discord_start_thread_with_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret = discord_start_thread_with_message_params_to_json(
-    payload, sizeof(payload), params);
-  body.start = payload;
-  body.size = ret;
+  body.size =
+    discord_start_thread_with_message_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/messages/%" PRIu64
@@ -890,8 +873,7 @@ discord_start_thread_without_message(
                                              : NULL,
                                    p_channel };
   struct sized_buffer body;
-  char payload[1024];
-  size_t ret;
+  char buf[1024];
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -902,10 +884,9 @@ discord_start_thread_without_message(
     return ORCA_MISSING_PARAMETER;
   }
 
-  ret = discord_start_thread_without_message_params_to_json(
-    payload, sizeof(payload), params);
-  body.start = payload;
-  body.size = ret;
+  body.size = discord_start_thread_without_message_params_to_json(
+    buf, sizeof(buf), params);
+  body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/threads", channel_id);

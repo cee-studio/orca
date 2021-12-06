@@ -82,10 +82,9 @@ _ws_curl_debug_dump(const char *text,
                     unsigned char *ptr,
                     size_t size)
 {
+  unsigned int width = 0x10;
   size_t i;
   size_t c;
-
-  unsigned int width = 0x10;
 
   fprintf(stream, "%s, %10.10lu bytes (0x%8.8lx)\n", text, (unsigned long)size,
           (unsigned long)size);
@@ -172,6 +171,7 @@ _ws_curl_tls_check(
       && strstr(data, "close notify (256)"))
   {
     const char reason[] = "TLS ended connection with a close notify (256)";
+
     ws_close(ws, WS_CLOSE_REASON_ABRUPTLY, reason, sizeof(reason));
   }
   return 0;
@@ -274,9 +274,8 @@ cws_on_connect_cb(void *p_ws, CURL *ehandle, const char *ws_protocols)
               ANSI_FG_YELLOW) " CONNECT (WS-Protocols: '%s') [@@@_%zu_@@@]",
     ws_protocols, ws->info.loginfo.counter);
 
-  if (ws->cbs.on_connect) {
-    (*ws->cbs.on_connect)(ws->cbs.data, ws, &ws->info, ws_protocols);
-  }
+  if (ws->cbs.on_connect)
+    ws->cbs.on_connect(ws->cbs.data, ws, &ws->info, ws_protocols);
 }
 
 static void
@@ -299,9 +298,9 @@ cws_on_close_cb(void *p_ws,
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " CLOSE(%d) (%zu bytes) [@@@_%zu_@@@]",
     cwscode, len, ws->info.loginfo.counter);
 
-  if (ws->cbs.on_close) {
-    (*ws->cbs.on_close)(ws->cbs.data, ws, &ws->info, cwscode, reason, len);
-  }
+  if (ws->cbs.on_close)
+    ws->cbs.on_close(ws->cbs.data, ws, &ws->info, cwscode, reason, len);
+
   ws->action = WS_ACTION_END_CLOSE;
 
   /* will set status to WS_DISCONNECTED when is_running == false */
@@ -321,9 +320,7 @@ cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " TEXT (%zu bytes) [@@@_%zu_@@@]", len,
     ws->info.loginfo.counter);
 
-  if (ws->cbs.on_text) {
-    (*ws->cbs.on_text)(ws->cbs.data, ws, &ws->info, text, len);
-  }
+  if (ws->cbs.on_text) ws->cbs.on_text(ws->cbs.data, ws, &ws->info, text, len);
 }
 
 static void
@@ -340,9 +337,8 @@ cws_on_binary_cb(void *p_ws, CURL *ehandle, const void *mem, size_t len)
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " BINARY (%zu bytes) [@@@_%zu_@@@]", len,
     ws->info.loginfo.counter);
 
-  if (ws->cbs.on_binary) {
-    (*ws->cbs.on_binary)(ws->cbs.data, ws, &ws->info, mem, len);
-  }
+  if (ws->cbs.on_binary)
+    ws->cbs.on_binary(ws->cbs.data, ws, &ws->info, mem, len);
 }
 
 static void
@@ -364,9 +360,8 @@ cws_on_ping_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " PING (%zu bytes) [@@@_%zu_@@@]", len,
     ws->info.loginfo.counter);
 
-  if (ws->cbs.on_ping) {
-    (*ws->cbs.on_ping)(ws->cbs.data, ws, &ws->info, reason, len);
-  }
+  if (ws->cbs.on_ping)
+    ws->cbs.on_ping(ws->cbs.data, ws, &ws->info, reason, len);
 }
 
 static void
@@ -388,9 +383,8 @@ cws_on_pong_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " PONG (%zu bytes) [@@@_%zu_@@@]", len,
     ws->info.loginfo.counter);
 
-  if (ws->cbs.on_pong) {
-    (*ws->cbs.on_pong)(ws->cbs.data, ws, &ws->info, reason, len);
-  }
+  if (ws->cbs.on_pong)
+    ws->cbs.on_pong(ws->cbs.data, ws, &ws->info, reason, len);
 }
 
 static bool _ws_close(struct websockets *ws,
@@ -442,8 +436,8 @@ _ws_cws_new(struct websockets *ws, const char ws_protocols[])
                                    .data = ws };
 
   CURL *new_ehandle = cws_new(ws->base_url, ws_protocols, &cws_cbs);
-
   CURLcode ecode;
+
   /* set error buffer for capturing CURL error descriptions */
   ecode = curl_easy_setopt(new_ehandle, CURLOPT_ERRORBUFFER, ws->errbuf);
   CURLE_CHECK(ws, ecode);
@@ -523,9 +517,12 @@ _ws_close(struct websockets *ws,
 enum ws_status
 ws_get_status(struct websockets *ws)
 {
+  enum ws_status status;
+
   pthread_mutex_lock(&ws->lock);
-  enum ws_status status = ws->status;
+  status = ws->status;
   pthread_mutex_unlock(&ws->lock);
+
   return status;
 }
 
@@ -548,6 +545,7 @@ ws_init(struct ws_callbacks *cbs, struct ws_attr *attr)
   logconf_branch(&new_ws->conf, attr ? attr->conf : NULL, "WEBSOCKETS");
 
   new_ws->cbs = *cbs;
+
   /** respond ping with a pong by default */
   if (!new_ws->cbs.on_ping) new_ws->cbs.on_ping = &default_on_ping;
 
@@ -564,6 +562,8 @@ ws_set_url(struct websockets *ws,
            const char base_url[],
            const char ws_protocols[])
 {
+  int ret;
+
   pthread_mutex_lock(&ws->lock);
 
   if (IS_EMPTY_STRING(ws->base_url))
@@ -572,7 +572,7 @@ ws_set_url(struct websockets *ws,
     logconf_debug(&ws->conf, "WebSockets redirecting:\n\tfrom: %s\n\tto: %s",
                   ws->base_url, base_url);
 
-  int ret = snprintf(ws->base_url, sizeof(ws->base_url), "%s", base_url);
+  ret = snprintf(ws->base_url, sizeof(ws->base_url), "%s", base_url);
   VASSERT_S(ret < sizeof(ws->base_url), "[%s] Out of bounds write attempt",
             ws->conf.id);
 

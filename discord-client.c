@@ -14,14 +14,13 @@ static _Bool once;
 static void
 _discord_init(struct discord *new_client)
 {
-  if (!once) {
-    discord_global_init();
-  }
+  if (!once) discord_global_init();
 
   discord_adapter_init(&new_client->adapter, &new_client->conf,
                        &new_client->token);
   discord_gateway_init(&new_client->gw, &new_client->conf, &new_client->token);
   discord_voice_connections_init(new_client);
+
   new_client->is_original = true;
 }
 
@@ -154,6 +153,7 @@ struct discord *
 discord_set_async(struct discord *client, struct discord_async_attr *attr)
 {
   client->async.enable = true;
+
   if (attr)
     memcpy(&client->async.attr, attr, sizeof(struct discord_async_attr));
   else
@@ -190,7 +190,9 @@ void
 discord_set_prefix(struct discord *client, char *prefix)
 {
   if (IS_EMPTY_STRING(prefix)) return;
+
   if (client->gw.cmds.prefix.start) free(client->gw.cmds.prefix.start);
+
   client->gw.cmds.prefix.size =
     asprintf(&client->gw.cmds.prefix.start, "%s", prefix);
 }
@@ -221,22 +223,23 @@ discord_set_on_command(struct discord *client,
                                 | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }
 
-void discord_set_on_commands(struct discord *client,
-                             discord_message_cb callback,
-                             ...)
+void
+discord_set_on_commands(struct discord *client,
+                        discord_message_cb callback,
+                        ...)
 {
-    char *command = NULL;
-    va_list commands = {0};
+  char *command = NULL;
+  va_list commands;
 
-    va_start(commands, callback);
-    command = va_arg(commands, char*);
+  va_start(commands, callback);
 
-    while(command != NULL) {
-        discord_set_on_command(client, command, callback);
-        command = va_arg(commands, char*);
-    }
+  command = va_arg(commands, char *);
+  while (command != NULL) {
+    discord_set_on_command(client, command, callback);
+    command = va_arg(commands, char *);
+  }
 
-    va_end(commands);
+  va_end(commands);
 }
 
 void

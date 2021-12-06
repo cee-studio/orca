@@ -49,8 +49,10 @@ void
 jsua_log(char *fmt, ...)
 {
   static FILE *logger = NULL;
+
   if (!logger) {
     char buf[512], file[1024];
+
     cee_gen_readlink(buf, sizeof(buf));
     cee_gen_dirname(buf);
     snprintf(file, sizeof(file), "%s/jso.log", buf);
@@ -71,8 +73,10 @@ jsua_print(js_State *J)
 {
   int i;
   int top = js_gettop(J);
+
   for (i = 1; i < top; ++i) {
     const char *s = js_tostring(J, i);
+
     if (i > 1) putchar(' ');
     fputs(s, stdout);
   }
@@ -92,6 +96,7 @@ new_UserAgent(js_State *J)
 {
   static struct logconf conf = { 0 };
   static _Bool first_run = 0;
+  struct ua_attr attr = { 0 };
 
   if (!first_run) {
     FILE *fp = fopen(g_config_file, "rb");
@@ -100,11 +105,13 @@ new_UserAgent(js_State *J)
     first_run = 1;
   }
 
-  struct user_agent *ua = ua_init(&(struct ua_attr){ .conf = &conf });
+  attr.conf = &conf;
+  struct user_agent *ua = ua_init(&attr);
+
   if (js_isstring(J, 1)) {
     char *tmp = (char *)js_tostring(J, 1);
-
     char *url = NULL;
+
     if ('<' == *tmp) /* remove enclosing '< >' from string */
       asprintf(&url, "%.*s", (int)(strlen(tmp + 1) - 1), tmp + 1);
     else
@@ -124,17 +131,19 @@ UserAgent_prototype_run(js_State *J)
 {
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info = { 0 };
+
   jsua_run(J, ua, &info);
 
   js_newobject(J);
   {
+    struct sized_buffer body = ua_info_get_body(&info);
+
     js_pushnumber(J, (double)info.httpcode);
     js_setproperty(J, -2, "httpCode");
 
     js_pushstring(J, http_method_print(info.method));
     js_setproperty(J, -2, "httpMethod");
 
-    struct sized_buffer body = ua_info_get_body(&info);
     js_pushstring(J, body.start);
     js_setproperty(J, -2, "responseBody");
   }
@@ -146,10 +155,11 @@ UserAgent_prototype_string(js_State *J)
 {
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info = { 0 };
+  struct sized_buffer body, new_body = { 0 };
+
   jsua_run(J, ua, &info);
 
-  struct sized_buffer body = ua_info_get_body(&info);
-  struct sized_buffer new_body = { 0 };
+  body = ua_info_get_body(&info);
 
   jsua_log("original response >>>:%.*s\n", (int)body.size, body.start);
   json_string_unescape(&new_body.start, &new_body.size, body.start, body.size);
@@ -241,20 +251,23 @@ jsua_init(js_State *J)
 ORCAcode
 jsua_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
 {
+  struct sized_buffer body = { 0 };
+  enum http_method method;
+  char *endpoint;
+
   if (!js_isstring(J, 1))
     js_typeerror(J, "Expected 'first' argument to be a 'string'");
   if (!js_isstring(J, 2))
     js_typeerror(J, "Expected 'second' argument to be a 'string'");
 
-  enum http_method method = http_method_eval((char *)js_tostring(J, 1));
-  char *endpoint = (char *)js_tostring(J, 2);
+  method = http_method_eval((char *)js_tostring(J, 1));
+  endpoint = (char *)js_tostring(J, 2);
 
-  struct sized_buffer req_body = { 0 };
   if (js_isobject(J, 3) || js_isstring(J, 3)) {
-    req_body.start = (char *)js_tostring(J, 3);
-    req_body.size = strlen(req_body.start);
+    body.start = (char *)js_tostring(J, 3);
+    body.size = strlen(body.start);
   }
 
   /* @todo map Error codes to JS Error objects */
-  return ua_run(ua, p_info, NULL, &req_body, method, endpoint);
+  return ua_run(ua, p_info, NULL, &body, method, endpoint);
 }

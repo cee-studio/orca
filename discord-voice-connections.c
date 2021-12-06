@@ -41,12 +41,12 @@ close_opcode_print(enum discord_voice_close_event_codes opcode)
 static void
 send_resume(struct discord_voice *vc)
 {
-  char payload[1024];
+  char buf[1024];
   int ret;
 
   vc->is_resumable = false; /* reset */
 
-  ret = json_inject(payload, sizeof(payload),
+  ret = json_inject(buf, sizeof(buf),
                     "(op):7" /* RESUME OPCODE */
                     "(d):{"
                     "(server_id):s_as_u64"
@@ -54,21 +54,21 @@ send_resume(struct discord_voice *vc)
                     "(token):s"
                     "}",
                     &vc->guild_id, vc->session_id, vc->token);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
   logconf_info(
     &vc->conf,
     ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN) " VOICE_RESUME (%d bytes)", ret);
-  ws_send_text(vc->ws, NULL, payload, ret);
+  ws_send_text(vc->ws, NULL, buf, ret);
 }
 
 static void
 send_identify(struct discord_voice *vc)
 {
-  char payload[1024];
+  char buf[1024];
   int ret;
 
-  ret = json_inject(payload, sizeof(payload),
+  ret = json_inject(buf, sizeof(buf),
                     "(op):0" /* IDENTIFY OPCODE */
                     "(d):{"
                     "(server_id):s_as_u64"
@@ -77,12 +77,12 @@ send_identify(struct discord_voice *vc)
                     "(token):s"
                     "}",
                     &vc->guild_id, &vc->bot_id, vc->session_id, vc->token);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
   logconf_info(
     &vc->conf,
     ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN) " VOICE_IDENTIFY (%d bytes)", ret);
-  ws_send_text(vc->ws, NULL, payload, ret);
+  ws_send_text(vc->ws, NULL, buf, ret);
 }
 
 static void
@@ -144,8 +144,8 @@ on_speaking(struct discord_voice *vc)
                "(ssrc):d",
                &user_id, &speaking, &delay, &ssrc);
 
-  (*client->voice_cbs.on_speaking)(client, vc, &vc->p_client->gw.bot, user_id,
-                                   speaking, delay, ssrc);
+  client->voice_cbs.on_speaking(client, vc, &vc->p_client->gw.bot, user_id,
+                                speaking, delay, ssrc);
 }
 
 static void
@@ -167,8 +167,7 @@ on_client_disconnect(struct discord_voice *vc)
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(user_id):s_as_u64", &user_id);
 
-  (*client->voice_cbs.on_client_disconnect)(client, vc, &client->gw.bot,
-                                            user_id);
+  client->voice_cbs.on_client_disconnect(client, vc, &client->gw.bot, user_id);
 }
 
 static void
@@ -182,8 +181,8 @@ on_codec(struct discord_voice *vc)
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(audio_codec):s, (video_codec):s", &audio_codec, &video_codec);
 
-  (*client->voice_cbs.on_codec)(client, vc, &client->gw.bot, audio_codec,
-                                video_codec);
+  client->voice_cbs.on_codec(client, vc, &client->gw.bot, audio_codec,
+                             video_codec);
 }
 
 static void
@@ -222,11 +221,8 @@ on_close_cb(void *p_vc,
     ANSICOLOR("CLOSE %s", ANSI_FG_RED) " (code: %4d, %zu bytes): '%.*s'",
     close_opcode_print(opcode), opcode, len, (int)len, reason);
 
-  if (vc->shutdown) {
-    /* user-triggered shutdown */
-    vc->shutdown = false;
-    return;
-  }
+  /* user-triggered shutdown */
+  if (vc->shutdown) return;
 
   switch (opcode) {
   case DISCORD_VOICE_CLOSE_EVENT_SERVER_CRASH:
@@ -319,18 +315,18 @@ on_text_cb(void *p_vc,
 static void
 send_heartbeat(struct discord_voice *vc)
 {
-  char payload[64];
+  char buf[64];
   int ret;
 
-  ret = json_inject(payload, sizeof(payload), "(op):3, (d):ld",
-                    &vc->hbeat.interval_ms);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ret =
+    json_inject(buf, sizeof(buf), "(op):3, (d):ld", &vc->hbeat.interval_ms);
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
   logconf_info(
     &vc->conf,
     ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN) " VOICE_HEARTBEAT (%d bytes)",
     ret);
-  ws_send_text(vc->ws, NULL, payload, ret);
+  ws_send_text(vc->ws, NULL, buf, ret);
 }
 
 static void
@@ -388,8 +384,8 @@ discord_send_speaking(struct discord_voice *vc,
   ASSERT_S(WS_CONNECTED == ws_get_status(vc->ws),
            "Action requires an active connection to Discord");
 
-  char payload[128];
-  int ret = json_inject(payload, sizeof(payload),
+  char buf[128];
+  int ret = json_inject(buf, sizeof(buf),
                         "(op):5," /* VOICE SPEAKING OPCODE */
                         "(d):{"
                         "(speaking):d"
@@ -397,12 +393,12 @@ discord_send_speaking(struct discord_voice *vc,
                         "(ssrc):d"
                         "}",
                         &flag, &delay, &vc->udp_service.ssrc);
-  ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
   logconf_info(
     &vc->conf,
     ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN) " VOICE_SPEAKING (%d bytes)", ret);
-  ws_send_text(vc->ws, NULL, payload, ret);
+  ws_send_text(vc->ws, NULL, buf, ret);
 }
 
 static void
@@ -426,11 +422,11 @@ send_voice_state_update(struct discord_voice *vc,
                         bool self_deaf)
 {
   struct discord_gateway *gw = &vc->p_client->gw;
-  char payload[256];
+  char buf[256];
   int ret;
 
   if (channel_id) {
-    ret = json_inject(payload, sizeof(payload),
+    ret = json_inject(buf, sizeof(buf),
                       "(op):4," /* VOICE STATE UPDATE OPCODE */
                       "(d):{"
                       "(guild_id):s_as_u64,"
@@ -439,7 +435,7 @@ send_voice_state_update(struct discord_voice *vc,
                       "(self_deaf):b"
                       "}",
                       &guild_id, &channel_id, &self_mute, &self_deaf);
-    ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+    ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
     logconf_info(
       &vc->conf,
       ANSICOLOR(
@@ -448,7 +444,7 @@ send_voice_state_update(struct discord_voice *vc,
       ret);
   }
   else {
-    ret = json_inject(payload, sizeof(payload),
+    ret = json_inject(buf, sizeof(buf),
                       "(op):4," /* VOICE STATE UPDATE OPCODE */
                       "(d):{"
                       "(guild_id):s_as_u64,"
@@ -457,7 +453,7 @@ send_voice_state_update(struct discord_voice *vc,
                       "(self_deaf):b"
                       "}",
                       &guild_id, &self_mute, &self_deaf);
-    ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
+    ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
     logconf_info(
       &vc->conf,
       ANSICOLOR(
@@ -465,7 +461,7 @@ send_voice_state_update(struct discord_voice *vc,
         ANSI_FG_BRIGHT_GREEN) " VOICE_STATE_UPDATE (%d bytes): leave channel",
       ret);
   }
-  ws_send_text(gw->ws, NULL, payload, ret);
+  ws_send_text(gw->ws, NULL, buf, ret);
 }
 
 enum discord_voice_status
@@ -572,8 +568,20 @@ event_loop(struct discord_voice *vc)
   /* the ws server side events */
   ws_start(vc->ws, NULL, NULL);
   while (1) {
-    if (!ws_perform(vc->ws, 100)) break; /* exit event loop */
-    if (!vc->is_ready) continue; /* wait until on_ready() */
+    if (!ws_perform(vc->ws, 5)) {
+      /* severed connection */
+      break;
+    }
+
+    if (vc->shutdown) {
+      /* wait until connection shutdown */
+      continue;
+    }
+
+    if (!vc->is_ready) {
+      /* wait until on_ready() */
+      continue;
+    }
 
     /* connection is established */
 
@@ -584,10 +592,11 @@ event_loop(struct discord_voice *vc)
       vc->hbeat.tstamp = ws_timestamp(vc->ws); /*update heartbeat timestamp */
     }
     if (client->voice_cbs.on_idle)
-      (*client->voice_cbs.on_idle)(client, vc, &vc->p_client->gw.bot);
+      client->voice_cbs.on_idle(client, vc, &vc->p_client->gw.bot);
   }
   ws_end(vc->ws);
 
+  vc->shutdown = false;
   vc->is_ready = false;
 }
 

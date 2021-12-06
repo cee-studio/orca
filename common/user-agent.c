@@ -508,7 +508,6 @@ struct user_agent *
 ua_init(struct ua_attr *attr)
 {
   struct user_agent *new_ua;
-  struct ua_attr _attr = attr ? *attr : (struct ua_attr){};
 
   new_ua = calloc(1, sizeof *new_ua);
 
@@ -517,7 +516,7 @@ ua_init(struct ua_attr *attr)
                    "Orca (https://github.com/cee-studio/orca)");
   ua_reqheader_add(new_ua, "Content-Type", "application/json");
   ua_reqheader_add(new_ua, "Accept", "application/json");
-  logconf_branch(&new_ua->conf, _attr.conf, "USER_AGENT");
+  logconf_branch(&new_ua->conf, attr ? attr->conf : NULL, "USER_AGENT");
 
   new_ua->connq = calloc(1, sizeof *new_ua->connq);
   QUEUE_INIT(&new_ua->connq->idle);

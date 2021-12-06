@@ -30,7 +30,13 @@ _discord_gateway_close(struct discord_gateway *gw,
                        const char reason[],
                        const size_t len)
 {
-  discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
+  struct discord_ratelimit *rlimit = &CLIENT(gw)->adapter.rlimit;
+
+  if (gw->reconnect->enable)
+    discord_request_pause_all(rlimit);
+  else
+    discord_request_stop_all(rlimit);
+
   ws_close(gw->ws, opcode, reason, len);
 }
 
@@ -1017,7 +1023,7 @@ on_invalid_session(struct discord_gateway *gw)
 
   if (gw->status->is_resumable) {
     reason = "Invalid session, will attempt to resume";
-    opcode = WS_CLOSE_REASON_NO_REASON;
+    opcode = DISCORD_GATEWAY_CLOSE_REASON_RECONNECT;
   }
   else {
     reason = "Invalid session, can't resume";
@@ -1036,7 +1042,7 @@ on_reconnect(struct discord_gateway *gw)
   gw->status->is_resumable = true;
   gw->reconnect->enable = true;
 
-  _discord_gateway_close(gw, WS_CLOSE_REASON_NO_REASON, reason,
+  _discord_gateway_close(gw, DISCORD_GATEWAY_CLOSE_REASON_RECONNECT, reason,
                          sizeof(reason));
 }
 
@@ -1376,8 +1382,6 @@ discord_gateway_shutdown(struct discord_gateway *gw)
   gw->status->shutdown = true;
   gw->status->is_resumable = false;
 
-  discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
-
   _discord_gateway_close(gw, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
@@ -1391,7 +1395,7 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
   gw->reconnect->enable = true;
   gw->status->shutdown = true;
   gw->status->is_resumable = resume;
-  opcode = gw->status->is_resumable ? WS_CLOSE_REASON_NO_REASON
+  opcode = gw->status->is_resumable ? DISCORD_GATEWAY_CLOSE_REASON_RECONNECT
                                     : WS_CLOSE_REASON_NORMAL;
 
   /* TODO: pause connections for retry instead of stopping them */

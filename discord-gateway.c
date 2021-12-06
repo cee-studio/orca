@@ -1202,7 +1202,6 @@ discord_gateway_init(struct discord_gateway *gw,
   cbs.on_close = &on_close_cb;
 
   attr.conf = conf;
-  attr.mhandle = CLIENT(gw)->mhandle;
 
   /* Web-Sockets handler */
   gw->ws = ws_init(&cbs, &attr);
@@ -1283,6 +1282,7 @@ discord_gateway_cleanup(struct discord_gateway *gw)
 static ORCAcode
 _discord_gateway_loop(struct discord_gateway *gw)
 {
+  struct discord *client = CLIENT(gw);
   /* get gateway bot info */
   struct sized_buffer json = { 0 };
   /* build URL that will be used to connect to Discord */
@@ -1318,16 +1318,16 @@ _discord_gateway_loop(struct discord_gateway *gw)
 
   ws_set_url(gw->ws, url, NULL);
 
-  ws_start(gw->ws, NULL);
+  ws_start(gw->ws, NULL, &client->mhandle);
   while (1) {
     if (!ws_perform(gw->ws, 5)) {
       /* severed connection */
       break;
     }
 
-    discord_request_check_timeouts_async(&CLIENT(gw)->adapter.rlimit);
-    discord_request_check_pending_async(&CLIENT(gw)->adapter.rlimit);
-    discord_request_check_results_async(&CLIENT(gw)->adapter.rlimit);
+    discord_request_check_timeouts_async(&client->adapter.rlimit);
+    discord_request_check_pending_async(&client->adapter.rlimit);
+    discord_request_check_results_async(&client->adapter.rlimit);
 
     if (!gw->status->is_ready) {
       /* wait until on_ready() */

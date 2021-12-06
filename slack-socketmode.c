@@ -308,7 +308,7 @@ slack_sm_run(struct slack *client)
   ASSERT_S(WS_DISCONNECTED == ws_get_status(sm->ws),
            "Can't run websockets recursively");
 
-  ws_start(sm->ws, NULL);
+  ws_start(sm->ws, NULL, NULL);
 
   while (1) {
     if (!ws_perform(sm->ws, 5)) break; /* exit event loop */

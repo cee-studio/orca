@@ -570,7 +570,7 @@ event_loop(struct discord_voice *vc)
 
   /* everything goes well, ws event_loop to serve */
   /* the ws server side events */
-  ws_start(vc->ws, NULL);
+  ws_start(vc->ws, NULL, NULL);
   while (1) {
     if (!ws_perform(vc->ws, 100)) break; /* exit event loop */
     if (!vc->is_ready) continue; /* wait until on_ready() */

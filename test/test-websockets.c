@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
   ws_set_url(ws, url, NULL);
 
   /* run the event-loop */
-  ws_start(ws, NULL);
+  ws_start(ws, NULL, NULL);
   while (true == ws_perform(ws, 5))
     ;
   ws_end(ws);

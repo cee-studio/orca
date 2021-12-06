@@ -425,6 +425,24 @@ void discord_set_event_scheduler(struct discord *client,
 void discord_set_on_command(struct discord *client,
                             char *command,
                             discord_message_cb callback);
+
+/**
+ * @brief Set a variadic series of NULL terminated commands to a callback
+ *        the callback is triggered if someone types command in chat.
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ * @param ... NULL terminated commands
+ * @note The command and any subjacent empty space is left out of
+ * discord_message#content
+ * @note `command` may be NULL only if a prefix was set by
+ * discord_set_prefix(), then `callback` may be triggered as a fallback, in
+ * case the prefix matches but the command doesn't.
+ */
+void discord_set_on_commands(struct discord *client,
+                             discord_message_cb callback,
+                             ...);
+
 /**
  * @brief Set a callback that triggers at every event-loop iteration.
  *

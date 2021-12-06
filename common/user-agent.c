@@ -482,19 +482,20 @@ ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
   _ua_info_reset(&conn->info);
   *conn->errbuf = '\0';
   memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
-
-  /* its assumed ua_clone() will be called before entering a thread
-   * to make sure 'struct user_agent' is thread-safe */
-  if (ua->mime) {
-    curl_mime_free(ua->mime);
-    ua->mime = NULL;
-  }
 }
 
 void
 ua_conn_stop(struct user_agent *ua, struct ua_conn *conn)
 {
   ua_conn_reset(ua, conn);
+
+  /* its assumed ua_clone() will be called before entering a thread
+   * to make sure 'struct user_agent' is thread-safe
+   * TODO: this should be stored in 'struct ua_conn' */
+  if (ua->mime) {
+    curl_mime_free(ua->mime);
+    ua->mime = NULL;
+  }
 
   /* move conn from 'busy' to 'idle' queue */
   pthread_mutex_lock(&ua->connq->lock);
@@ -729,7 +730,6 @@ ua_conn_setup(struct user_agent *ua,
   logconf_trace(conn->conf,
                 ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
                 method_str, conn->info.loginfo.counter);
-
 }
 
 /* get request results */

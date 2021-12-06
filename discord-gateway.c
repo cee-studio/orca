@@ -24,6 +24,16 @@ sized_buffer_from_json(char *json, size_t len, void *data)
   p->size = asprintf(&p->start, "%.*s", (int)len, json);
 }
 
+static void
+_discord_gateway_close(struct discord_gateway *gw,
+                       const enum ws_close_reason opcode,
+                       const char reason[],
+                       const size_t len)
+{
+  discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
+  ws_close(gw->ws, opcode, reason, len);
+}
+
 ORCAcode
 discord_get_gateway(struct discord *client, struct sized_buffer *p_json)
 {
@@ -1014,7 +1024,7 @@ on_invalid_session(struct discord_gateway *gw)
     opcode = WS_CLOSE_REASON_NORMAL;
   }
 
-  ws_close(gw->ws, opcode, reason, SIZE_MAX);
+  _discord_gateway_close(gw, opcode, reason, SIZE_MAX);
 }
 
 static void
@@ -1026,7 +1036,8 @@ on_reconnect(struct discord_gateway *gw)
   gw->status->is_resumable = true;
   gw->reconnect->enable = true;
 
-  ws_close(gw->ws, WS_CLOSE_REASON_NO_REASON, reason, sizeof(reason));
+  _discord_gateway_close(gw, WS_CLOSE_REASON_NO_REASON, reason,
+                         sizeof(reason));
 }
 
 static void
@@ -1367,7 +1378,7 @@ discord_gateway_shutdown(struct discord_gateway *gw)
 
   discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
 
-  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
+  _discord_gateway_close(gw, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
 void
@@ -1384,7 +1395,5 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
                                     : WS_CLOSE_REASON_NORMAL;
 
   /* TODO: pause connections for retry instead of stopping them */
-  discord_request_stop_all(&CLIENT(gw)->adapter.rlimit);
-
-  ws_close(gw->ws, opcode, reason, sizeof(reason));
+  _discord_gateway_close(gw, opcode, reason, sizeof(reason));
 }

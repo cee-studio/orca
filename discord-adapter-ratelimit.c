@@ -63,8 +63,8 @@ _discord_bucket_init(struct discord_ratelimit *rlimit,
   if (pthread_mutex_init(&b->lock, NULL))
     ERR("Couldn't initialize pthread mutex");
 
-  QUEUE_INIT(&b->wait);
-  QUEUE_INIT(&b->busy);
+  QUEUE_INIT(&b->waitq);
+  QUEUE_INIT(&b->busyq);
 
   pthread_mutex_lock(&rlimit->global->lock);
   HASH_ADD_STR(rlimit->buckets, route, b);
@@ -123,7 +123,7 @@ _discord_bucket_cleanup(struct discord_bucket *b)
   pthread_mutex_destroy(&b->lock);
 
   /* cleanup pending requests */
-  QUEUE_MOVE(&b->wait, &queue);
+  QUEUE_MOVE(&b->waitq, &queue);
   while (!QUEUE_EMPTY(&queue)) {
     QUEUE *q = QUEUE_HEAD(&queue);
     cxt = QUEUE_DATA(q, struct discord_request, entry);
@@ -132,7 +132,7 @@ _discord_bucket_cleanup(struct discord_bucket *b)
   }
 
   /* cleanup on-going requests */
-  QUEUE_MOVE(&b->busy, &queue);
+  QUEUE_MOVE(&b->busyq, &queue);
   while (!QUEUE_EMPTY(&queue)) {
     QUEUE *q = QUEUE_HEAD(&queue);
     cxt = QUEUE_DATA(q, struct discord_request, entry);
@@ -321,18 +321,18 @@ _discord_bucket_undefined_filter(struct discord_ratelimit *rlimit,
   QUEUE queue;
   QUEUE *q;
 
-  QUEUE_MOVE(&rlimit->b_null->wait, &queue);
+  QUEUE_MOVE(&rlimit->b_null->waitq, &queue);
   while (!QUEUE_EMPTY(&queue)) {
     q = QUEUE_HEAD(&queue);
     QUEUE_REMOVE(q);
 
     cxt = QUEUE_DATA(q, struct discord_request, entry);
     if (0 == strcmp(cxt->endpoint, endpoint)) {
-      QUEUE_INSERT_TAIL(&b->wait, q);
+      QUEUE_INSERT_TAIL(&b->waitq, q);
       cxt->bucket = b;
     }
     else {
-      QUEUE_INSERT_TAIL(&rlimit->b_null->wait, q);
+      QUEUE_INSERT_TAIL(&rlimit->b_null->waitq, q);
     }
   }
 }

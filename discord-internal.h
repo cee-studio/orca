@@ -97,7 +97,7 @@ struct discord_adapter {
   /** ratelimit handler structure */
   struct discord_ratelimit rlimit;
   /** idle request handles (can be recycled) */
-  QUEUE idle;
+  QUEUE idleq;
   /** error storage context */
   struct {
     /** informational on the latest transfer */
@@ -297,9 +297,11 @@ struct discord_bucket {
   /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
   /** pending requests */
-  QUEUE wait;
+  QUEUE waitq;
   /** busy requests */
-  QUEUE busy;
+  QUEUE busyq;
+  /** avoid excessive timeouts */
+  bool freeze;
   /** makes this structure hashable */
   UT_hash_handle hh;
 };

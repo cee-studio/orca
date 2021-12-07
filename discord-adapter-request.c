@@ -30,6 +30,7 @@ static void
 _discord_request_reset(struct discord_request *cxt)
 {
   cxt->bucket = NULL;
+  memset(&cxt->attr, 0, sizeof(struct discord_async_attr));
   memset(&cxt->handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
   cxt->conn = NULL;
@@ -459,11 +460,26 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
       QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
     }
     else {
-      if (cxt->attr.callback) {
-        struct discord_context params = { client, &client->gw.bot, code };
-        struct sized_buffer buf = ua_info_get_body(&client->adapter.err.info);
+      void *p_obj = NULL;
 
-        cxt->attr.callback(&params, buf.start, buf.size);
+      if (cxt->attr.from_json) {
+        struct sized_buffer buf = ua_info_get_body(&client->adapter.err.info);
+        if (cxt->attr.size > client->adapter.async.objsize) {
+          void *tmp = realloc(client->adapter.async.objbuf, cxt->attr.size);
+          ASSERT_S(tmp != NULL, "Out of memory");
+
+          client->adapter.async.objbuf = tmp;
+          client->adapter.async.objsize = cxt->attr.size;
+        }
+        p_obj = client->adapter.async.objbuf;
+
+        cxt->attr.from_json(buf.start, buf.size, p_obj);
+      }
+      if (cxt->attr.on_completion) {
+        cxt->attr.on_completion(client, code, p_obj);
+      }
+      if (p_obj && cxt->attr.cleanup) {
+        cxt->attr.cleanup(p_obj);
       }
 
       /* set for recycling */

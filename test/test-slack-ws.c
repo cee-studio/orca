@@ -20,9 +20,9 @@ int main(int argc, char *argv[])
   struct slack *client = slack_config_init(config_file);
   assert(NULL != client);
 
-  slack_set_on_hello(client, &on_hello);
+  slack_sm_set_on_hello(client, &on_hello);
 
-  slack_rtm_run(client);
+  slack_sm_run(client);
 
   slack_cleanup(client);
 }

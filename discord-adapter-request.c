@@ -460,8 +460,11 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     }
     else {
       if (cxt->attr.callback) {
-        cxt->attr.callback(client, &client->gw.bot, NULL, code);
+        struct sized_buffer buf = ua_info_get_body(&client->adapter.err.info);
+
+        cxt->attr.callback(client, &client->gw.bot, buf.start, buf.size, code);
       }
+
       /* set for recycling */
       ua_conn_stop(client->adapter.ua, cxt->conn);
       QUEUE_INSERT_TAIL(&client->adapter.idleq, &cxt->entry);

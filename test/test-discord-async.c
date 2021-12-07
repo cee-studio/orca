@@ -21,7 +21,8 @@ void on_ready(struct discord *client, const struct discord_user *me)
 
 void shutdown(struct discord *client,
               const struct discord_user *bot,
-              const void *p_obj,
+              const char buf[],
+              const size_t len,
               ORCAcode code)
 {
   discord_shutdown(client);
@@ -47,7 +48,8 @@ void on_disconnect(struct discord *client,
 
 void reconnect(struct discord *client,
                const struct discord_user *bot,
-               const void *p_obj,
+               const char buf[],
+               const size_t len,
                ORCAcode code)
 {
   discord_reconnect(client, true);
@@ -73,7 +75,8 @@ void on_reconnect(struct discord *client,
 
 void send_batch(struct discord *client,
                 const struct discord_user *bot,
-                const void *p_obj,
+                const char buf[],
+                const size_t len,
                 ORCAcode code)
 {
   struct spam_cxt *cxt = discord_get_data(client);
@@ -108,12 +111,13 @@ void on_spam(struct discord *client,
   struct spam_cxt *cxt = discord_get_data(client);
   cxt->channel_id = msg->channel_id;
 
-  send_batch(client, bot, NULL, ORCA_OK);
+  send_batch(client, bot, NULL, 0, ORCA_OK);
 }
 
 void send_msg(struct discord *client,
               const struct discord_user *bot,
-              const void *p_obj,
+              const char buf[],
+              const size_t len,
               ORCAcode code)
 {
   char text[32];
@@ -143,7 +147,7 @@ void on_spam_ordered(struct discord *client,
   /* TODO: trigger via timeout function */
   struct spam_cxt *cxt = discord_get_data(client);
   cxt->channel_id = msg->channel_id;
-  send_msg(client, bot, NULL, ORCA_OK);
+  send_msg(client, bot, NULL, 0, ORCA_OK);
 }
 
 int main(int argc, char *argv[])

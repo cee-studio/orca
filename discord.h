@@ -114,7 +114,8 @@ typedef discord_event_scheduler_t (*discord_event_scheduler_cb)(
  */
 typedef void (*discord_async_cb)(struct discord *client,
                                  const struct discord_user *bot,
-                                 const void *p_obj,
+                                 const char body[],
+                                 const size_t len,
                                  ORCAcode code);
 
 /**

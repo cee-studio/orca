@@ -22,7 +22,7 @@ void on_bot_get_guild_template(struct discord *client,
 {
   char message_buffer[8001];
 
-  struct discord_message p_message;
+  struct discord_message ret;
   struct discord_guild_template template;
   ORCAcode response =
     discord_get_guild_template(client, message->content, &template);
@@ -42,7 +42,7 @@ void on_bot_get_guild_template(struct discord *client,
   struct discord_create_message_params params = { 0 };
   params.content = message_buffer;
 
-  discord_create_message(client, message->channel_id, &params, &p_message);
+  discord_create_message(client, message->channel_id, &params, &ret);
 
   if (response == ORCA_OK) {
     discord_guild_template_cleanup(&template);
@@ -54,7 +54,7 @@ void on_bot_create_guild_template(struct discord *client,
                                   const struct discord_message *message)
 {
   char message_buffer[8001];
-  struct discord_message p_message;
+  struct discord_message ret;
   struct discord_guild_template template;
   struct discord_create_guild_template_params params;
 
@@ -81,8 +81,7 @@ void on_bot_create_guild_template(struct discord *client,
   struct discord_create_message_params message_params = { 0 };
   message_params.content = message_buffer;
 
-  discord_create_message(client, message->channel_id, &message_params,
-                         &p_message);
+  discord_create_message(client, message->channel_id, &message_params, &ret);
 
   if (response == ORCA_OK) {
     discord_guild_template_cleanup(&template);
@@ -94,7 +93,7 @@ void on_bot_sync_guild_template(struct discord *client,
                                 const struct discord_message *message)
 {
   char message_buffer[8001];
-  struct discord_message p_message;
+  struct discord_message ret;
   struct discord_guild_template template;
 
   ORCAcode response = discord_sync_guild_template(client, message->guild_id,
@@ -117,8 +116,7 @@ void on_bot_sync_guild_template(struct discord *client,
   struct discord_create_message_params message_params = { 0 };
   message_params.content = message_buffer;
 
-  discord_create_message(client, message->channel_id, &message_params,
-                         &p_message);
+  discord_create_message(client, message->channel_id, &message_params, &ret);
 
   if (response == ORCA_OK) {
     discord_guild_template_cleanup(&template);

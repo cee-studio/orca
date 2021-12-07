@@ -10,9 +10,9 @@ ORCAcode
 discord_create_webhook(struct discord *client,
                        const u64_snowflake_t channel_id,
                        struct discord_create_webhook_params *params,
-                       struct discord_webhook *p_webhook)
+                       struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, p_webhook };
+  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -24,8 +24,8 @@ discord_create_webhook(struct discord *client,
     logconf_error(&client->conf, "Missing 'params.name'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_webhook) {
-    logconf_error(&client->conf, "Missing 'p_webhook'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -39,17 +39,16 @@ discord_create_webhook(struct discord *client,
 ORCAcode
 discord_get_channel_webhooks(struct discord *client,
                              const u64_snowflake_t channel_id,
-                             NTL_T(struct discord_webhook) * p_webhooks)
+                             struct discord_webhook ***ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_list_from_json_v,
-                                   p_webhooks };
+  struct ua_resp_handle handle = { &discord_webhook_list_from_json_v, ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_webhooks) {
-    logconf_error(&client->conf, "Missing 'p_webhooks'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -60,17 +59,16 @@ discord_get_channel_webhooks(struct discord *client,
 ORCAcode
 discord_get_guild_webhooks(struct discord *client,
                            const u64_snowflake_t guild_id,
-                           NTL_T(struct discord_webhook) * p_webhooks)
+                           struct discord_webhook ***ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_list_from_json_v,
-                                   p_webhooks };
+  struct ua_resp_handle handle = { &discord_webhook_list_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_webhooks) {
-    logconf_error(&client->conf, "Missing 'p_webhooks'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -81,16 +79,16 @@ discord_get_guild_webhooks(struct discord *client,
 ORCAcode
 discord_get_webhook(struct discord *client,
                     const u64_snowflake_t webhook_id,
-                    struct discord_webhook *p_webhook)
+                    struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, p_webhook };
+  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_webhook) {
-    logconf_error(&client->conf, "Missing 'p_webhook'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -102,9 +100,9 @@ ORCAcode
 discord_get_webhook_with_token(struct discord *client,
                                const u64_snowflake_t webhook_id,
                                const char webhook_token[],
-                               struct discord_webhook *p_webhook)
+                               struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, p_webhook };
+  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
@@ -114,8 +112,8 @@ discord_get_webhook_with_token(struct discord *client,
     logconf_error(&client->conf, "Missing 'webhook_token'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_webhook) {
-    logconf_error(&client->conf, "Missing 'p_webhook'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -128,9 +126,9 @@ ORCAcode
 discord_modify_webhook(struct discord *client,
                        const u64_snowflake_t webhook_id,
                        struct discord_modify_webhook_params *params,
-                       struct discord_webhook *p_webhook)
+                       struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, p_webhook };
+  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -152,9 +150,9 @@ discord_modify_webhook_with_token(
   const u64_snowflake_t webhook_id,
   const char webhook_token[],
   struct discord_modify_webhook_with_token_params *params,
-  struct discord_webhook *p_webhook)
+  struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, p_webhook };
+  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -213,16 +211,16 @@ discord_execute_webhook(struct discord *client,
                         const u64_snowflake_t webhook_id,
                         const char webhook_token[],
                         struct discord_execute_webhook_params *params,
-                        struct discord_webhook *p_webhook)
+                        struct discord_webhook *ret)
 {
   struct ua_resp_handle resp_handle = {
-    p_webhook ? &discord_webhook_from_json_v : NULL,
-    p_webhook,
+    ret ? &discord_webhook_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
   char query[4096] = "";
-  size_t ret = 0;
+  size_t len = 0;
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
@@ -238,13 +236,13 @@ discord_execute_webhook(struct discord *client,
   }
 
   if (params->wait) {
-    ret = snprintf(query, sizeof(query), "wait=1");
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len = snprintf(query, sizeof(query), "wait=1");
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   if (params->thread_id) {
-    ret += snprintf(query + ret, sizeof(query) - ret, "%sthread_id=%" PRIu64,
-                    ret ? "&" : "", params->thread_id);
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len += snprintf(query + len, sizeof(query) - len, "%sthread_id=%" PRIu64,
+                    len ? "&" : "", params->thread_id);
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
 
   body.size = discord_execute_webhook_params_to_json(buf, sizeof(buf), params);
@@ -280,9 +278,9 @@ discord_get_webhook_message(struct discord *client,
                             const u64_snowflake_t webhook_id,
                             const char webhook_token[],
                             const u64_snowflake_t message_id,
-                            struct discord_message *p_message)
+                            struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { &discord_message_from_json_v, p_message };
+  struct ua_resp_handle handle = { &discord_message_from_json_v, ret };
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
@@ -296,8 +294,8 @@ discord_get_webhook_message(struct discord *client,
     logconf_error(&client->conf, "Missing 'message_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_message) {
-    logconf_error(&client->conf, "Missing 'p_message'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -313,12 +311,12 @@ discord_edit_webhook_message(
   const char webhook_token[],
   const u64_snowflake_t message_id,
   struct discord_edit_webhook_message_params *params,
-  struct discord_message *p_message)
+  struct discord_message *ret)
 {
 
   struct ua_resp_handle resp_handle = {
-    p_message ? &discord_message_from_json_v : NULL,
-    p_message,
+    ret ? &discord_message_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */

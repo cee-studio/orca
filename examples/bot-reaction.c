@@ -18,7 +18,7 @@ void on_get_users(struct discord *client,
 {
   if (msg->author->bot || !msg->referenced_message) return;
 
-  NTL_T(struct discord_user) users = NULL;
+  struct discord_user **users = NULL;
   ORCAcode code;
   code = discord_get_reactions(
     client, msg->referenced_message->channel_id, msg->referenced_message->id,

@@ -84,7 +84,7 @@ void parse_session_config()
 {
   size_t len;
   char *json_payload = cee_load_whole_file("bot-quiz.json", &len);
-  NTL_T(struct sized_buffer) t_questions = NULL;
+  struct sized_buffer **t_questions = NULL;
 
   json_extract(json_payload, len,
                "(listener.channel_id):s_as_u64"
@@ -107,7 +107,7 @@ void parse_session_config()
     1, g_session.num_questions * sizeof(struct question));
 
   for (size_t i = 0; t_questions[i]; ++i) {
-    NTL_T(struct sized_buffer) t_answers = NULL;
+    struct sized_buffer **t_answers = NULL;
     json_extract(t_questions[i]->start, t_questions[i]->size,
                  "(description):?s", &g_session.questions[i].desc);
     json_extract(t_questions[i]->start, t_questions[i]->size, "(answers):[L]",
@@ -146,7 +146,7 @@ void close_existing_sessions(struct discord *client,
    * get a ongoing session */
 
   /* Check if user already has a session role assigned to */
-  NTL_T(struct discord_role) rls = NULL;
+  struct discord_role **rls = NULL;
   discord_get_guild_roles(client, guild_id, &rls);
 
   for (size_t i = 0; rls[i]; ++i) {
@@ -189,14 +189,14 @@ u64_snowflake_t create_session_channel(
     0, // role type
     DISCORD_BITWISE_PERMISSION_ZERO, // Allow
     DISCORD_BITWISE_PERMISSION_ADD_REACTIONS // Deny
-      | DISCORD_BITWISE_PERMISSION_VIEW_CHANNEL |
-      DISCORD_BITWISE_PERMISSION_SEND_MESSAGES);
+      | DISCORD_BITWISE_PERMISSION_VIEW_CHANNEL
+      | DISCORD_BITWISE_PERMISSION_SEND_MESSAGES);
 
   discord_overwrite_append(&params1.permission_overwrites, member->user->id,
                            1, // user type
                            DISCORD_BITWISE_PERMISSION_ADD_REACTIONS // Allow
-                             | DISCORD_BITWISE_PERMISSION_VIEW_CHANNEL |
-                             DISCORD_BITWISE_PERMISSION_SEND_MESSAGES,
+                             | DISCORD_BITWISE_PERMISSION_VIEW_CHANNEL
+                             | DISCORD_BITWISE_PERMISSION_SEND_MESSAGES,
                            DISCORD_BITWISE_PERMISSION_ZERO); // Deny
 
   discord_create_guild_channel(client, guild_id, &params1, &ch);
@@ -247,8 +247,8 @@ void start_new_session(struct discord *client,
                        const struct discord_guild_member *member)
 {
 #if 1 /* @sqlite this section can be replaced by a simple DB fetch, try to    \
-         fetch a row by the user_id, if it doesn't exist create a new session               \
-         and store in DB, otherwise if it exists you can delete the                                    \
+         fetch a row by the user_id, if it doesn't exist create a new session \
+         and store in DB, otherwise if it exists you can delete the           \
          channel_id associated with the ongoing                               \
           session, (or continue/restart the quiz in the same channel) */
   close_existing_sessions(client, guild_id, member);
@@ -285,10 +285,10 @@ void send_next_question(struct discord *client,
 {
   char text[DISCORD_MAX_PAYLOAD_LEN];
   if (session->curr_question == g_session.questions_per_session) {
-    sprintf(text, "You got %d out of %d! (%.1f%%)", session->hits,
-            g_session.questions_per_session,
-            100 *
-              ((float)session->hits / (float)g_session.questions_per_session));
+    sprintf(
+      text, "You got %d out of %d! (%.1f%%)", session->hits,
+      g_session.questions_per_session,
+      100 * ((float)session->hits / (float)g_session.questions_per_session));
     struct discord_create_message_params params = { .content = text };
     discord_create_message(client, channel_id, &params, NULL);
 
@@ -326,8 +326,8 @@ void on_reaction_add(struct discord *client,
                      const struct discord_emoji *emoji)
 {
   if (member->user->bot) return; // ignore bots
-  if ((message_id == g_session.message_id) &&
-      (0 == strcmp(emoji->name, g_session.reaction_emoji)))
+  if ((message_id == g_session.message_id)
+      && (0 == strcmp(emoji->name, g_session.reaction_emoji)))
   { // close existing quiz session / start new quiz session
     start_new_session(client, guild_id, member);
   }

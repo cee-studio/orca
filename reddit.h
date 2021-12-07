@@ -18,14 +18,14 @@ void reddit_cleanup(struct reddit *client);
 
 ORCAcode reddit_access_token(struct reddit *client,
                              struct reddit_access_token_params *params,
-                             struct sized_buffer *p_resp_body);
+                             struct sized_buffer *ret);
 
 ORCAcode reddit_comment(struct reddit *client,
                         struct reddit_comment_params *params,
-                        struct sized_buffer *p_resp_body);
+                        struct sized_buffer *ret);
 ORCAcode reddit_search(struct reddit *client,
                        struct reddit_search_params *params,
                        char subreddit[],
-                       struct sized_buffer *p_resp_body);
+                       struct sized_buffer *ret);
 
 #endif /* REDDIT_H */

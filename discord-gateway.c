@@ -41,12 +41,12 @@ _discord_gateway_close(struct discord_gateway *gw,
 }
 
 ORCAcode
-discord_get_gateway(struct discord *client, struct sized_buffer *p_json)
+discord_get_gateway(struct discord *client, struct sized_buffer *ret)
 {
-  struct ua_resp_handle handle = { &sized_buffer_from_json, p_json };
+  struct ua_resp_handle handle = { &sized_buffer_from_json, ret };
 
-  if (!p_json) {
-    logconf_error(&client->conf, "Missing 'p_json'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -55,12 +55,12 @@ discord_get_gateway(struct discord *client, struct sized_buffer *p_json)
 }
 
 ORCAcode
-discord_get_gateway_bot(struct discord *client, struct sized_buffer *p_json)
+discord_get_gateway_bot(struct discord *client, struct sized_buffer *ret)
 {
-  struct ua_resp_handle handle = { &sized_buffer_from_json, p_json };
+  struct ua_resp_handle handle = { &sized_buffer_from_json, ret };
 
-  if (!p_json) {
-    logconf_error(&client->conf, "Missing 'p_json'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -605,7 +605,7 @@ on_message_delete(struct discord_gateway *gw, struct sized_buffer *data)
 static void
 on_message_delete_bulk(struct discord_gateway *gw, struct sized_buffer *data)
 {
-  const NTL_T(ja_u64) ids = NULL;
+  const ja_u64 **ids = NULL;
   u64_snowflake_t channel_id = 0, guild_id = 0;
 
   json_extract(data->start, data->size,

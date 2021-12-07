@@ -101,7 +101,7 @@ void *read_input(void *p_client)
       u64_snowflake_t guild_id = 0;
       sscanf(buf + bufoffset, "%" SCNu64, &guild_id);
 
-      NTL_T(struct discord_application_command) app_cmds = NULL;
+      struct discord_application_command **app_cmds = NULL;
       if (guild_id)
         code = discord_get_guild_application_commands(client, g_application_id,
                                                       guild_id, &app_cmds);

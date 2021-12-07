@@ -4,7 +4,8 @@
 
 #include "slack.h"
 
-void on_hello(struct slack *client, const char *text, const size_t len) {
+void on_hello(struct slack *client, const char *text, const size_t len)
+{
   fputs("\n\nSuccesfully connected to Slack!\n\n", stderr);
 }
 
@@ -16,7 +17,6 @@ int main(int argc, char *argv[])
   else
     config_file = "bot.config";
 
-
   struct slack *client = slack_config_init(config_file);
   assert(NULL != client);
 
@@ -26,4 +26,3 @@ int main(int argc, char *argv[])
 
   slack_cleanup(client);
 }
-

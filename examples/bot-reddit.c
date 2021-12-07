@@ -29,7 +29,7 @@ struct {
   } R;
   struct { /* DISCORD UTILS */
     struct discord *client;
-    NTL_T(u64_snowflake_t) channel_ids;
+    u64_snowflake_t **channel_ids;
   } D;
 } BOT;
 
@@ -238,7 +238,8 @@ void on_search(struct discord *client,
               return; /* EARLY RETURN */
             }
           case '_':
-          case '+': break;
+          case '+':
+            break;
           }
         }
         snprintf(subreddits, sizeof(subreddits), "%.*s", (int)query_size,
@@ -361,8 +362,8 @@ void load_BOT(const char config_file[])
 
   bool enable = false;
   int refresh_seconds = 0;
-  NTL_T(ja_str) ja_q = NULL;
-  NTL_T(ja_str) ja_sr = NULL;
+  ja_str **ja_q = NULL;
+  ja_str **ja_sr = NULL;
   json_extract(BOT.json.start, BOT.json.size,
                "(enable):b"
                "(refresh_seconds):d"
@@ -428,7 +429,7 @@ void cleanup_BOT()
   free(BOT.R.params.q);
   free(BOT.R.srs);
   reddit_cleanup(BOT.R.client);
-  ja_u64_list_free((NTL_T(ja_u64))BOT.D.channel_ids);
+  ja_u64_list_free((ja_u64 **)BOT.D.channel_ids);
 }
 
 enum discord_event_scheduler scheduler(struct discord *client,

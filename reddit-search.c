@@ -3,11 +3,10 @@
 #include "reddit.h"
 #include "reddit-internal.h"
 
-ORCAcode
-reddit_search(struct reddit *client,
-              struct reddit_search_params *params,
-              char subreddit[],
-              struct sized_buffer *p_resp_body)
+ORCAcode reddit_search(struct reddit *client,
+                       struct reddit_search_params *params,
+                       char subreddit[],
+                       struct sized_buffer *ret)
 {
   if (IS_EMPTY_STRING(subreddit)) {
     log_error("Missing 'subreddit'");
@@ -37,27 +36,27 @@ reddit_search(struct reddit *client,
     log_error("'params.show' should be NULL or \"all\"");
     return ORCA_BAD_PARAMETER;
   }
-  if (!IS_EMPTY_STRING(params->sort) &&
-      !(STREQ(params->sort, "relevance") || STREQ(params->sort, "hot") ||
-        STREQ(params->sort, "top") || STREQ(params->sort, "new") ||
-        STREQ(params->sort, "comments")))
+  if (!IS_EMPTY_STRING(params->sort)
+      && !(STREQ(params->sort, "relevance") || STREQ(params->sort, "hot")
+           || STREQ(params->sort, "top") || STREQ(params->sort, "new")
+           || STREQ(params->sort, "comments")))
   {
     log_error(
       "'params.sort' should be one of: (relevance, hot, top, new, comments)");
     return ORCA_BAD_PARAMETER;
   }
-  if (!IS_EMPTY_STRING(params->t) &&
-      !(STREQ(params->t, "hour") || STREQ(params->t, "day") ||
-        STREQ(params->t, "week") || STREQ(params->t, "month") ||
-        STREQ(params->t, "year") || STREQ(params->t, "all")))
+  if (!IS_EMPTY_STRING(params->t)
+      && !(STREQ(params->t, "hour") || STREQ(params->t, "day")
+           || STREQ(params->t, "week") || STREQ(params->t, "month")
+           || STREQ(params->t, "year") || STREQ(params->t, "all")))
   {
     log_error(
       "'params.t' should be one of: (hour, day, week, month, year, all)");
     return ORCA_BAD_PARAMETER;
   }
-  if (!IS_EMPTY_STRING(params->type) &&
-      !(STREQ(params->type, "sr") || STREQ(params->type, "link") ||
-        STREQ(params->type, "user")))
+  if (!IS_EMPTY_STRING(params->type)
+      && !(STREQ(params->type, "sr") || STREQ(params->type, "link")
+           || STREQ(params->type, "user")))
   {
     log_error("'params.type' should be one of: (sr, link, user)");
     return ORCA_BAD_PARAMETER;
@@ -69,40 +68,40 @@ reddit_search(struct reddit *client,
     params->limit = 100;
 
   char query[1024];
-  size_t ret = 0;
-  ret += snprintf(query, sizeof(query), "limit=%d", params->limit);
-  ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+  size_t len = 0;
+  len += snprintf(query, sizeof(query), "limit=%d", params->limit);
+  ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
 
   char *q_url_encoded = url_encode(params->q);
-  ret += snprintf(query + ret, sizeof(query) - ret, "&q=%s", q_url_encoded);
-  ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+  len += snprintf(query + len, sizeof(query) - len, "&q=%s", q_url_encoded);
+  ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   free(q_url_encoded);
 
   if (true == params->restrict_sr) {
-    ret += snprintf(query + ret, sizeof(query) - ret, "&restrict_sr=1");
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len += snprintf(query + len, sizeof(query) - len, "&restrict_sr=1");
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   if (params->t) {
-    ret += snprintf(query + ret, sizeof(query) - ret, "&t=%s", params->t);
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len += snprintf(query + len, sizeof(query) - len, "&t=%s", params->t);
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   if (params->sort) {
-    ret +=
-      snprintf(query + ret, sizeof(query) - ret, "&sort=%s", params->sort);
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len +=
+      snprintf(query + len, sizeof(query) - len, "&sort=%s", params->sort);
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   if (params->before) {
-    ret +=
-      snprintf(query + ret, sizeof(query) - ret, "&before=%s", params->before);
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len +=
+      snprintf(query + len, sizeof(query) - len, "&before=%s", params->before);
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   if (params->after) {
-    ret +=
-      snprintf(query + ret, sizeof(query) - ret, "&after=%s", params->after);
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    len +=
+      snprintf(query + len, sizeof(query) - len, "&after=%s", params->after);
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
 
-  return reddit_adapter_run(&client->adapter, p_resp_body, NULL, HTTP_GET,
+  return reddit_adapter_run(&client->adapter, ret, NULL, HTTP_GET,
                             "/r/%s/search.json?raw_json=1%s", subreddit,
                             query);
 }

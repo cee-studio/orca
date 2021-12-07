@@ -49,7 +49,7 @@ void on_get_pins(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  NTL_T(struct discord_message) msgs = NULL;
+  struct discord_message **msgs = NULL;
   discord_get_pinned_messages(client, msg->channel_id, &msgs);
 
   char text[DISCORD_MAX_MESSAGE_LEN];

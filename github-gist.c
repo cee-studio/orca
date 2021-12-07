@@ -14,7 +14,7 @@
 ORCAcode
 github_create_gist(struct github *client,
                    struct github_gist_create_params *params,
-                   struct github_gist *gist)
+                   struct github_gist *ret)
 {
   log_info("===create-gist===");
 
@@ -44,17 +44,17 @@ github_create_gist(struct github *client,
            params->public, params->description, params->title,
            params->contents);
 
-  size_t ret = json_inject(payload, sizeof(payload), fmt);
+  size_t len = json_inject(payload, sizeof(payload), fmt);
 
   return github_adapter_run(
     &client->adapter,
     &(struct ua_resp_handle){ .ok_cb = &github_gist_from_json_v,
-                              .ok_obj = gist },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST, "/gists");
+                              .ok_obj = ret },
+    &(struct sized_buffer){ payload, len }, HTTP_POST, "/gists");
 }
 
 ORCAcode
-github_get_gist(struct github *client, char *id, struct github_gist *gist)
+github_get_gist(struct github *client, char *id, struct github_gist *ret)
 {
   log_info("===get-a-gist===");
 
@@ -63,15 +63,15 @@ github_get_gist(struct github *client, char *id, struct github_gist *gist)
     return ORCA_MISSING_PARAMETER;
   }
 
-  if (!gist) {
-    log_error("Missing 'gist'");
+  if (!ret) {
+    log_error("Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
   return github_adapter_run(
     &client->adapter,
     &(struct ua_resp_handle){ .ok_cb = &github_gist_from_json_v,
-                              .ok_obj = gist },
+                              .ok_obj = ret },
     NULL, HTTP_GET, "/gists/%s", id);
 }
 

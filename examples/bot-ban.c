@@ -56,7 +56,7 @@ void on_ban(struct discord *client,
             const struct discord_message *msg)
 {
   // get member list
-  NTL_T(struct discord_guild_member) members = NULL;
+  struct discord_guild_member **members = NULL;
   ORCAcode code = discord_list_guild_members(
     client, msg->guild_id,
     &(struct discord_list_guild_members_params){ .limit = 1000, .after = 0 },
@@ -72,8 +72,8 @@ void on_ban(struct discord *client,
   // try to find match for to be banned user
   struct discord_user *target = NULL;
   for (size_t i = 0; members[i]; ++i) {
-    if (0 == strcmp(members[i]->user->username, username) &&
-        0 == strcmp(members[i]->user->discriminator, discriminator))
+    if (0 == strcmp(members[i]->user->username, username)
+        && 0 == strcmp(members[i]->user->discriminator, discriminator))
     {
       target = members[i]->user;
       break; /* EARLY BREAK */
@@ -95,7 +95,7 @@ void on_unban(struct discord *client,
               const struct discord_message *msg)
 {
   // get banned list
-  NTL_T(struct discord_ban) bans = NULL;
+  struct discord_ban **bans = NULL;
 
   ORCAcode code;
   code = discord_get_guild_bans(client, msg->guild_id, &bans);
@@ -110,8 +110,8 @@ void on_unban(struct discord *client,
   // try to find match for to be banned user
   struct discord_user *target = NULL;
   for (size_t i = 0; bans[i]; ++i) {
-    if (0 == strcmp(bans[i]->user->username, username) &&
-        0 == strcmp(bans[i]->user->discriminator, discriminator))
+    if (0 == strcmp(bans[i]->user->username, username)
+        && 0 == strcmp(bans[i]->user->discriminator, discriminator))
     {
       target = bans[i]->user;
       break; /* EARLY BREAK */

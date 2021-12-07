@@ -57,8 +57,8 @@ void slack_sm_run(struct slack *client);
 void slack_sm_shutdown(struct slack *client);
 
 ORCAcode slack_apps_connections_open(struct slack *client,
-                                     struct sized_buffer *p_resp);
-ORCAcode slack_auth_test(struct slack *client, struct sized_buffer *p_resp);
+                                     struct sized_buffer *ret);
+ORCAcode slack_auth_test(struct slack *client, struct sized_buffer *ret);
 
 /* https://api.slack.com/methods/chat.postMessage */
 struct slack_chat_post_message_params {
@@ -84,7 +84,7 @@ struct slack_chat_post_message_params {
 };
 ORCAcode slack_chat_post_message(struct slack *client,
                                  struct slack_chat_post_message_params *params,
-                                 struct sized_buffer *p_resp);
+                                 struct sized_buffer *ret);
 
 /* https://api.slack.com/methods/users.info */
 struct slack_users_info_params {
@@ -94,6 +94,6 @@ struct slack_users_info_params {
 };
 ORCAcode slack_users_info(struct slack *client,
                           struct slack_users_info_params *params,
-                          struct sized_buffer *p_resp);
+                          struct sized_buffer *ret);
 
 #endif /* SLACK_H */

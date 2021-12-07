@@ -2,8 +2,8 @@
 #include "slack-internal.h"
 
 ORCAcode
-slack_auth_test(struct slack *client, struct sized_buffer *p_resp_body)
+slack_auth_test(struct slack *client, struct sized_buffer *ret)
 {
-  return slack_webapi_run(&client->webapi, p_resp_body, NULL, HTTP_POST,
+  return slack_webapi_run(&client->webapi, ret, NULL, HTTP_POST,
                           "/auth.test");
 }

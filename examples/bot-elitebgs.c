@@ -78,12 +78,12 @@ void embed_from_json(char *str, size_t len, void *p_embed)
 {
   struct discord_embed *embed = p_embed;
 
-  NTL_T(struct sized_buffer) l_docs = NULL;
-  NTL_T(struct sized_buffer) l_fpresence = NULL;
-  NTL_T(struct sized_buffer) l_history = NULL;
-  NTL_T(struct sized_buffer) l_active_states = NULL;
-  NTL_T(struct sized_buffer) l_pending_states = NULL;
-  NTL_T(struct sized_buffer) l_recovering_states = NULL;
+  struct sized_buffer **l_docs = NULL;
+  struct sized_buffer **l_fpresence = NULL;
+  struct sized_buffer **l_history = NULL;
+  struct sized_buffer **l_active_states = NULL;
+  struct sized_buffer **l_pending_states = NULL;
+  struct sized_buffer **l_recovering_states = NULL;
 
   struct doc_s *doc = malloc(sizeof *doc);
   struct faction_presence_s *fpresence = malloc(sizeof *fpresence);

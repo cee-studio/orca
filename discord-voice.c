@@ -8,13 +8,12 @@
 
 ORCAcode
 discord_list_voice_regions(struct discord *client,
-                           NTL_T(struct discord_voice_region)
-                             * p_voice_regions)
+                           struct discord_voice_region ***ret)
 {
   struct ua_resp_handle handle = { &discord_voice_region_list_from_json_v,
-                                   p_voice_regions };
-  if (!p_voice_regions) {
-    logconf_error(&client->conf, "Missing 'p_voice_regions'");
+                                   ret };
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 

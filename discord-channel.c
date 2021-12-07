@@ -9,16 +9,16 @@
 ORCAcode
 discord_get_channel(struct discord *client,
                     const u64_snowflake_t channel_id,
-                    struct discord_channel *p_channel)
+                    struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { &discord_channel_from_json_v, p_channel };
+  struct ua_resp_handle handle = { &discord_channel_from_json_v, ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_channel) {
-    logconf_error(&client->conf, "Missing 'p_channel'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -30,11 +30,10 @@ ORCAcode
 discord_modify_channel(struct discord *client,
                        const u64_snowflake_t channel_id,
                        struct discord_modify_channel_params *params,
-                       struct discord_channel *p_channel)
+                       struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_channel ? &discord_channel_from_json_v
-                                             : NULL,
-                                   p_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -57,11 +56,10 @@ discord_modify_channel(struct discord *client,
 ORCAcode
 discord_delete_channel(struct discord *client,
                        const u64_snowflake_t channel_id,
-                       struct discord_channel *p_channel)
+                       struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_channel ? &discord_channel_from_json_v
-                                             : NULL,
-                                   p_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id");
@@ -77,18 +75,17 @@ discord_get_channel_messages(
   struct discord *client,
   const u64_snowflake_t channel_id,
   struct discord_get_channel_messages_params *params,
-  NTL_T(struct discord_message) * p_messages)
+  struct discord_message ***ret)
 {
-  struct ua_resp_handle handle = { &discord_message_list_from_json_v,
-                                   p_messages };
+  struct ua_resp_handle handle = { &discord_message_list_from_json_v, ret };
   char query[1024] = "";
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_messages) {
-    logconf_error(&client->conf, "Missing 'p_messages'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -127,9 +124,9 @@ ORCAcode
 discord_get_channel_message(struct discord *client,
                             const u64_snowflake_t channel_id,
                             const u64_snowflake_t message_id,
-                            struct discord_message *p_message)
+                            struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { &discord_message_from_json_v, p_message };
+  struct ua_resp_handle handle = { &discord_message_from_json_v, ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -139,8 +136,8 @@ discord_get_channel_message(struct discord *client,
     logconf_error(&client->conf, "Missing 'message_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_message) {
-    logconf_error(&client->conf, "Missing 'p_message'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -153,11 +150,10 @@ ORCAcode
 discord_create_message(struct discord *client,
                        const u64_snowflake_t channel_id,
                        struct discord_create_message_params *params,
-                       struct discord_message *p_message)
+                       struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { p_message ? &discord_message_from_json_v
-                                             : NULL,
-                                   p_message };
+  struct ua_resp_handle handle = { ret ? &discord_message_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
   ORCAcode code;
@@ -201,11 +197,10 @@ ORCAcode
 discord_crosspost_message(struct discord *client,
                           const u64_snowflake_t channel_id,
                           const u64_snowflake_t message_id,
-                          struct discord_message *p_message)
+                          struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { p_message ? &discord_message_from_json_v
-                                             : NULL,
-                                   p_message };
+  struct ua_resp_handle handle = { ret ? &discord_message_from_json_v : NULL,
+                                   ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -348,9 +343,9 @@ discord_get_reactions(struct discord *client,
                       const u64_snowflake_t emoji_id,
                       const char emoji_name[],
                       struct discord_get_reactions_params *params,
-                      NTL_T(struct discord_user) * p_users)
+                      struct discord_user ***ret)
 {
-  struct ua_resp_handle handle = { &discord_user_list_from_json_v, p_users };
+  struct ua_resp_handle handle = { &discord_user_list_from_json_v, ret };
   char query[1024] = "";
   char emoji_endpoint[256];
   char *pct_emoji_name;
@@ -364,13 +359,13 @@ discord_get_reactions(struct discord *client,
     logconf_error(&client->conf, "Missing 'message_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_users) {
-    logconf_error(&client->conf, "Missing 'p_users'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
   if (params) {
-    size_t ret;
+    size_t len;
 
     if (params->limit <= 0 || params->limit > 100) {
       logconf_error(&client->conf, "'params.limit' should be between [1-100]");
@@ -378,15 +373,15 @@ discord_get_reactions(struct discord *client,
     }
 
     if (params->after) {
-      ret = query_inject(query, sizeof(query),
+      len = query_inject(query, sizeof(query),
                          "(after):F"
                          "(limit):d",
                          &cee_u64tostr, &params->after, &params->limit);
     }
     else {
-      ret = query_inject(query, sizeof(query), "(limit):d", &params->limit);
+      len = query_inject(query, sizeof(query), "(limit):d", &params->limit);
     }
-    ASSERT_S(ret < sizeof(query), "Out of bounds write attempt");
+    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
 
   pct_emoji_name = emoji_name ? url_encode((char *)emoji_name) : NULL;
@@ -470,11 +465,10 @@ discord_edit_message(struct discord *client,
                      const u64_snowflake_t channel_id,
                      const u64_snowflake_t message_id,
                      struct discord_edit_message_params *params,
-                     struct discord_message *p_message)
+                     struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { p_message ? &discord_message_from_json_v
-                                             : NULL,
-                                   p_message };
+  struct ua_resp_handle handle = { ret ? &discord_message_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
 
@@ -522,7 +516,7 @@ discord_delete_message(struct discord *client,
 ORCAcode
 discord_bulk_delete_messages(struct discord *client,
                              u64_snowflake_t channel_id,
-                             NTL_T(u64_snowflake_t) messages)
+                             u64_snowflake_t **messages)
 {
   u64_unix_ms_t now = discord_timestamp(client);
   struct sized_buffer body;
@@ -604,17 +598,16 @@ discord_edit_channel_permissions(
 ORCAcode
 discord_get_channel_invites(struct discord *client,
                             const u64_snowflake_t channel_id,
-                            NTL_T(struct discord_invite) * p_invites)
+                            struct discord_invite ***ret)
 {
-  struct ua_resp_handle handle = { &discord_invite_list_from_json_v,
-                                   p_invites };
+  struct ua_resp_handle handle = { &discord_invite_list_from_json_v, ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_invites) {
-    logconf_error(&client->conf, "Missing 'p_invites'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -627,14 +620,13 @@ discord_create_channel_invite(
   struct discord *client,
   const u64_snowflake_t channel_id,
   struct discord_create_channel_invite_params *params,
-  struct discord_invite *p_invite)
+  struct discord_invite *ret)
 {
-  struct ua_resp_handle handle = { p_invite ? &discord_invite_from_json_v
-                                            : NULL,
-                                   p_invite };
+  struct ua_resp_handle handle = { ret ? &discord_invite_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
-  size_t ret;
+  size_t len;
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -642,12 +634,12 @@ discord_create_channel_invite(
   }
 
   if (params)
-    ret =
+    len =
       discord_create_channel_invite_params_to_json(buf, sizeof(buf), params);
   else
-    ret = sprintf(buf, "{}");
+    len = sprintf(buf, "{}");
   body.start = buf;
-  body.size = ret;
+  body.size = len;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/invites", channel_id);
@@ -676,12 +668,10 @@ ORCAcode
 discord_follow_news_channel(struct discord *client,
                             const u64_snowflake_t channel_id,
                             struct discord_follow_news_channel_params *params,
-                            struct discord_channel *p_followed_channel)
+                            struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_followed_channel
-                                     ? &discord_channel_from_json_v
-                                     : NULL,
-                                   p_followed_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[256]; /* should be more than enough for this */
 
@@ -718,17 +708,16 @@ discord_trigger_typing_indicator(struct discord *client,
 ORCAcode
 discord_get_pinned_messages(struct discord *client,
                             const u64_snowflake_t channel_id,
-                            NTL_T(struct discord_message) * p_messages)
+                            struct discord_message ***ret)
 {
-  struct ua_resp_handle handle = { &discord_message_list_from_json_v,
-                                   p_messages };
+  struct ua_resp_handle handle = { &discord_message_list_from_json_v, ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_messages) {
-    logconf_error(&client->conf, "Missing 'p_messages'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -831,11 +820,10 @@ discord_start_thread_with_message(
   const u64_snowflake_t channel_id,
   const u64_snowflake_t message_id,
   struct discord_start_thread_with_message_params *params,
-  struct discord_channel *p_channel)
+  struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_channel ? &discord_channel_from_json_v
-                                             : NULL,
-                                   p_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -867,11 +855,10 @@ discord_start_thread_without_message(
   struct discord *client,
   const u64_snowflake_t channel_id,
   struct discord_start_thread_without_message_params *params,
-  struct discord_channel *p_channel)
+  struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_channel ? &discord_channel_from_json_v
-                                             : NULL,
-                                   p_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -959,18 +946,17 @@ discord_remove_thread_member(struct discord *client,
 ORCAcode
 discord_list_thread_members(struct discord *client,
                             const u64_snowflake_t channel_id,
-                            NTL_T(struct discord_thread_member)
-                              * p_thread_members)
+                            struct discord_thread_member ***ret)
 {
   struct ua_resp_handle handle = { &discord_thread_member_list_from_json_v,
-                                   p_thread_members };
+                                   ret };
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_thread_members) {
-    logconf_error(&client->conf, "Missing 'p_thread_members'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 

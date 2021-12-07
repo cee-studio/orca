@@ -88,7 +88,7 @@ void on_channel_get_invites(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  NTL_T(struct discord_invite) invites = NULL;
+  struct discord_invite **invites = NULL;
 
   ORCAcode code;
   code = discord_get_channel_invites(client, msg->channel_id, &invites);
@@ -115,8 +115,8 @@ void on_channel_create_invite(struct discord *client,
   struct discord_invite invite = { 0 };
 
   char text[DISCORD_MAX_MESSAGE_LEN];
-  if (ORCA_OK ==
-      discord_create_channel_invite(client, msg->channel_id, NULL, &invite))
+  if (ORCA_OK
+      == discord_create_channel_invite(client, msg->channel_id, NULL, &invite))
     sprintf(text, "https://discord.gg/%s", invite.code);
   else
     sprintf(text, "Couldn't create invite.");

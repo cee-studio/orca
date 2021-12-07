@@ -18,7 +18,7 @@ void on_list_voice_regions(struct discord *client,
                            const struct discord_message *msg)
 {
   if (msg->author->bot) return;
-  NTL_T(struct discord_voice_region) voice_regions = NULL;
+  struct discord_voice_region **voice_regions = NULL;
   discord_list_voice_regions(client, &voice_regions);
   if (!voice_regions) {
     log_error("Could not obtain voice regions");

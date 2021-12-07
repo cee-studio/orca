@@ -8,12 +8,12 @@
 #include "cee-utils.h"
 
 ORCAcode
-discord_get_current_user(struct discord *client, struct discord_user *p_user)
+discord_get_current_user(struct discord *client, struct discord_user *ret)
 {
-  struct ua_resp_handle handle = { &discord_user_from_json_v, p_user };
+  struct ua_resp_handle handle = { &discord_user_from_json_v, ret };
 
-  if (!p_user) {
-    logconf_error(&client->conf, "Missing 'p_user'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -24,16 +24,16 @@ discord_get_current_user(struct discord *client, struct discord_user *p_user)
 ORCAcode
 discord_get_user(struct discord *client,
                  const u64_snowflake_t user_id,
-                 struct discord_user *p_user)
+                 struct discord_user *ret)
 {
-  struct ua_resp_handle handle = { &discord_user_from_json_v, p_user };
+  struct ua_resp_handle handle = { &discord_user_from_json_v, ret };
 
   if (!user_id) {
     logconf_error(&client->conf, "Missing 'user_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_user) {
-    logconf_error(&client->conf, "Missing 'p_user'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -44,10 +44,10 @@ discord_get_user(struct discord *client,
 ORCAcode
 discord_modify_current_user(struct discord *client,
                             struct discord_modify_current_user_params *params,
-                            struct discord_user *p_user)
+                            struct discord_user *ret)
 {
-  struct ua_resp_handle handle = { p_user ? &discord_user_from_json_v : NULL,
-                                   p_user };
+  struct ua_resp_handle handle = { ret ? &discord_user_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -73,13 +73,12 @@ sized_buffer_from_json(char *json, size_t len, void *data)
 }
 
 ORCAcode /* @todo this is a temporary solution for easily wrapping JS */
-sb_discord_get_current_user(struct discord *client,
-                            struct sized_buffer *p_sb_user)
+sb_discord_get_current_user(struct discord *client, struct sized_buffer *ret)
 {
-  struct ua_resp_handle handle = { &sized_buffer_from_json, p_sb_user };
+  struct ua_resp_handle handle = { &sized_buffer_from_json, ret };
 
-  if (!p_sb_user) {
-    logconf_error(&client->conf, "Missing 'p_sb_user'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -89,12 +88,12 @@ sb_discord_get_current_user(struct discord *client,
 
 ORCAcode
 discord_get_current_user_guilds(struct discord *client,
-                                NTL_T(struct discord_guild) * p_guilds)
+                                struct discord_guild ***ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_list_from_json_v, p_guilds };
+  struct ua_resp_handle handle = { &discord_guild_list_from_json_v, ret };
 
-  if (!p_guilds) {
-    logconf_error(&client->conf, "Missing 'p_guilds'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -119,11 +118,10 @@ discord_leave_guild(struct discord *client, const u64_snowflake_t guild_id)
 ORCAcode
 discord_create_dm(struct discord *client,
                   struct discord_create_dm_params *params,
-                  struct discord_channel *p_dm_channel)
+                  struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_dm_channel ? &discord_channel_from_json_v
-                                                : NULL,
-                                   p_dm_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[128];
 
@@ -142,11 +140,10 @@ discord_create_dm(struct discord *client,
 ORCAcode
 discord_create_group_dm(struct discord *client,
                         struct discord_create_group_dm_params *params,
-                        struct discord_channel *p_dm_channel)
+                        struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_dm_channel ? &discord_channel_from_json_v
-                                                : NULL,
-                                   p_dm_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -172,13 +169,12 @@ discord_create_group_dm(struct discord *client,
 
 ORCAcode
 discord_get_user_connections(struct discord *client,
-                             NTL_T(struct discord_connection) * p_connections)
+                             struct discord_connection ***ret)
 {
-  struct ua_resp_handle handle = { &discord_connection_list_from_json_v,
-                                   p_connections };
+  struct ua_resp_handle handle = { &discord_connection_list_from_json_v, ret };
 
-  if (!p_connections) {
-    logconf_error(&client->conf, "Missing 'p_connections'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 

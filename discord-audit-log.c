@@ -10,18 +10,17 @@ ORCAcode
 discord_get_guild_audit_log(struct discord *client,
                             const u64_snowflake_t guild_id,
                             struct discord_get_guild_audit_log_params *params,
-                            struct discord_audit_log *p_audit_log)
+                            struct discord_audit_log *ret)
 {
-  struct ua_resp_handle handle = { &discord_audit_log_from_json_v,
-                                   p_audit_log };
+  struct ua_resp_handle handle = { &discord_audit_log_from_json_v, ret };
   char query[1024] = "";
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_audit_log) {
-    logconf_error(&client->conf, "Missing 'p_audit_log'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 

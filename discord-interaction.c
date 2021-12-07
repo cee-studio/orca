@@ -12,10 +12,10 @@ discord_create_interaction_response(
   const u64_snowflake_t interaction_id,
   const char interaction_token[],
   struct discord_interaction_response *params,
-  struct discord_interaction_response *p_response)
+  struct discord_interaction_response *ret)
 {
   struct ua_resp_handle handle = {
-    p_response ? &discord_interaction_response_from_json_v : NULL, p_response
+    ret ? &discord_interaction_response_from_json_v : NULL, ret
   };
   struct sized_buffer body;
   char buf[4096];
@@ -46,10 +46,10 @@ discord_get_original_interaction_response(
   struct discord *client,
   const u64_snowflake_t interaction_id,
   const char interaction_token[],
-  struct discord_interaction_response *p_response)
+  struct discord_interaction_response *ret)
 {
   struct ua_resp_handle handle = { &discord_interaction_response_from_json_v,
-                                   p_response };
+                                   ret };
 
   if (!interaction_id) {
     logconf_error(&client->conf, "Missing 'interaction_id'");
@@ -59,8 +59,8 @@ discord_get_original_interaction_response(
     logconf_error(&client->conf, "Missing 'interaction_token'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_response) {
-    logconf_error(&client->conf, "Missing 'p_response'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -75,11 +75,11 @@ discord_edit_original_interaction_response(
   const u64_snowflake_t interaction_id,
   const char interaction_token[],
   struct discord_edit_original_interaction_response_params *params,
-  struct discord_interaction_response *p_response)
+  struct discord_interaction_response *ret)
 {
   struct ua_resp_handle handle = {
-    p_response ? &discord_interaction_response_from_json_v : NULL,
-    p_response,
+    ret ? &discord_interaction_response_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
@@ -151,11 +151,11 @@ discord_create_followup_message(
   const u64_snowflake_t application_id,
   const char interaction_token[],
   struct discord_create_followup_message_params *params,
-  struct discord_webhook *p_webhook)
+  struct discord_webhook *ret)
 {
   struct ua_resp_handle resp_handle = {
-    p_webhook ? &discord_webhook_from_json_v : NULL,
-    p_webhook,
+    ret ? &discord_webhook_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
@@ -216,9 +216,9 @@ discord_get_followup_message(struct discord *client,
                              const u64_snowflake_t application_id,
                              const char interaction_token[],
                              const u64_snowflake_t message_id,
-                             struct discord_message *p_message)
+                             struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { &discord_message_from_json_v, p_message };
+  struct ua_resp_handle handle = { &discord_message_from_json_v, ret };
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -232,8 +232,8 @@ discord_get_followup_message(struct discord *client,
     logconf_error(&client->conf, "Missing 'message_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_message) {
-    logconf_error(&client->conf, "Missing 'p_message'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -249,11 +249,11 @@ discord_edit_followup_message(
   const char interaction_token[],
   const u64_snowflake_t message_id,
   struct discord_edit_followup_message_params *params,
-  struct discord_message *p_message)
+  struct discord_message *ret)
 {
   struct ua_resp_handle resp_handle = {
-    p_message ? &discord_message_from_json_v : NULL,
-    p_message,
+    ret ? &discord_message_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */

@@ -126,8 +126,8 @@ void on_role_create(struct discord *client,
     struct discord_role role = { 0 };
 
     struct discord_create_guild_role_params params = { .name = name };
-    if (ORCA_OK ==
-        discord_create_guild_role(client, msg->guild_id, &params, &role))
+    if (ORCA_OK
+        == discord_create_guild_role(client, msg->guild_id, &params, &role))
       sprintf(text, "Succesfully create <@&%" PRIu64 ">", role.id);
     else
       sprintf(text, "Couldn't create role `%s`", name);
@@ -178,8 +178,9 @@ void on_role_member_add(struct discord *client,
             "Invalid format for `guild.role_member_add <user_id> <role_id>`");
   }
   else {
-    if (ORCA_OK ==
-        discord_add_guild_member_role(client, msg->guild_id, user_id, role_id))
+    if (ORCA_OK
+        == discord_add_guild_member_role(client, msg->guild_id, user_id,
+                                         role_id))
       sprintf(text, "Assigned role <@&%" PRIu64 "> to <@%" PRIu64 ">", role_id,
               user_id);
     else
@@ -207,8 +208,9 @@ void on_role_member_remove(struct discord *client,
       "Invalid format for `guild.role_member_remove <user_id> <role_id>`");
   }
   else {
-    if (ORCA_OK == discord_remove_guild_member_role(client, msg->guild_id,
-                                                    user_id, role_id))
+    if (ORCA_OK
+        == discord_remove_guild_member_role(client, msg->guild_id, user_id,
+                                            role_id))
       sprintf(text, "Removed role <@&%" PRIu64 "> from <@%" PRIu64 ">",
               role_id, user_id);
     else
@@ -226,7 +228,7 @@ void on_role_list(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  NTL_T(struct discord_role) roles = NULL;
+  struct discord_role **roles = NULL;
   ORCAcode code;
   code = discord_get_guild_roles(client, msg->guild_id, &roles);
 
@@ -275,8 +277,9 @@ void on_member_get(struct discord *client,
   else {
     struct discord_guild_member member = { 0 };
 
-    if (ORCA_OK == discord_get_guild_member(client, msg->guild_id,
-                                            msg->author->id, &member))
+    if (ORCA_OK
+        == discord_get_guild_member(client, msg->guild_id, msg->author->id,
+                                    &member))
       sprintf(text, "Member <@%" PRIu64 "> found!", user_id);
     else
       sprintf(text, "Couldn't find member");
@@ -303,8 +306,9 @@ void on_member_change_nick(struct discord *client,
   }
   else {
     struct discord_modify_guild_member_params params = { .nick = nick };
-    if (ORCA_OK == discord_modify_guild_member(client, msg->guild_id, user_id,
-                                               &params, NULL))
+    if (ORCA_OK
+        == discord_modify_guild_member(client, msg->guild_id, user_id, &params,
+                                       NULL))
       sprintf(text, "Succesfully changed <@%" PRIu64 "> nick", user_id);
     else
       sprintf(text, "Couldn't change <@%" PRIu64 "> nick", user_id);
@@ -320,7 +324,7 @@ void on_member_search(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  NTL_T(struct discord_guild_member) members = NULL;
+  struct discord_guild_member **members = NULL;
   ORCAcode code;
   code = discord_search_guild_members(
     client, msg->guild_id,
@@ -370,8 +374,8 @@ void on_bot_change_nick(struct discord *client,
   else {
     struct discord_modify_current_member_params params = { .nick =
                                                              msg->content };
-    if (ORCA_OK ==
-        discord_modify_current_member(client, msg->guild_id, &params, NULL))
+    if (ORCA_OK
+        == discord_modify_current_member(client, msg->guild_id, &params, NULL))
       sprintf(text, "Succesfully changed <@%" PRIu64 "> nick", bot->id);
     else
       sprintf(text, "Couldn't change <@%" PRIu64 "> nick", bot->id);

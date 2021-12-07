@@ -9,10 +9,10 @@
 ORCAcode
 discord_create_guild(struct discord *client,
                      struct discord_create_guild_params *params,
-                     struct discord_guild *p_guild)
+                     struct discord_guild *ret)
 {
-  struct ua_resp_handle handle = { p_guild ? &discord_guild_from_json_v : NULL,
-                                   p_guild };
+  struct ua_resp_handle handle = { ret ? &discord_guild_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[4096];
 
@@ -31,16 +31,16 @@ discord_create_guild(struct discord *client,
 ORCAcode
 discord_get_guild(struct discord *client,
                   const u64_snowflake_t guild_id,
-                  struct discord_guild *p_guild)
+                  struct discord_guild *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_from_json_v, p_guild };
+  struct ua_resp_handle handle = { &discord_guild_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_guild) {
-    logconf_error(&client->conf, "Missing 'p_guild'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -51,17 +51,16 @@ discord_get_guild(struct discord *client,
 ORCAcode
 discord_get_guild_preview(struct discord *client,
                           const u64_snowflake_t guild_id,
-                          struct discord_guild_preview *p_guild_preview)
+                          struct discord_guild_preview *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_preview_from_json_v,
-                                   p_guild_preview };
+  struct ua_resp_handle handle = { &discord_guild_preview_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_guild_preview) {
-    logconf_error(&client->conf, "Missing 'p_guild_preview'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -73,10 +72,10 @@ ORCAcode
 discord_modify_guild(struct discord *client,
                      const u64_snowflake_t guild_id,
                      struct discord_modify_guild_params *params,
-                     struct discord_guild *p_guild)
+                     struct discord_guild *ret)
 {
-  struct ua_resp_handle handle = { p_guild ? &discord_guild_from_json_v : NULL,
-                                   p_guild };
+  struct ua_resp_handle handle = { ret ? &discord_guild_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[4096];
 
@@ -111,17 +110,16 @@ discord_delete_guild(struct discord *client, const u64_snowflake_t guild_id)
 ORCAcode
 discord_get_guild_channels(struct discord *client,
                            const u64_snowflake_t guild_id,
-                           NTL_T(struct discord_channel) * p_channels)
+                           struct discord_channel ***ret)
 {
-  struct ua_resp_handle handle = { &discord_channel_list_from_json_v,
-                                   p_channels };
+  struct ua_resp_handle handle = { &discord_channel_list_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_channels) {
-    logconf_error(&client->conf, "Missing 'p_channels'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -134,11 +132,10 @@ discord_create_guild_channel(
   struct discord *client,
   const u64_snowflake_t guild_id,
   struct discord_create_guild_channel_params *params,
-  struct discord_channel *p_channel)
+  struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { p_channel ? &discord_channel_from_json_v
-                                             : NULL,
-                                   p_channel };
+  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[2048];
 
@@ -163,7 +160,7 @@ ORCAcode
 discord_modify_guild_channel_positions(
   struct discord *client,
   const u64_snowflake_t guild_id,
-  NTL_T(struct discord_modify_guild_channel_positions_params) params)
+  struct discord_modify_guild_channel_positions_params **params)
 {
   struct sized_buffer body;
   char buf[4096];
@@ -189,10 +186,9 @@ ORCAcode
 discord_get_guild_member(struct discord *client,
                          u64_snowflake_t guild_id,
                          u64_snowflake_t user_id,
-                         struct discord_guild_member *p_member)
+                         struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_member_from_json_v,
-                                   p_member };
+  struct ua_resp_handle handle = { &discord_guild_member_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -202,8 +198,8 @@ discord_get_guild_member(struct discord *client,
     logconf_error(&client->conf, "Missing 'user_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_member) {
-    logconf_error(&client->conf, "Missing 'p_member'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -216,18 +212,18 @@ ORCAcode
 discord_list_guild_members(struct discord *client,
                            const u64_snowflake_t guild_id,
                            struct discord_list_guild_members_params *params,
-                           NTL_T(struct discord_guild_member) * p_members)
+                           struct discord_guild_member ***ret)
 {
   struct ua_resp_handle handle = { &discord_guild_member_list_from_json_v,
-                                   p_members };
+                                   ret };
   char query[1024] = "";
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_members) {
-    logconf_error(&client->conf, "Missing 'p_members'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -256,18 +252,18 @@ discord_search_guild_members(
   struct discord *client,
   const u64_snowflake_t guild_id,
   struct discord_search_guild_members_params *params,
-  NTL_T(struct discord_guild_member) * p_members)
+  struct discord_guild_member ***ret)
 {
   struct ua_resp_handle handle = { &discord_guild_member_list_from_json_v,
-                                   p_members };
+                                   ret };
   char query[1024] = "";
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_members) {
-    logconf_error(&client->conf, "Missing 'p_members'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -299,10 +295,9 @@ discord_add_guild_member(struct discord *client,
                          const u64_snowflake_t guild_id,
                          const u64_snowflake_t user_id,
                          struct discord_add_guild_member_params *params,
-                         struct discord_guild_member *p_member)
+                         struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_member_from_json_v,
-                                   p_member };
+  struct ua_resp_handle handle = { &discord_guild_member_from_json_v, ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -333,11 +328,11 @@ discord_modify_guild_member(struct discord *client,
                             const u64_snowflake_t guild_id,
                             const u64_snowflake_t user_id,
                             struct discord_modify_guild_member_params *params,
-                            struct discord_guild_member *p_member)
+                            struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { p_member ? &discord_guild_member_from_json_v
-                                            : NULL,
-                                   p_member };
+  struct ua_resp_handle handle = { ret ? &discord_guild_member_from_json_v
+                                       : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[2048];
 
@@ -367,11 +362,11 @@ discord_modify_current_member(
   struct discord *client,
   const u64_snowflake_t guild_id,
   struct discord_modify_current_member_params *params,
-  struct discord_guild_member *p_member)
+  struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { p_member ? &discord_guild_member_from_json_v
-                                            : NULL,
-                                   p_member };
+  struct ua_resp_handle handle = { ret ? &discord_guild_member_from_json_v
+                                       : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[512];
 
@@ -400,11 +395,10 @@ discord_modify_current_user_nick(
   struct discord *client,
   const u64_snowflake_t guild_id,
   struct discord_modify_current_user_nick_params *params,
-  struct discord_guild_member *p_member)
+  struct discord_guild_member *ret)
 {
   struct ua_resp_handle handle = {
-    .ok_cb = p_member ? &discord_guild_member_from_json_v : NULL,
-    .ok_obj = p_member
+    .ok_cb = ret ? &discord_guild_member_from_json_v : NULL, .ok_obj = ret
   };
   struct sized_buffer body;
   char buf[512];
@@ -506,16 +500,16 @@ discord_remove_guild_member(struct discord *client,
 ORCAcode
 discord_get_guild_bans(struct discord *client,
                        const u64_snowflake_t guild_id,
-                       NTL_T(struct discord_ban) * p_bans)
+                       struct discord_ban ***ret)
 {
-  struct ua_resp_handle handle = { &discord_ban_list_from_json_v, p_bans };
+  struct ua_resp_handle handle = { &discord_ban_list_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_bans) {
-    logconf_error(&client->conf, "Missing 'p_bans'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -527,9 +521,9 @@ ORCAcode
 discord_get_guild_ban(struct discord *client,
                       const u64_snowflake_t guild_id,
                       const u64_snowflake_t user_id,
-                      struct discord_ban *p_ban)
+                      struct discord_ban *ret)
 {
-  struct ua_resp_handle handle = { &discord_ban_from_json_v, p_ban };
+  struct ua_resp_handle handle = { &discord_ban_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -539,8 +533,8 @@ discord_get_guild_ban(struct discord *client,
     logconf_error(&client->conf, "Missing 'user_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_ban) {
-    logconf_error(&client->conf, "Missing 'p_ban'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -607,16 +601,16 @@ discord_remove_guild_ban(struct discord *client,
 ORCAcode
 discord_get_guild_roles(struct discord *client,
                         const u64_snowflake_t guild_id,
-                        NTL_T(struct discord_role) * p_roles)
+                        struct discord_role ***ret)
 {
-  struct ua_resp_handle handle = { &discord_role_list_from_json_v, p_roles };
+  struct ua_resp_handle handle = { &discord_role_list_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_roles) {
-    logconf_error(&client->conf, "Missing 'p_roles'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -628,10 +622,10 @@ ORCAcode
 discord_create_guild_role(struct discord *client,
                           const u64_snowflake_t guild_id,
                           struct discord_create_guild_role_params *params,
-                          struct discord_role *p_role)
+                          struct discord_role *ret)
 {
-  struct ua_resp_handle handle = { p_role ? &discord_role_from_json_v : NULL,
-                                   p_role };
+  struct ua_resp_handle handle = { ret ? &discord_role_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[1024];
 
@@ -652,12 +646,11 @@ ORCAcode
 discord_modify_guild_role_positions(
   struct discord *client,
   const u64_snowflake_t guild_id,
-  NTL_T(struct discord_modify_guild_role_positions_params) params,
-  NTL_T(struct discord_role) * p_roles)
+  struct discord_modify_guild_role_positions_params **params,
+  struct discord_role ***ret)
 {
-  struct ua_resp_handle handle = { p_roles ? &discord_role_list_from_json_v
-                                           : NULL,
-                                   p_roles };
+  struct ua_resp_handle handle = { ret ? &discord_role_list_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[4096];
 
@@ -683,13 +676,13 @@ discord_modify_guild_role(struct discord *client,
                           const u64_snowflake_t guild_id,
                           const u64_snowflake_t role_id,
                           struct discord_modify_guild_role_params *params,
-                          struct discord_role *p_role)
+                          struct discord_role *ret)
 {
-  struct ua_resp_handle handle = { p_role ? &discord_role_from_json_v : NULL,
-                                   p_role };
+  struct ua_resp_handle handle = { ret ? &discord_role_from_json_v : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[2048] = "{}";
-  size_t ret;
+  size_t len;
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -701,10 +694,10 @@ discord_modify_guild_role(struct discord *client,
   }
 
   if (params)
-    ret = discord_modify_guild_role_params_to_json(buf, sizeof(buf), params);
+    len = discord_modify_guild_role_params_to_json(buf, sizeof(buf), params);
   else
-    ret = sprintf(buf, "{}");
-  body.size = ret;
+    len = sprintf(buf, "{}");
+  body.size = len;
   body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
@@ -737,7 +730,7 @@ discord_begin_guild_prune(struct discord *client,
 {
   struct sized_buffer body;
   char buf[4096];
-  size_t ret;
+  size_t len;
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -745,10 +738,10 @@ discord_begin_guild_prune(struct discord *client,
   }
 
   if (params)
-    ret = discord_begin_guild_prune_params_to_json(buf, sizeof(buf), params);
+    len = discord_begin_guild_prune_params_to_json(buf, sizeof(buf), params);
   else
-    ret = sprintf(buf, "{}");
-  body.size = ret;
+    len = sprintf(buf, "{}");
+  body.size = len;
   body.start = buf;
 
   return discord_adapter_run(&client->adapter, NULL, &body, HTTP_POST,
@@ -758,17 +751,16 @@ discord_begin_guild_prune(struct discord *client,
 ORCAcode
 discord_get_guild_invites(struct discord *client,
                           const u64_snowflake_t guild_id,
-                          NTL_T(struct discord_invite) * p_invites)
+                          struct discord_invite ***ret)
 {
-  struct ua_resp_handle handle = { &discord_invite_list_from_json_v,
-                                   p_invites };
+  struct ua_resp_handle handle = { &discord_invite_list_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_invites) {
-    logconf_error(&client->conf, "Missing 'p_invites'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -798,16 +790,16 @@ discord_delete_guild_integrations(struct discord *client,
 ORCAcode
 discord_get_guild_vanity_url(struct discord *client,
                              const u64_snowflake_t guild_id,
-                             struct discord_invite *p_invite)
+                             struct discord_invite *ret)
 {
-  struct ua_resp_handle handle = { &discord_invite_from_json_v, p_invite };
+  struct ua_resp_handle handle = { &discord_invite_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_invite) {
-    logconf_error(&client->conf, "Missing 'p_invites'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -818,17 +810,16 @@ discord_get_guild_vanity_url(struct discord *client,
 ORCAcode
 discord_get_guild_welcome_screen(struct discord *client,
                                  const u64_snowflake_t guild_id,
-                                 struct discord_welcome_screen *p_screen)
+                                 struct discord_welcome_screen *ret)
 {
-  struct ua_resp_handle handle = { &discord_welcome_screen_from_json_v,
-                                   p_screen };
+  struct ua_resp_handle handle = { &discord_welcome_screen_from_json_v, ret };
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_screen) {
-    logconf_error(&client->conf, "Missing 'p_screen'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 

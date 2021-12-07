@@ -10,18 +10,18 @@ ORCAcode
 discord_get_global_application_commands(
   struct discord *client,
   const u64_snowflake_t application_id,
-  NTL_T(struct discord_application_command) * p_app_cmds)
+  struct discord_application_command ***ret)
 {
   struct ua_resp_handle handle = {
-    &discord_application_command_list_from_json_v, p_app_cmds
+    &discord_application_command_list_from_json_v, ret
   };
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_app_cmds) {
-    logconf_error(&client->conf, "Missing 'p_app_cmds'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -35,11 +35,11 @@ discord_create_global_application_command(
   struct discord *client,
   const u64_snowflake_t application_id,
   struct discord_create_global_application_command_params *params,
-  struct discord_application_command *p_app_cmd)
+  struct discord_application_command *ret)
 {
   struct ua_resp_handle handle = {
-    p_app_cmd ? &discord_application_command_from_json_v : NULL,
-    p_app_cmd,
+    ret ? &discord_application_command_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[4096];
@@ -71,14 +71,13 @@ discord_create_global_application_command(
 }
 
 ORCAcode
-discord_get_global_application_command(
-  struct discord *client,
-  const u64_snowflake_t application_id,
-  const u64_snowflake_t command_id,
-  struct discord_application_command *p_app_cmd)
+discord_get_global_application_command(struct discord *client,
+                                       const u64_snowflake_t application_id,
+                                       const u64_snowflake_t command_id,
+                                       struct discord_application_command *ret)
 {
   struct ua_resp_handle handle = { &discord_application_command_from_json_v,
-                                   p_app_cmd };
+                                   ret };
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -88,8 +87,8 @@ discord_get_global_application_command(
     logconf_error(&client->conf, "Missing 'command_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_app_cmd) {
-    logconf_error(&client->conf, "Missing 'p_app_cmd'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -104,11 +103,11 @@ discord_edit_global_application_command(
   const u64_snowflake_t application_id,
   const u64_snowflake_t command_id,
   struct discord_edit_global_application_command_params *params,
-  struct discord_application_command *p_app_cmd)
+  struct discord_application_command *ret)
 {
   struct ua_resp_handle handle = {
-    p_app_cmd ? &discord_application_command_from_json_v : NULL,
-    p_app_cmd,
+    ret ? &discord_application_command_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[4096];
@@ -154,12 +153,11 @@ ORCAcode
 discord_bulk_overwrite_global_application_command(
   struct discord *client,
   const u64_snowflake_t application_id,
-  NTL_T(struct discord_application_command) params,
-  NTL_T(struct discord_application_command) * p_app_cmds)
+  struct discord_application_command **params,
+  struct discord_application_command ***ret)
 {
   struct ua_resp_handle handle = {
-    p_app_cmds ? &discord_application_command_list_from_json_v : NULL,
-    p_app_cmds
+    ret ? &discord_application_command_list_from_json_v : NULL, ret
   };
   struct sized_buffer body;
   char buf[8192];
@@ -187,10 +185,10 @@ discord_get_guild_application_commands(
   struct discord *client,
   const u64_snowflake_t application_id,
   const u64_snowflake_t guild_id,
-  NTL_T(struct discord_application_command) * p_app_cmds)
+  struct discord_application_command ***ret)
 {
   struct ua_resp_handle handle = {
-    &discord_application_command_list_from_json_v, p_app_cmds
+    &discord_application_command_list_from_json_v, ret
   };
 
   if (!application_id) {
@@ -201,8 +199,8 @@ discord_get_guild_application_commands(
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_app_cmds) {
-    logconf_error(&client->conf, "Missing 'p_app_cmds'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -218,11 +216,11 @@ discord_create_guild_application_command(
   const u64_snowflake_t application_id,
   const u64_snowflake_t guild_id,
   struct discord_create_guild_application_command_params *params,
-  struct discord_application_command *p_app_cmd)
+  struct discord_application_command *ret)
 {
   struct ua_resp_handle handle = {
-    p_app_cmd ? &discord_application_command_from_json_v : NULL,
-    p_app_cmd,
+    ret ? &discord_application_command_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[4096];
@@ -259,15 +257,14 @@ discord_create_guild_application_command(
 }
 
 ORCAcode
-discord_get_guild_application_command(
-  struct discord *client,
-  const u64_snowflake_t application_id,
-  const u64_snowflake_t guild_id,
-  const u64_snowflake_t command_id,
-  struct discord_application_command *p_app_cmd)
+discord_get_guild_application_command(struct discord *client,
+                                      const u64_snowflake_t application_id,
+                                      const u64_snowflake_t guild_id,
+                                      const u64_snowflake_t command_id,
+                                      struct discord_application_command *ret)
 {
   struct ua_resp_handle handle = { &discord_application_command_from_json_v,
-                                   p_app_cmd };
+                                   ret };
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -281,8 +278,8 @@ discord_get_guild_application_command(
     logconf_error(&client->conf, "Missing 'command_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_app_cmd) {
-    logconf_error(&client->conf, "Missing 'p_app_cmd'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -299,11 +296,11 @@ discord_edit_guild_application_command(
   const u64_snowflake_t guild_id,
   const u64_snowflake_t command_id,
   struct discord_edit_guild_application_command_params *params,
-  struct discord_application_command *p_app_cmd)
+  struct discord_application_command *ret)
 {
   struct ua_resp_handle handle = {
-    p_app_cmd ? &discord_application_command_from_json_v : NULL,
-    p_app_cmd,
+    ret ? &discord_application_command_from_json_v : NULL,
+    ret,
   };
   struct sized_buffer body;
   char buf[4096];
@@ -361,12 +358,11 @@ discord_bulk_overwrite_guild_application_command(
   struct discord *client,
   const u64_snowflake_t application_id,
   const u64_snowflake_t guild_id,
-  NTL_T(struct discord_application_command) params,
-  NTL_T(struct discord_application_command) * p_app_cmds)
+  struct discord_application_command **params,
+  struct discord_application_command ***ret)
 {
   struct ua_resp_handle handle = {
-    p_app_cmds ? &discord_application_command_list_from_json_v : NULL,
-    p_app_cmds
+    ret ? &discord_application_command_list_from_json_v : NULL, ret
   };
   struct sized_buffer body;
   char buf[8192];
@@ -399,11 +395,10 @@ discord_get_guild_application_command_permissions(
   struct discord *client,
   const u64_snowflake_t application_id,
   const u64_snowflake_t guild_id,
-  NTL_T(struct discord_guild_application_command_permissions) * p_permissions)
+  struct discord_guild_application_command_permissions ***ret)
 {
   struct ua_resp_handle handle = {
-    &discord_guild_application_command_permissions_list_from_json_v,
-    p_permissions
+    &discord_guild_application_command_permissions_list_from_json_v, ret
   };
 
   if (!application_id) {
@@ -414,8 +409,8 @@ discord_get_guild_application_command_permissions(
     logconf_error(&client->conf, "Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_permissions) {
-    logconf_error(&client->conf, "Missing 'p_permissions'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -431,10 +426,10 @@ discord_get_application_command_permissions(
   const u64_snowflake_t application_id,
   const u64_snowflake_t guild_id,
   const u64_snowflake_t command_id,
-  struct discord_guild_application_command_permissions *p_permissions)
+  struct discord_guild_application_command_permissions *ret)
 {
   struct ua_resp_handle handle = {
-    &discord_guild_application_command_permissions_from_json_v, p_permissions
+    &discord_guild_application_command_permissions_from_json_v, ret
   };
 
   if (!application_id) {
@@ -449,8 +444,8 @@ discord_get_application_command_permissions(
     logconf_error(&client->conf, "Missing 'command_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_permissions) {
-    logconf_error(&client->conf, "Missing 'p_permissions'");
+  if (!ret) {
+    logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -467,12 +462,11 @@ discord_edit_application_command_permissions(
   const u64_snowflake_t guild_id,
   const u64_snowflake_t command_id,
   struct discord_edit_application_command_permissions_params *params,
-  struct discord_guild_application_command_permissions *p_permissions)
+  struct discord_guild_application_command_permissions *ret)
 {
   struct ua_resp_handle handle = {
-    p_permissions ? &discord_guild_application_command_permissions_from_json_v
-                  : NULL,
-    p_permissions
+    ret ? &discord_guild_application_command_permissions_from_json_v : NULL,
+    ret
   };
   struct sized_buffer body;
   char buf[8192];
@@ -505,14 +499,13 @@ discord_batch_edit_application_command_permissions(
   struct discord *client,
   const u64_snowflake_t application_id,
   const u64_snowflake_t guild_id,
-  NTL_T(struct discord_guild_application_command_permissions) params,
-  NTL_T(struct discord_guild_application_command_permissions) * p_permissions)
+  struct discord_guild_application_command_permissions **params,
+  struct discord_guild_application_command_permissions ***ret)
 {
   struct ua_resp_handle handle = {
-    p_permissions
-      ? &discord_guild_application_command_permissions_list_from_json_v
-      : NULL,
-    p_permissions
+    ret ? &discord_guild_application_command_permissions_list_from_json_v
+        : NULL,
+    ret
   };
   struct sized_buffer body;
   char buf[8192];

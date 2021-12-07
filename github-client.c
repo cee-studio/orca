@@ -228,7 +228,7 @@ github_get_tree_sha(struct github *client, char *commit_sha, char **p_sha)
 }
 
 ORCAcode
-github_create_blobs(struct github *client, NTL_T(struct github_file) files)
+github_create_blobs(struct github *client, struct github_file ** files)
 {
   if (!files) {
     log_error("Missing 'files'");
@@ -305,7 +305,7 @@ node_list2json(char *buf, size_t size, void *p)
 ORCAcode
 github_create_tree(struct github *client,
                    char *base_tree_sha,
-                   NTL_T(struct github_file) files,
+                   struct github_file ** files,
                    char **p_tree_sha)
 {
   log_info("==create-tree==");
@@ -502,7 +502,7 @@ github_create_a_pull_request(struct github *client,
 ORCAcode
 github_get_user(struct github *client,
                 char *username,
-                struct github_user *user)
+                struct github_user *ret)
 {
   log_info("===get-user===");
 
@@ -510,15 +510,15 @@ github_get_user(struct github *client,
     log_error("Missing 'username'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!user) {
-    log_error("Missing 'user'");
+  if (!ret) {
+    log_error("Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
   return github_adapter_run(
     &client->adapter,
     &(struct ua_resp_handle){ .ok_cb = &github_user_from_json_v,
-                              .ok_obj = user },
+                              .ok_obj = ret },
     NULL, HTTP_GET, "/users/%s", username);
 }
 
@@ -526,7 +526,7 @@ ORCAcode
 github_get_repository(struct github *client,
                       char *owner,
                       char *repo,
-                      struct sized_buffer *output)
+                      struct sized_buffer *ret)
 {
   log_info("===get-repository===");
 
@@ -535,13 +535,13 @@ github_get_repository(struct github *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  if (!output) {
+  if (!ret) {
     log_error("Missing 'repo'");
     return ORCA_MISSING_PARAMETER;
   }
 
   return github_adapter_run(
     &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &github_write_json, .ok_obj = output },
+    &(struct ua_resp_handle){ .ok_cb = &github_write_json, .ok_obj = ret },
     NULL, HTTP_GET, "/repos/%s/%s", owner, repo);
 }

@@ -339,7 +339,7 @@ discord_get_channel_at_pos(struct discord *client,
                            const u64_snowflake_t guild_id,
                            const enum discord_channel_types type,
                            const size_t position,
-                           struct discord_channel *p_channel)
+                           struct discord_channel *ret)
 {
   struct discord_channel **channels = NULL;
   ORCAcode code;
@@ -348,8 +348,8 @@ discord_get_channel_at_pos(struct discord *client,
     log_error("Missing 'guild_id'");
     return ORCA_MISSING_PARAMETER;
   }
-  if (!p_channel) {
-    log_error("Missing 'p_channel'");
+  if (!ret) {
+    log_error("Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
@@ -363,7 +363,7 @@ discord_get_channel_at_pos(struct discord *client,
 
     for (i = 0, j = 0; channels[i]; ++i) {
       if (type == channels[i]->type && j++ == position) {
-        memcpy(p_channel, channels[i], sizeof(struct discord_channel));
+        memcpy(ret, channels[i], sizeof(struct discord_channel));
         /* avoid double freeing */
         memset(channels[i], 0, sizeof(struct discord_channel));
         break; /* EARLY BREAK */
@@ -379,11 +379,11 @@ ORCAcode
 discord_disconnect_guild_member(struct discord *client,
                                 const u64_snowflake_t guild_id,
                                 const u64_snowflake_t user_id,
-                                struct discord_guild_member *p_member)
+                                struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { p_member ? &discord_guild_member_from_json_v
-                                            : NULL,
-                                   p_member };
+  struct ua_resp_handle handle = { ret ? &discord_guild_member_from_json_v
+                                       : NULL,
+                                   ret };
   struct sized_buffer body;
   char buf[128];
 

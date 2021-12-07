@@ -6,7 +6,7 @@
 ORCAcode
 slack_chat_post_message(struct slack *client,
                         struct slack_chat_post_message_params *params,
-                        struct sized_buffer *p_resp_body)
+                        struct sized_buffer *ret)
 {
   if (!params) {
     log_error("Missing 'params'");
@@ -18,7 +18,7 @@ slack_chat_post_message(struct slack *client,
   }
 
   char *payload = NULL;
-  size_t ret = json_ainject(&payload,
+  size_t len = json_ainject(&payload,
                             "(token):s"
                             "(channel):s"
 #if 0
@@ -44,8 +44,8 @@ slack_chat_post_message(struct slack *client,
   ua_reqheader_add(client->webapi.ua, "Content-type", "application/json");
 
   ORCAcode code;
-  code = slack_webapi_run(&client->webapi, p_resp_body,
-                          &(struct sized_buffer){ payload, ret }, HTTP_POST,
+  code = slack_webapi_run(&client->webapi, ret,
+                          &(struct sized_buffer){ payload, len }, HTTP_POST,
                           "/chat.postMessage");
 
   ua_reqheader_add(client->webapi.ua, "Content-type",

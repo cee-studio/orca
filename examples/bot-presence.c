@@ -5,15 +5,13 @@
 
 #include "discord.h"
 
-void
-on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client, const struct discord_user *bot)
 {
   log_info("Presence-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   const char *config_file;
   if (argc > 1)

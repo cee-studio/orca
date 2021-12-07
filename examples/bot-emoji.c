@@ -17,7 +17,7 @@ void on_list(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  NTL_T(struct discord_emoji) emojis = NULL;
+  struct discord_emoji **emojis = NULL;
   ORCAcode code;
   code = discord_list_guild_emojis(client, msg->guild_id, &emojis);
 

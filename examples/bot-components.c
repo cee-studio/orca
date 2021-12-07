@@ -65,7 +65,7 @@ void on_dynamic(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  NTL_T(struct discord_component) components = NULL;
+  struct discord_component **components = NULL;
   discord_component_list_from_json(JSON_STRING, sizeof(JSON_STRING),
                                    &components);
 

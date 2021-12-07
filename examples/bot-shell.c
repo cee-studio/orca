@@ -25,8 +25,8 @@ void on_cd(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  if (strcmp(SUDO.discriminator, msg->author->discriminator) ||
-      strcmp(SUDO.username, msg->author->username))
+  if (strcmp(SUDO.discriminator, msg->author->discriminator)
+      || strcmp(SUDO.username, msg->author->username))
   {
     return; // EARLY RETURN IF NOT SUDO USER
   }
@@ -44,8 +44,8 @@ void on_less_like(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  if (strcmp(SUDO.discriminator, msg->author->discriminator) ||
-      strcmp(SUDO.username, msg->author->username))
+  if (strcmp(SUDO.discriminator, msg->author->discriminator)
+      || strcmp(SUDO.username, msg->author->username))
   {
     return; // EARLY RETURN IF NOT SUDO USER
   }
@@ -81,8 +81,8 @@ void on_default(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  if (strcmp(SUDO.discriminator, msg->author->discriminator) ||
-      strcmp(SUDO.username, msg->author->username))
+  if (strcmp(SUDO.discriminator, msg->author->discriminator)
+      || strcmp(SUDO.username, msg->author->username))
   {
     return; // EARLY RETURN IF NOT SUDO USER
   }
@@ -163,8 +163,8 @@ int main(int argc, char *argv[])
   fgets(SUDO.username, sizeof(SUDO.username), stdin);
 
   SUDO.discriminator = strchr(SUDO.username, '#');
-  assert(NULL != SUDO.discriminator &&
-         "Missing '#' delimiter (eg. user#1234)");
+  assert(NULL != SUDO.discriminator
+         && "Missing '#' delimiter (eg. user#1234)");
 
   SUDO.discriminator[strlen(SUDO.discriminator) - 1] = '\0'; // remove \n
   *SUDO.discriminator = '\0'; // split at #

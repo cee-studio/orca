@@ -149,19 +149,6 @@ discord_get_data(struct discord *client)
   return client->data;
 }
 
-struct discord *
-discord_set_async(struct discord *client, struct discord_async_attr *attr)
-{
-  client->async.enable = true;
-
-  if (attr)
-    memcpy(&client->async.attr, attr, sizeof(struct discord_async_attr));
-  else
-    memset(&client->async.attr, 0, sizeof(struct discord_async_attr));
-
-  return client;
-}
-
 void
 discord_add_intents(struct discord *client, enum discord_gateway_intents code)
 {

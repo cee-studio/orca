@@ -7,10 +7,6 @@
 #include "discord.h"
 #include "discord-internal.h"
 
-/* get client from adapter pointer */
-#define CLIENT(p_adapter)                                                     \
-  ((struct discord *)((int8_t *)(p_adapter)-offsetof(struct discord, adapter)))
-
 void
 discord_adapter_init(struct discord_adapter *adapter,
                      struct logconf *conf,
@@ -94,16 +90,26 @@ discord_adapter_run(struct discord_adapter *adapter,
   va_end(args);
 
   /* non-blocking request */
-  if (true == CLIENT(adapter)->async.enable) {
-    struct discord_async_attr *attr = &CLIENT(adapter)->async.attr;
-
-    CLIENT(adapter)->async.enable = false; /* reset */
+  if (true == adapter->async.enable) {
+    struct discord_async_attr *attr = &adapter->async.attr;
+    adapter->async.enable = false; /* reset */
 
     return discord_request_perform_async(adapter, attr, resp_handle, req_body,
                                          method, endpoint);
   }
-
   /* blocking request */
   return discord_request_perform(adapter, resp_handle, req_body, method,
                                  endpoint);
+}
+
+void
+discord_adapter_set_async(struct discord_adapter *adapter,
+                          struct discord_async_attr *attr)
+{
+  adapter->async.enable = true;
+
+  if (attr)
+    memcpy(&adapter->async.attr, attr, sizeof(struct discord_async_attr));
+  else
+    memset(&adapter->async.attr, 0, sizeof(struct discord_async_attr));
 }

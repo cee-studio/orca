@@ -34,7 +34,6 @@
  *   - discord_ratelimit_cleanup()
  */
 struct discord_ratelimit {
-  /* TODO: add content type field */
   /** DISCORD_RATELIMIT logging module */
   struct logconf conf;
   /** buckets discovered */
@@ -42,16 +41,19 @@ struct discord_ratelimit {
   /** for undefined routes */
   struct discord_bucket *b_null;
   /* global resources */
-  struct {
-    /** global ratelimit */
-    u64_unix_ms_t wait_ms;
-    /** global rwlock  */
-    pthread_rwlock_t rwlock;
-    /** global lock */
-    pthread_mutex_t lock;
-  } * global;
+  struct discord_ratelimit_global *global;
   /* request timeouts */
   struct heap timeouts;
+};
+
+/** @brief Client-wide ratelimiting timeout and locks */
+struct discord_ratelimit_global {
+  /** global ratelimit */
+  u64_unix_ms_t wait_ms;
+  /** global rwlock  */
+  pthread_rwlock_t rwlock;
+  /** global lock */
+  pthread_mutex_t lock;
 };
 
 /**
@@ -79,6 +81,44 @@ void discord_ratelimit_cleanup(struct discord_ratelimit *rlimit);
 u64_unix_ms_t discord_ratelimit_get_global_wait(
   struct discord_ratelimit *rlimit);
 
+/** @brief Behavior of async request */
+struct discord_async_attr {
+  /** if true the request will be dealt with as soon as possible */
+  bool high_priority;
+  /** sizeof `obj` */
+  size_t size;
+  /** callback for filling `obj` with JSON values */
+  void (*from_json)(char *json, size_t len, void *obj);
+  /** callback to be triggered on completion, `obj` is the object filled by
+   *        `from_json` field */
+  void (*on_completion)(struct discord *client,
+                        ORCAcode code,
+                        const void *obj);
+  /** perform a cleanup on `obj` */
+  void (*cleanup)(void *obj);
+};
+
+struct discord_adapter_async {
+  /** if true then next request will be dealt with asynchronously */
+  bool enable;
+  /** return object buffer */
+  uint8_t *objbuf;
+  /** return object memory size */
+  size_t objsize;
+  /** additional behavior config */
+  struct discord_async_attr attr;
+};
+
+/** @brief Informational on the previous request */
+struct discord_adapter_err {
+  /** informational on the previous request */
+  struct ua_info info;
+  /** JSON error code on failed request */
+  int jsoncode;
+  /** the entire JSON response of the error */
+  char jsonstr[512];
+};
+
 /**
  * @brief The handle used for performing HTTP Requests
  *
@@ -96,15 +136,10 @@ struct discord_adapter {
   struct user_agent *ua;
   /** ratelimit handler structure */
   struct discord_ratelimit rlimit;
-  /** error storage context */
-  struct {
-    /** informational on the latest transfer */
-    struct ua_info info;
-    /** JSON error code on failed request */
-    int jsoncode;
-    /** the entire JSON response of the error */
-    char jsonstr[512];
-  } err;
+  /** async handler */
+  struct discord_adapter_async async;
+  /** previous request error context */
+  struct discord_adapter_err err;
   /**
    * idle request handles of type 'struct discord_request'
    * @note allocated dynamically to share between clients cloned by
@@ -154,6 +189,15 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              enum http_method method,
                              char endpoint_fmt[],
                              ...);
+
+/**
+ * @brief Set next request to run asynchronously
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param attr attributes of the asynchronous task
+ */
+void discord_adapter_set_async(struct discord_adapter *adapter,
+                               struct discord_async_attr *attr);
 
 /**
  * @brief Context for requests that are scheduled to run asynchronously
@@ -636,13 +680,6 @@ struct discord {
   struct logconf conf;
   /** whether this is the original client or a clone */
   bool is_original;
-  /** async handler */
-  struct {
-    /** if true then next request will be dealt with asynchronously */
-    bool enable;
-    /** additional behavior config */
-    struct discord_async_attr attr;
-  } async;
   /** the bot token */
   struct sized_buffer token;
   /** custom libcurl's IO multiplexer */

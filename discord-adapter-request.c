@@ -30,7 +30,7 @@ static void
 _discord_request_reset(struct discord_request *cxt)
 {
   cxt->bucket = NULL;
-  memset(&cxt->resp_handle, 0, sizeof(struct ua_resp_handle));
+  memset(&cxt->handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
   cxt->conn = NULL;
 }
@@ -38,7 +38,7 @@ _discord_request_reset(struct discord_request *cxt)
 void
 discord_request_cleanup(struct discord_request *cxt)
 {
-  if (cxt->req_body.start) free(cxt->req_body.start);
+  if (cxt->body.start) free(cxt->body.start);
   _discord_request_reset(cxt);
   free(cxt);
 }
@@ -47,8 +47,8 @@ static void
 _discord_request_populate(struct discord_request *cxt,
                           struct discord_adapter *adapter,
                           struct discord_async_attr *attr,
-                          struct ua_resp_handle *resp_handle,
-                          struct sized_buffer *req_body,
+                          struct ua_resp_handle *handle,
+                          struct sized_buffer *body,
                           enum http_method method,
                           char endpoint[])
 {
@@ -59,23 +59,23 @@ _discord_request_populate(struct discord_request *cxt,
   else
     memset(&cxt->attr, 0, sizeof(struct discord_async_attr));
 
-  if (resp_handle) {
+  if (handle) {
     /* copy response handle */
-    memcpy(&cxt->resp_handle, resp_handle, sizeof(cxt->resp_handle));
+    memcpy(&cxt->handle, handle, sizeof(cxt->handle));
   }
 
-  if (req_body) {
+  if (body) {
     /* copy request body */
-    if (req_body->size > cxt->req_body.memsize) {
+    if (body->size > cxt->body.memsize) {
       /* needs to increase buffer size */
-      void *tmp = realloc(cxt->req_body.start, req_body->size);
+      void *tmp = realloc(cxt->body.start, body->size);
       ASSERT_S(tmp != NULL, "Out of memory");
 
-      cxt->req_body.start = tmp;
-      cxt->req_body.memsize = req_body->size;
+      cxt->body.start = tmp;
+      cxt->body.memsize = body->size;
     }
-    memcpy(cxt->req_body.start, req_body->start, req_body->size);
-    cxt->req_body.size = req_body->size;
+    memcpy(cxt->body.start, body->start, body->size);
+    cxt->body.size = body->size;
   }
 
   /* copy endpoint over to cxt */
@@ -203,8 +203,8 @@ _discord_request_timeout(struct discord_ratelimit *rlimit,
 ORCAcode
 discord_request_perform_async(struct discord_adapter *adapter,
                               struct discord_async_attr *attr,
-                              struct ua_resp_handle *resp_handle,
-                              struct sized_buffer *req_body,
+                              struct ua_resp_handle *handle,
+                              struct sized_buffer *body,
                               enum http_method method,
                               char endpoint[])
 {
@@ -224,7 +224,7 @@ discord_request_perform_async(struct discord_adapter *adapter,
   }
   QUEUE_INIT(&cxt->entry);
 
-  _discord_request_populate(cxt, adapter, attr, resp_handle, req_body, method,
+  _discord_request_populate(cxt, adapter, attr, handle, body, method,
                             endpoint);
 
   if (cxt->attr.high_priority)
@@ -259,13 +259,13 @@ json_error_cb(char *str, size_t len, void *p_adapter)
 /* perform a blocking request */
 ORCAcode
 discord_request_perform(struct discord_adapter *adapter,
-                        struct ua_resp_handle *resp_handle,
-                        struct sized_buffer *req_body,
+                        struct ua_resp_handle *handle,
+                        struct sized_buffer *body,
                         enum http_method method,
                         char endpoint[])
 {
   /* response callbacks */
-  struct ua_resp_handle _resp_handle = {};
+  struct ua_resp_handle _handle = {};
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(&adapter->rlimit, endpoint);
   /* orca error status */
@@ -273,11 +273,11 @@ discord_request_perform(struct discord_adapter *adapter,
   /* in case of request failure, try again */
   bool retry;
 
-  _resp_handle.err_cb = &json_error_cb;
-  _resp_handle.err_obj = adapter;
-  if (resp_handle) {
-    _resp_handle.ok_cb = resp_handle->ok_cb;
-    _resp_handle.ok_obj = resp_handle->ok_obj;
+  _handle.err_cb = &json_error_cb;
+  _handle.err_obj = adapter;
+  if (handle) {
+    _handle.ok_cb = handle->ok_cb;
+    _handle.ok_obj = handle->ok_obj;
   }
 
   pthread_mutex_lock(&b->lock);
@@ -286,8 +286,8 @@ discord_request_perform(struct discord_adapter *adapter,
 
     discord_bucket_cooldown(&adapter->rlimit, b);
 
-    code = ua_run(adapter->ua, &adapter->err.info, &_resp_handle, req_body,
-                  method, endpoint);
+    code = ua_run(adapter->ua, &adapter->err.info, &_handle, body, method,
+                  endpoint);
 
     retry = _discord_request_status(adapter, &code, NULL);
 
@@ -304,17 +304,17 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
                              struct discord_request *cxt)
 {
   struct discord *client = CLIENT(rlimit);
-  struct sized_buffer req_body;
+  struct sized_buffer body;
   CURL *ehandle;
 
   /* TODO: turn below into a user-agent.c function? */
   cxt->conn = ua_conn_start(client->adapter.ua);
   ehandle = ua_conn_curl_easy_get(cxt->conn);
 
-  req_body.start = cxt->req_body.start;
-  req_body.size = cxt->req_body.size;
+  body.start = cxt->body.start;
+  body.size = cxt->body.size;
 
-  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->resp_handle, &req_body,
+  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->handle, &body,
                 cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
@@ -512,6 +512,7 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
   }
 }
 
+/* in case of reconnect, we want to be able to resume connections */
 void
 discord_request_pause_all(struct discord_ratelimit *rlimit)
 {

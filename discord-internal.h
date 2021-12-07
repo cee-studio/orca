@@ -133,9 +133,9 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  * This functions is a selector over discord_request_perform() or
  *        discord_request_perform_async()
  * @param adapter the handle initialized with discord_adapter_init()
- * @param resp_handle the callbacks to be triggered should the request
+ * @param handle the callbacks to be triggered should the request
  *        fail or succeed
- * @param req_body the body sent for methods that require (ex: post), leave as
+ * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
  * @param method the method in opcode format of the request being sent
  * @param endpoint_fmt the format endpoint that be appended to base_url when
@@ -146,8 +146,8 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  * performing it immediately
  */
 ORCAcode discord_adapter_run(struct discord_adapter *adapter,
-                             struct ua_resp_handle *resp_handle,
-                             struct sized_buffer *req_body,
+                             struct ua_resp_handle *handle,
+                             struct sized_buffer *body,
                              enum http_method method,
                              char endpoint_fmt[],
                              ...);
@@ -169,13 +169,13 @@ struct discord_request {
   /** the request's bucket */
   struct discord_bucket *bucket;
   /** the request's response handle */
-  struct ua_resp_handle resp_handle;
+  struct ua_resp_handle handle;
   /** the request's request body @note buffer is kept and recycled */
   struct {
     char *start;
     size_t size;
     size_t memsize;
-  } req_body;
+  } body;
   /** the request's http method */
   enum http_method method;
   /** the request's endpoint */
@@ -202,9 +202,9 @@ void discord_request_cleanup(struct discord_request *cxt);
  * @brief Perform a blocking request to Discord
  *
  * @param adapter the handle initialized with discord_adapter_init()
- * @param resp_handle the callbacks to be triggered should the request
+ * @param handle the callbacks to be triggered should the request
  *        fail or succeed
- * @param req_body the body sent for methods that require (ex: post), leave as
+ * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
  * @param method the method in opcode format of the request being sent
  * @param endpoint the fully-formed request's endpoint
@@ -212,8 +212,8 @@ void discord_request_cleanup(struct discord_request *cxt);
  *        transfer was succesful
  */
 ORCAcode discord_request_perform(struct discord_adapter *adapter,
-                                 struct ua_resp_handle *resp_handle,
-                                 struct sized_buffer *req_body,
+                                 struct ua_resp_handle *handle,
+                                 struct sized_buffer *body,
                                  enum http_method method,
                                  char endpoint[]);
 /**
@@ -221,9 +221,9 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  *
  * @param adapter the handle initialized with discord_adapter_init()
  * @param attr attributes for asynchronous task
- * @param resp_handle the callbacks to be triggered should the request
+ * @param handle the callbacks to be triggered should the request
  *        fail or succeed
- * @param req_body the body sent for methods that require (ex: post), leave as
+ * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
  * @param method the method in opcode format of the request being sent
  * @param endpoint the fully-formed request's endpoint
@@ -232,8 +232,8 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  */
 ORCAcode discord_request_perform_async(struct discord_adapter *adapter,
                                        struct discord_async_attr *attr,
-                                       struct ua_resp_handle *resp_handle,
-                                       struct sized_buffer *req_body,
+                                       struct ua_resp_handle *handle,
+                                       struct sized_buffer *body,
                                        enum http_method method,
                                        char endpoint[]);
 

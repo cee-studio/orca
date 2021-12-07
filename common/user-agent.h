@@ -223,16 +223,16 @@ const char *ua_get_url(struct user_agent *ua);
  *
  * @param ua the User-Agent handle created with ua_init()
  * @param info optional informational handle on how the request went
- * @param resp_handle the optional response callbacks, can be NULL
- * @param req_body the optional request body, can be NULL
+ * @param handle the optional response callbacks, can be NULL
+ * @param body the optional request body, can be NULL
  * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  * @return ORCAcode for how the transfer went, ORCA_OK means success.
  */
 ORCAcode ua_run(struct user_agent *ua,
                 struct ua_info *info,
-                struct ua_resp_handle *resp_handle,
-                struct sized_buffer *req_body,
+                struct ua_resp_handle *handle,
+                struct sized_buffer *body,
                 enum http_method method,
                 char endpoint[]);
 
@@ -267,15 +267,15 @@ void ua_conn_stop(struct user_agent *ua, struct ua_conn *conn);
  *
  * @param ua the User-Agent handle created with ua_init()
  * @param conn the connection handle to be modified
- * @param resp_handle the optional response callbacks, can be NULL
- * @param req_body the optional request body, can be NULL
+ * @param handle the optional response callbacks, can be NULL
+ * @param body the optional request body, can be NULL
  * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  */
 void ua_conn_setup(struct user_agent *ua,
                    struct ua_conn *conn,
-                   struct ua_resp_handle *resp_handle,
-                   struct sized_buffer *req_body,
+                   struct ua_resp_handle *handle,
+                   struct sized_buffer *body,
                    enum http_method method,
                    char endpoint[]);
 

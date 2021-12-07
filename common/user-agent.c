@@ -72,11 +72,11 @@ struct ua_conn {
    * request response's handle containing user callback and object
    *        to be filled up
    */
-  struct ua_resp_handle resp_handle;
+  struct ua_resp_handle handle;
   /** request URL */
   struct sized_buffer req_url;
   /** pointer to request body (won't claim ownership) */
-  struct sized_buffer *req_body;
+  struct sized_buffer *body;
   /**
    * capture curl error messages
    * @note should only be accessed after a error code returns
@@ -481,7 +481,7 @@ ua_conn_reset(struct user_agent *ua, struct ua_conn *conn)
   /* reset conn fields for next iteration */
   _ua_info_reset(&conn->info);
   *conn->errbuf = '\0';
-  memset(&conn->resp_handle, 0, sizeof(struct ua_resp_handle));
+  memset(&conn->handle, 0, sizeof(struct ua_resp_handle));
 }
 
 void
@@ -618,15 +618,15 @@ static void
 _ua_conn_set_method(struct user_agent *ua,
                     struct ua_conn *conn,
                     enum http_method method,
-                    struct sized_buffer *req_body)
+                    struct sized_buffer *body)
 {
-  static struct sized_buffer blank_req_body = { "", 0 };
+  static struct sized_buffer blank_body = { "", 0 };
 
   /* make sure req_body points to something */
-  if (!req_body) req_body = &blank_req_body;
+  if (!body) body = &blank_body;
   /* for safe-keeping */
   conn->info.method = method;
-  conn->req_body = req_body;
+  conn->body = body;
 
   /* resets any preexisting CUSTOMREQUEST */
   curl_easy_setopt(conn->ehandle, CURLOPT_CUSTOMREQUEST, NULL);
@@ -660,8 +660,8 @@ _ua_conn_set_method(struct user_agent *ua,
   }
 
   /* set ptr to payload that will be sent via POST/PUT/PATCH */
-  curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDSIZE, req_body->size);
-  curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDS, req_body->start);
+  curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDSIZE, body->size);
+  curl_easy_setopt(conn->ehandle, CURLOPT_POSTFIELDS, body->start);
 }
 
 /* combine base url with endpoint and assign it to 'conn' */
@@ -697,8 +697,8 @@ _ua_conn_set_url(struct user_agent *ua, struct ua_conn *conn, char endpoint[])
 void
 ua_conn_setup(struct user_agent *ua,
               struct ua_conn *conn,
-              struct ua_resp_handle *resp_handle,
-              struct sized_buffer *req_body,
+              struct ua_resp_handle *handle,
+              struct sized_buffer *body,
               enum http_method method,
               char endpoint[])
 {
@@ -708,10 +708,10 @@ ua_conn_setup(struct user_agent *ua,
   /* set conn request's url */
   _ua_conn_set_url(ua, conn, endpoint);
   /* set conn request's method */
-  _ua_conn_set_method(ua, conn, method, req_body);
+  _ua_conn_set_method(ua, conn, method, body);
   /* store callback context */
-  if (resp_handle) {
-    memcpy(&conn->resp_handle, resp_handle, sizeof(struct ua_resp_handle));
+  if (handle) {
+    memcpy(&conn->handle, handle, sizeof(struct ua_resp_handle));
   }
 
   /* log request to be sent */
@@ -724,7 +724,7 @@ ua_conn_setup(struct user_agent *ua,
                  logbuf,
                  sizeof(logbuf),
                },
-               *conn->req_body, "HTTP_SEND_%s", method_str);
+               *conn->body, "HTTP_SEND_%s", method_str);
 
   logconf_trace(conn->conf,
                 ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
@@ -770,9 +770,9 @@ ua_conn_get_results(struct user_agent *ua,
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
 
-    if (conn->resp_handle.err_cb) {
-      (*conn->resp_handle.err_cb)(conn->info.body.buf, conn->info.body.len,
-                                  conn->resp_handle.err_obj);
+    if (conn->handle.err_cb) {
+      conn->handle.err_cb(conn->info.body.buf, conn->info.body.len,
+                          conn->handle.err_obj);
     }
     code = ORCA_HTTP_CODE;
   }
@@ -783,9 +783,9 @@ ua_conn_get_results(struct user_agent *ua,
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
 
-    if (conn->resp_handle.err_cb) {
-      (*conn->resp_handle.err_cb)(conn->info.body.buf, conn->info.body.len,
-                                  conn->resp_handle.err_obj);
+    if (conn->handle.err_cb) {
+      conn->handle.err_cb(conn->info.body.buf, conn->info.body.len,
+                          conn->handle.err_obj);
     }
     code = ORCA_HTTP_CODE;
   }
@@ -804,9 +804,9 @@ ua_conn_get_results(struct user_agent *ua,
       conn->info.httpcode, http_code_print(conn->info.httpcode),
       http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
 
-    if (conn->resp_handle.ok_cb) {
-      (*conn->resp_handle.ok_cb)(conn->info.body.buf, conn->info.body.len,
-                                 conn->resp_handle.ok_obj);
+    if (conn->handle.ok_cb) {
+      conn->handle.ok_cb(conn->info.body.buf, conn->info.body.len,
+                         conn->handle.ok_obj);
     }
     code = ORCA_OK;
   }
@@ -855,8 +855,8 @@ _ua_conn_perform(struct user_agent *ua, struct ua_conn *conn)
 ORCAcode
 ua_run(struct user_agent *ua,
        struct ua_info *info,
-       struct ua_resp_handle *resp_handle,
-       struct sized_buffer *req_body,
+       struct ua_resp_handle *handle,
+       struct sized_buffer *body,
        enum http_method method,
        char endpoint[])
 {
@@ -866,7 +866,7 @@ ua_run(struct user_agent *ua,
   /* get conn that will perform the request */
   conn = ua_conn_start(ua);
   /* populate conn with parameters */
-  ua_conn_setup(ua, conn, resp_handle, req_body, method, endpoint);
+  ua_conn_setup(ua, conn, handle, body, method, endpoint);
 
   /* perform blocking request */
   if ((code = _ua_conn_perform(ua, conn)) != ORCA_OK) {

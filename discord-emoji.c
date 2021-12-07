@@ -73,7 +73,7 @@ discord_create_guild_emoji(struct discord *client,
   }
 
   body.size =
-    discord_create_guild_emoji_params_to_json(buf, sizeof(buf), &params);
+    discord_create_guild_emoji_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
@@ -106,7 +106,7 @@ discord_modify_guild_emoji(struct discord *client,
   }
 
   body.size =
-    discord_modify_guild_emoji_params_to_json(buf, sizeof(buf), &params);
+    discord_modify_guild_emoji_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
   return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,

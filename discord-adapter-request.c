@@ -210,13 +210,13 @@ discord_request_perform_async(struct discord_adapter *adapter,
 {
   struct discord_request *cxt;
 
-  if (QUEUE_EMPTY(&adapter->idleq)) {
+  if (QUEUE_EMPTY(adapter->idleq)) {
     /* create new request handler */
     cxt = calloc(1, sizeof(struct discord_request));
   }
   else {
     /* get from idle requests queue */
-    QUEUE *q = QUEUE_HEAD(&adapter->idleq);
+    QUEUE *q = QUEUE_HEAD(adapter->idleq);
     QUEUE_REMOVE(q);
 
     cxt = QUEUE_DATA(q, struct discord_request, entry);
@@ -468,7 +468,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
 
       /* set for recycling */
       ua_conn_stop(client->adapter.ua, cxt->conn);
-      QUEUE_INSERT_TAIL(&client->adapter.idleq, &cxt->entry);
+      QUEUE_INSERT_TAIL(client->adapter.idleq, &cxt->entry);
     }
   }
 }
@@ -489,7 +489,7 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
     heap_remove(&rlimit->timeouts, node, &timer_less_than);
     cxt->bucket->freeze = false;
 
-    QUEUE_INSERT_TAIL(&client->adapter.idleq, &cxt->entry);
+    QUEUE_INSERT_TAIL(client->adapter.idleq, &cxt->entry);
   }
 
   /* cancel bucket's on-going transfers */
@@ -507,11 +507,11 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
 
       /* set for recycling */
       ua_conn_stop(client->adapter.ua, cxt->conn);
-      QUEUE_INSERT_TAIL(&client->adapter.idleq, q);
+      QUEUE_INSERT_TAIL(client->adapter.idleq, q);
     }
 
     /* cancel pending tranfers */
-    QUEUE_ADD(&client->adapter.idleq, &b->waitq);
+    QUEUE_ADD(client->adapter.idleq, &b->waitq);
     QUEUE_INIT(&b->waitq);
   }
 }

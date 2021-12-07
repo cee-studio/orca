@@ -41,8 +41,11 @@ discord_adapter_init(struct discord_adapter *adapter,
   }
   /* initialize ratelimit handler */
   discord_ratelimit_init(&adapter->rlimit, &adapter->conf);
-  /* initialize idle request queues (for async purposes) */
-  QUEUE_INIT(&adapter->idleq);
+
+  /* idleq is allocated to guarantee a client cloned by discord_clone() will
+   * share the same queue */
+  adapter->idleq = malloc(sizeof(QUEUE));
+  QUEUE_INIT(adapter->idleq);
 }
 
 void
@@ -58,13 +61,14 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
   /* cleanup ratelimit handle */
   discord_ratelimit_cleanup(&adapter->rlimit);
   /* cleanup idle requests queue */
-  QUEUE_MOVE(&adapter->idleq, &queue);
+  QUEUE_MOVE(adapter->idleq, &queue);
   while (!QUEUE_EMPTY(&queue)) {
     QUEUE *q = QUEUE_HEAD(&queue);
     cxt = QUEUE_DATA(q, struct discord_request, entry);
     QUEUE_REMOVE(&cxt->entry);
     discord_request_cleanup(cxt);
   }
+  free(adapter->idleq);
 }
 
 /* template function for performing requests */

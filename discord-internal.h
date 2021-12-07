@@ -96,8 +96,6 @@ struct discord_adapter {
   struct user_agent *ua;
   /** ratelimit handler structure */
   struct discord_ratelimit rlimit;
-  /** idle request handles (can be recycled) */
-  QUEUE idleq;
   /** error storage context */
   struct {
     /** informational on the latest transfer */
@@ -107,6 +105,11 @@ struct discord_adapter {
     /** the entire JSON response of the error */
     char jsonstr[512];
   } err;
+  /**
+   * idle request handles of type 'struct discord_request'
+   * @note allocated dynamically to share between clients cloned by
+   *        discord_clone() */
+  QUEUE *idleq;
 };
 
 /**
@@ -304,9 +307,9 @@ struct discord_bucket {
   u64_unix_ms_t reset_tstamp;
   /** synchronize ratelimiting between threads */
   pthread_mutex_t lock;
-  /** pending requests */
+  /** pending requests of type 'struct discord_request' */
   QUEUE waitq;
-  /** busy requests */
+  /** busy requests of type 'struct discord_request' */
   QUEUE busyq;
   /** avoid excessive timeouts */
   bool freeze;

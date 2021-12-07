@@ -8,7 +8,7 @@
 #include "cee-utils.h"
 #include "json-actor.h" /* json_extract() */
 
-struct spam_cxt {
+struct user_data {
   u64_snowflake_t channel_id;
   unsigned long long counter;
 };
@@ -19,13 +19,9 @@ void on_ready(struct discord *client, const struct discord_user *me)
            me->discriminator);
 }
 
-void shutdown(struct discord *client,
-              const struct discord_user *bot,
-              const char buf[],
-              const size_t len,
-              ORCAcode code)
+void shutdown(struct discord_context *cxt, const char buf[], const size_t len)
 {
-  discord_shutdown(client);
+  discord_shutdown(cxt->client);
 }
 
 void on_disconnect(struct discord *client,
@@ -46,13 +42,9 @@ void on_disconnect(struct discord *client,
                          NULL);
 }
 
-void reconnect(struct discord *client,
-               const struct discord_user *bot,
-               const char buf[],
-               const size_t len,
-               ORCAcode code)
+void reconnect(struct discord_context *cxt, const char buf[], const size_t len)
 {
-  discord_reconnect(client, true);
+  discord_reconnect(cxt->client, true);
 }
 
 void on_reconnect(struct discord *client,
@@ -73,18 +65,16 @@ void on_reconnect(struct discord *client,
                          NULL);
 }
 
-void send_batch(struct discord *client,
-                const struct discord_user *bot,
+void send_batch(struct discord_context *cxt,
                 const char buf[],
-                const size_t len,
-                ORCAcode code)
+                const size_t len)
 {
-  struct spam_cxt *cxt = discord_get_data(client);
+  struct user_data *data = discord_get_data(cxt->client);
   char text[32];
 
   for (int i = 0; i < 128; ++i) {
     snprintf(text, sizeof(text), "%d", i);
-    discord_create_message(discord_set_async(client, NULL), cxt->channel_id,
+    discord_create_message(discord_set_async(client, NULL), data->channel_id,
                            &(struct discord_create_message_params){
                              .content = text,
                            },
@@ -95,7 +85,7 @@ void send_batch(struct discord *client,
                                            &(struct discord_async_attr){
                                              .callback = &send_batch,
                                            }),
-                         cxt->channel_id,
+                         data->channel_id,
                          &(struct discord_create_message_params){
                            .content = "CHECKPOINT",
                          },
@@ -108,34 +98,30 @@ void on_spam(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  struct spam_cxt *cxt = discord_get_data(client);
-  cxt->channel_id = msg->channel_id;
+  struct user_data *data = discord_get_data(client);
+  data->channel_id = msg->channel_id;
 
   send_batch(client, bot, NULL, 0, ORCA_OK);
 }
 
-void send_msg(struct discord *client,
-              const struct discord_user *bot,
-              const char buf[],
-              const size_t len,
-              ORCAcode code)
+void send_msg(struct discord_context *cxt, const char buf[], const size_t len)
 {
   char text[32];
-  struct spam_cxt *cxt = discord_get_data(client);
+  struct user_data *data = discord_get_data(cxt->client);
 
-  snprintf(text, sizeof(text), "%llu", cxt->counter);
+  snprintf(text, sizeof(text), "%llu", data->counter);
 
   discord_create_message(discord_set_async(client,
                                            &(struct discord_async_attr){
                                              .callback = &send_msg,
                                            }),
-                         cxt->channel_id,
+                         data->channel_id,
                          &(struct discord_create_message_params){
                            .content = text,
                          },
                          NULL);
 
-  ++cxt->counter;
+  ++data->counter;
 }
 
 void on_spam_ordered(struct discord *client,
@@ -145,8 +131,8 @@ void on_spam_ordered(struct discord *client,
   if (msg->author->bot) return;
 
   /* TODO: trigger via timeout function */
-  struct spam_cxt *cxt = discord_get_data(client);
-  cxt->channel_id = msg->channel_id;
+  struct user_data *data = discord_get_data(client);
+  data->channel_id = msg->channel_id;
   send_msg(client, bot, NULL, 0, ORCA_OK);
 }
 
@@ -162,8 +148,8 @@ int main(int argc, char *argv[])
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
-  struct spam_cxt cxt = { 0 };
-  discord_set_data(client, &cxt);
+  struct user_data data = { 0 };
+  discord_set_data(client, &data);
 
   discord_set_on_ready(client, &on_ready);
 

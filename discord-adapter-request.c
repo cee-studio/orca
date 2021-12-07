@@ -460,9 +460,10 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     }
     else {
       if (cxt->attr.callback) {
+        struct discord_context params = { client, &client->gw.bot, code };
         struct sized_buffer buf = ua_info_get_body(&client->adapter.err.info);
 
-        cxt->attr.callback(client, &client->gw.bot, buf.start, buf.size, code);
+        cxt->attr.callback(&params, buf.start, buf.size);
       }
 
       /* set for recycling */

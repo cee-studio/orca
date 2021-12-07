@@ -97,14 +97,14 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
 
   /* create bucket if it doesn't exist yet */
   if (!b) {
-    struct sized_buffer hash = ua_info_header_get(info, "x-ratelimit-bucket");
+    struct sized_buffer hash = ua_info_get_header(info, "x-ratelimit-bucket");
 
     if (!hash.size) {
       /* bucket not specified */
       b = rlimit->b_null;
     }
     else {
-      struct sized_buffer limit = ua_info_header_get(info, "x-ratelimit-limit");
+      struct sized_buffer limit = ua_info_get_header(info, "x-ratelimit-limit");
       int _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
 
       b = _discord_bucket_init(rlimit, route, &hash, _limit);
@@ -259,9 +259,9 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
   /* remaining requests before ratelimiting */
   int _remaining;
 
-  reset = ua_info_header_get(info, "x-ratelimit-reset");
-  reset_after = ua_info_header_get(info, "x-ratelimit-reset-after");
-  remaining = ua_info_header_get(info, "x-ratelimit-remaining");
+  reset = ua_info_get_header(info, "x-ratelimit-reset");
+  reset_after = ua_info_get_header(info, "x-ratelimit-reset-after");
+  remaining = ua_info_get_header(info, "x-ratelimit-remaining");
 
   _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
 
@@ -272,7 +272,7 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
    * X-Ratelimit-Reset */
   if (reset_after.size) {
     struct sized_buffer global =
-      ua_info_header_get(info, "x-ratelimit-global");
+      ua_info_get_header(info, "x-ratelimit-global");
     u64_unix_ms_t reset_tstamp = now + 1000 * strtod(reset_after.start, NULL);
 
     if (global.size) {
@@ -287,7 +287,7 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
     }
   }
   else if (reset.size) {
-    struct sized_buffer date = ua_info_header_get(info, "date");
+    struct sized_buffer date = ua_info_get_header(info, "date");
     /* get approximate elapsed time since request */
     struct PsnipClockTimespec ts;
     /* the Discord time in milliseconds */

@@ -297,7 +297,7 @@ ORCAcode ua_conn_get_results(struct user_agent *ua,
  * @param conn the connection handle
  * @return the libcurl's easy handle
  */
-CURL *ua_conn_curl_easy_get(struct ua_conn *conn);
+CURL *ua_conn_get_curl_easy(struct ua_conn *conn);
 
 /**
  * @brief Cleanup informational handle
@@ -313,7 +313,7 @@ void ua_info_cleanup(struct ua_info *info);
  * @param field the header field to fetch the value
  * @return a sized_buffer containing the field's value
  */
-const struct sized_buffer ua_info_header_get(struct ua_info *info,
+const struct sized_buffer ua_info_get_header(struct ua_info *info,
                                              char field[]);
 
 /**

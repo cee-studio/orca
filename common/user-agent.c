@@ -833,7 +833,7 @@ ua_conn_get_results(struct user_agent *ua,
 }
 
 CURL *
-ua_conn_curl_easy_get(struct ua_conn *conn)
+ua_conn_get_curl_easy(struct ua_conn *conn)
 {
   return conn->ehandle;
 }
@@ -892,7 +892,7 @@ ua_info_cleanup(struct ua_info *info)
 
 /** attempt to get value from matching response header field */
 const struct sized_buffer
-ua_info_header_get(struct ua_info *info, char field[])
+ua_info_get_header(struct ua_info *info, char field[])
 {
   const size_t len = strlen(field);
   struct sized_buffer value;

@@ -309,7 +309,7 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
 
   /* TODO: turn below into a user-agent.c function? */
   cxt->conn = ua_conn_start(client->adapter.ua);
-  ehandle = ua_conn_curl_easy_get(cxt->conn);
+  ehandle = ua_conn_get_curl_easy(cxt->conn);
 
   body.start = cxt->body.start;
   body.size = cxt->body.size;
@@ -497,7 +497,7 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
       QUEUE_REMOVE(q);
 
       cxt = QUEUE_DATA(q, struct discord_request, entry);
-      ehandle = ua_conn_curl_easy_get(cxt->conn);
+      ehandle = ua_conn_get_curl_easy(cxt->conn);
 
       curl_multi_remove_handle(client->mhandle, ehandle);
 
@@ -542,7 +542,7 @@ discord_request_pause_all(struct discord_ratelimit *rlimit)
       QUEUE_REMOVE(q);
 
       cxt = QUEUE_DATA(q, struct discord_request, entry);
-      ehandle = ua_conn_curl_easy_get(cxt->conn);
+      ehandle = ua_conn_get_curl_easy(cxt->conn);
 
       curl_multi_remove_handle(client->mhandle, ehandle);
 

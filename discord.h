@@ -75,54 +75,9 @@ struct discord_voice_cbs;
 /* see specs/discord/ for specs */
 #include "specs-code/discord/one-specs.h"
 
-/**
- * @brief return value of discord_set_event_scheduler() callback
- *
- * @see discord_set_event_scheduler()
- */
-typedef enum discord_event_scheduler {
-  /** this event has been handled */
-  DISCORD_EVENT_IGNORE,
-  /** handle this event in main thread */
-  DISCORD_EVENT_MAIN_THREAD,
-  /** handle this event in a worker thread */
-  DISCORD_EVENT_WORKER_THREAD
-} discord_event_scheduler_t;
-
-/** @brief Execution context for asynchronous functions */
-struct discord_context {
-  struct discord *client;
-  const struct discord_user *bot;
-  ORCAcode code;
-};
-
 /** @defgroup DiscordCallbacksGeneral
  * @brief General-purpose callbacks
  *  @{ */
-/**
- * @brief Event Handling Mode callback
- *
- * A very important callback that enables the user with a fine-grained control
- *        of how each event is handled: blocking, non-blocking or ignored
- * @see discord_set_event_scheduler()
- * @see discord_gateway_events
- */
-typedef discord_event_scheduler_t (*discord_event_scheduler_cb)(
-  struct discord *client,
-  struct discord_user *bot,
-  struct sized_buffer *event_data,
-  enum discord_gateway_events event);
-
-/**
- * @brief Async callback
- *
- * Callback triggered when the request it has been assigned to is completed
- * @see discord_set_async()
- */
-typedef void (*discord_async_cb)(struct discord_context *cxt,
-                                 const char body[],
-                                 const size_t len);
-
 /** @brief Idle callback */
 typedef void (*discord_idle_cb)(struct discord *client,
                                 const struct discord_user *bot);
@@ -388,22 +343,6 @@ void discord_remove_intents(struct discord *client,
  */
 void discord_set_prefix(struct discord *client, char *prefix);
 
-/**
- * @brief Provides the user with a fine-grained control of the Discord's
- * event-loop
- *
- * Allows the user to specify which events should be executed from the
- * main-thread, in parallel from a worker-thread, or completely ignored.
- *
- * @param client the client created_with discord_init()
- * @param fn the function that will be executed
- * @warning The user is responsible for providing his own locking mechanism to
- * avoid race-condition on sensitive data.
- * @see discord_event_scheduler_t
- * @see enum discord_gateway_events
- */
-void discord_set_event_scheduler(struct discord *client,
-                                 discord_event_scheduler_cb callback);
 /**
  * @brief Set command/callback pair, the callback is triggered if someone
  *        types command in chat.
@@ -791,28 +730,6 @@ void *discord_set_data(struct discord *client, void *data);
  *        his data from race conditions
  */
 void *discord_get_data(struct discord *client);
-
-/**
- * @brief Set behavior for async task
- *
- * @see discord_set_async()
- */
-struct discord_async_attr {
-  /** optional callback to be triggered on completion */
-  discord_async_cb callback;
-  /** if true the request will be dealt with as soon as possible */
-  bool high_priority;
-};
-
-/**
- * @brief Set next request to run asynchronously
- *
- * @param client the client created with discord_init()
- * @param attr attributes of the asynchronous task
- * @return a pointer to the original client (for one-line statements)
- */
-struct discord *discord_set_async(struct discord *client,
-                                  struct discord_async_attr *attr);
 
 /**
  * @brief Set the Client presence state
@@ -3237,6 +3154,55 @@ ORCAcode discord_sync_guild_template(struct discord *client,
                                      u64_snowflake_t guild_id,
                                      char *code,
                                      struct discord_guild_template *ret);
+/** @} */
+
+/** @defgroup DiscordScheduler
+ * @brief Control Discord event scheduling
+ *  @{ */
+/**
+ * @brief return value of discord_set_event_scheduler() callback
+ *
+ * @see discord_set_event_scheduler()
+ */
+typedef enum discord_event_scheduler {
+  /** this event has been handled */
+  DISCORD_EVENT_IGNORE,
+  /** handle this event in main thread */
+  DISCORD_EVENT_MAIN_THREAD,
+  /** handle this event in a worker thread */
+  DISCORD_EVENT_WORKER_THREAD
+} discord_event_scheduler_t;
+
+/**
+ * @brief Event Handling Mode callback
+ *
+ * A very important callback that enables the user with a fine-grained control
+ *        of how each event is handled: blocking, non-blocking or ignored
+ * @see discord_set_event_scheduler()
+ * @see discord_gateway_events
+ */
+typedef discord_event_scheduler_t (*discord_event_scheduler_cb)(
+  struct discord *client,
+  struct discord_user *bot,
+  struct sized_buffer *event_data,
+  enum discord_gateway_events event);
+
+/**
+ * @brief Provides the user with a fine-grained control of the Discord's
+ * event-loop
+ *
+ * Allows the user to specify which events should be executed from the
+ * main-thread, in parallel from a worker-thread, or completely ignored.
+ *
+ * @param client the client created_with discord_init()
+ * @param fn the function that will be executed
+ * @warning The user is responsible for providing his own locking mechanism to
+ * avoid race-condition on sensitive data.
+ * @see discord_event_scheduler_t
+ * @see enum discord_gateway_events
+ */
+void discord_set_event_scheduler(struct discord *client,
+                                 discord_event_scheduler_cb callback);
 /** @} */
 
 #endif /* DISCORD_H */

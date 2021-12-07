@@ -40,20 +40,17 @@ struct discord_ratelimit {
   struct discord_bucket *buckets;
   /** for undefined routes */
   struct discord_bucket *b_null;
-  /* global resources */
-  struct discord_ratelimit_global *global;
   /* request timeouts */
   struct heap timeouts;
-};
-
-/** @brief Client-wide ratelimiting timeout and locks */
-struct discord_ratelimit_global {
-  /** global ratelimit */
-  u64_unix_ms_t wait_ms;
-  /** global rwlock  */
-  pthread_rwlock_t rwlock;
-  /** global lock */
-  pthread_mutex_t lock;
+  /* client-wide ratelimiting timeout */
+  struct {
+    /** global ratelimit */
+    u64_unix_ms_t wait_ms;
+    /** global rwlock  */
+    pthread_rwlock_t rwlock;
+    /** global lock */
+    pthread_mutex_t lock;
+  } * global;
 };
 
 /**
@@ -81,12 +78,14 @@ void discord_ratelimit_cleanup(struct discord_ratelimit *rlimit);
 u64_unix_ms_t discord_ratelimit_get_global_wait(
   struct discord_ratelimit *rlimit);
 
-/** @brief Behavior of async request */
-struct discord_async_attr {
+/** @brief Behavior of request return object */
+struct discord_request_attr {
   /** if true the request will be dealt with as soon as possible */
   bool high_priority;
   /** sizeof `obj` */
   size_t size;
+  /** initialize `obj` fields */
+  void (*init)(void *obj);
   /** callback for filling `obj` with JSON values */
   void (*from_json)(char *json, size_t len, void *obj);
   /** callback to be triggered on completion, `obj` is the object filled by
@@ -96,27 +95,6 @@ struct discord_async_attr {
                         const void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
-};
-
-struct discord_adapter_async {
-  /** if true then next request will be dealt with asynchronously */
-  bool enable;
-  /** return object buffer */
-  uint8_t *objbuf;
-  /** return object memory size */
-  size_t objsize;
-  /** additional behavior config */
-  struct discord_async_attr attr;
-};
-
-/** @brief Informational on the previous request */
-struct discord_adapter_err {
-  /** informational on the previous request */
-  struct ua_info info;
-  /** JSON error code on failed request */
-  int jsoncode;
-  /** the entire JSON response of the error */
-  char jsonstr[512];
 };
 
 /**
@@ -130,21 +108,38 @@ struct discord_adapter_err {
  *   - discord_adapter_cleanup()
  */
 struct discord_adapter {
+  /** if true then next request will be dealt with asynchronously */
+  bool toggle_async;
+  /** behavior config for next async request */
+  struct discord_request_attr attr;
+
   /** DISCORD_HTTP or DISCORD_WEBHOOK logging module */
   struct logconf conf;
   /** the user agent handle for performing requests */
   struct user_agent *ua;
   /** ratelimit handler structure */
   struct discord_ratelimit rlimit;
-  /** async handler */
-  struct discord_adapter_async async;
-  /** previous request error context */
-  struct discord_adapter_err err;
-  /**
-   * idle request handles of type 'struct discord_request'
-   * @note allocated dynamically to share between clients cloned by
-   *        discord_clone() */
+
+  /** idle request handles of type 'struct discord_request' */
   QUEUE *idleq;
+
+  /** previous request error context */
+  struct {
+    /** informational on the previous request */
+    struct ua_info info;
+    /** JSON error code on failed request */
+    int jsoncode;
+    /** the entire JSON response of the error */
+    char jsonstr[512];
+  } err;
+
+  /** reusable buffer for async return objects */
+  struct {
+    /** return object buffer */
+    uint8_t *buf;
+    /** size in memory */
+    size_t size;
+  } obj;
 };
 
 /**
@@ -197,7 +192,7 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
  * @param attr attributes of the asynchronous task
  */
 void discord_adapter_set_async(struct discord_adapter *adapter,
-                               struct discord_async_attr *attr);
+                               struct discord_request_attr *attr);
 
 /**
  * @brief Context for requests that are scheduled to run asynchronously
@@ -212,7 +207,7 @@ void discord_adapter_set_async(struct discord_adapter *adapter,
  */
 struct discord_request {
   /** async attributes */
-  struct discord_async_attr attr;
+  struct discord_request_attr attr;
   /** the request's bucket */
   struct discord_bucket *bucket;
   /** the request's response handle */
@@ -278,7 +273,7 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  *        request has been successfully enqueued
  */
 ORCAcode discord_request_perform_async(struct discord_adapter *adapter,
-                                       struct discord_async_attr *attr,
+                                       struct discord_request_attr *attr,
                                        struct ua_resp_handle *handle,
                                        struct sized_buffer *body,
                                        enum http_method method,
@@ -531,6 +526,8 @@ struct discord_gateway {
   struct discord_identify id;
   /** the session id (for resuming lost connections) */
   char session_id[512];
+
+  /** session structure */
   struct {
     int shards;
     struct discord_session_start_limit start_limit;
@@ -549,11 +546,7 @@ struct discord_gateway {
   /** the client's user raw JSON @todo this is temporary */
   struct sized_buffer sb_bot;
 
-  /**
-   * response-payload structure
-   * @see
-   * https://discord.com/developers/docs/topics/gateway#payloads-gateway-payload-structure
-   */
+  /** response-payload structure */
   struct {
     /** field 'op' */
     enum discord_gateway_opcodes opcode;
@@ -565,12 +558,7 @@ struct discord_gateway {
     struct sized_buffer data;
   } payload;
 
-  /**
-   * heartbeating (keep-alive) structure
-   * @note Discord expects a proccess called hearbeating in order to keep the
-   * client connection alive
-   * @see https://discord.com/developers/docs/topics/gateway#heartbeating
-   */
+  /** heartbeating (keep-alive) structure */
   struct {
     /** fixed interval between heartbeats */
     u64_unix_ms_t interval_ms;
@@ -603,7 +591,7 @@ struct discord_gateway {
 
 /**
  * @brief Context in case event is scheduled to be triggered
- *        from the orca threadpool
+ *        from Orca's worker threads
  */
 struct discord_event {
   /** the event name */
@@ -692,10 +680,7 @@ struct discord {
   struct discord_voice vcs[DISCORD_MAX_VOICE_CONNECTIONS];
   /** @todo create a analogous struct for Gateway's callbacks */
   struct discord_voice_cbs voice_cbs;
-  /**
-   * keep user arbitrary data
-   * @see discord_get_data(), discord_set_data()
-   */
+  /** space for user arbitrary data */
   void *data;
 };
 

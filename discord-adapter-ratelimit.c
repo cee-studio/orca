@@ -151,7 +151,7 @@ discord_ratelimit_init(struct discord_ratelimit *rlimit, struct logconf *conf)
   logconf_branch(&rlimit->conf, conf, "DISCORD_RATELIMIT");
 
   /* global resources */
-  rlimit->global = calloc(1, sizeof(struct discord_ratelimit_global));
+  rlimit->global = calloc(1, sizeof *rlimit->global);
   if (pthread_rwlock_init(&rlimit->global->rwlock, NULL))
     ERR("Couldn't initialize pthread rwlock");
   if (pthread_mutex_init(&rlimit->global->lock, NULL))

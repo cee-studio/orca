@@ -52,10 +52,13 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
 
   /* cleanup User-Agent handle */
   ua_cleanup(adapter->ua);
+
   /* cleanup request's informational handle */
   ua_info_cleanup(&adapter->err.info);
+
   /* cleanup ratelimit handle */
   discord_ratelimit_cleanup(&adapter->rlimit);
+
   /* cleanup idle requests queue */
   QUEUE_MOVE(adapter->idleq, &queue);
   while (!QUEUE_EMPTY(&queue)) {
@@ -64,6 +67,9 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
     QUEUE_REMOVE(&cxt->entry);
     discord_request_cleanup(cxt);
   }
+
+  if (adapter->obj.size) free(adapter->obj.buf);
+
   free(adapter->idleq);
 }
 
@@ -90,9 +96,9 @@ discord_adapter_run(struct discord_adapter *adapter,
   va_end(args);
 
   /* non-blocking request */
-  if (true == adapter->async.enable) {
-    struct discord_async_attr *attr = &adapter->async.attr;
-    adapter->async.enable = false; /* reset */
+  if (true == adapter->toggle_async) {
+    struct discord_request_attr *attr = &adapter->attr;
+    adapter->toggle_async = false; /* reset */
 
     return discord_request_perform_async(adapter, attr, resp_handle, req_body,
                                          method, endpoint);
@@ -103,13 +109,13 @@ discord_adapter_run(struct discord_adapter *adapter,
 }
 
 void
-discord_adapter_set_async(struct discord_adapter *adapter,
-                          struct discord_async_attr *attr)
+discord_adapter_toggle_async(struct discord_adapter *adapter,
+                             struct discord_request_attr *attr)
 {
-  adapter->async.enable = true;
+  adapter->toggle_async = true;
 
   if (attr)
-    memcpy(&adapter->async.attr, attr, sizeof(struct discord_async_attr));
+    memcpy(&adapter->attr, attr, sizeof(struct discord_request_attr));
   else
-    memset(&adapter->async.attr, 0, sizeof(struct discord_async_attr));
+    memset(&adapter->attr, 0, sizeof(struct discord_request_attr));
 }

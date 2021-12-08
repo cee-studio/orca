@@ -1102,3 +1102,25 @@ discord_list_joined_private_archived_threads(
                              "/users/@me/threads/archived/private%s%s",
                              channel_id, *query ? "?" : "", query);
 }
+
+/* ASYNCHRONOUS WRAPPERS */
+
+ORCAcode
+discord_create_message_async(struct discord *client,
+                             const u64_snowflake_t channel_id,
+                             struct discord_create_message_params *params,
+                             void (*ret)(struct discord *client,
+                                         ORCAcode code,
+                                         const struct discord_message *msg))
+{
+  struct discord_request_attr attr = {
+    sizeof(struct discord_message),
+    &discord_message_init_v,
+    &discord_message_from_json_v,
+    &discord_message_cleanup_v,
+    (void *)ret,
+  };
+
+  discord_adapter_toggle_async(&client->adapter, &attr);
+  return discord_create_message(client, channel_id, params, NULL);
+}

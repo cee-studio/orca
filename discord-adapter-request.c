@@ -228,7 +228,7 @@ discord_request_perform_async(struct discord_adapter *adapter,
   _discord_request_populate(cxt, adapter, attr, handle, body, method,
                             endpoint);
 
-  if (cxt->attr.high_priority)
+  if (cxt->attr.high_p)
     QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
   else
     QUEUE_INSERT_TAIL(&cxt->bucket->waitq, &cxt->entry);
@@ -424,21 +424,35 @@ _discord_request_accept(struct discord_adapter *adapter,
                         ORCAcode code,
                         struct discord_request *cxt)
 {
-  struct sized_buffer buf = ua_info_get_body(&adapter->err.info);
-
   /* increase buffer length if necessary */
   if (cxt->attr.size > adapter->obj.size) {
     void *tmp = realloc(adapter->obj.buf, cxt->attr.size);
-    ASSERT_S(tmp != NULL, "Out of memory");
+    VASSERT_S(tmp != NULL, "Couldn't increase buffer %zu -> %zu (bytes)",
+              adapter->obj.size, cxt->attr.size);
 
     adapter->obj.buf = tmp;
     adapter->obj.size = cxt->attr.size;
   }
 
-  cxt->attr.init(adapter->obj.buf);
-  cxt->attr.from_json(buf.start, buf.size, adapter->obj.buf);
-  cxt->attr.on_completion(CLIENT(&adapter->rlimit), code, adapter->obj.buf);
-  cxt->attr.cleanup(adapter->obj.buf);
+  /* initialize obj */
+  if (cxt->attr.init) cxt->attr.init(adapter->obj.buf);
+
+  /* fill obj fields with JSON values */
+  if (cxt->attr.from_json) {
+    struct sized_buffer body = ua_info_get_body(&adapter->err.info);
+
+    cxt->attr.from_json(body.start, body.size, adapter->obj.buf);
+  }
+
+  /* user callback */
+  if (cxt->attr.done) {
+    struct discord *client = CLIENT(&adapter->rlimit);
+
+    cxt->attr.done(client, code, adapter->obj.buf);
+  }
+
+  /* cleanup obj fields */
+  if (cxt->attr.cleanup) cxt->attr.cleanup(adapter->obj.buf);
 }
 
 void

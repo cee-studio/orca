@@ -80,21 +80,21 @@ u64_unix_ms_t discord_ratelimit_get_global_wait(
 
 /** @brief Behavior of request return object */
 struct discord_request_attr {
-  /** if true the request will be dealt with as soon as possible */
-  bool high_priority;
   /** sizeof `obj` */
   size_t size;
   /** initialize `obj` fields */
   void (*init)(void *obj);
   /** callback for filling `obj` with JSON values */
   void (*from_json)(char *json, size_t len, void *obj);
-  /** callback to be triggered on completion, `obj` is the object filled by
-   *        `from_json` field */
-  void (*on_completion)(struct discord *client,
-                        ORCAcode code,
-                        const void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
+
+  /** callback to be triggered on completion, `obj` is the object filled by
+   *        `from_json` field */
+  void (*done)(struct discord *client, ORCAcode code, const void *obj);
+
+  /** if true the request will be dealt with as soon as possible */
+  bool high_p;
 };
 
 /**
@@ -186,13 +186,13 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
                              ...);
 
 /**
- * @brief Set next request to run asynchronously
+ * @brief Toggle next request to run asynchronously
  *
  * @param adapter the handle initialized with discord_adapter_init()
  * @param attr attributes of the asynchronous task
  */
-void discord_adapter_set_async(struct discord_adapter *adapter,
-                               struct discord_request_attr *attr);
+void discord_adapter_toggle_async(struct discord_adapter *adapter,
+                                  struct discord_request_attr *attr);
 
 /**
  * @brief Context for requests that are scheduled to run asynchronously

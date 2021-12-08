@@ -1542,6 +1542,15 @@ ORCAcode discord_create_message(struct discord *client,
                                 const u64_snowflake_t channel_id,
                                 struct discord_create_message_params *params,
                                 struct discord_message *ret);
+
+ORCAcode discord_create_message_async(
+  struct discord *client,
+  const u64_snowflake_t channel_id,
+  struct discord_create_message_params *params,
+  void (*ret)(struct discord *client,
+              ORCAcode code,
+              const struct discord_message *msg));
+
 /** @struct discord_create_message_params */
 /** @} */
 

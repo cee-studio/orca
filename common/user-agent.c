@@ -207,30 +207,33 @@ http_method_eval(char method[])
 void
 ua_reqheader_add(struct user_agent *ua, const char field[], const char value[])
 {
+  size_t fieldlen = strlen(field);
+  struct curl_slist *node;
   char buf[4096];
-  size_t ret = snprintf(buf, sizeof(buf), "%s: %s", field, value);
-  ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
+  size_t buflen;
+  char *ptr;
+
+  buflen = snprintf(buf, sizeof(buf), "%s: %s", field, value);
+  ASSERT_S(buflen < sizeof(buf), "Out of bounds write attempt");
 
   /* check for match in existing fields */
-  size_t field_len = strlen(field);
-  char *ptr;
-  struct curl_slist *node = ua->req_header;
-  while (NULL != node) {
+  for (node = ua->req_header; node != NULL; node = node->next) {
     if (!(ptr = strchr(node->data, ':')))
       ERR("Missing ':' in header:\n\t%s", node->data);
-    if (field_len == ptr - node->data
-        && 0 == strncasecmp(node->data, field, field_len))
+
+    if (fieldlen == ptr - node->data
+        && 0 == strncasecmp(node->data, field, fieldlen))
     {
-      if (strlen(node->data) < ret) {
+      if (strlen(node->data) < buflen) {
         free(node->data);
         node->data = strdup(buf);
       }
       else {
-        memcpy(node->data, buf, ret + 1);
+        memcpy(node->data, buf, buflen + 1);
       }
+
       return;
     }
-    node = node->next;
   }
 
   /* couldn't find match, we will create a new field */
@@ -240,57 +243,20 @@ ua_reqheader_add(struct user_agent *ua, const char field[], const char value[])
     curl_slist_append(ua->req_header, buf);
 }
 
-void
-ua_reqheader_del(struct user_agent *ua, const char field[])
-{
-  struct curl_slist *node = ua->req_header;
-  size_t field_len = strlen(field);
-  char *ptr;
-  if (!(ptr = strchr(node->data, ':')))
-    ERR("Missing ':' in header: %s", node->data);
-  if (field_len == ptr - node->data
-      && 0 == strncasecmp(node->data, field, field_len))
-  {
-    free(node->data);
-    free(node);
-    ua->req_header = NULL;
-    return;
-  }
-
-  /* iterate linked list to try and find field match */
-  do {
-    if (node->next) {
-      if (!(ptr = strchr(node->next->data, ':')))
-        ERR("Missing ':' in header: %s", node->next->data);
-      if (field_len == ptr - node->next->data
-          && 0 == strncasecmp(node->next->data, field, field_len))
-      {
-        free(node->next->data);
-        free(node->next);
-        node->next = NULL;
-        return;
-      }
-    }
-    node = node->next;
-  } while (node != NULL);
-
-  logconf_warn(&ua->conf,
-               "Couldn't find field '%s' in existing request header", field);
-}
-
 char *
 ua_reqheader_str(struct user_agent *ua, char *buf, size_t bufsize)
 {
-  struct curl_slist *node = ua->req_header;
+  struct curl_slist *node;
   size_t ret = 0;
-  while (NULL != node) {
+
+  for (node = ua->req_header; node != NULL; node = node->next) {
     ret += snprintf(buf + ret, bufsize - ret, "%s\r\n", node->data);
     VASSERT_S(ret < bufsize, "[%s] Out of bounds write attempt", ua->conf.id);
-    node = node->next;
   }
   if (!ret) return NULL;
 
   buf[ret - 1] = '\0';
+
   return buf;
 }
 
@@ -301,20 +267,18 @@ ua_reqheader_str(struct user_agent *ua, char *buf, size_t bufsize)
 static size_t
 _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
 {
-  size_t bufsize = size * nmemb;
   struct ua_resp_header *header = p_userdata;
-
+  size_t bufsize = size * nmemb;
+  ptrdiff_t offset;
   char *ptr;
-  if (!(ptr = strchr(buf, ':'))) {
-    /* returns if can't find ':' field/value delimiter */
-    return bufsize;
-  }
 
-  ptrdiff_t delim_idx = ptr - buf; /* get ':' position */
-  if (!(ptr = strstr(ptr + 1, "\r\n"))) {
-    /* returns if can't find CRLF match */
-    return bufsize;
-  }
+  /* returns if can't find ':' field/value delimiter */
+  if (!(ptr = strchr(buf, ':'))) return bufsize;
+
+  offset = ptr - buf; /* get ':' position */
+
+  /* returns if can't find CRLF match */
+  if (!(ptr = strstr(ptr + 1, "\r\n"))) return bufsize;
 
   if (header->bufsize < (header->len + bufsize + 1)) {
     header->bufsize = header->len + bufsize + 1;
@@ -324,20 +288,16 @@ _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
 
   /* get the field part of the string */
   header->pairs[header->n_pairs].field.idx = header->len;
-  header->pairs[header->n_pairs].field.size = delim_idx;
+  header->pairs[header->n_pairs].field.size = offset;
 
-  /* offsets blank characters */
-  size_t bufoffset = 1; /* starts after the ':' delimiter */
-  while (delim_idx + bufoffset < bufsize) {
-    if (!isspace(buf[delim_idx + bufoffset])) break;
-    ++bufoffset;
+  /* skip black characters (starts after the ':' delimiter) */
+  for (offset += 1; offset < bufsize; ++offset) {
+    if (!isspace(buf[offset])) break;
   }
 
   /* get the value part of the string */
-  header->pairs[header->n_pairs].value.idx =
-    header->len + (delim_idx + bufoffset);
-  header->pairs[header->n_pairs].value.size =
-    (ptr - buf) - (delim_idx + bufoffset);
+  header->pairs[header->n_pairs].value.idx = header->len + offset;
+  header->pairs[header->n_pairs].value.size = (ptr - buf) - offset;
 
   header->len += bufsize;
 
@@ -356,8 +316,8 @@ _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
 static size_t
 _ua_conn_respbody_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
 {
-  size_t bufchunk_size = size * nmemb;
   struct ua_resp_body *body = p_userdata;
+  size_t bufchunk_size = size * nmemb;
 
   /* increase response body memory block size only if necessary */
   if (body->bufsize < (body->len + bufchunk_size + 1)) {
@@ -365,8 +325,10 @@ _ua_conn_respbody_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
     body->buf = realloc(body->buf, body->bufsize);
   }
   memcpy(&body->buf[body->len], buf, bufchunk_size);
+
   body->len += bufchunk_size;
   body->buf[body->len] = '\0';
+
   return bufchunk_size;
 }
 
@@ -392,8 +354,6 @@ static struct ua_conn *
 _ua_conn_init(struct user_agent *ua)
 {
   struct ua_conn *new_conn = calloc(1, sizeof(struct ua_conn));
-  new_conn->conf = &ua->conf;
-
   CURL *new_ehandle = curl_easy_init();
 
   /* set error buffer for capturing CURL error descriptions */
@@ -415,7 +375,7 @@ _ua_conn_init(struct user_agent *ua)
   if (ua->setopt_cb) (*ua->setopt_cb)(new_ehandle, ua->data);
 
   new_conn->ehandle = new_ehandle;
-
+  new_conn->conf = &ua->conf;
   QUEUE_INIT(&new_conn->entry);
 
   return new_conn;
@@ -433,26 +393,27 @@ _ua_conn_cleanup(struct ua_conn *conn)
 struct ua_conn *
 ua_conn_start(struct user_agent *ua)
 {
-  struct ua_conn *ret_conn = NULL;
+  struct ua_conn *conn = NULL;
+  QUEUE *q;
 
   pthread_mutex_lock(&ua->connq->lock);
 
   if (QUEUE_EMPTY(&ua->connq->idle)) {
-    ret_conn = _ua_conn_init(ua);
+    conn = _ua_conn_init(ua);
     ++ua->connq->total;
   }
   else {
-    QUEUE *q = QUEUE_HEAD(&ua->connq->idle);
+    /* remove from idle queue */
+    q = QUEUE_HEAD(&ua->connq->idle);
     QUEUE_REMOVE(q);
 
-    ret_conn = QUEUE_DATA(q, struct ua_conn, entry);
-    /* remove from idle queue */
+    conn = QUEUE_DATA(q, struct ua_conn, entry);
   }
-  QUEUE_INSERT_TAIL(&ua->connq->busy, &ret_conn->entry);
+  QUEUE_INSERT_TAIL(&ua->connq->busy, &conn->entry);
 
   pthread_mutex_unlock(&ua->connq->lock);
 
-  return ret_conn;
+  return conn;
 }
 
 static void
@@ -536,16 +497,17 @@ struct user_agent *
 ua_clone(struct user_agent *orig_ua)
 {
   struct user_agent *clone_ua = calloc(1, sizeof(struct user_agent));
+  struct curl_slist *node;
 
   pthread_mutex_lock(&orig_ua->connq->lock);
   memcpy(clone_ua, orig_ua, sizeof(struct user_agent));
 
   /* copy orig_ua header into clone_ua */
-  struct curl_slist *orig_node = orig_ua->req_header;
-  clone_ua->req_header = curl_slist_append(NULL, orig_node->data);
-  while (NULL != orig_node->next) {
-    orig_node = orig_node->next;
-    curl_slist_append(clone_ua->req_header, orig_node->data);
+  node = orig_ua->req_header;
+  clone_ua->req_header = curl_slist_append(NULL, node->data);
+  while (NULL != node->next) {
+    node = node->next;
+    curl_slist_append(clone_ua->req_header, node->data);
   }
 
   /* use a different base_url context than the original */
@@ -563,22 +525,17 @@ ua_clone(struct user_agent *orig_ua)
 void
 ua_cleanup(struct user_agent *ua)
 {
-  /* cleanup headers */
-  curl_slist_free_all(ua->req_header);
-
-  /* cleanup URL */
-  if (ua->base_url.start) free(ua->base_url.start);
-
   /* cleaning all resources is a must if this function was called
    *        for the original (parent) User-Agent handle */
   if (ua->is_original) {
     QUEUE *ua_queues[] = { &ua->connq->idle, &ua->connq->busy };
+    int i;
 
     /* cleanup queues */
-    for (int i = 0; i < sizeof(ua_queues) / sizeof(QUEUE *); ++i) {
+    for (i = 0; i < sizeof(ua_queues) / sizeof(QUEUE *); ++i) {
+      struct ua_conn *conn;
       QUEUE queue;
       QUEUE *q;
-      struct ua_conn *conn;
 
       QUEUE_MOVE(ua_queues[i], &queue);
       while (!QUEUE_EMPTY(&queue)) {
@@ -589,13 +546,17 @@ ua_cleanup(struct user_agent *ua)
         _ua_conn_cleanup(conn);
       }
     }
+
     pthread_mutex_destroy(&ua->connq->lock);
     free(ua->connq);
-
     /* cleanup logging module */
     logconf_cleanup(&ua->conf);
   }
 
+  /* cleanup headers */
+  curl_slist_free_all(ua->req_header);
+  /* cleanup URL */
+  if (ua->base_url.start) free(ua->base_url.start);
   /* cleanup User-Agent handle */
   free(ua);
 }
@@ -668,15 +629,16 @@ _ua_conn_set_method(struct user_agent *ua,
 static void
 _ua_conn_set_url(struct user_agent *ua, struct ua_conn *conn, char endpoint[])
 {
-  CURLcode ecode;
   size_t endpoint_len = strlen(endpoint);
   size_t size = 2 + ua->base_url.size + endpoint_len;
+  CURLcode ecode;
   size_t ret;
 
   /* increase buffer length if necessary */
   if (size > conn->req_url.size) {
     void *tmp = realloc(conn->req_url.start, size);
     ASSERT_S(NULL != tmp, "Couldn't increase buffer's length");
+
     conn->req_url.start = tmp;
     conn->req_url.size = size;
   }
@@ -737,9 +699,7 @@ ua_conn_get_results(struct user_agent *ua,
                     struct ua_conn *conn,
                     struct ua_info *info)
 {
-  /* response URL */
   char *resp_url = NULL;
-  /* return code */
   ORCAcode code;
 
   /* get request's total elapsed time */

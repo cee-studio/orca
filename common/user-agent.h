@@ -132,14 +132,6 @@ void ua_reqheader_add(struct user_agent *ua,
                       const char value[]);
 
 /**
- * @brief Delete a field from the request header
- *
- * @param ua the User-Agent handle created with ua_init()
- * @param field header's field to be deleted
- */
-void ua_reqheader_del(struct user_agent *ua, const char field[]);
-
-/**
  * @brief Get the request header as a linear string
  *
  * @param ua the User-Agent handle created with ua_init()

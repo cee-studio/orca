@@ -49,6 +49,7 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
 {
   struct discord_request *cxt;
   QUEUE queue;
+  QUEUE *q;
 
   /* cleanup User-Agent handle */
   ua_cleanup(adapter->ua);
@@ -62,7 +63,7 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
   /* cleanup idle requests queue */
   QUEUE_MOVE(adapter->idleq, &queue);
   while (!QUEUE_EMPTY(&queue)) {
-    QUEUE *q = QUEUE_HEAD(&queue);
+    q = QUEUE_HEAD(&queue);
     cxt = QUEUE_DATA(q, struct discord_request, entry);
     QUEUE_REMOVE(&cxt->entry);
     discord_request_cleanup(cxt);

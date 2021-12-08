@@ -38,8 +38,10 @@ _discord_ratelimit_get_route(const char endpoint[], char buf[32])
     /* copy snowflake id over to buf */
     memcpy(buf, start, len);
     buf[len] = '\0';
+
     return buf;
   }
+
   return endpoint;
 }
 
@@ -299,6 +301,7 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
     server = 1000 * curl_getdate(date.start, NULL);
     psnip_clock_wall_get_time(&ts);
     offset = server + ts.nanoseconds / 1000000;
+
     /* reset timestamp =
      *   (system time) + (diff between Discord's reset timestamp and offset) */
     b->reset_tstamp = now + (1000 * strtod(reset.start, NULL) - offset);

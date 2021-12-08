@@ -126,9 +126,9 @@ _discord_request_check_status(struct discord_adapter *adapter,
   case HTTP_TOO_MANY_REQUESTS: {
     struct sized_buffer body = ua_info_get_body(&adapter->err.info);
     struct discord *client = CLIENT(&adapter->rlimit);
+    double retry_after = 1.0;
     bool is_global = false;
     char message[256] = "";
-    double retry_after = 1.0;
     long delay_ms = 0L;
 
     json_extract(body.start, body.size,
@@ -265,10 +265,10 @@ discord_request_perform(struct discord_adapter *adapter,
                         enum http_method method,
                         char endpoint[])
 {
-  /* response callbacks */
-  struct ua_resp_handle _handle = {};
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(&adapter->rlimit, endpoint);
+  /* response callbacks */
+  struct ua_resp_handle _handle = { 0 };
   /* orca error status */
   ORCAcode code;
   /* in case of request failure, try again */
@@ -485,9 +485,10 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
                          &adapter->err.info);
 
-    /* remove from 'busy' and multiplex queue */
+    /* remove from busy queue */
     curl_multi_remove_handle(mhandle, ehandle);
     QUEUE_REMOVE(&cxt->entry);
+
     if (retry) {
       /* add request handler to 'waitq' queue for retry */
       QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);

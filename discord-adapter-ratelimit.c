@@ -28,8 +28,12 @@ _discord_ratelimit_get_route(const char endpoint[], char buf[32])
       || STRNEQ(endpoint, "/webhooks/", sizeof("/webhooks/") - 1))
   {
     /* safe to assume strchr() won't return NULL */
-    char *start = 1 + strchr(1 + endpoint, '/'), *end = strchr(start, '/');
-    ptrdiff_t len = end - start;
+    char *start = 1 + strchr(1 + endpoint, '/');
+    size_t len;
+
+    /* get length of major parameter */
+    for (len = 0; start[len] && start[len] != '/'; ++len)
+      continue;
 
     /* copy snowflake id over to buf */
     memcpy(buf, start, len);
@@ -104,7 +108,8 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
       b = rlimit->b_null;
     }
     else {
-      struct sized_buffer limit = ua_info_get_header(info, "x-ratelimit-limit");
+      struct sized_buffer limit =
+        ua_info_get_header(info, "x-ratelimit-limit");
       int _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
 
       b = _discord_bucket_init(rlimit, route, &hash, _limit);
@@ -252,24 +257,20 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
                          struct discord_bucket *b,
                          struct ua_info *info)
 {
-  /* fetch individual header fields */
   struct sized_buffer reset, remaining, reset_after;
-  /* 'now' timestamp */
   u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
-  /* remaining requests before ratelimiting */
   int _remaining;
 
-  reset = ua_info_get_header(info, "x-ratelimit-reset");
-  reset_after = ua_info_get_header(info, "x-ratelimit-reset-after");
   remaining = ua_info_get_header(info, "x-ratelimit-remaining");
-
   _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
 
   /* skip out of order responses */
   if (_remaining > b->remaining && now < b->reset_tstamp) return;
 
-  /* use X-Ratelimit-Reset-After if available, otherwise use
-   * X-Ratelimit-Reset */
+  reset = ua_info_get_header(info, "x-ratelimit-reset");
+  reset_after = ua_info_get_header(info, "x-ratelimit-reset-after");
+
+  /* use X-Ratelimit-Reset-After if available, X-Ratelimit-Reset otherwise */
   if (reset_after.size) {
     struct sized_buffer global =
       ua_info_get_header(info, "x-ratelimit-global");
@@ -311,17 +312,19 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
 }
 
 /* in case of asynchronous requests, check if successive requests with
- * undefined buckets can be matched to a new route */
+ * null buckets can be matched to a new route */
 static void
-_discord_bucket_undefined_filter(struct discord_ratelimit *rlimit,
-                                 struct discord_bucket *b,
-                                 const char endpoint[])
+_discord_bucket_null_filter(struct discord_ratelimit *rlimit,
+                            struct discord_bucket *b,
+                            const char endpoint[])
 {
   struct discord_request *cxt;
   QUEUE queue;
   QUEUE *q;
 
   QUEUE_MOVE(&rlimit->b_null->waitq, &queue);
+  QUEUE_INIT(&rlimit->b_null->waitq);
+
   while (!QUEUE_EMPTY(&queue)) {
     q = QUEUE_HEAD(&queue);
     QUEUE_REMOVE(q);
@@ -358,7 +361,7 @@ discord_bucket_build(struct discord_ratelimit *rlimit,
     logconf_debug(&rlimit->conf, "[%.4s] Bucket match for route '%s'", b->hash,
                   b->route);
 
-    _discord_bucket_undefined_filter(rlimit, b, endpoint);
+    _discord_bucket_null_filter(rlimit, b, endpoint);
   }
 
   /* update bucket's values */

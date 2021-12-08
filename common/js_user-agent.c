@@ -49,6 +49,7 @@ void
 jsua_log(char *fmt, ...)
 {
   static FILE *logger = NULL;
+  va_list ap;
 
   if (!logger) {
     char buf[512], file[1024];
@@ -59,7 +60,6 @@ jsua_log(char *fmt, ...)
     logger = fopen(file, "a");
   }
 
-  va_list ap;
   va_start(ap, fmt);
 
   vfprintf(logger, fmt, ap);
@@ -71,8 +71,8 @@ jsua_log(char *fmt, ...)
 static void
 jsua_print(js_State *J)
 {
-  int i;
   int top = js_gettop(J);
+  int i;
 
   for (i = 1; i < top; ++i) {
     const char *s = js_tostring(J, i);
@@ -97,6 +97,7 @@ new_UserAgent(js_State *J)
   static struct logconf conf = { 0 };
   static _Bool first_run = 0;
   struct ua_attr attr = { 0 };
+  struct user_agent *ua;
 
   if (!first_run) {
     FILE *fp = fopen(g_config_file, "rb");
@@ -106,7 +107,7 @@ new_UserAgent(js_State *J)
   }
 
   attr.conf = &conf;
-  struct user_agent *ua = ua_init(&attr);
+  ua = ua_init(&attr);
 
   if (js_isstring(J, 1)) {
     char *tmp = (char *)js_tostring(J, 1);
@@ -154,8 +155,8 @@ static void
 UserAgent_prototype_string(js_State *J)
 {
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
-  struct ua_info info = { 0 };
   struct sized_buffer body, new_body = { 0 };
+  struct ua_info info = { 0 };
 
   jsua_run(J, ua, &info);
 
@@ -173,12 +174,14 @@ UserAgent_prototype_string(js_State *J)
 static void
 UserAgent_prototype_addHeader(js_State *J)
 {
+  struct user_agent *ua;
+
   if (!js_isstring(J, 1))
     js_typeerror(J, "Expected 'first' argument to be a 'string'");
   if (!js_isstring(J, 2))
     js_typeerror(J, "Expected 'second' argument to be a 'string'");
 
-  struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
+  ua = js_touserdata(J, 0, "UserAgent");
   ua_reqheader_add(ua, js_tostring(J, 1), js_tostring(J, 2));
   js_pushundefined(J);
 }
@@ -186,11 +189,13 @@ UserAgent_prototype_addHeader(js_State *J)
 static void
 UserAgent_prototype_setUrl(js_State *J)
 {
+  struct user_agent *ua;
+
   if (!js_isstring(J, 1)) {
     js_typeerror(J, "Expected 'first' argument to be a 'string'");
   }
 
-  struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
+  ua = js_touserdata(J, 0, "UserAgent");
   ua_set_url(ua, js_tostring(J, 1));
   js_pushundefined(J);
 }

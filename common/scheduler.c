@@ -57,9 +57,8 @@ event_run(void *p_task)
 
   cee_sleep_ms(task->timeout_ms);
   while (is_alive(task)) {
-
     task->callback(task->data);
-    if (!task->repeat_ms) break; /* EARLY BREAK */
+    if (!task->repeat_ms) break;
 
     cee_sleep_ms(task->repeat_ms);
   }

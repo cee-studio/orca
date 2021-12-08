@@ -219,7 +219,9 @@ static CURL *_ws_cws_new(struct websockets *ws, const char ws_protocols[]);
 static void
 _ws_set_status_nolock(struct websockets *ws, enum ws_status status)
 {
-  if ((WS_DISCONNECTING == ws->status) && (status != WS_DISCONNECTED)) return;
+  if ((WS_DISCONNECTING == ws->status) && (status != WS_DISCONNECTED)) {
+    return;
+  }
 
   switch (status) {
   case WS_DISCONNECTED:
@@ -768,8 +770,8 @@ ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
 void
 ws_end(struct websockets *ws)
 {
-  int msgq = 0;
   struct CURLMsg *curlmsg;
+  int msgq = 0;
 
   /* tag as disconnecting */
   _ws_set_status(ws, WS_DISCONNECTING);

@@ -5,10 +5,12 @@
 #include <assert.h>
 
 #include "discord.h"
+#include "discord-internal.h"
+
 #include "cee-utils.h"
 #include "json-actor.h" /* json_extract() */
 
-struct user_data {
+struct user_cxt {
   u64_snowflake_t channel_id;
   unsigned long long counter;
 };
@@ -19,9 +21,14 @@ void on_ready(struct discord *client, const struct discord_user *me)
            me->discriminator);
 }
 
-void shutdown(struct discord_context *cxt, const char buf[], const size_t len)
+void disconnect(struct discord *client, ORCAcode code, const void *obj)
 {
-  discord_shutdown(cxt->client);
+  discord_shutdown(client);
+}
+
+void reconnect(struct discord *client, ORCAcode code, const void *obj)
+{
+  discord_reconnect(client, true);
 }
 
 void on_disconnect(struct discord *client,
@@ -30,66 +37,42 @@ void on_disconnect(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  discord_create_message(discord_set_async(client,
-                                           &(struct discord_async_attr){
-                                             .callback = &shutdown,
-                                             .high_priority = true,
-                                           }),
-                         msg->channel_id,
-                         &(struct discord_create_message_params){
-                           .content = "Disconnecting ...",
-                         },
-                         NULL);
-}
+  struct discord_request_attr attr = { .done = &disconnect, .high_p = true };
+  struct discord_create_message_params params = { .content = "Disconnecting ..." };
 
-void reconnect(struct discord_context *cxt, const char buf[], const size_t len)
-{
-  discord_reconnect(cxt->client, true);
+  discord_adapter_toggle_async(&client->adapter, &attr);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void on_reconnect(struct discord *client,
                   const struct discord_user *bot,
                   const struct discord_message *msg)
 {
+
   if (msg->author->bot) return;
 
-  discord_create_message(discord_set_async(client,
-                                           &(struct discord_async_attr){
-                                             .callback = &reconnect,
-                                             .high_priority = true,
-                                           }),
-                         msg->channel_id,
-                         &(struct discord_create_message_params){
-                           .content = "Reconnecting ...",
-                         },
-                         NULL);
+  struct discord_request_attr attr = { .done = &reconnect, .high_p = true };
+  struct discord_create_message_params params = { .content = "Reconnecting ..." };
+
+  discord_adapter_toggle_async(&client->adapter, &attr);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void send_batch(struct discord_context *cxt,
-                const char buf[],
-                const size_t len)
+void send_batch(struct discord *client,
+                ORCAcode code,
+                const struct discord_message *msg)
 {
-  struct user_data *data = discord_get_data(cxt->client);
+  struct discord_create_message_params params = { 0 };
   char text[32];
 
-  for (int i = 0; i < 128; ++i) {
+  params.content = text;
+  for (int i = 0; i < 1024; ++i) {
     snprintf(text, sizeof(text), "%d", i);
-    discord_create_message(discord_set_async(client, NULL), data->channel_id,
-                           &(struct discord_create_message_params){
-                             .content = text,
-                           },
-                           NULL);
+    discord_create_message_async(client, msg->channel_id, &params, NULL);
   }
 
-  discord_create_message(discord_set_async(client,
-                                           &(struct discord_async_attr){
-                                             .callback = &send_batch,
-                                           }),
-                         data->channel_id,
-                         &(struct discord_create_message_params){
-                           .content = "CHECKPOINT",
-                         },
-                         NULL);
+  params.content = "CHECKPOINT";
+  discord_create_message_async(client, msg->channel_id, &params, &send_batch);
 }
 
 void on_spam(struct discord *client,
@@ -98,30 +81,24 @@ void on_spam(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  struct user_data *data = discord_get_data(client);
-  data->channel_id = msg->channel_id;
-
-  send_batch(client, bot, NULL, 0, ORCA_OK);
+  struct discord_message first_msg = { .channel_id = msg->channel_id };
+  send_batch(client, ORCA_OK, &first_msg);
 }
 
-void send_msg(struct discord_context *cxt, const char buf[], const size_t len)
+void send_msg(struct discord *client,
+              ORCAcode code,
+              const struct discord_message *msg)
 {
+  struct discord_create_message_params params = { 0 };
+  struct user_cxt *cxt = discord_get_data(client);
   char text[32];
-  struct user_data *data = discord_get_data(cxt->client);
 
-  snprintf(text, sizeof(text), "%llu", data->counter);
+  snprintf(text, sizeof(text), "%llu", cxt->counter);
 
-  discord_create_message(discord_set_async(client,
-                                           &(struct discord_async_attr){
-                                             .callback = &send_msg,
-                                           }),
-                         data->channel_id,
-                         &(struct discord_create_message_params){
-                           .content = text,
-                         },
-                         NULL);
+  params.content = text;
+  discord_create_message_async(client, msg->channel_id, &params, &send_msg);
 
-  ++data->counter;
+  ++cxt->counter;
 }
 
 void on_spam_ordered(struct discord *client,
@@ -130,10 +107,7 @@ void on_spam_ordered(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  /* TODO: trigger via timeout function */
-  struct user_data *data = discord_get_data(client);
-  data->channel_id = msg->channel_id;
-  send_msg(client, bot, NULL, 0, ORCA_OK);
+  send_msg(client, ORCA_OK, msg);
 }
 
 int main(int argc, char *argv[])
@@ -148,8 +122,8 @@ int main(int argc, char *argv[])
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
-  struct user_data data = { 0 };
-  discord_set_data(client, &data);
+  struct user_cxt cxt = { 0 };
+  discord_set_data(client, &cxt);
 
   discord_set_on_ready(client, &on_ready);
 

@@ -9,42 +9,44 @@
 #include "cee-utils.h"
 
 static void
-curl_setopt_cb(CURL *ehandle, void *p_client)
+setopt_cb(struct ua_conn *conn, void *p_client)
 {
+  CURL *ehandle = ua_conn_get_easy_handle(conn);
   struct reddit *client = p_client;
 
-  int ret; // check return length
-  char client_id[512], client_secret[512];
+  char client_id[512], client_secret[512], auth[512];
+  int ret;
+
   ret = snprintf(client_id, sizeof(client_id), "%.*s",
                  (int)client->client_id.size, client->client_id.start);
   ASSERT_S(ret < sizeof(client_id), "Out of bounds write attempt");
+
   ret = snprintf(client_secret, sizeof(client_secret), "%.*s",
                  (int)client->client_secret.size, client->client_secret.start);
   ASSERT_S(ret < sizeof(client_secret), "Out of bounds write attempt");
 
-  CURLcode ecode;
-  ecode = curl_easy_setopt(ehandle, CURLOPT_USERNAME, client_id);
-  ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
-  ecode = curl_easy_setopt(ehandle, CURLOPT_PASSWORD, client_secret);
-  ASSERT_S(CURLE_OK == ecode, curl_easy_strerror(ecode));
+  ret = snprintf(auth, sizeof(auth),
+                 "orca:github.com/cee-studio/orca:v.0 (by /u/%.*s)",
+                 (int)client->username.size, client->username.start);
+  ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
+
+  ua_conn_add_header(conn, "User-Agent", auth);
+  ua_conn_add_header(conn, "Content-Type",
+                     "application/x-www-form-urlencoded");
+
+  curl_easy_setopt(ehandle, CURLOPT_USERNAME, client_id);
+  curl_easy_setopt(ehandle, CURLOPT_PASSWORD, client_secret);
 }
 
 void
 reddit_adapter_init(struct reddit_adapter *adapter, struct logconf *conf)
 {
   adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
+
   ua_set_url(adapter->ua, BASE_API_URL);
   logconf_branch(&adapter->conf, conf, "REDDIT_HTTP");
 
-  ua_curl_easy_setopt(adapter->ua, adapter->p_client, &curl_setopt_cb);
-
-  char auth[512];
-  snprintf(
-    auth, sizeof(auth), "orca:github.com/cee-studio/orca:v.0 (by /u/%.*s)",
-    (int)adapter->p_client->username.size, adapter->p_client->username.start);
-  ua_reqheader_add(adapter->ua, "User-Agent", auth);
-  ua_reqheader_add(adapter->ua, "Content-Type",
-                   "application/x-www-form-urlencoded");
+  ua_set_opt(adapter->ua, adapter->p_client, &setopt_cb);
 }
 
 void

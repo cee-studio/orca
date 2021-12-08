@@ -236,8 +236,7 @@ discord_request_perform_async(struct discord_adapter *adapter,
   return ORCA_OK;
 }
 
-/*
- * https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
+/* https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
  */
 static void
 json_error_cb(char *str, size_t len, void *p_adapter)
@@ -269,6 +268,8 @@ discord_request_perform(struct discord_adapter *adapter,
   struct discord_bucket *b = discord_bucket_get(&adapter->rlimit, endpoint);
   /* response callbacks */
   struct ua_resp_handle _handle = { 0 };
+  /* connection handle to perform connection */
+  struct ua_conn *conn;
   /* orca error status */
   ORCAcode code;
   /* in case of request failure, try again */
@@ -281,20 +282,35 @@ discord_request_perform(struct discord_adapter *adapter,
     _handle.ok_obj = handle->ok_obj;
   }
 
+  conn = ua_conn_start(adapter->ua);
+
+  if (HTTP_MIMEPOST == method)
+    ua_conn_add_header(conn, "Content-Type", "multipart/form-data");
+  else
+    ua_conn_add_header(conn, "Content-Type", "application/json");
+
+  /* populate conn with parameters */
+  ua_conn_setup(conn, &_handle, body, method, endpoint);
+
   pthread_mutex_lock(&b->lock);
   do {
     ua_info_cleanup(&adapter->err.info);
 
     discord_bucket_cooldown(&adapter->rlimit, b);
 
-    code = ua_run(adapter->ua, &adapter->err.info, &_handle, body, method,
-                  endpoint);
+    /* perform blocking request, and check results */
+    if (ORCA_OK == (code = ua_conn_perform(conn))) {
+      code = ua_conn_get_results(conn, &adapter->err.info);
+    }
 
     retry = _discord_request_check_status(adapter, &code, NULL);
 
     discord_bucket_build(&adapter->rlimit, b, endpoint, &adapter->err.info);
   } while (retry);
   pthread_mutex_unlock(&b->lock);
+
+  /* reset conn and mark it as free to use */
+  ua_conn_stop(conn);
 
   return code;
 }
@@ -308,15 +324,19 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
   struct sized_buffer body;
   CURL *ehandle;
 
-  /* TODO: turn below into a user-agent.c function? */
   cxt->conn = ua_conn_start(client->adapter.ua);
-  ehandle = ua_conn_get_curl_easy(cxt->conn);
+
+  if (HTTP_MIMEPOST == cxt->method)
+    ua_conn_add_header(cxt->conn, "Content-Type", "multipart/form-data");
+  else
+    ua_conn_add_header(cxt->conn, "Content-Type", "application/json");
+
+  ehandle = ua_conn_get_easy_handle(cxt->conn);
 
   body.start = cxt->body.start;
   body.size = cxt->body.size;
 
-  ua_conn_setup(client->adapter.ua, cxt->conn, &cxt->handle, &body,
-                cxt->method, cxt->endpoint);
+  ua_conn_setup(cxt->conn, &cxt->handle, &body, cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
@@ -466,8 +486,9 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
   ORCAcode code;
 
   while (1) {
-    bool retry;
     int msgq = 0;
+    bool retry;
+
     curlmsg = curl_multi_info_read(mhandle, &msgq);
 
     if (!curlmsg) break;
@@ -480,7 +501,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
 
     /* check request results and call user-callbacks */
-    code = ua_conn_get_results(adapter->ua, cxt->conn, &adapter->err.info);
+    code = ua_conn_get_results(cxt->conn, &adapter->err.info);
     retry = _discord_request_check_status(adapter, &code, cxt);
     discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
                          &adapter->err.info);
@@ -496,7 +517,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     else {
       /* run assigned callback and set for recycling */
       _discord_request_accept(adapter, code, cxt);
-      ua_conn_stop(adapter->ua, cxt->conn);
+      ua_conn_stop(cxt->conn);
       QUEUE_INSERT_TAIL(adapter->idleq, &cxt->entry);
     }
   }
@@ -530,12 +551,12 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
       QUEUE_REMOVE(q);
 
       cxt = QUEUE_DATA(q, struct discord_request, entry);
-      ehandle = ua_conn_get_curl_easy(cxt->conn);
+      ehandle = ua_conn_get_easy_handle(cxt->conn);
 
       curl_multi_remove_handle(client->mhandle, ehandle);
 
       /* set for recycling */
-      ua_conn_stop(client->adapter.ua, cxt->conn);
+      ua_conn_stop(cxt->conn);
       QUEUE_INSERT_TAIL(client->adapter.idleq, q);
     }
 
@@ -575,7 +596,7 @@ discord_request_pause_all(struct discord_ratelimit *rlimit)
       QUEUE_REMOVE(q);
 
       cxt = QUEUE_DATA(q, struct discord_request, entry);
-      ehandle = ua_conn_get_curl_easy(cxt->conn);
+      ehandle = ua_conn_get_easy_handle(cxt->conn);
 
       curl_multi_remove_handle(client->mhandle, ehandle);
 

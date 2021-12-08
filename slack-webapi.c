@@ -15,6 +15,7 @@ slack_webapi_init(struct slack_webapi *webapi,
                   struct logconf *conf,
                   struct sized_buffer *token)
 {
+#if 0
   webapi->ua = ua_init(&(struct ua_attr){ .conf = conf });
   ua_set_url(webapi->ua, SLACK_BASE_API_URL);
   logconf_branch(&webapi->conf, conf, "SLACK_WEBAPI");
@@ -32,6 +33,7 @@ slack_webapi_init(struct slack_webapi *webapi,
   ua_reqheader_add(webapi->ua, "Authorization", auth);
   ua_reqheader_add(webapi->ua, "Content-type",
                    "application/x-www-form-urlencoded");
+#endif
 }
 
 void

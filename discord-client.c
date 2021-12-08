@@ -71,12 +71,9 @@ discord_config_init(const char config_file[])
 struct discord *
 discord_clone(const struct discord *orig_client)
 {
-  struct discord *clone_client;
+  struct discord *clone_client = malloc(sizeof(struct discord));
 
-  clone_client = malloc(sizeof(struct discord));
   memcpy(clone_client, orig_client, sizeof(struct discord));
-
-  clone_client->adapter.ua = ua_clone(orig_client->adapter.ua);
   memset(&clone_client->adapter.err, 0, sizeof(clone_client->adapter.err));
 
   clone_client->is_original = false;
@@ -93,7 +90,6 @@ discord_cleanup(struct discord *client)
     discord_gateway_cleanup(&client->gw);
   }
   else {
-    ua_cleanup(client->adapter.ua);
     ua_info_cleanup(&client->adapter.err.info);
   }
   free(client);

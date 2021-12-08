@@ -80,7 +80,7 @@ u64_unix_ms_t discord_ratelimit_get_global_wait(
 
 /** @brief Behavior of request return object */
 struct discord_request_attr {
-  /** sizeof `obj` */
+  /** size of `obj` in bytes */
   size_t size;
   /** initialize `obj` fields */
   void (*init)(void *obj);
@@ -88,11 +88,8 @@ struct discord_request_attr {
   void (*from_json)(char *json, size_t len, void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
-
-  /** callback to be triggered on completion, `obj` is the object filled by
-   *        `from_json` field */
+  /** user callback to be triggered on request completion */
   void (*done)(struct discord *client, ORCAcode code, const void *obj);
-
   /** if true the request will be dealt with as soon as possible */
   bool high_p;
 };

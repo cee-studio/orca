@@ -8,6 +8,7 @@ slack_chat_post_message(struct slack *client,
                         struct slack_chat_post_message_params *params,
                         struct sized_buffer *ret)
 {
+#if 0
   if (!params) {
     log_error("Missing 'params'");
     return ORCA_MISSING_PARAMETER;
@@ -54,4 +55,7 @@ slack_chat_post_message(struct slack *client,
   free(payload);
 
   return code;
+#else
+  return -1;
+#endif
 }

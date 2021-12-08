@@ -170,22 +170,22 @@ UserAgent_prototype_string(js_State *J)
 
   ua_info_cleanup(&info);
 }
-
+#if 0
 static void
 UserAgent_prototype_addHeader(js_State *J)
 {
-  struct user_agent *ua;
+  struct ua_conn *conn;
 
   if (!js_isstring(J, 1))
     js_typeerror(J, "Expected 'first' argument to be a 'string'");
   if (!js_isstring(J, 2))
     js_typeerror(J, "Expected 'second' argument to be a 'string'");
 
-  ua = js_touserdata(J, 0, "UserAgent");
-  ua_reqheader_add(ua, js_tostring(J, 1), js_tostring(J, 2));
+  conn = js_touserdata(J, 0, "Conn");
+  ua_conn_add_header(ua, js_tostring(J, 1), js_tostring(J, 2));
   js_pushundefined(J);
 }
-
+#endif
 static void
 UserAgent_prototype_setUrl(js_State *J)
 {
@@ -217,12 +217,12 @@ jsua_ua_init(js_State *J)
     js_newcfunction(J, &UserAgent_prototype_string,
                     "UserAgent.prototype.string", 1);
     js_defproperty(J, -2, "string", JS_DONTENUM);
-
+#if 0
     /* UserAgent.prototype.addHeader = function() { ... } */
     js_newcfunction(J, &UserAgent_prototype_addHeader,
                     "UserAgent.prototype.addHeader", 2);
     js_defproperty(J, -2, "addHeader", JS_DONTENUM);
-
+#endif
     /* UserAgent.prototype.setUrl = function() { ... } */
     js_newcfunction(J, &UserAgent_prototype_setUrl,
                     "UserAgent.prototype.setUrl", 2);

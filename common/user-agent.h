@@ -121,50 +121,15 @@ const char *http_method_print(enum http_method method);
 enum http_method http_method_eval(char method[]);
 
 /**
- * @brief Add a field/value pair to the request header
- *
- * @param ua the User-Agent handle created with ua_init()
- * @param field header's field to be added
- * @param value field's value
- */
-void ua_reqheader_add(struct user_agent *ua,
-                      const char field[],
-                      const char value[]);
-
-/**
- * @brief Get the request header as a linear string
- *
- * @param ua the User-Agent handle created with ua_init()
- * @param buf the user buffer to be filled
- * @param bufsize the user buffer size in bytes
- * @return the user buffer
- */
-char *ua_reqheader_str(struct user_agent *ua, char *buf, size_t bufsize);
-
-/**
- * @brief Set a setup callback to be called by each libcurl's connection during
- * initial setup
+ * @brief Callback to be called on each libcurl's easy handle initialization
  *
  * @param ua the User-Handle created with ua_init()
- * @param data user data to be passed along to setopt_cb
- * @param setopt_cb the user callback
+ * @param data user data to be passed along to `callback`
+ * @param callback the user callback
  */
-void ua_curl_easy_setopt(struct user_agent *ua,
-                         void *data,
-                         void (*setopt_cb)(CURL *ehandle, void *data));
-/**
- * @brief Set a MIME creation callback to be called by each libcurl's
- * connection
- *
- * This sets a user-defined callback for creating multipart types, needed
- *        if `Content-Type: multipart/form-data` is set
- * @param ua the User-Handle created with ua_init()
- * @param data user data to be passed along to `mime_cb`
- * @param mime_cb the user callback
- */
-void ua_curl_mime_setopt(struct user_agent *ua,
-                         void *data,
-                         void (*mime_cb)(curl_mime *mime, void *data));
+void ua_set_opt(struct user_agent *ua,
+                void *data,
+                void (*callback)(struct ua_conn *conn, void *data));
 
 /**
  * @brief Initialize User-Agent handle
@@ -173,19 +138,6 @@ void ua_curl_mime_setopt(struct user_agent *ua,
  * @return the user agent handle
  */
 struct user_agent *ua_init(struct ua_attr *attr);
-
-/**
- * @brief Clone a User-Agent handle
- *
- * Should be called before entering a thread, to ensure each thread
- *        has its own `user-agent` instance with unique buffers, url and
- * headers. The clone will share connections with the original, but will have
- *        its own unique set of URL and headers
- * @param orig_ua the original User-Agent handle
- * @return the User-Agent handle clone
- * @note should call ua_cleanup() after done being used
- */
-struct user_agent *ua_clone(struct user_agent *orig_ua);
 
 /**
  * @brief Cleanup User-Agent handle resources
@@ -200,7 +152,7 @@ void ua_cleanup(struct user_agent *ua);
  * @param ua the User-Agent handle created with ua_init()
  * @param base_url the base request url
  */
-void ua_set_url(struct user_agent *ua, const char *base_url);
+void ua_set_url(struct user_agent *ua, const char base_url[]);
 
 /**
  * @brief Get the request url
@@ -231,41 +183,77 @@ ORCAcode ua_run(struct user_agent *ua,
 /**
  * @brief Get a connection handle and mark it as running
  *
- * @param ua the User-Agent handle created with ua_init()
+ * @param conn the User-Agent handle created with ua_init()
  * @return a connection handle
  */
 struct ua_conn *ua_conn_start(struct user_agent *ua);
 
 /**
+ * @brief Perform connection assigned to `conn`
+ *
+ * @param conn the connection handle
+ * @return ORCAcode for how the transfer went, ORCA_OK means success.
+ */
+ORCAcode ua_conn_perform(struct ua_conn *conn);
+
+/**
+ * @brief Add a field/value pair to the request header
+ *
+ * @param conn the connection handle
+ * @param field header's field to be added
+ * @param value field's value
+ */
+void ua_conn_add_header(struct ua_conn *conn,
+                        const char field[],
+                        const char value[]);
+
+/**
+ * @brief Fill a buffer with the request header
+ *
+ * @param conn the connection handle
+ * @param buf the user buffer to be filled
+ * @param bufsize the user buffer size in bytes
+ * @return the user buffer
+ */
+char *ua_conn_print_header(struct ua_conn *conn, char *buf, size_t bufsize);
+/**
+ * @brief Multipart creation callback for `conn`
+ *
+ * @param conn the connection handle to send multipart body
+ * @param data user data to be passed along to `callback`
+ * @param callback the user callback
+ * @see https://curl.se/libcurl/c/smtp-mime.html
+ */
+void ua_conn_set_mime(struct ua_conn *conn,
+                      void *data,
+                      void (*callback)(curl_mime *mime, void *data));
+
+/**
  * @brief Reset a connection handle fields
  *
- * @param ua the User-Agent handle created with ua_init()
  * @param conn connection handle to be reset
  * @warning this won't deactivate the handle, for that purpose check
  *        ua_conn_stop()
  */
-void ua_conn_reset(struct user_agent *ua, struct ua_conn *conn);
+void ua_conn_reset(struct ua_conn *conn);
 
 /**
  * @brief Stop a connection handle and mark it as idle
  *
- * @param ua the User-Agent handle created with ua_init()
  * @param conn connection handle to be deactivated
  */
-void ua_conn_stop(struct user_agent *ua, struct ua_conn *conn);
+void ua_conn_stop(struct ua_conn *conn);
 
 /**
  * @brief Setup a connection handle
  *
- * @param ua the User-Agent handle created with ua_init()
- * @param conn the connection handle to be modified
+ * @param conn the connection handle
  * @param handle the optional response callbacks, can be NULL
  * @param body the optional request body, can be NULL
  * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  */
-void ua_conn_setup(struct user_agent *ua,
-                   struct ua_conn *conn,
+void ua_conn_setup(struct ua_conn *conn,
                    struct ua_resp_handle *handle,
                    struct sized_buffer *body,
                    enum http_method method,
@@ -274,14 +262,11 @@ void ua_conn_setup(struct user_agent *ua,
 /**
  * @brief Fetch information about previous request
  *
- * @param ua the User-Agent handle created with ua_init()
  * @param conn the connection that performed a request
  * @param info handle containing information on previous request
  * @return ORCAcode for how the transfer went, ORCA_OK means success.
  */
-ORCAcode ua_conn_get_results(struct user_agent *ua,
-                             struct ua_conn *conn,
-                             struct ua_info *info);
+ORCAcode ua_conn_get_results(struct ua_conn *conn, struct ua_info *info);
 
 /**
  * @brief Get libcurl's easy handle assigned to `conn`
@@ -289,7 +274,7 @@ ORCAcode ua_conn_get_results(struct user_agent *ua,
  * @param conn the connection handle
  * @return the libcurl's easy handle
  */
-CURL *ua_conn_get_curl_easy(struct ua_conn *conn);
+CURL *ua_conn_get_easy_handle(struct ua_conn *conn);
 
 /**
  * @brief Cleanup informational handle

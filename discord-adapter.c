@@ -2,10 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <errno.h>
 
 #include "discord.h"
 #include "discord-internal.h"
+
+static void
+setopt_cb(struct ua_conn *conn, void *p_token)
+{
+  struct sized_buffer *token = p_token;
+  char auth[128];
+  int ret;
+
+  ret =
+    snprintf(auth, sizeof(auth), "Bot %.*s", (int)token->size, token->start);
+  ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
+
+  ua_conn_add_header(conn, "Authorization", auth);
+}
 
 void
 discord_adapter_init(struct discord_adapter *adapter,
@@ -23,23 +36,16 @@ discord_adapter_init(struct discord_adapter *adapter,
     logconf_branch(&adapter->conf, conf, "DISCORD_WEBHOOK");
   }
   else {
-    char auth[128];
-    int ret;
-
     /* bot client */
     logconf_branch(&adapter->conf, conf, "DISCORD_HTTP");
-
-    ret =
-      snprintf(auth, sizeof(auth), "Bot %.*s", (int)token->size, token->start);
-    ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
-
-    ua_reqheader_add(adapter->ua, "Authorization", auth);
+    ua_set_opt(adapter->ua, token, &setopt_cb);
   }
+
   /* initialize ratelimit handler */
   discord_ratelimit_init(&adapter->rlimit, &adapter->conf);
 
-  /* idleq is allocated to guarantee a client cloned by discord_clone() will
-   * share the same queue */
+  /* idleq is malloc'd to guarantee a client cloned by discord_clone() will
+   * share the same queue with the original */
   adapter->idleq = malloc(sizeof(QUEUE));
   QUEUE_INIT(adapter->idleq);
 }
@@ -77,36 +83,35 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
 /* template function for performing requests */
 ORCAcode
 discord_adapter_run(struct discord_adapter *adapter,
-                    struct ua_resp_handle *resp_handle,
-                    struct sized_buffer *req_body,
+                    struct ua_resp_handle *handle,
+                    struct sized_buffer *body,
                     enum http_method method,
                     char endpoint_fmt[],
                     ...)
 {
-  /* fully-formed endpoint string */
   char endpoint[2048];
-  /* variable arguments for endpoint formation */
   va_list args;
-  /* vsnprintf OOB check */
   int ret;
 
   /* build the endpoint string */
   va_start(args, endpoint_fmt);
+
   ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
+
   va_end(args);
 
-  /* non-blocking request */
+  /* enqueue request */
   if (true == adapter->toggle_async) {
     struct discord_request_attr *attr = &adapter->attr;
-    adapter->toggle_async = false; /* reset */
 
-    return discord_request_perform_async(adapter, attr, resp_handle, req_body,
-                                         method, endpoint);
+    adapter->toggle_async = false; /* reset */
+    return discord_request_perform_async(adapter, attr, handle, body, method,
+                                         endpoint);
   }
+
   /* blocking request */
-  return discord_request_perform(adapter, resp_handle, req_body, method,
-                                 endpoint);
+  return discord_request_perform(adapter, handle, body, method, endpoint);
 }
 
 void

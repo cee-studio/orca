@@ -102,6 +102,7 @@ discord_edit_original_interaction_response(
   body.start = buf;
 
   if (params->attachments) {
+#if 0
     /* content-type is multipart/form-data */
     void *cxt[2] = { params->attachments, &body };
     ORCAcode code;
@@ -117,6 +118,7 @@ discord_edit_original_interaction_response(
     ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
 
     return code;
+#endif
   }
 
   /* content-type is application/json */
@@ -187,6 +189,7 @@ discord_create_followup_message(
   body.start = buf;
 
   if (params->attachments) {
+#if 0
     /* content-type is multipart/form-data */
     void *cxt[2] = { params->attachments, &body };
     ORCAcode code;
@@ -203,6 +206,7 @@ discord_create_followup_message(
     ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
 
     return code;
+#endif
   }
 
   /* content-type is application/json */
@@ -280,6 +284,7 @@ discord_edit_followup_message(
   body.start = buf;
 
   if (!params->attachments) {
+#if 0
     /* content-type is multipart/form-data */
     void *cxt[2] = { params->attachments, &body };
     ORCAcode code;
@@ -296,6 +301,7 @@ discord_edit_followup_message(
     ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
 
     return code;
+#endif
   }
 
   /* content-type is application/json */

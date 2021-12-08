@@ -176,6 +176,7 @@ discord_create_message(struct discord *client,
                                "/channels/%" PRIu64 "/messages", channel_id);
   }
   else {
+#if 0
     /* content-type is multipart/form-data */
     void *cxt[2] = { params->attachments, &body };
 
@@ -188,6 +189,7 @@ discord_create_message(struct discord *client,
                                "/channels/%" PRIu64 "/messages", channel_id);
 
     ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
+#endif
   }
 
   return code;

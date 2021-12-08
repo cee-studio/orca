@@ -6,7 +6,7 @@
 ORCAcode
 slack_apps_connections_open(struct slack *client, struct sized_buffer *ret)
 {
-
+#if 0
   ASSERT_S(NULL != client->bot_token.start, "Missing bot token");
   ASSERT_S(NULL != client->app_token.start, "Missing app token");
 
@@ -28,4 +28,7 @@ slack_apps_connections_open(struct slack *client, struct sized_buffer *ret)
   ua_reqheader_add(client->webapi.ua, "Authorization", auth);
 
   return code;
+#else
+  return -1;
+#endif
 }

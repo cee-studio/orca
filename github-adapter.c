@@ -29,10 +29,12 @@ github_adapter_init(struct github_adapter *adapter,
                     struct logconf *conf,
                     struct github_presets *presets)
 {
+#if 0
   adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
   ua_set_url(adapter->ua, GITHUB_BASE_API_URL);
   ua_reqheader_add(adapter->ua, "Accept", "application/vnd.github.v3+json");
   ua_curl_easy_setopt(adapter->ua, presets, &curl_easy_setopt_cb);
+#endif
 }
 
 static void

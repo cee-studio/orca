@@ -8,6 +8,7 @@ reddit_access_token(struct reddit *client,
                     struct reddit_access_token_params *params,
                     struct sized_buffer *ret)
 {
+#if 0
   if (!params) {
     log_error("Missing 'params'");
     return ORCA_MISSING_PARAMETER;
@@ -97,4 +98,7 @@ reddit_access_token(struct reddit *client,
     free(resp_body.start);
 
   return code;
+#else
+  return -1;
+#endif
 }

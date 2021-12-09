@@ -48,7 +48,6 @@ void on_reconnect(struct discord *client,
                   const struct discord_user *bot,
                   const struct discord_message *msg)
 {
-
   if (msg->author->bot) return;
 
   struct discord_request_attr attr = { .done = &reconnect, .high_p = true };
@@ -56,6 +55,16 @@ void on_reconnect(struct discord *client,
 
   discord_adapter_toggle_async(&client->adapter, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
+}
+
+void on_single(struct discord *client,
+               const struct discord_user *bot,
+               const struct discord_message *msg)
+{
+  if (msg->author->bot) return;
+
+  struct discord_create_message_params params = { .content = "Hello" };
+  discord_create_message_async(client, msg->channel_id, &params, NULL);
 }
 
 void send_batch(struct discord *client,
@@ -66,7 +75,7 @@ void send_batch(struct discord *client,
   char text[32];
 
   params.content = text;
-  for (int i = 0; i < 1024; ++i) {
+  for (int i = 0; i < 128; ++i) {
     snprintf(text, sizeof(text), "%d", i);
     discord_create_message_async(client, msg->channel_id, &params, NULL);
   }
@@ -81,8 +90,7 @@ void on_spam(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  struct discord_message first_msg = { .channel_id = msg->channel_id };
-  send_batch(client, ORCA_OK, &first_msg);
+  send_batch(client, ORCA_OK, msg);
 }
 
 void send_msg(struct discord *client,
@@ -130,6 +138,7 @@ int main(int argc, char *argv[])
   discord_set_prefix(client, "!");
   discord_set_on_command(client, "disconnect", &on_disconnect);
   discord_set_on_command(client, "reconnect", &on_reconnect);
+  discord_set_on_command(client, "single", &on_single);
   discord_set_on_command(client, "spam", &on_spam);
   discord_set_on_command(client, "spam-ordered", &on_spam_ordered);
 

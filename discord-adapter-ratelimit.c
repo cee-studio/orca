@@ -49,7 +49,7 @@ static struct discord_bucket *
 _discord_bucket_init(struct discord_ratelimit *rlimit,
                      const char route[],
                      const struct sized_buffer *hash,
-                     const int limit)
+                     const long limit)
 {
   struct discord_bucket *b;
   int ret;
@@ -112,7 +112,7 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
     else {
       struct sized_buffer limit =
         ua_info_get_header(info, "x-ratelimit-limit");
-      int _limit = limit.size ? strtol(limit.start, NULL, 10) : INT_MAX;
+      long _limit = limit.size ? strtol(limit.start, NULL, 10) : LONG_MAX;
 
       b = _discord_bucket_init(rlimit, route, &hash, _limit);
     }
@@ -165,7 +165,7 @@ discord_ratelimit_init(struct discord_ratelimit *rlimit, struct logconf *conf)
     ERR("Couldn't initialize pthread mutex");
 
   /* for routes that still haven't discovered a bucket match */
-  rlimit->b_null = _discord_bucket_init(rlimit, "", &hash, 1);
+  rlimit->b_null = _discord_bucket_init(rlimit, "", &hash, 1L);
 
   /* initialize min-heap for handling request timeouts */
   heap_init(&rlimit->timeouts);
@@ -218,12 +218,12 @@ discord_bucket_cooldown(struct discord_ratelimit *rlimit,
 {
   u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
   u64_unix_ms_t reset = discord_bucket_get_timeout(rlimit, b);
-  long delay_ms = (long)(reset - now);
+  int64_t delay_ms = (int64_t)(reset - now);
 
   if (delay_ms > 0) {
     /* block thread's runtime for delay amount */
-    logconf_info(&rlimit->conf, "[%.4s] RATELIMITING (wait %ld ms)", b->hash,
-                 delay_ms);
+    logconf_info(&rlimit->conf, "[%.4s] RATELIMITING (wait %" PRId64 " ms)",
+                 b->hash, delay_ms);
     cee_sleep_ms(delay_ms);
   }
 
@@ -259,15 +259,19 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
                          struct discord_bucket *b,
                          struct ua_info *info)
 {
-  struct sized_buffer reset, remaining, reset_after;
+  struct sized_buffer remaining, reset, reset_after;
   u64_unix_ms_t now = discord_timestamp(CLIENT(rlimit));
-  int _remaining;
+  long _remaining;
 
   remaining = ua_info_get_header(info, "x-ratelimit-remaining");
-  _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1;
+  _remaining = remaining.size ? strtol(remaining.start, NULL, 10) : 1L;
 
   /* skip out of order responses */
-  if (_remaining > b->remaining && now < b->reset_tstamp) return;
+  if (_remaining > b->remaining && now < b->reset_tstamp) {
+    return;
+  }
+
+  b->remaining = _remaining;
 
   reset = ua_info_get_header(info, "x-ratelimit-reset");
   reset_after = ua_info_get_header(info, "x-ratelimit-reset-after");
@@ -307,11 +311,10 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
     b->reset_tstamp = now + (1000 * strtod(reset.start, NULL) - offset);
   }
 
-  b->remaining = _remaining;
-
   logconf_debug(&rlimit->conf,
-                "[%.4s] Remaining = %d | Reset = %" PRIu64 " (%ld ms)",
-                b->hash, b->remaining, b->reset_tstamp, b->reset_tstamp - now);
+                "[%.4s] Remaining = %ld | Reset = %" PRIu64 " (%" PRId64 " ms)",
+                b->hash, b->remaining, b->reset_tstamp,
+                (int64_t)(b->reset_tstamp - now));
 }
 
 /* in case of asynchronous requests, check if successive requests with

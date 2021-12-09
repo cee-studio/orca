@@ -47,8 +47,8 @@ typedef int ORCAcode;
 #define ORCA_OK 0
 /** request wasn't succesful */
 #define ORCA_HTTP_CODE -1
-/** failure connecting to API's url */
-#define ORCA_NO_RESPONSE -2
+/** no response came through from curl */
+#define ORCA_CURL_NO_RESPONSE -2
 /** received a non-standard http code */
 #define ORCA_UNUSUAL_HTTP_CODE -3
 /** missing a mandatory function parameter */

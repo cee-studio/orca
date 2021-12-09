@@ -744,7 +744,7 @@ ua_conn_get_results(struct ua_conn *conn, struct ua_info *info)
   }
   else {
     logconf_error(conf, "No http response received by libcurl");
-    code = ORCA_NO_RESPONSE;
+    code = ORCA_CURL_NO_RESPONSE;
   }
 
   if (info) _ua_info_populate(info, &conn->info);

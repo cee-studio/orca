@@ -102,14 +102,7 @@ _discord_request_check_status(struct discord_adapter *adapter,
                               ORCAcode *code,
                               struct discord_request *cxt)
 {
-  switch (*code) {
-  case ORCA_HTTP_CODE:
-    break;
-  case ORCA_CURL_NO_RESPONSE:
-    return true;
-  default:
-    return false;
-  }
+  if (*code != ORCA_HTTP_CODE) return false;
 
   switch (adapter->err.info.httpcode) {
   case HTTP_FORBIDDEN:
@@ -501,33 +494,45 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     if (!curlmsg) break;
     if (CURLMSG_DONE != curlmsg->msg) continue;
 
-    ua_info_cleanup(&adapter->err.info);
-
-    /* get request handler assigned to this easy handle */
     ehandle = curlmsg->easy_handle;
     curl_easy_getinfo(ehandle, CURLINFO_PRIVATE, &cxt);
 
-    /* check request results and call user-callbacks */
-    code = ua_conn_get_results(cxt->conn, &adapter->err.info);
+    switch (curlmsg->data.result) {
+    case CURLE_OK: {
+      ua_info_cleanup(&adapter->err.info);
 
-    retry = _discord_request_check_status(adapter, &code, cxt);
+      /* check request results and call user-callbacks */
+      code = ua_conn_get_results(cxt->conn, &adapter->err.info);
 
-    discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
-                         &adapter->err.info);
+      retry = _discord_request_check_status(adapter, &code, cxt);
+
+      discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
+                           &adapter->err.info);
+
+      _discord_request_accept(adapter, code, cxt);
+      break;
+    }
+    case CURLE_READ_ERROR:
+      logconf_warn(&adapter->conf, "Read error, will retry again");
+      retry = true;
+      break;
+    default:
+      logconf_error(&adapter->conf, "(CURLE code: %d) %s",
+                    curlmsg->data.result);
+      retry = false;
+      break;
+    }
 
     /* remove from busy queue */
     curl_multi_remove_handle(mhandle, ehandle);
     QUEUE_REMOVE(&cxt->entry);
-    ua_conn_reset(cxt->conn);
 
+    /* enqueue request for retry or recycle */
     if (retry) {
-      /* add request handler to 'waitq' queue for retry */
+      ua_conn_reset(cxt->conn);
       QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
     }
     else {
-      /* run assigned callback and set for recycling */
-      _discord_request_accept(adapter, code, cxt);
-
       ua_conn_stop(cxt->conn);
       QUEUE_INSERT_TAIL(adapter->idleq, &cxt->entry);
     }

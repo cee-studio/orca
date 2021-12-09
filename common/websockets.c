@@ -197,7 +197,10 @@ ws_close_opcode_print(enum ws_close_reason opcode)
     CASE_RETURN_STR(WS_CLOSE_REASON_PRIVATE_START);
     CASE_RETURN_STR(WS_CLOSE_REASON_PRIVATE_END);
   default:
-    return NULL;
+    if (opcode > WS_CLOSE_REASON_PRIVATE_START || opcode < WS_CLOSE_REASON_PRIVATE_END) {
+      return "WS_CLOSE_REASON_PRIVATE";
+    }
+    return "WS_CLOSE_REASON_UNKNOWN";
   }
 }
 
@@ -301,7 +304,7 @@ cws_on_close_cb(void *p_ws,
     cwscode, len, ws->info.loginfo.counter);
 
   if (ws->cbs.on_close)
-    ws->cbs.on_close(ws->cbs.data, ws, &ws->info, cwscode, reason, len);
+    ws->cbs.on_close(ws->cbs.data, ws, &ws->info, (enum ws_close_reason)cwscode, reason, len);
 
   ws->action = WS_ACTION_END_CLOSE;
 
@@ -757,8 +760,10 @@ ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
             "closing the connection",
             ws->conf.id);
 
+  if (!ws->mhandle) ws->mhandle = curl_multi_init();
+
   ws->ehandle = _ws_cws_new(ws, ws->protocols);
-  ws->mhandle = curl_multi_init();
+
   curl_multi_add_handle(ws->mhandle, ws->ehandle);
 
   _ws_set_status(ws, WS_CONNECTING);
@@ -805,10 +810,6 @@ ws_end(struct websockets *ws)
   if (ws->ehandle) {
     cws_free(ws->ehandle);
     ws->ehandle = NULL;
-  }
-  if (ws->mhandle) {
-    curl_multi_cleanup(ws->mhandle);
-    ws->mhandle = NULL;
   }
 
   _ws_set_status(ws, WS_DISCONNECTED);

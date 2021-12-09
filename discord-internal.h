@@ -336,9 +336,9 @@ struct discord_bucket {
   /** the hash associated with this bucket (logging purposes) */
   char hash[64];
   /** maximum connections this bucket can handle before ratelimit */
-  int limit;
+  long limit;
   /** connections this bucket can do before waiting for cooldown */
-  int remaining;
+  long remaining;
   /** timestamp of when cooldown timer resets */
   u64_unix_ms_t reset_tstamp;
   /** synchronize ratelimiting between threads */

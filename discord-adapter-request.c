@@ -102,8 +102,12 @@ _discord_request_check_status(struct discord_adapter *adapter,
                               ORCAcode *code,
                               struct discord_request *cxt)
 {
-  if (*code != ORCA_HTTP_CODE) {
-    /* ORCA_OK or internal error */
+  switch (*code) {
+  case ORCA_HTTP_CODE:
+    break;
+  case ORCA_CURL_NO_RESPONSE:
+    return true;
+  default:
     return false;
   }
 
@@ -129,7 +133,7 @@ _discord_request_check_status(struct discord_adapter *adapter,
     double retry_after = 1.0;
     bool is_global = false;
     char message[256] = "";
-    long delay_ms = 0L;
+    int64_t delay_ms = 0LL;
 
     json_extract(body.start, body.size,
                  "(global):b (message):.*s (retry_after):lf", &is_global,
@@ -139,11 +143,11 @@ _discord_request_check_status(struct discord_adapter *adapter,
       u64_unix_ms_t global;
 
       global = discord_ratelimit_get_global_wait(&adapter->rlimit);
-      delay_ms = global - discord_timestamp(client);
+      delay_ms = (int64_t)(global - discord_timestamp(client));
 
       logconf_warn(&adapter->conf,
-                   "429 GLOBAL RATELIMITING (wait: %ld ms) : %s", delay_ms,
-                   message);
+                   "429 GLOBAL RATELIMITING (wait: %" PRId64 " ms) : %s",
+                   delay_ms, message);
 
       /* TODO: this blocks the event loop, which means Gateway's heartbeating
        * won't work */
@@ -152,14 +156,15 @@ _discord_request_check_status(struct discord_adapter *adapter,
       return true;
     }
 
-    delay_ms = 1000 * retry_after;
+    delay_ms = (int64_t)(1000 * retry_after);
 
     if (cxt) {
       /* non-blocking timeout */
       u64_unix_ms_t timeout = discord_timestamp(client) + delay_ms;
 
-      logconf_warn(&adapter->conf, "429 RATELIMITING (timeout: %ld ms) : %s",
-                   delay_ms, message);
+      logconf_warn(&adapter->conf,
+                   "429 RATELIMITING (timeout: %" PRId64 " ms) : %s", delay_ms,
+                   message);
 
       _discord_request_set_timeout(&adapter->rlimit, timeout, cxt);
 
@@ -167,8 +172,9 @@ _discord_request_check_status(struct discord_adapter *adapter,
       return false;
     }
 
-    logconf_warn(&adapter->conf, "429 RATELIMITING (wait: %ld ms) : %s",
-                 delay_ms, message);
+    logconf_warn(&adapter->conf,
+                 "429 RATELIMITING (wait: %" PRId64 " ms) : %s", delay_ms,
+                 message);
 
     cee_sleep_ms(delay_ms);
 
@@ -192,8 +198,8 @@ _discord_request_timeout(struct discord_ratelimit *rlimit,
 
   if (now > timeout) return false;
 
-  logconf_info(&rlimit->conf, "[%.4s] RATELIMITING (timeout %ld ms)",
-               cxt->bucket->hash, timeout - now);
+  logconf_info(&rlimit->conf, "[%.4s] RATELIMITING (timeout %" PRId64 " ms)",
+               cxt->bucket->hash, (int64_t)(timeout - now));
 
   _discord_request_set_timeout(rlimit, timeout, cxt);
 
@@ -306,6 +312,7 @@ discord_request_perform(struct discord_adapter *adapter,
     retry = _discord_request_check_status(adapter, &code, NULL);
 
     discord_bucket_build(&adapter->rlimit, b, endpoint, &adapter->err.info);
+    ua_conn_reset(conn);
   } while (retry);
   pthread_mutex_unlock(&b->lock);
 
@@ -385,8 +392,6 @@ _discord_request_send_single(struct discord_ratelimit *rlimit,
 
   cxt = QUEUE_DATA(q, struct discord_request, entry);
 
-  b->remaining = 1;
-
   _discord_request_start_async(rlimit, cxt);
 }
 
@@ -397,7 +402,7 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
 {
   struct discord_request *cxt;
   QUEUE *q;
-  int i;
+  long i;
 
   for (i = b->remaining; i > 0; --i) {
     if (QUEUE_EMPTY(&b->waitq)) break;
@@ -409,7 +414,9 @@ _discord_request_send_batch(struct discord_ratelimit *rlimit,
     cxt = QUEUE_DATA(q, struct discord_request, entry);
 
     /* timeout request if ratelimiting is necessary */
-    if (_discord_request_timeout(rlimit, cxt)) break;
+    if (_discord_request_timeout(rlimit, cxt)) {
+      break;
+    }
 
     _discord_request_start_async(rlimit, cxt);
   }
@@ -422,8 +429,8 @@ discord_request_check_pending_async(struct discord_ratelimit *rlimit)
 
   /* iterate over buckets in search of pending requests */
   for (b = rlimit->buckets; b != NULL; b = b->hh.next) {
+    /* skip timed-out, busy and non-pending buckets */
     if (b->freeze || !QUEUE_EMPTY(&b->busyq) || QUEUE_EMPTY(&b->waitq)) {
-      /* skip timed-out, busy and non-pending buckets */
       continue;
     }
 
@@ -458,7 +465,7 @@ _discord_request_accept(struct discord_adapter *adapter,
   if (cxt->attr.init) cxt->attr.init(adapter->obj.buf);
 
   /* fill obj fields with JSON values */
-  if (cxt->attr.from_json) {
+  if (cxt->attr.from_json && ORCA_OK == code) {
     struct sized_buffer body = ua_info_get_body(&adapter->err.info);
 
     cxt->attr.from_json(body.start, body.size, adapter->obj.buf);
@@ -502,13 +509,16 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
 
     /* check request results and call user-callbacks */
     code = ua_conn_get_results(cxt->conn, &adapter->err.info);
+
     retry = _discord_request_check_status(adapter, &code, cxt);
+
     discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
                          &adapter->err.info);
 
     /* remove from busy queue */
     curl_multi_remove_handle(mhandle, ehandle);
     QUEUE_REMOVE(&cxt->entry);
+    ua_conn_reset(cxt->conn);
 
     if (retry) {
       /* add request handler to 'waitq' queue for retry */
@@ -517,6 +527,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     else {
       /* run assigned callback and set for recycling */
       _discord_request_accept(adapter, code, cxt);
+
       ua_conn_stop(cxt->conn);
       QUEUE_INSERT_TAIL(adapter->idleq, &cxt->entry);
     }

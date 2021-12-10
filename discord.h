@@ -83,7 +83,6 @@ typedef void (*discord_idle_cb)(struct discord *client,
                                 const struct discord_user *bot);
 /** @} */
 
-
 /** @defgroup DiscordCallbacksApplicationCommand
  * @brief Application Command event callbacks
  * @see https://discord.com/developers/docs/topics/gateway#commands
@@ -345,34 +344,30 @@ void discord_remove_intents(struct discord *client,
 void discord_set_prefix(struct discord *client, char *prefix);
 
 /**
- * @brief Set command/callback pair, the callback is triggered if someone
- *        types command in chat.
+ * @brief Set command/callback pair.
  *
+ * The callback is triggered when an user types the assigned command in a
+ *        chat visible to the bot.
  * @param client the client created with discord_init()
  * @param command the command to trigger the callback
  * @param callback the callback that will be executed
  * @note The command and any subjacent empty space is left out of
- * discord_message#content
- * @note `command` may be NULL only if a prefix was set by
- * discord_set_prefix(), then `callback` may be triggered as a fallback, in
- * case the prefix matches but the command doesn't.
+ * the message content
  */
 void discord_set_on_command(struct discord *client,
                             char *command,
                             discord_message_cb callback);
 
 /**
- * @brief Set a variadic series of NULL terminated commands to a callback
- *        the callback is triggered if someone types command in chat.
+ * @brief Set a variadic series of NULL terminated commands to a callback.
  *
+ * The callback is triggered when a user types one of the assigned commands in
+ *        chat visble to the bot.
  * @param client the client created with discord_init()
  * @param callback the callback that will be executed
  * @param ... NULL terminated commands
  * @note The command and any subjacent empty space is left out of
- * discord_message#content
- * @note `command` may be NULL only if a prefix was set by
- * discord_set_prefix(), then `callback` may be triggered as a fallback, in
- * case the prefix matches but the command doesn't.
+ * the message content
  */
 void discord_set_on_commands(struct discord *client,
                              discord_message_cb callback,

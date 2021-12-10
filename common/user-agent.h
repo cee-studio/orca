@@ -103,6 +103,8 @@ struct ua_resp_body {
 struct ua_info {
   /** logging informational */
   struct loginfo loginfo;
+  /** response code for latest request */
+  ORCAcode code;
   /** last used HTTP method */
   enum http_method method;
   /** the HTTP response code */

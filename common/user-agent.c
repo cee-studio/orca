@@ -440,6 +440,7 @@ _ua_info_reset(struct ua_info *info)
   info->header.n_pairs = 0;
 }
 
+/* TODO: src should be 'struct ua_conn' */
 static void
 _ua_info_populate(struct ua_info *dest, struct ua_info *src)
 {
@@ -661,7 +662,6 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
   struct sized_buffer logbody = { conn->info.body.buf, conn->info.body.len };
   struct logconf *conf = &conn->ua->conf;
   char *resp_url = NULL;
-  ORCAcode code;
 
   _ua_info_populate(info, &conn->info);
 
@@ -683,7 +683,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       ANSICOLOR("SERVER ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
-    code = ORCA_HTTP_CODE;
+    info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode >= 400) {
     logconf_error(
@@ -691,7 +691,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       ANSICOLOR("CLIENT ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
-    code = ORCA_HTTP_CODE;
+    info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode >= 300) {
     logconf_warn(
@@ -699,32 +699,32 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       ANSICOLOR("REDIRECTING", ANSI_FG_YELLOW) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
-    code = ORCA_HTTP_CODE;
+    info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode >= 200) {
     logconf_info(
       conf, ANSICOLOR("SUCCESS", ANSI_FG_GREEN) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
-    code = ORCA_OK;
+    info->code = ORCA_OK;
   }
   else if (info->httpcode >= 100) {
     logconf_info(conf,
                  ANSICOLOR("INFO", ANSI_FG_GRAY) " (%d)%s - %s [@@@_%zu_@@@]",
                  info->httpcode, http_code_print(info->httpcode),
                  http_reason_print(info->httpcode), info->loginfo.counter);
-    code = ORCA_HTTP_CODE;
+    info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode > 0) {
     logconf_error(conf, "Unusual HTTP response code: %d", info->httpcode);
-    code = ORCA_UNUSUAL_HTTP_CODE;
+    info->code = ORCA_UNUSUAL_HTTP_CODE;
   }
   else {
     logconf_error(conf, "No http response received by libcurl");
-    code = ORCA_CURL_NO_RESPONSE;
+    info->code = ORCA_CURL_NO_RESPONSE;
   }
 
-  return code;
+  return info->code;
 }
 
 CURL *

@@ -12,27 +12,17 @@
 
 u64_snowflake_t g_sudo_id;
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void
+on_ready(struct discord *client, const struct discord_user *bot)
 {
   log_info("Shell-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-void on_disconnect(struct discord *client,
-                   const struct discord_user *bot,
-                   const struct discord_message *msg)
-{
-  if (msg->author->bot) return;
-
-  struct discord_create_message_params params = { .content = "Disconnecting ..." };
-  discord_create_message(client, msg->channel_id, &params, NULL);
-
-  discord_shutdown(client);
-}
-
-void on_cd(struct discord *client,
-           const struct discord_user *bot,
-           const struct discord_message *msg)
+void
+on_cd(struct discord *client,
+      const struct discord_user *bot,
+      const struct discord_message *msg)
 {
   if (msg->author->id != g_sudo_id) return;
 
@@ -46,9 +36,10 @@ void on_cd(struct discord *client,
   discord_create_message_async(client, msg->channel_id, &params, NULL);
 }
 
-void on_less_like(struct discord *client,
-                  const struct discord_user *bot,
-                  const struct discord_message *msg)
+void
+on_less_like(struct discord *client,
+             const struct discord_user *bot,
+             const struct discord_message *msg)
 {
   if (msg->author->id != g_sudo_id) return;
 
@@ -62,10 +53,7 @@ void on_less_like(struct discord *client,
     snprintf(buf, sizeof(buf), "attachment://%s", msg->content);
 
     params.embeds = (struct discord_embed *[]){
-      &(struct discord_embed){
-        .title = msg->content,
-        .thumbnail = &(struct discord_embed_thumbnail){ .url = buf },
-      },
+      &(struct discord_embed){ .title = msg->content },
       NULL // end of array
     };
 
@@ -78,9 +66,10 @@ void on_less_like(struct discord *client,
   discord_create_message_async(client, msg->channel_id, &params, NULL);
 }
 
-void on_fallback(struct discord *client,
-                 const struct discord_user *bot,
-                 const struct discord_message *msg)
+void
+on_fallback(struct discord *client,
+            const struct discord_user *bot,
+            const struct discord_message *msg)
 {
   const size_t MAX_FSIZE = 5e6; // 5 mb
 
@@ -122,7 +111,8 @@ void on_fallback(struct discord *client,
   free(pathtmp);
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
   setlocale(LC_ALL, "");
 
@@ -139,10 +129,8 @@ int main(int argc, char *argv[])
   discord_set_prefix(client, "$");
   discord_set_on_command(client, NULL, &on_fallback);
   discord_set_on_command(client, "cd", &on_cd);
-  discord_set_on_command(client, "less", &on_less_like);
-  discord_set_on_command(client, "cat", &on_less_like);
-  discord_set_on_command(client, "hexdump", &on_less_like);
-  discord_set_on_command(client, "disconnect", &on_disconnect);
+  discord_set_on_commands(client, &on_less_like, "less", "cat", "hexdump",
+                          NULL);
 
   printf("\n\nThis bot allows navigating its host machine like"
          " a shell terminal.\n\n"

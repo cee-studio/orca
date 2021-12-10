@@ -52,7 +52,7 @@ u64_snowflake_t select_member(struct discord *client, u64_snowflake_t guild_id)
   int i = 0;
   while (members[i]) {
     printf("\n%d. %s", i + 1, members[i]->user->username);
-    if (*members[i]->nick) { // prints nick if available
+    if (members[i]->nick && *members[i]->nick) { // prints nick if available
       printf(" (%s)", members[i]->nick);
     }
     ++i;

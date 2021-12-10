@@ -12,17 +12,15 @@
 
 u64_snowflake_t g_sudo_id;
 
-void
-on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client, const struct discord_user *bot)
 {
   log_info("Shell-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-void
-on_cd(struct discord *client,
-      const struct discord_user *bot,
-      const struct discord_message *msg)
+void on_cd(struct discord *client,
+           const struct discord_user *bot,
+           const struct discord_message *msg)
 {
   if (msg->author->id != g_sudo_id) return;
 
@@ -36,10 +34,9 @@ on_cd(struct discord *client,
   discord_create_message_async(client, msg->channel_id, &params, NULL);
 }
 
-void
-on_less_like(struct discord *client,
-             const struct discord_user *bot,
-             const struct discord_message *msg)
+void on_less_like(struct discord *client,
+                  const struct discord_user *bot,
+                  const struct discord_message *msg)
 {
   if (msg->author->id != g_sudo_id) return;
 
@@ -66,10 +63,9 @@ on_less_like(struct discord *client,
   discord_create_message_async(client, msg->channel_id, &params, NULL);
 }
 
-void
-on_fallback(struct discord *client,
-            const struct discord_user *bot,
-            const struct discord_message *msg)
+void on_fallback(struct discord *client,
+                 const struct discord_user *bot,
+                 const struct discord_message *msg)
 {
   const size_t MAX_FSIZE = 5e6; // 5 mb
 
@@ -111,8 +107,7 @@ on_fallback(struct discord *client,
   free(pathtmp);
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   setlocale(LC_ALL, "");
 

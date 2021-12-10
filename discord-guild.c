@@ -11,8 +11,8 @@ discord_create_guild(struct discord *client,
                      struct discord_create_guild_params *params,
                      struct discord_guild *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_guild_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -24,7 +24,7 @@ discord_create_guild(struct discord *client,
   body.size = discord_create_guild_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/guilds");
 }
 
@@ -33,7 +33,8 @@ discord_get_guild(struct discord *client,
                   const u64_snowflake_t guild_id,
                   struct discord_guild *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -44,7 +45,7 @@ discord_get_guild(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64, guild_id);
 }
 
@@ -53,7 +54,8 @@ discord_get_guild_preview(struct discord *client,
                           const u64_snowflake_t guild_id,
                           struct discord_guild_preview *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_preview_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_preview, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -64,7 +66,7 @@ discord_get_guild_preview(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/preview", guild_id);
 }
 
@@ -74,8 +76,8 @@ discord_modify_guild(struct discord *client,
                      struct discord_modify_guild_params *params,
                      struct discord_guild *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_guild_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -91,7 +93,7 @@ discord_modify_guild(struct discord *client,
   body.size = discord_modify_guild_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64, guild_id);
 }
 
@@ -112,7 +114,8 @@ discord_get_guild_channels(struct discord *client,
                            const u64_snowflake_t guild_id,
                            struct discord_channel ***ret)
 {
-  struct ua_resp_handle handle = { &discord_channel_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_channel, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -123,7 +126,7 @@ discord_get_guild_channels(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/channels", guild_id);
 }
 
@@ -134,8 +137,8 @@ discord_create_guild_channel(
   struct discord_create_guild_channel_params *params,
   struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[2048];
 
@@ -152,7 +155,7 @@ discord_create_guild_channel(
     discord_create_guild_channel_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/guilds/%" PRIu64 "/channels", guild_id);
 }
 
@@ -188,7 +191,8 @@ discord_get_guild_member(struct discord *client,
                          u64_snowflake_t user_id,
                          struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_member_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -203,7 +207,7 @@ discord_get_guild_member(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/members/%" PRIu64, guild_id,
                              user_id);
 }
@@ -214,8 +218,8 @@ discord_list_guild_members(struct discord *client,
                            struct discord_list_guild_members_params *params,
                            struct discord_guild_member ***ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_member_list_from_json_v,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_guild_member, ret);
   char query[1024] = "";
 
   if (!guild_id) {
@@ -242,7 +246,7 @@ discord_list_guild_members(struct discord *client,
     }
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/members%s%s", guild_id,
                              *query ? "?" : "", query);
 }
@@ -254,8 +258,8 @@ discord_search_guild_members(
   struct discord_search_guild_members_params *params,
   struct discord_guild_member ***ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_member_list_from_json_v,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_guild_member, ret);
   char query[1024] = "";
 
   if (!guild_id) {
@@ -285,7 +289,7 @@ discord_search_guild_members(
     }
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/members/search%s%s",
                              guild_id, *query ? "?" : "", query);
 }
@@ -297,7 +301,8 @@ discord_add_guild_member(struct discord *client,
                          struct discord_add_guild_member_params *params,
                          struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_member_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -318,7 +323,7 @@ discord_add_guild_member(struct discord *client,
     discord_add_guild_member_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PUT,
                              "/guilds/%" PRIu64 "/members/%" PRIu64, guild_id,
                              user_id);
 }
@@ -330,9 +335,8 @@ discord_modify_guild_member(struct discord *client,
                             struct discord_modify_guild_member_params *params,
                             struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_guild_member_from_json_v
-                                       : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
   struct sized_buffer body;
   char buf[2048];
 
@@ -353,7 +357,7 @@ discord_modify_guild_member(struct discord *client,
     discord_modify_guild_member_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/members/%" PRIu64, guild_id,
                              user_id);
 }
@@ -364,9 +368,8 @@ discord_modify_current_member(
   struct discord_modify_current_member_params *params,
   struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_guild_member_from_json_v
-                                       : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
   struct sized_buffer body;
   char buf[512];
 
@@ -387,7 +390,7 @@ discord_modify_current_member(
     discord_modify_current_member_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/members/@me", guild_id);
 }
 ORCAcode
@@ -397,9 +400,8 @@ discord_modify_current_user_nick(
   struct discord_modify_current_user_nick_params *params,
   struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = {
-    .ok_cb = ret ? &discord_guild_member_from_json_v : NULL, .ok_obj = ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
   struct sized_buffer body;
   char buf[512];
 
@@ -424,7 +426,7 @@ discord_modify_current_user_nick(
     discord_modify_current_user_nick_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/members/@me/nick", guild_id);
 }
 
@@ -502,7 +504,8 @@ discord_get_guild_bans(struct discord *client,
                        const u64_snowflake_t guild_id,
                        struct discord_ban ***ret)
 {
-  struct ua_resp_handle handle = { &discord_ban_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_ban, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -513,7 +516,7 @@ discord_get_guild_bans(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/bans", guild_id);
 }
 
@@ -523,7 +526,8 @@ discord_get_guild_ban(struct discord *client,
                       const u64_snowflake_t user_id,
                       struct discord_ban *ret)
 {
-  struct ua_resp_handle handle = { &discord_ban_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_ban, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -538,7 +542,7 @@ discord_get_guild_ban(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/bans/%" PRIu64, guild_id,
                              user_id);
 }
@@ -603,7 +607,8 @@ discord_get_guild_roles(struct discord *client,
                         const u64_snowflake_t guild_id,
                         struct discord_role ***ret)
 {
-  struct ua_resp_handle handle = { &discord_role_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_role, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -614,7 +619,7 @@ discord_get_guild_roles(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/roles", guild_id);
 }
 
@@ -624,8 +629,8 @@ discord_create_guild_role(struct discord *client,
                           struct discord_create_guild_role_params *params,
                           struct discord_role *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_role_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_role, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -638,7 +643,7 @@ discord_create_guild_role(struct discord *client,
     discord_create_guild_role_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/guilds/%" PRIu64 "/roles", guild_id);
 }
 
@@ -649,8 +654,8 @@ discord_modify_guild_role_positions(
   struct discord_modify_guild_role_positions_params **params,
   struct discord_role ***ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_role_list_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_role, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -667,7 +672,7 @@ discord_modify_guild_role_positions(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/roles", guild_id);
 }
 
@@ -678,8 +683,8 @@ discord_modify_guild_role(struct discord *client,
                           struct discord_modify_guild_role_params *params,
                           struct discord_role *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_role_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_role, ret);
   struct sized_buffer body;
   char buf[2048] = "{}";
   size_t len;
@@ -700,7 +705,7 @@ discord_modify_guild_role(struct discord *client,
   body.size = len;
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/roles/%" PRIu64, guild_id,
                              role_id);
 }
@@ -753,7 +758,8 @@ discord_get_guild_invites(struct discord *client,
                           const u64_snowflake_t guild_id,
                           struct discord_invite ***ret)
 {
-  struct ua_resp_handle handle = { &discord_invite_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_invite, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -764,7 +770,7 @@ discord_get_guild_invites(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/invites", guild_id);
 }
 
@@ -792,7 +798,8 @@ discord_get_guild_vanity_url(struct discord *client,
                              const u64_snowflake_t guild_id,
                              struct discord_invite *ret)
 {
-  struct ua_resp_handle handle = { &discord_invite_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_invite, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -803,7 +810,7 @@ discord_get_guild_vanity_url(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/vanity-url", guild_id);
 }
 
@@ -812,7 +819,8 @@ discord_get_guild_welcome_screen(struct discord *client,
                                  const u64_snowflake_t guild_id,
                                  struct discord_welcome_screen *ret)
 {
-  struct ua_resp_handle handle = { &discord_welcome_screen_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_welcome_screen, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -823,6 +831,6 @@ discord_get_guild_welcome_screen(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/welcome-screen", guild_id);
 }

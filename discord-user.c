@@ -10,14 +10,15 @@
 ORCAcode
 discord_get_current_user(struct discord *client, struct discord_user *ret)
 {
-  struct ua_resp_handle handle = { &discord_user_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_user, ret);
 
   if (!ret) {
     logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me");
 }
 
@@ -26,7 +27,8 @@ discord_get_user(struct discord *client,
                  const u64_snowflake_t user_id,
                  struct discord_user *ret)
 {
-  struct ua_resp_handle handle = { &discord_user_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_user, ret);
 
   if (!user_id) {
     logconf_error(&client->conf, "Missing 'user_id'");
@@ -37,7 +39,7 @@ discord_get_user(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/%" PRIu64, user_id);
 }
 
@@ -46,8 +48,8 @@ discord_modify_current_user(struct discord *client,
                             struct discord_modify_current_user_params *params,
                             struct discord_user *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_user_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_user, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -60,7 +62,7 @@ discord_modify_current_user(struct discord *client,
     discord_modify_current_user_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/users/@me");
 }
 
@@ -75,14 +77,15 @@ sized_buffer_from_json(char *json, size_t len, void *data)
 ORCAcode /* @todo this is a temporary solution for easily wrapping JS */
 sb_discord_get_current_user(struct discord *client, struct sized_buffer *ret)
 {
-  struct ua_resp_handle handle = { &sized_buffer_from_json, ret };
+  struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
+                                       &sized_buffer_from_json };
 
   if (!ret) {
     logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me");
 }
 
@@ -90,14 +93,15 @@ ORCAcode
 discord_get_current_user_guilds(struct discord *client,
                                 struct discord_guild ***ret)
 {
-  struct ua_resp_handle handle = { &discord_guild_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_guild, ret);
 
   if (!ret) {
     logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me/guilds");
 }
 
@@ -120,8 +124,8 @@ discord_create_dm(struct discord *client,
                   struct discord_create_dm_params *params,
                   struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[128];
 
@@ -133,7 +137,7 @@ discord_create_dm(struct discord *client,
   body.size = discord_create_dm_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/users/@me/channels");
 }
 
@@ -142,8 +146,8 @@ discord_create_group_dm(struct discord *client,
                         struct discord_create_group_dm_params *params,
                         struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -163,7 +167,7 @@ discord_create_group_dm(struct discord *client,
   body.size = discord_create_group_dm_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/users/@me/channels");
 }
 
@@ -171,13 +175,14 @@ ORCAcode
 discord_get_user_connections(struct discord *client,
                              struct discord_connection ***ret)
 {
-  struct ua_resp_handle handle = { &discord_connection_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_connection, ret);
 
   if (!ret) {
     logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me/connections");
 }

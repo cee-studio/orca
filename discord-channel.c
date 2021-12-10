@@ -11,7 +11,8 @@ discord_get_channel(struct discord *client,
                     const u64_snowflake_t channel_id,
                     struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { &discord_channel_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id");
@@ -22,7 +23,7 @@ discord_get_channel(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64, channel_id);
 }
 
@@ -32,8 +33,8 @@ discord_modify_channel(struct discord *client,
                        struct discord_modify_channel_params *params,
                        struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -49,7 +50,7 @@ discord_modify_channel(struct discord *client,
   body.size = discord_modify_channel_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/channels/%" PRIu64, channel_id);
 }
 
@@ -58,15 +59,15 @@ discord_delete_channel(struct discord *client,
                        const u64_snowflake_t channel_id,
                        struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_DELETE,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_DELETE,
                              "/channels/%" PRIu64, channel_id);
 }
 
@@ -77,7 +78,8 @@ discord_get_channel_messages(
   struct discord_get_channel_messages_params *params,
   struct discord_message ***ret)
 {
-  struct ua_resp_handle handle = { &discord_message_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_message, ret);
   char query[1024] = "";
 
   if (!channel_id) {
@@ -115,7 +117,7 @@ discord_get_channel_messages(
     }
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/messages%s%s", channel_id,
                              *query ? "?" : "", query);
 }
@@ -126,7 +128,8 @@ discord_get_channel_message(struct discord *client,
                             const u64_snowflake_t message_id,
                             struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { &discord_message_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -141,7 +144,7 @@ discord_get_channel_message(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/messages/%" PRIu64,
                              channel_id, message_id);
 }
@@ -152,8 +155,8 @@ discord_create_message(struct discord *client,
                        struct discord_create_message_params *params,
                        struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_message_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
   ORCAcode code;
@@ -172,7 +175,7 @@ discord_create_message(struct discord *client,
 
   if (!params->attachments) {
     /* content-type is application/json */
-    code = discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+    code = discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                                "/channels/%" PRIu64 "/messages", channel_id);
   }
   else {
@@ -185,7 +188,7 @@ discord_create_message(struct discord *client,
     ua_reqheader_add(client->adapter.ua, "Content-Type",
                      "multipart/form-data");
 
-    code = discord_adapter_run(&client->adapter, &handle, NULL, HTTP_MIMEPOST,
+    code = discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
                                "/channels/%" PRIu64 "/messages", channel_id);
 
     ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
@@ -201,8 +204,8 @@ discord_crosspost_message(struct discord *client,
                           const u64_snowflake_t message_id,
                           struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_message_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -213,7 +216,7 @@ discord_crosspost_message(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_POST,
                              "/channels/%" PRIu64 "/messages/%" PRIu64
                              "/crosspost",
                              channel_id, message_id);
@@ -347,7 +350,8 @@ discord_get_reactions(struct discord *client,
                       struct discord_get_reactions_params *params,
                       struct discord_user ***ret)
 {
-  struct ua_resp_handle handle = { &discord_user_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_user, ret);
   char query[1024] = "";
   char emoji_endpoint[256];
   char *pct_emoji_name;
@@ -394,7 +398,7 @@ discord_get_reactions(struct discord *client,
   else
     snprintf(emoji_endpoint, sizeof(emoji_endpoint), "%s", pct_emoji_name);
 
-  code = discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  code = discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/messages/%" PRIu64
                              "/reactions/%s%s",
                              channel_id, message_id, emoji_endpoint, query);
@@ -469,8 +473,8 @@ discord_edit_message(struct discord *client,
                      struct discord_edit_message_params *params,
                      struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_message_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
 
@@ -490,7 +494,7 @@ discord_edit_message(struct discord *client,
   body.size = discord_edit_message_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/channels/%" PRIu64 "/messages/%" PRIu64,
                              channel_id, message_id);
 }
@@ -602,7 +606,8 @@ discord_get_channel_invites(struct discord *client,
                             const u64_snowflake_t channel_id,
                             struct discord_invite ***ret)
 {
-  struct ua_resp_handle handle = { &discord_invite_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_invite, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -613,7 +618,7 @@ discord_get_channel_invites(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/invites", channel_id);
 }
 
@@ -624,8 +629,8 @@ discord_create_channel_invite(
   struct discord_create_channel_invite_params *params,
   struct discord_invite *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_invite_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_invite, ret);
   struct sized_buffer body;
   char buf[1024];
   size_t len;
@@ -643,7 +648,7 @@ discord_create_channel_invite(
   body.start = buf;
   body.size = len;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/invites", channel_id);
 }
 
@@ -672,8 +677,8 @@ discord_follow_news_channel(struct discord *client,
                             struct discord_follow_news_channel_params *params,
                             struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[256]; /* should be more than enough for this */
 
@@ -690,7 +695,7 @@ discord_follow_news_channel(struct discord *client,
     discord_follow_news_channel_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/followers", channel_id);
 }
 
@@ -712,7 +717,8 @@ discord_get_pinned_messages(struct discord *client,
                             const u64_snowflake_t channel_id,
                             struct discord_message ***ret)
 {
-  struct ua_resp_handle handle = { &discord_message_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_message, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -723,7 +729,7 @@ discord_get_pinned_messages(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/pins", channel_id);
 }
 
@@ -824,8 +830,8 @@ discord_start_thread_with_message(
   struct discord_start_thread_with_message_params *params,
   struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -846,7 +852,7 @@ discord_start_thread_with_message(
     discord_start_thread_with_message_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/messages/%" PRIu64
                              "/threads",
                              channel_id, message_id);
@@ -859,8 +865,8 @@ discord_start_thread_without_message(
   struct discord_start_thread_without_message_params *params,
   struct discord_channel *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_channel_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -877,7 +883,7 @@ discord_start_thread_without_message(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/threads", channel_id);
 }
 
@@ -950,8 +956,8 @@ discord_list_thread_members(struct discord *client,
                             const u64_snowflake_t channel_id,
                             struct discord_thread_member ***ret)
 {
-  struct ua_resp_handle handle = { &discord_thread_member_list_from_json_v,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_thread_member, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -962,7 +968,7 @@ discord_list_thread_members(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/thread-members",
                              channel_id);
 }
@@ -972,8 +978,8 @@ discord_list_active_threads(struct discord *client,
                             const u64_snowflake_t channel_id,
                             struct discord_thread_response_body *body)
 {
-  struct ua_resp_handle handle = { &discord_thread_response_body_from_json_v,
-                                   body };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_thread_response_body, body);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -984,7 +990,7 @@ discord_list_active_threads(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/threads/active",
                              channel_id);
 }
@@ -996,8 +1002,8 @@ discord_list_public_archived_threads(struct discord *client,
                                      const int limit,
                                      struct discord_thread_response_body *body)
 {
-  struct ua_resp_handle handle = { &discord_thread_response_body_from_json_v,
-                                   body };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_thread_response_body, body);
   char query[1024] = "";
   size_t offset = 0;
 
@@ -1021,7 +1027,7 @@ discord_list_public_archived_threads(struct discord *client,
     ASSERT_S(offset < sizeof(query), "Out of bounds write attempt");
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64
                              "/threads/archived/public%s%s",
                              channel_id, *query ? "?" : "", query);
@@ -1035,8 +1041,8 @@ discord_list_private_archived_threads(
   const int limit,
   struct discord_thread_response_body *body)
 {
-  struct ua_resp_handle handle = { &discord_thread_response_body_from_json_v,
-                                   body };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_thread_response_body, body);
   char query[1024] = "";
   size_t offset = 0;
 
@@ -1060,7 +1066,7 @@ discord_list_private_archived_threads(
     ASSERT_S(offset < sizeof(query), "Out of bounds write attempt");
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64
                              "/threads/archived/private%s%s",
                              channel_id, *query ? "?" : "", query);
@@ -1074,8 +1080,8 @@ discord_list_joined_private_archived_threads(
   const int limit,
   struct discord_thread_response_body *body)
 {
-  struct ua_resp_handle handle = { &discord_thread_response_body_from_json_v,
-                                   body };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_thread_response_body, body);
   char query[1024] = "";
   size_t offset = 0;
 
@@ -1099,7 +1105,7 @@ discord_list_joined_private_archived_threads(
     ASSERT_S(offset < sizeof(query), "Out of bounds write attempt");
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64
                              "/users/@me/threads/archived/private%s%s",
                              channel_id, *query ? "?" : "", query);
@@ -1115,14 +1121,8 @@ discord_create_message_async(struct discord *client,
                                          ORCAcode code,
                                          const struct discord_message *msg))
 {
-  struct discord_request_attr attr = {
-    sizeof(struct discord_message),
-    &discord_message_init_v,
-    &discord_message_from_json_v,
-    &discord_message_cleanup_v,
-    (void *)ret,
-  };
+  struct discord_async_attr attr = { (discord_async_cb)ret };
 
-  discord_adapter_toggle_async(&client->adapter, &attr);
+  discord_adapter_set_async(&client->adapter, &attr);
   return discord_create_message(client, channel_id, params, NULL);
 }

@@ -30,8 +30,8 @@ static void
 _discord_request_reset(struct discord_request *cxt)
 {
   cxt->bucket = NULL;
+  cxt->done = NULL;
   memset(&cxt->attr, 0, sizeof(struct discord_request_attr));
-  memset(&cxt->handle, 0, sizeof(struct ua_resp_handle));
   *cxt->endpoint = '\0';
   cxt->conn = NULL;
 }
@@ -48,22 +48,17 @@ static void
 _discord_request_populate(struct discord_request *cxt,
                           struct discord_adapter *adapter,
                           struct discord_request_attr *attr,
-                          struct ua_resp_handle *handle,
                           struct sized_buffer *body,
                           enum http_method method,
                           char endpoint[])
 {
   cxt->method = method;
+  cxt->done = adapter->async.attr.done;
 
   if (attr)
     memcpy(&cxt->attr, attr, sizeof(struct discord_request_attr));
   else
     memset(&cxt->attr, 0, sizeof(struct discord_request_attr));
-
-  if (handle) {
-    /* copy response handle */
-    memcpy(&cxt->handle, handle, sizeof(cxt->handle));
-  }
 
   if (body) {
     /* copy request body */
@@ -203,7 +198,6 @@ _discord_request_timeout(struct discord_ratelimit *rlimit,
 ORCAcode
 discord_request_perform_async(struct discord_adapter *adapter,
                               struct discord_request_attr *attr,
-                              struct ua_resp_handle *handle,
                               struct sized_buffer *body,
                               enum http_method method,
                               char endpoint[])
@@ -224,10 +218,9 @@ discord_request_perform_async(struct discord_adapter *adapter,
   }
   QUEUE_INIT(&cxt->entry);
 
-  _discord_request_populate(cxt, adapter, attr, handle, body, method,
-                            endpoint);
+  _discord_request_populate(cxt, adapter, attr, body, method, endpoint);
 
-  if (cxt->attr.high_p)
+  if (adapter->async.attr.high_p)
     QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
   else
     QUEUE_INSERT_TAIL(&cxt->bucket->waitq, &cxt->entry);
@@ -258,28 +251,19 @@ json_error_cb(char *str, size_t len, void *p_adapter)
 /* perform a blocking request */
 ORCAcode
 discord_request_perform(struct discord_adapter *adapter,
-                        struct ua_resp_handle *handle,
+                        struct discord_request_attr *attr,
                         struct sized_buffer *body,
                         enum http_method method,
                         char endpoint[])
 {
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(&adapter->rlimit, endpoint);
-  /* response callbacks */
-  struct ua_resp_handle _handle = { 0 };
   /* connection handle to perform connection */
   struct ua_conn *conn;
   /* orca error status */
   ORCAcode code;
   /* in case of request failure, try again */
   bool retry;
-
-  _handle.err_cb = &json_error_cb;
-  _handle.err_obj = adapter;
-  if (handle) {
-    _handle.ok_cb = handle->ok_cb;
-    _handle.ok_obj = handle->ok_obj;
-  }
 
   conn = ua_conn_start(adapter->ua);
 
@@ -289,7 +273,7 @@ discord_request_perform(struct discord_adapter *adapter,
     ua_conn_add_header(conn, "Content-Type", "application/json");
 
   /* populate conn with parameters */
-  ua_conn_setup(conn, &_handle, body, method, endpoint);
+  ua_conn_setup(conn, body, method, endpoint);
 
   pthread_mutex_lock(&b->lock);
   do {
@@ -299,7 +283,18 @@ discord_request_perform(struct discord_adapter *adapter,
 
     /* perform blocking request, and check results */
     if (ORCA_OK == (code = ua_conn_perform(conn))) {
-      code = ua_conn_get_results(conn, &adapter->err.info);
+      code = ua_info_extract(conn, &adapter->err.info);
+    }
+
+    if (attr->obj
+        && (adapter->err.info.httpcode >= 200
+            && adapter->err.info.httpcode < 300))
+    {
+      struct sized_buffer body = ua_info_get_body(&adapter->err.info);
+
+      if (attr->init) attr->init(attr->obj);
+
+      attr->from_json(body.start, body.size, attr->obj);
     }
 
     retry = _discord_request_check_status(adapter, &code, NULL);
@@ -336,7 +331,7 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
   body.start = cxt->body.start;
   body.size = cxt->body.size;
 
-  ua_conn_setup(cxt->conn, &cxt->handle, &body, cxt->method, cxt->endpoint);
+  ua_conn_setup(cxt->conn, &body, cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
@@ -465,10 +460,10 @@ _discord_request_accept(struct discord_adapter *adapter,
   }
 
   /* user callback */
-  if (cxt->attr.done) {
+  if (cxt->done) {
     struct discord *client = CLIENT(&adapter->rlimit);
 
-    cxt->attr.done(client, code, adapter->obj.buf);
+    cxt->done(client, code, adapter->obj.buf);
   }
 
   /* cleanup obj fields */
@@ -502,7 +497,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
       ua_info_cleanup(&adapter->err.info);
 
       /* check request results and call user-callbacks */
-      code = ua_conn_get_results(cxt->conn, &adapter->err.info);
+      code = ua_info_extract(cxt->conn, &adapter->err.info);
 
       retry = _discord_request_check_status(adapter, &code, cxt);
 

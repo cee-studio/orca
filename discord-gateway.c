@@ -43,28 +43,30 @@ _discord_gateway_close(struct discord_gateway *gw,
 ORCAcode
 discord_get_gateway(struct discord *client, struct sized_buffer *ret)
 {
-  struct ua_resp_handle handle = { &sized_buffer_from_json, ret };
+  struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
+                                       &sized_buffer_from_json };
 
   if (!ret) {
     logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/gateway");
 }
 
 ORCAcode
 discord_get_gateway_bot(struct discord *client, struct sized_buffer *ret)
 {
-  struct ua_resp_handle handle = { &sized_buffer_from_json, ret };
+  struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
+                                       &sized_buffer_from_json };
 
   if (!ret) {
     logconf_error(&client->conf, "Missing 'ret'");
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/gateway/bot");
 }
 

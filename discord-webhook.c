@@ -12,7 +12,8 @@ discord_create_webhook(struct discord *client,
                        struct discord_create_webhook_params *params,
                        struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -32,7 +33,7 @@ discord_create_webhook(struct discord *client,
   body.size = discord_create_webhook_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/channels/%" PRIu64 "/webhooks", channel_id);
 }
 
@@ -41,7 +42,8 @@ discord_get_channel_webhooks(struct discord *client,
                              const u64_snowflake_t channel_id,
                              struct discord_webhook ***ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_webhook, ret);
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -52,7 +54,7 @@ discord_get_channel_webhooks(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/webhooks", channel_id);
 }
 
@@ -61,7 +63,8 @@ discord_get_guild_webhooks(struct discord *client,
                            const u64_snowflake_t guild_id,
                            struct discord_webhook ***ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_webhook, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -72,7 +75,7 @@ discord_get_guild_webhooks(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/webhooks", guild_id);
 }
 
@@ -81,7 +84,8 @@ discord_get_webhook(struct discord *client,
                     const u64_snowflake_t webhook_id,
                     struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
@@ -92,7 +96,7 @@ discord_get_webhook(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64, webhook_id);
 }
 
@@ -102,7 +106,8 @@ discord_get_webhook_with_token(struct discord *client,
                                const char webhook_token[],
                                struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
@@ -117,7 +122,7 @@ discord_get_webhook_with_token(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64 "/%s", webhook_id,
                              webhook_token);
 }
@@ -128,7 +133,8 @@ discord_modify_webhook(struct discord *client,
                        struct discord_modify_webhook_params *params,
                        struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -140,7 +146,7 @@ discord_modify_webhook(struct discord *client,
   body.size = discord_modify_webhook_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/webhooks/%" PRIu64, webhook_id);
 }
 
@@ -152,7 +158,8 @@ discord_modify_webhook_with_token(
   struct discord_modify_webhook_with_token_params *params,
   struct discord_webhook *ret)
 {
-  struct ua_resp_handle handle = { &discord_webhook_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[1024];
 
@@ -169,7 +176,7 @@ discord_modify_webhook_with_token(
     discord_modify_webhook_with_token_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/webhooks/%" PRIu64 "/%s", webhook_id,
                              webhook_token);
 }
@@ -213,10 +220,8 @@ discord_execute_webhook(struct discord *client,
                         struct discord_execute_webhook_params *params,
                         struct discord_webhook *ret)
 {
-  struct ua_resp_handle resp_handle = {
-    ret ? &discord_webhook_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
   char query[4096] = "";
@@ -259,7 +264,7 @@ discord_execute_webhook(struct discord *client,
     ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
 
     code =
-      discord_adapter_run(&client->adapter, &resp_handle, NULL, HTTP_MIMEPOST,
+      discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
                           "/webhooks/%" PRIu64 "/%s%s%s", webhook_id,
                           webhook_token, *query ? "?" : "", query);
 
@@ -270,7 +275,7 @@ discord_execute_webhook(struct discord *client,
   }
 
   /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &resp_handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/webhooks/%" PRIu64 "/%s%s%s", webhook_id,
                              webhook_token, *query ? "?" : "", query);
 }
@@ -282,7 +287,8 @@ discord_get_webhook_message(struct discord *client,
                             const u64_snowflake_t message_id,
                             struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { &discord_message_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
 
   if (!webhook_id) {
     logconf_error(&client->conf, "Missing 'webhook_id'");
@@ -301,7 +307,7 @@ discord_get_webhook_message(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64 "/%s/%" PRIu64, webhook_id,
                              webhook_token, message_id);
 }
@@ -315,11 +321,8 @@ discord_edit_webhook_message(
   struct discord_edit_webhook_message_params *params,
   struct discord_message *ret)
 {
-
-  struct ua_resp_handle resp_handle = {
-    ret ? &discord_message_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
 
@@ -355,7 +358,7 @@ discord_edit_webhook_message(
     ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
 
     code =
-      discord_adapter_run(&client->adapter, &resp_handle, NULL, HTTP_MIMEPOST,
+      discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
                           "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
                           webhook_id, webhook_token, message_id);
 
@@ -366,7 +369,7 @@ discord_edit_webhook_message(
   }
 
   /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &resp_handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
                              webhook_id, webhook_token, message_id);
 }

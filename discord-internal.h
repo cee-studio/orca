@@ -78,8 +78,24 @@ void discord_ratelimit_cleanup(struct discord_ratelimit *rlimit);
 u64_unix_ms_t discord_ratelimit_get_global_wait(
   struct discord_ratelimit *rlimit);
 
+/** @brief Quickly set attributes for an object */
+#define DISCORD_REQUEST_ATTR_INIT(type, obj)                                  \
+  {                                                                           \
+    obj, sizeof(struct type), type##_init_v, type##_from_json_v,              \
+      type##_cleanup_v                                                        \
+  }
+
+/** @brief Quickly set attributes for a list */
+#define DISCORD_REQUEST_ATTR_LIST_INIT(type, list)                            \
+  {                                                                           \
+    list, 0, NULL, (void (*)(char *, size_t, void *))type##_list_from_json_v, \
+      (void (*)(void *))type##_list_free_v                                    \
+  }
+
 /** @brief Behavior of request return object */
 struct discord_request_attr {
+  /** the object itself (only for synchronous requests */
+  void *obj;
   /** size of `obj` in bytes */
   size_t size;
   /** initialize `obj` fields */
@@ -88,9 +104,16 @@ struct discord_request_attr {
   void (*from_json)(char *json, size_t len, void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
-  /** user callback to be triggered on request completion */
-  void (*done)(struct discord *client, ORCAcode code, const void *obj);
-  /** if true the request will be dealt with as soon as possible */
+};
+
+typedef void (*discord_async_cb)(struct discord *client,
+                                 ORCAcode code,
+                                 const void *obj);
+
+struct discord_async_attr {
+  /** callback to be executed on request completion */
+  discord_async_cb done;
+  /** whether the next request is high priority */
   bool high_p;
 };
 
@@ -105,10 +128,12 @@ struct discord_request_attr {
  *   - discord_adapter_cleanup()
  */
 struct discord_adapter {
-  /** if true then next request will be dealt with asynchronously */
-  bool toggle_async;
-  /** behavior config for next async request */
-  struct discord_request_attr attr;
+  struct {
+    /** if true next request will be dealt with asynchronously */
+    bool enable;
+    /** attributes for next async request */
+    struct discord_async_attr attr;
+  } async;
 
   /** DISCORD_HTTP or DISCORD_WEBHOOK logging module */
   struct logconf conf;
@@ -163,8 +188,7 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  * This functions is a selector over discord_request_perform() or
  *        discord_request_perform_async()
  * @param adapter the handle initialized with discord_adapter_init()
- * @param handle the callbacks to be triggered should the request
- *        fail or succeed
+ * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
  * @param method the method in opcode format of the request being sent
@@ -176,20 +200,20 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
  * performing it immediately
  */
 ORCAcode discord_adapter_run(struct discord_adapter *adapter,
-                             struct ua_resp_handle *handle,
+                             struct discord_request_attr *attr,
                              struct sized_buffer *body,
                              enum http_method method,
                              char endpoint_fmt[],
                              ...);
 
 /**
- * @brief Toggle next request to run asynchronously
+ * @brief Set next request to run asynchronously
  *
  * @param adapter the handle initialized with discord_adapter_init()
- * @param attr attributes of the asynchronous task
+ * @param attr async attributes for next request
  */
-void discord_adapter_toggle_async(struct discord_adapter *adapter,
-                                  struct discord_request_attr *attr);
+void discord_adapter_set_async(struct discord_adapter *adapter,
+                               struct discord_async_attr *attr);
 
 /**
  * @brief Context for requests that are scheduled to run asynchronously
@@ -207,8 +231,8 @@ struct discord_request {
   struct discord_request_attr attr;
   /** the request's bucket */
   struct discord_bucket *bucket;
-  /** the request's response handle */
-  struct ua_resp_handle handle;
+  /** callback to be executed on request completion */
+  discord_async_cb done;
   /** the request's request body @note buffer is kept and recycled */
   struct {
     char *start;
@@ -240,9 +264,8 @@ void discord_request_cleanup(struct discord_request *cxt);
 /**
  * @brief Perform a blocking request to Discord
  *
- * @param adapter the handle initialized with discord_adapter_init()
- * @param handle the callbacks to be triggered should the request
- *        fail or succeed
+ * @param adapter the HTTP handle initialized with discord_adapter_init()
+ * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
  * @param method the method in opcode format of the request being sent
@@ -251,17 +274,15 @@ void discord_request_cleanup(struct discord_request *cxt);
  *        transfer was succesful
  */
 ORCAcode discord_request_perform(struct discord_adapter *adapter,
-                                 struct ua_resp_handle *handle,
+                                 struct discord_request_attr *attr,
                                  struct sized_buffer *body,
                                  enum http_method method,
                                  char endpoint[]);
 /**
  * @brief Enqueue a request to be performed asynchronously
  *
- * @param adapter the handle initialized with discord_adapter_init()
- * @param attr attributes for asynchronous task
- * @param handle the callbacks to be triggered should the request
- *        fail or succeed
+ * @param adapter the HTTP handle initialized with discord_adapter_init()
+ * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
  * @param method the method in opcode format of the request being sent
@@ -271,7 +292,6 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  */
 ORCAcode discord_request_perform_async(struct discord_adapter *adapter,
                                        struct discord_request_attr *attr,
-                                       struct ua_resp_handle *handle,
                                        struct sized_buffer *body,
                                        enum http_method method,
                                        char endpoint[]);

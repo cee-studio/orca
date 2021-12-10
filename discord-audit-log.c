@@ -12,7 +12,8 @@ discord_get_guild_audit_log(struct discord *client,
                             struct discord_get_guild_audit_log_params *params,
                             struct discord_audit_log *ret)
 {
-  struct ua_resp_handle handle = { &discord_audit_log_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_audit_log, ret);
   char query[1024] = "";
 
   if (!guild_id) {
@@ -51,7 +52,7 @@ discord_get_guild_audit_log(struct discord *client,
     }
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/audit-logs%s", guild_id,
                              query);
 }

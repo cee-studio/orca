@@ -83,13 +83,14 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
 /* template function for performing requests */
 ORCAcode
 discord_adapter_run(struct discord_adapter *adapter,
-                    struct ua_resp_handle *handle,
+                    struct discord_request_attr *attr,
                     struct sized_buffer *body,
                     enum http_method method,
                     char endpoint_fmt[],
                     ...)
 {
   char endpoint[2048];
+  ORCAcode code;
   va_list args;
   int ret;
 
@@ -101,27 +102,23 @@ discord_adapter_run(struct discord_adapter *adapter,
 
   va_end(args);
 
-  /* enqueue request */
-  if (true == adapter->toggle_async) {
-    struct discord_request_attr *attr = &adapter->attr;
-
-    adapter->toggle_async = false; /* reset */
-    return discord_request_perform_async(adapter, attr, handle, body, method,
-                                         endpoint);
+  /* whether request should be enqueued or executed on the spot */
+  if (true == adapter->async.enable) {
+    code =
+      discord_request_perform_async(adapter, attr, body, method, endpoint);
+    memset(&adapter->async, 0, sizeof(adapter->async));
+  }
+  else {
+    code = discord_request_perform(adapter, attr, body, method, endpoint);
   }
 
-  /* blocking request */
-  return discord_request_perform(adapter, handle, body, method, endpoint);
+  return code;
 }
 
 void
-discord_adapter_toggle_async(struct discord_adapter *adapter,
-                             struct discord_request_attr *attr)
+discord_adapter_set_async(struct discord_adapter *adapter,
+                          struct discord_async_attr *attr)
 {
-  adapter->toggle_async = true;
-
-  if (attr)
-    memcpy(&adapter->attr, attr, sizeof(struct discord_request_attr));
-  else
-    memset(&adapter->attr, 0, sizeof(struct discord_request_attr));
+  adapter->async.enable = true;
+  memcpy(&adapter->async.attr, attr, sizeof(struct discord_async_attr));
 }

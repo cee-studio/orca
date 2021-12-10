@@ -14,9 +14,8 @@ discord_create_interaction_response(
   struct discord_interaction_response *params,
   struct discord_interaction_response *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_interaction_response_from_json_v : NULL, ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_interaction_response, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -36,7 +35,7 @@ discord_create_interaction_response(
   body.size = discord_interaction_response_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/interactions/%" PRIu64 "/%s/callback",
                              interaction_id, interaction_token);
 }
@@ -48,8 +47,8 @@ discord_get_original_interaction_response(
   const char interaction_token[],
   struct discord_interaction_response *ret)
 {
-  struct ua_resp_handle handle = { &discord_interaction_response_from_json_v,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_interaction_response, ret);
 
   if (!interaction_id) {
     logconf_error(&client->conf, "Missing 'interaction_id'");
@@ -64,7 +63,7 @@ discord_get_original_interaction_response(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64 "/%s/messages/@original",
                              interaction_id, interaction_token);
 }
@@ -77,10 +76,8 @@ discord_edit_original_interaction_response(
   struct discord_edit_original_interaction_response_params *params,
   struct discord_interaction_response *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_interaction_response_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_interaction_response, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
 
@@ -111,7 +108,7 @@ discord_edit_original_interaction_response(
                      "multipart/form-data");
     ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
 
-    code = discord_adapter_run(&client->adapter, &handle, NULL, HTTP_MIMEPOST,
+    code = discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
                                "/webhooks/%" PRIu64 "/%s/messages/@original",
                                interaction_id, interaction_token);
 
@@ -122,7 +119,7 @@ discord_edit_original_interaction_response(
   }
 
   /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/webhooks/%" PRIu64 "/%s/messages/@original",
                              interaction_id, interaction_token);
 }
@@ -155,10 +152,8 @@ discord_create_followup_message(
   struct discord_create_followup_message_params *params,
   struct discord_webhook *ret)
 {
-  struct ua_resp_handle resp_handle = {
-    ret ? &discord_webhook_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
   char query[4096] = "";
@@ -199,7 +194,7 @@ discord_create_followup_message(
     ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
 
     code =
-      discord_adapter_run(&client->adapter, &resp_handle, NULL, HTTP_MIMEPOST,
+      discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
                           "/webhooks/%" PRIu64 "/%s%s%s", application_id,
                           interaction_token, *query ? "?" : "", query);
 
@@ -210,7 +205,7 @@ discord_create_followup_message(
   }
 
   /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &resp_handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/webhooks/%" PRIu64 "/%s%s%s", application_id,
                              interaction_token, *query ? "?" : "", query);
 }
@@ -222,7 +217,8 @@ discord_get_followup_message(struct discord *client,
                              const u64_snowflake_t message_id,
                              struct discord_message *ret)
 {
-  struct ua_resp_handle handle = { &discord_message_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -241,7 +237,7 @@ discord_get_followup_message(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64 "/%s/%" PRIu64,
                              application_id, interaction_token, message_id);
 }
@@ -255,10 +251,8 @@ discord_edit_followup_message(
   struct discord_edit_followup_message_params *params,
   struct discord_message *ret)
 {
-  struct ua_resp_handle resp_handle = {
-    ret ? &discord_message_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
   char buf[16384]; /**< @todo dynamic buffer */
 
@@ -294,7 +288,7 @@ discord_edit_followup_message(
     ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
 
     code =
-      discord_adapter_run(&client->adapter, &resp_handle, NULL, HTTP_MIMEPOST,
+      discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
                           "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
                           application_id, interaction_token, message_id);
 
@@ -305,7 +299,7 @@ discord_edit_followup_message(
   }
 
   /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &resp_handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
                              application_id, interaction_token, message_id);
 }

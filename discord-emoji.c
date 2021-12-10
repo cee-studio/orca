@@ -11,7 +11,8 @@ discord_list_guild_emojis(struct discord *client,
                           const u64_snowflake_t guild_id,
                           struct discord_emoji ***ret)
 {
-  struct ua_resp_handle handle = { &discord_emoji_list_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_emoji, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -22,7 +23,7 @@ discord_list_guild_emojis(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/emojis", guild_id);
 }
 
@@ -32,7 +33,8 @@ discord_get_guild_emoji(struct discord *client,
                         const u64_snowflake_t emoji_id,
                         struct discord_emoji *ret)
 {
-  struct ua_resp_handle handle = { &discord_emoji_from_json_v, ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_emoji, ret);
 
   if (!guild_id) {
     logconf_error(&client->conf, "Missing 'guild_id'");
@@ -47,7 +49,7 @@ discord_get_guild_emoji(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/emojis/%" PRIu64, guild_id,
                              emoji_id);
 }
@@ -58,8 +60,8 @@ discord_create_guild_emoji(struct discord *client,
                            struct discord_create_guild_emoji_params *params,
                            struct discord_emoji *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_emoji_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_emoji, ret);
   struct sized_buffer body;
   char buf[2048];
 
@@ -76,7 +78,7 @@ discord_create_guild_emoji(struct discord *client,
     discord_create_guild_emoji_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/guilds/%" PRIu64 "/emojis", guild_id);
 }
 
@@ -87,8 +89,8 @@ discord_modify_guild_emoji(struct discord *client,
                            struct discord_modify_guild_emoji_params *params,
                            struct discord_emoji *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_emoji_from_json_v : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_emoji, ret);
   struct sized_buffer body;
   char buf[2048];
 
@@ -109,7 +111,7 @@ discord_modify_guild_emoji(struct discord *client,
     discord_modify_guild_emoji_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/emojis/%" PRIu64, guild_id,
                              emoji_id);
 }

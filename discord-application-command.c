@@ -12,9 +12,8 @@ discord_get_global_application_commands(
   const u64_snowflake_t application_id,
   struct discord_application_command ***ret)
 {
-  struct ua_resp_handle handle = {
-    &discord_application_command_list_from_json_v, ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_application_command, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -25,7 +24,7 @@ discord_get_global_application_commands(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/applications/%" PRIu64 "/commands",
                              application_id);
 }
@@ -37,10 +36,8 @@ discord_create_global_application_command(
   struct discord_create_global_application_command_params *params,
   struct discord_application_command *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_application_command_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -65,7 +62,7 @@ discord_create_global_application_command(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/applications/%" PRIu64 "/commands",
                              application_id);
 }
@@ -76,8 +73,8 @@ discord_get_global_application_command(struct discord *client,
                                        const u64_snowflake_t command_id,
                                        struct discord_application_command *ret)
 {
-  struct ua_resp_handle handle = { &discord_application_command_from_json_v,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -92,7 +89,7 @@ discord_get_global_application_command(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/applications/%" PRIu64 "/commands/%" PRIu64,
                              application_id, command_id);
 }
@@ -105,10 +102,8 @@ discord_edit_global_application_command(
   struct discord_edit_global_application_command_params *params,
   struct discord_application_command *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_application_command_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -125,7 +120,7 @@ discord_edit_global_application_command(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/applications/%" PRIu64 "/commands/%" PRIu64,
                              application_id, command_id);
 }
@@ -156,9 +151,8 @@ discord_bulk_overwrite_global_application_command(
   struct discord_application_command **params,
   struct discord_application_command ***ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_application_command_list_from_json_v : NULL, ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_application_command, ret);
   struct sized_buffer body;
   char buf[8192];
 
@@ -175,7 +169,7 @@ discord_bulk_overwrite_global_application_command(
     discord_application_command_list_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PUT,
                              "/applications/%" PRIu64 "/commands",
                              application_id);
 }
@@ -187,9 +181,8 @@ discord_get_guild_application_commands(
   const u64_snowflake_t guild_id,
   struct discord_application_command ***ret)
 {
-  struct ua_resp_handle handle = {
-    &discord_application_command_list_from_json_v, ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_application_command, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -204,7 +197,7 @@ discord_get_guild_application_commands(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands",
                              application_id, guild_id);
@@ -218,10 +211,8 @@ discord_create_guild_application_command(
   struct discord_create_guild_application_command_params *params,
   struct discord_application_command *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_application_command_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -250,7 +241,7 @@ discord_create_guild_application_command(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands",
                              application_id, guild_id);
@@ -263,8 +254,8 @@ discord_get_guild_application_command(struct discord *client,
                                       const u64_snowflake_t command_id,
                                       struct discord_application_command *ret)
 {
-  struct ua_resp_handle handle = { &discord_application_command_from_json_v,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -283,7 +274,7 @@ discord_get_guild_application_command(struct discord *client,
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands/%" PRIu64,
                              application_id, guild_id, command_id);
@@ -298,10 +289,8 @@ discord_edit_guild_application_command(
   struct discord_edit_guild_application_command_params *params,
   struct discord_application_command *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_application_command_from_json_v : NULL,
-    ret,
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command, ret);
   struct sized_buffer body;
   char buf[4096];
 
@@ -322,7 +311,7 @@ discord_edit_guild_application_command(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands/%" PRIu64,
                              application_id, guild_id, command_id);
@@ -361,9 +350,8 @@ discord_bulk_overwrite_guild_application_command(
   struct discord_application_command **params,
   struct discord_application_command ***ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_application_command_list_from_json_v : NULL, ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_LIST_INIT(discord_application_command, ret);
   struct sized_buffer body;
   char buf[8192];
 
@@ -384,7 +372,7 @@ discord_bulk_overwrite_guild_application_command(
     discord_application_command_list_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PUT,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands",
                              application_id, guild_id);
@@ -397,9 +385,8 @@ discord_get_guild_application_command_permissions(
   const u64_snowflake_t guild_id,
   struct discord_guild_application_command_permissions ***ret)
 {
-  struct ua_resp_handle handle = {
-    &discord_guild_application_command_permissions_list_from_json_v, ret
-  };
+  struct discord_request_attr attr = DISCORD_REQUEST_ATTR_LIST_INIT(
+    discord_application_command_permissions, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -414,7 +401,7 @@ discord_get_guild_application_command_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands/permissions",
                              application_id, guild_id);
@@ -428,9 +415,8 @@ discord_get_application_command_permissions(
   const u64_snowflake_t command_id,
   struct discord_guild_application_command_permissions *ret)
 {
-  struct ua_resp_handle handle = {
-    &discord_guild_application_command_permissions_from_json_v, ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command_permissions, ret);
 
   if (!application_id) {
     logconf_error(&client->conf, "Missing 'application_id'");
@@ -449,7 +435,7 @@ discord_get_application_command_permissions(
     return ORCA_MISSING_PARAMETER;
   }
 
-  return discord_adapter_run(&client->adapter, &handle, NULL, HTTP_GET,
+  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands/%" PRIu64 "/permissions",
                              application_id, guild_id, command_id);
@@ -464,10 +450,8 @@ discord_edit_application_command_permissions(
   struct discord_edit_application_command_permissions_params *params,
   struct discord_guild_application_command_permissions *ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_guild_application_command_permissions_from_json_v : NULL,
-    ret
-  };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_application_command_permissions, ret);
   struct sized_buffer body;
   char buf[8192];
 
@@ -488,7 +472,7 @@ discord_edit_application_command_permissions(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PUT,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands/%" PRIu64 "/permissions",
                              application_id, guild_id, command_id);
@@ -502,11 +486,8 @@ discord_batch_edit_application_command_permissions(
   struct discord_guild_application_command_permissions **params,
   struct discord_guild_application_command_permissions ***ret)
 {
-  struct ua_resp_handle handle = {
-    ret ? &discord_guild_application_command_permissions_list_from_json_v
-        : NULL,
-    ret
-  };
+  struct discord_request_attr attr = DISCORD_REQUEST_ATTR_LIST_INIT(
+    discord_application_command_permissions, ret);
   struct sized_buffer body;
   char buf[8192];
 
@@ -527,7 +508,7 @@ discord_batch_edit_application_command_permissions(
     buf, sizeof(buf), params);
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PUT,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PUT,
                              "/applications/%" PRIu64 "/guilds/%" PRIu64
                              "/commands/permissions",
                              application_id, guild_id);

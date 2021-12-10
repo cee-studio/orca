@@ -381,9 +381,8 @@ discord_disconnect_guild_member(struct discord *client,
                                 const u64_snowflake_t user_id,
                                 struct discord_guild_member *ret)
 {
-  struct ua_resp_handle handle = { ret ? &discord_guild_member_from_json_v
-                                       : NULL,
-                                   ret };
+  struct discord_request_attr attr =
+    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
   struct sized_buffer body;
   char buf[128];
 
@@ -399,7 +398,7 @@ discord_disconnect_guild_member(struct discord *client,
   body.size = json_inject(buf, sizeof(buf), "(channel_id):null");
   body.start = buf;
 
-  return discord_adapter_run(&client->adapter, &handle, &body, HTTP_PATCH,
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
                              "/guilds/%" PRIu64 "/members/%" PRIu64, guild_id,
                              user_id);
 }

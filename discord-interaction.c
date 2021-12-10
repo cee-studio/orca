@@ -79,6 +79,7 @@ discord_edit_original_interaction_response(
   struct discord_request_attr attr =
     DISCORD_REQUEST_ATTR_INIT(discord_interaction_response, ret);
   struct sized_buffer body;
+  enum http_method method;
   char buf[16384]; /**< @todo dynamic buffer */
 
   if (!interaction_id) {
@@ -99,27 +100,14 @@ discord_edit_original_interaction_response(
   body.start = buf;
 
   if (params->attachments) {
-#if 0
-    /* content-type is multipart/form-data */
-    void *cxt[2] = { params->attachments, &body };
-    ORCAcode code;
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type",
-                     "multipart/form-data");
-    ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
-
-    code = discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
-                               "/webhooks/%" PRIu64 "/%s/messages/@original",
-                               interaction_id, interaction_token);
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
-
-    return code;
-#endif
+    method = HTTP_MIMEPOST;
+    attr.attachments = params->attachments;
+  }
+  else {
+    method = HTTP_POST;
   }
 
-  /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, method,
                              "/webhooks/%" PRIu64 "/%s/messages/@original",
                              interaction_id, interaction_token);
 }
@@ -155,6 +143,7 @@ discord_create_followup_message(
   struct discord_request_attr attr =
     DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
+  enum http_method method;
   char buf[16384]; /**< @todo dynamic buffer */
   char query[4096] = "";
 
@@ -184,28 +173,14 @@ discord_create_followup_message(
   body.start = buf;
 
   if (params->attachments) {
-#if 0
-    /* content-type is multipart/form-data */
-    void *cxt[2] = { params->attachments, &body };
-    ORCAcode code;
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type",
-                     "multipart/form-data");
-    ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
-
-    code =
-      discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
-                          "/webhooks/%" PRIu64 "/%s%s%s", application_id,
-                          interaction_token, *query ? "?" : "", query);
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
-
-    return code;
-#endif
+    method = HTTP_MIMEPOST;
+    attr.attachments = params->attachments;
+  }
+  else {
+    method = HTTP_POST;
   }
 
-  /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, method,
                              "/webhooks/%" PRIu64 "/%s%s%s", application_id,
                              interaction_token, *query ? "?" : "", query);
 }
@@ -254,6 +229,7 @@ discord_edit_followup_message(
   struct discord_request_attr attr =
     DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
+  enum http_method method;
   char buf[16384]; /**< @todo dynamic buffer */
 
   if (!application_id) {
@@ -277,29 +253,15 @@ discord_edit_followup_message(
     discord_edit_followup_message_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  if (!params->attachments) {
-#if 0
-    /* content-type is multipart/form-data */
-    void *cxt[2] = { params->attachments, &body };
-    ORCAcode code;
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type",
-                     "multipart/form-data");
-    ua_curl_mime_setopt(client->adapter.ua, &cxt, &_discord_params_to_mime);
-
-    code =
-      discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
-                          "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
-                          application_id, interaction_token, message_id);
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
-
-    return code;
-#endif
+  if (params->attachments) {
+    method = HTTP_MIMEPOST;
+    attr.attachments = params->attachments;
+  }
+  else {
+    method = HTTP_POST;
   }
 
-  /* content-type is application/json */
-  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
+  return discord_adapter_run(&client->adapter, &attr, &body, method,
                              "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
                              application_id, interaction_token, message_id);
 }

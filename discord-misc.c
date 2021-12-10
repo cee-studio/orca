@@ -12,50 +12,6 @@ struct msg {
   bool matched;
 };
 
-void
-_discord_params_to_mime(curl_mime *mime, void *p_cxt)
-{
-  NTL_T(struct discord_attachment) atchs = ((void **)p_cxt)[0];
-  struct sized_buffer *buf = ((void **)p_cxt)[1];
-  curl_mimepart *part;
-  char name[64];
-  int i;
-
-  /* json part */
-  if (buf->start && buf->size) {
-    part = curl_mime_addpart(mime);
-    curl_mime_data(part, buf->start, buf->size);
-    curl_mime_type(part, "application/json");
-    curl_mime_name(part, "payload_json");
-  }
-
-  /* attachment part */
-  for (i = 0; atchs[i]; ++i) {
-    snprintf(name, sizeof(name), "files[%d]", i);
-    if (atchs[i]->content) {
-      part = curl_mime_addpart(mime);
-      curl_mime_data(part, atchs[i]->content,
-                     atchs[i]->size ? atchs[i]->size : CURL_ZERO_TERMINATED);
-      curl_mime_filename(part, IS_EMPTY_STRING(atchs[i]->filename)
-                                 ? "a.out"
-                                 : atchs[i]->filename);
-      curl_mime_type(part, IS_EMPTY_STRING(atchs[i]->content_type)
-                             ? "application/octet-stream"
-                             : atchs[i]->content_type);
-      curl_mime_name(part, name);
-    }
-    else if (!IS_EMPTY_STRING(atchs[i]->filename)) {
-      /* fetch local file by the filename */
-      part = curl_mime_addpart(mime);
-      curl_mime_filedata(part, atchs[i]->filename);
-      curl_mime_type(part, IS_EMPTY_STRING(atchs[i]->content_type)
-                             ? "application/octet-stream"
-                             : atchs[i]->content_type);
-      curl_mime_name(part, name);
-    }
-  }
-}
-
 ORCAcode
 discord_delete_messages_by_author_id(struct discord *client,
                                      u64_snowflake_t channel_id,

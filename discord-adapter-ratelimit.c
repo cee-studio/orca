@@ -124,7 +124,7 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
 static void
 _discord_request_cleanup(struct discord_request *cxt)
 {
-  if (cxt->body.start) free(cxt->body.start);
+  if (cxt->body.buf.start) free(cxt->body.buf.start);
   free(cxt);
 }
 
@@ -146,7 +146,7 @@ _discord_bucket_cleanup(struct discord_bucket *b)
     QUEUE_MOVE(ua_queues[i], &queue);
     while (!QUEUE_EMPTY(&queue)) {
       q = QUEUE_HEAD(&queue);
-      QUEUE_REMOVE(&cxt->entry);
+      QUEUE_REMOVE(q);
 
       cxt = QUEUE_DATA(q, struct discord_request, entry);
       _discord_request_cleanup(cxt);
@@ -172,7 +172,6 @@ discord_ratelimit_init(struct discord_ratelimit *rlimit, struct logconf *conf)
 
   /* for routes that still haven't discovered a bucket match */
   rlimit->b_null = _discord_bucket_init(rlimit, "", &hash, 1L);
-
 
   /* idleq is malloc'd to guarantee a client cloned by discord_clone() will
    * share the same queue with the original */
@@ -339,10 +338,10 @@ _discord_bucket_populate(struct discord_ratelimit *rlimit,
     b->reset_tstamp = now + (1000 * strtod(reset.start, NULL) - offset);
   }
 
-  logconf_debug(&rlimit->conf,
-                "[%.4s] Remaining = %ld | Reset = %" PRIu64 " (%" PRId64 " ms)",
-                b->hash, b->remaining, b->reset_tstamp,
-                (int64_t)(b->reset_tstamp - now));
+  logconf_debug(
+    &rlimit->conf,
+    "[%.4s] Remaining = %ld | Reset = %" PRIu64 " (%" PRId64 " ms)", b->hash,
+    b->remaining, b->reset_tstamp, (int64_t)(b->reset_tstamp - now));
 }
 
 /* in case of asynchronous requests, check if successive requests with

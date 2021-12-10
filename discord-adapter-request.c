@@ -17,6 +17,79 @@
   ((struct discord_request *)((int8_t *)(p_node)-offsetof(                    \
     struct discord_request, node)))
 
+static void
+_discord_request_to_mime(curl_mime *mime, void *p_cxt)
+{
+  struct discord_request *cxt = p_cxt;
+  struct discord_attachment **atchs = cxt->attr.attachments;
+  struct sized_buffer *body = &cxt->body.buf;
+  curl_mimepart *part;
+  char name[64];
+  int i;
+
+  /* json part */
+  if (body->start && body->size) {
+    part = curl_mime_addpart(mime);
+    curl_mime_data(part, body->start, body->size);
+    curl_mime_type(part, "application/json");
+    curl_mime_name(part, "payload_json");
+  }
+
+  /* attachment part */
+  for (i = 0; atchs[i]; ++i) {
+    snprintf(name, sizeof(name), "files[%d]", i);
+    if (atchs[i]->content) {
+      part = curl_mime_addpart(mime);
+      curl_mime_data(part, atchs[i]->content,
+                     atchs[i]->size ? atchs[i]->size : CURL_ZERO_TERMINATED);
+      curl_mime_filename(part, IS_EMPTY_STRING(atchs[i]->filename)
+                                 ? "a.out"
+                                 : atchs[i]->filename);
+      curl_mime_type(part, IS_EMPTY_STRING(atchs[i]->content_type)
+                             ? "application/octet-stream"
+                             : atchs[i]->content_type);
+      curl_mime_name(part, name);
+    }
+    else if (!IS_EMPTY_STRING(atchs[i]->filename)) {
+      /* fetch local file by the filename */
+      part = curl_mime_addpart(mime);
+      curl_mime_filedata(part, atchs[i]->filename);
+      curl_mime_type(part, IS_EMPTY_STRING(atchs[i]->content_type)
+                             ? "application/octet-stream"
+                             : atchs[i]->content_type);
+      curl_mime_name(part, name);
+    }
+  }
+}
+
+/* TODO: make this kind of function specs generated (optional)
+ *
+ * Only the fields that are required at _discord_request_to_mime()
+ *        are duplicated*/
+static struct discord_attachment **
+_discord_attachment_list_dup(struct discord_attachment **src)
+{
+  size_t i, len = ntl_length((ntl_t)src);
+  struct discord_attachment **dest;
+
+  dest = (struct discord_attachment **)ntl_calloc(len, sizeof **dest);
+
+  for (i = 0; src[i]; ++i) {
+    memcpy(dest[i], src[i], sizeof **dest);
+    if (src[i]->content) {
+      dest[i]->content = strdup(src[i]->content);
+    }
+    if (src[i]->filename) {
+      dest[i]->filename = strdup(src[i]->filename);
+    }
+    if (src[i]->content_type) {
+      dest[i]->content_type = strdup(src[i]->content_type);
+    }
+  }
+
+  return dest;
+}
+
 static int
 timer_less_than(const struct heap_node *ha, const struct heap_node *hb)
 {
@@ -27,13 +100,19 @@ timer_less_than(const struct heap_node *ha, const struct heap_node *hb)
 }
 
 static void
-_discord_request_reset(struct discord_request *cxt)
+_discord_request_stop(struct discord_request *cxt)
 {
+  ua_conn_stop(cxt->conn);
+
   cxt->bucket = NULL;
   cxt->done = NULL;
-  memset(&cxt->attr, 0, sizeof(struct discord_request_attr));
   *cxt->endpoint = '\0';
   cxt->conn = NULL;
+
+  if (cxt->attr.attachments) {
+    discord_attachment_list_free(cxt->attr.attachments);
+  }
+  memset(&cxt->attr, 0, sizeof(struct discord_request_attr));
 }
 
 static void
@@ -47,23 +126,24 @@ _discord_request_populate(struct discord_request *cxt,
   cxt->method = method;
   cxt->done = rlimit->async.attr.done;
 
-  if (attr)
-    memcpy(&cxt->attr, attr, sizeof(struct discord_request_attr));
-  else
-    memset(&cxt->attr, 0, sizeof(struct discord_request_attr));
+  memcpy(&cxt->attr, attr, sizeof(struct discord_request_attr));
+
+  if (attr->attachments) {
+    cxt->attr.attachments = _discord_attachment_list_dup(attr->attachments);
+  }
 
   if (body) {
     /* copy request body */
     if (body->size > cxt->body.memsize) {
       /* needs to increase buffer size */
-      void *tmp = realloc(cxt->body.start, body->size);
+      void *tmp = realloc(cxt->body.buf.start, body->size);
       ASSERT_S(tmp != NULL, "Out of memory");
 
-      cxt->body.start = tmp;
+      cxt->body.buf.start = tmp;
       cxt->body.memsize = body->size;
     }
-    memcpy(cxt->body.start, body->start, body->size);
-    cxt->body.size = body->size;
+    memcpy(cxt->body.buf.start, body->start, body->size);
+    cxt->body.buf.size = body->size;
   }
 
   /* copy endpoint over to cxt */
@@ -205,8 +285,6 @@ discord_request_perform_async(struct discord_ratelimit *rlimit,
     QUEUE_REMOVE(q);
 
     cxt = QUEUE_DATA(q, struct discord_request, entry);
-
-    _discord_request_reset(cxt);
   }
   QUEUE_INIT(&cxt->entry);
 
@@ -234,21 +312,24 @@ discord_request_perform(struct discord_ratelimit *rlimit,
   struct discord *client = CLIENT(rlimit);
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(rlimit, endpoint);
-  /* connection handle to perform connection */
+  /* throw-away for ua_conn_set_mime() */
+  struct discord_request cxt = { 0 };
   struct ua_conn *conn;
-  /* orca error status */
   ORCAcode code;
-  /* in case of request failure, try again */
   bool retry;
 
   conn = ua_conn_start(client->adapter.ua);
 
-  if (HTTP_MIMEPOST == method)
-    ua_conn_add_header(conn, "Content-Type", "multipart/form-data");
-  else
-    ua_conn_add_header(conn, "Content-Type", "application/json");
+  if (HTTP_MIMEPOST == method) {
+    cxt.attr.attachments = attr->attachments;
+    cxt.body.buf = *body;
 
-  /* populate conn with parameters */
+    ua_conn_add_header(conn, "Content-Type", "multipart/form-data");
+    ua_conn_set_mime(conn, &cxt, &_discord_request_to_mime);
+  }
+  else {
+    ua_conn_add_header(conn, "Content-Type", "application/json");
+  }
   ua_conn_setup(conn, body, method, endpoint);
 
   pthread_mutex_lock(&b->lock);
@@ -304,22 +385,20 @@ _discord_request_start_async(struct discord_ratelimit *rlimit,
                              struct discord_request *cxt)
 {
   struct discord *client = CLIENT(rlimit);
-  struct sized_buffer body;
   CURL *ehandle;
 
   cxt->conn = ua_conn_start(client->adapter.ua);
 
-  if (HTTP_MIMEPOST == cxt->method)
-    ua_conn_add_header(cxt->conn, "Content-Type", "multipart/form-data");
-  else
-    ua_conn_add_header(cxt->conn, "Content-Type", "application/json");
-
   ehandle = ua_conn_get_easy_handle(cxt->conn);
 
-  body.start = cxt->body.start;
-  body.size = cxt->body.size;
-
-  ua_conn_setup(cxt->conn, &body, cxt->method, cxt->endpoint);
+  if (HTTP_MIMEPOST == cxt->method) {
+    ua_conn_add_header(cxt->conn, "Content-Type", "multipart/form-data");
+    ua_conn_set_mime(cxt->conn, cxt, &_discord_request_to_mime);
+  }
+  else {
+    ua_conn_add_header(cxt->conn, "Content-Type", "application/json");
+  }
+  ua_conn_setup(cxt->conn, &cxt->body.buf, cxt->method, cxt->endpoint);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
@@ -509,10 +588,12 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     /* enqueue request for retry or recycle */
     if (retry) {
       ua_conn_reset(cxt->conn);
+
       QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
     }
     else {
-      ua_conn_stop(cxt->conn);
+      _discord_request_stop(cxt);
+
       QUEUE_INSERT_TAIL(rlimit->async.idleq, &cxt->entry);
     }
   }

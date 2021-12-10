@@ -158,8 +158,8 @@ discord_create_message(struct discord *client,
   struct discord_request_attr attr =
     DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
+  enum http_method method;
   char buf[16384]; /**< @todo dynamic buffer */
-  ORCAcode code;
 
   if (!channel_id) {
     logconf_error(&client->conf, "Missing 'channel_id'");
@@ -173,29 +173,16 @@ discord_create_message(struct discord *client,
   body.size = discord_create_message_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
 
-  if (!params->attachments) {
-    /* content-type is application/json */
-    code = discord_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
-                               "/channels/%" PRIu64 "/messages", channel_id);
+  if (params->attachments) {
+    method = HTTP_MIMEPOST;
+    attr.attachments = params->attachments;
   }
   else {
-#if 0
-    /* content-type is multipart/form-data */
-    void *cxt[2] = { params->attachments, &body };
-
-    ua_curl_mime_setopt(client->adapter.ua, cxt, &_discord_params_to_mime);
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type",
-                     "multipart/form-data");
-
-    code = discord_adapter_run(&client->adapter, &attr, NULL, HTTP_MIMEPOST,
-                               "/channels/%" PRIu64 "/messages", channel_id);
-
-    ua_reqheader_add(client->adapter.ua, "Content-Type", "application/json");
-#endif
+    method = HTTP_POST;
   }
 
-  return code;
+  return discord_adapter_run(&client->adapter, &attr, &body, method,
+                             "/channels/%" PRIu64 "/messages", channel_id);
 }
 
 ORCAcode

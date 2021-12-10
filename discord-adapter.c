@@ -18,6 +18,10 @@ setopt_cb(struct ua_conn *conn, void *p_token)
   ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
 
   ua_conn_add_header(conn, "Authorization", auth);
+
+#if 0 /* enable for debugging */
+  curl_easy_setopt(ua_conn_get_easy_handle(conn), CURLOPT_VERBOSE, 1L);
+#endif
 }
 
 void

@@ -50,12 +50,16 @@ struct discord_request_attr {
   void (*from_json)(char *json, size_t len, void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
+
+  /** in case of HTTP_MIMEPOST, provide attachments */
+  struct discord_attachment **attachments;
 };
 
 typedef void (*discord_async_cb)(struct discord *client,
                                  ORCAcode code,
                                  const void *obj);
 
+/** @brief The async attributes for next request */
 struct discord_async_attr {
   /** callback to be executed on request completion */
   discord_async_cb done;
@@ -219,8 +223,7 @@ struct discord_request {
   discord_async_cb done;
   /** the request's request body @note buffer is kept and recycled */
   struct {
-    char *start;
-    size_t size;
+    struct sized_buffer buf;
     size_t memsize;
   } body;
   /** the request's http method */
@@ -677,19 +680,5 @@ struct discord {
   /** space for user arbitrary data */
   void *data;
 };
-
-/* MISCELLANEOUS */
-
-/**
- * @brief Encodes a raw JSON payload to multipart data
- *
- * Set as a ua_curl_mime_setopt() callback, the Content-Type must be changed to
- *        `multipart/form-data` by ua_reqheader_add(), and the
- *        discord_adapter_run() HTTP method must be `HTTP_MIMEPOST`
- * @param mime the pre-initialized curl_mime handler
- * @param p_cxt a `void*[2]` that expects `struct discord_attachment**` and
- *        `struct sized_buffer` on each respective element
- */
-void _discord_params_to_mime(curl_mime *mime, void *p_cxt);
 
 #endif /* DISCORD_INTERNAL_H */

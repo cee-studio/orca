@@ -59,8 +59,6 @@ struct ua_conn {
   /** informational handle on how the request went */
   struct ua_info info;
 
-  /** user callback and object to be filled up on response */
-  struct ua_resp_handle handle;
   /** request URL */
   struct sized_buffer url;
   /** the conn request header */
@@ -436,7 +434,7 @@ static void
 _ua_info_reset(struct ua_info *info)
 {
   info->httpcode = 0;
-  info->time_us = 0;
+  info->elapsed_sec = 0;
   info->body.len = 0;
   info->header.len = 0;
   info->header.n_pairs = 0;
@@ -458,7 +456,6 @@ ua_conn_reset(struct ua_conn *conn)
   /* reset conn fields for next iteration */
   _ua_info_reset(&conn->info);
   *conn->errbuf = '\0';
-  memset(&conn->handle, 0, sizeof(struct ua_resp_handle));
 }
 
 void
@@ -631,7 +628,6 @@ _ua_conn_set_url(struct ua_conn *conn, char endpoint[], size_t len)
 
 void
 ua_conn_setup(struct ua_conn *conn,
-              struct ua_resp_handle *handle,
               struct sized_buffer *body,
               enum http_method method,
               char endpoint[])
@@ -643,11 +639,6 @@ ua_conn_setup(struct ua_conn *conn,
 
   _ua_conn_set_url(conn, endpoint, strlen(endpoint));
   _ua_conn_set_method(conn, method, body);
-
-  /* store callback context */
-  if (handle) {
-    memcpy(&conn->handle, handle, sizeof(struct ua_resp_handle));
-  }
 
   /* log request to be sent */
   method_str = http_method_print(conn->info.method);
@@ -663,7 +654,7 @@ ua_conn_setup(struct ua_conn *conn,
 
 /* get request results */
 ORCAcode
-ua_conn_get_results(struct ua_conn *conn, struct ua_info *info)
+ua_info_extract(struct ua_conn *conn, struct ua_info *info)
 {
   struct sized_buffer logheader = { conn->info.header.buf,
                                     conn->info.header.len };
@@ -672,82 +663,66 @@ ua_conn_get_results(struct ua_conn *conn, struct ua_info *info)
   char *resp_url = NULL;
   ORCAcode code;
 
+  _ua_info_populate(info, &conn->info);
+
   /* get request's total elapsed time */
-  curl_easy_getinfo(conn->ehandle, CURLINFO_TOTAL_TIME_T, &conn->info.time_us);
+  curl_easy_getinfo(conn->ehandle, CURLINFO_TOTAL_TIME, &info->elapsed_sec);
   /* get response's code */
-  curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE,
-                    &conn->info.httpcode);
+  curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE, &info->httpcode);
   /* get response's url */
   curl_easy_getinfo(conn->ehandle, CURLINFO_EFFECTIVE_URL, &resp_url);
 
   logconf_http(conf, &conn->info.loginfo, resp_url, logheader, logbody,
-               "HTTP_RCV_%s(%d)", http_code_print(conn->info.httpcode),
-               conn->info.httpcode);
+               "HTTP_RCV_%s(%d)", http_code_print(info->httpcode),
+               info->httpcode);
 
   /* triggers response callbacks */
-  if (conn->info.httpcode >= 500 && conn->info.httpcode < 600) {
+  if (info->httpcode >= 500 && info->httpcode < 600) {
     logconf_error(
       conf,
       ANSICOLOR("SERVER ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
-      conn->info.httpcode, http_code_print(conn->info.httpcode),
-      http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
-
-    if (conn->handle.err_cb) {
-      conn->handle.err_cb(conn->info.body.buf, conn->info.body.len,
-                          conn->handle.err_obj);
-    }
+      info->httpcode, http_code_print(info->httpcode),
+      http_reason_print(info->httpcode), info->loginfo.counter);
     code = ORCA_HTTP_CODE;
   }
-  else if (conn->info.httpcode >= 400) {
+  else if (info->httpcode >= 400) {
     logconf_error(
       conf,
       ANSICOLOR("CLIENT ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
-      conn->info.httpcode, http_code_print(conn->info.httpcode),
-      http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
-
-    if (conn->handle.err_cb) {
-      conn->handle.err_cb(conn->info.body.buf, conn->info.body.len,
-                          conn->handle.err_obj);
-    }
+      info->httpcode, http_code_print(info->httpcode),
+      http_reason_print(info->httpcode), info->loginfo.counter);
     code = ORCA_HTTP_CODE;
   }
-  else if (conn->info.httpcode >= 300) {
+  else if (info->httpcode >= 300) {
     logconf_warn(
       conf,
       ANSICOLOR("REDIRECTING", ANSI_FG_YELLOW) " (%d)%s - %s [@@@_%zu_@@@]",
-      conn->info.httpcode, http_code_print(conn->info.httpcode),
-      http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
+      info->httpcode, http_code_print(info->httpcode),
+      http_reason_print(info->httpcode), info->loginfo.counter);
     code = ORCA_HTTP_CODE;
   }
-  else if (conn->info.httpcode >= 200) {
+  else if (info->httpcode >= 200) {
     logconf_info(
       conf, ANSICOLOR("SUCCESS", ANSI_FG_GREEN) " (%d)%s - %s [@@@_%zu_@@@]",
-      conn->info.httpcode, http_code_print(conn->info.httpcode),
-      http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
-
-    if (conn->handle.ok_cb) {
-      conn->handle.ok_cb(conn->info.body.buf, conn->info.body.len,
-                         conn->handle.ok_obj);
-    }
+      info->httpcode, http_code_print(info->httpcode),
+      http_reason_print(info->httpcode), info->loginfo.counter);
     code = ORCA_OK;
   }
-  else if (conn->info.httpcode >= 100) {
-    logconf_info(
-      conf, ANSICOLOR("INFO", ANSI_FG_GRAY) " (%d)%s - %s [@@@_%zu_@@@]",
-      conn->info.httpcode, http_code_print(conn->info.httpcode),
-      http_reason_print(conn->info.httpcode), conn->info.loginfo.counter);
+  else if (info->httpcode >= 100) {
+    logconf_info(conf,
+                 ANSICOLOR("INFO", ANSI_FG_GRAY) " (%d)%s - %s [@@@_%zu_@@@]",
+                 info->httpcode, http_code_print(info->httpcode),
+                 http_reason_print(info->httpcode), info->loginfo.counter);
     code = ORCA_HTTP_CODE;
   }
-  else if (conn->info.httpcode > 0) {
-    logconf_error(conf, "Unusual HTTP response code: %d", conn->info.httpcode);
+  else if (info->httpcode > 0) {
+    logconf_error(conf, "Unusual HTTP response code: %d", info->httpcode);
     code = ORCA_UNUSUAL_HTTP_CODE;
   }
   else {
     logconf_error(conf, "No http response received by libcurl");
     code = ORCA_CURL_NO_RESPONSE;
   }
-
-  if (info) _ua_info_populate(info, &conn->info);
 
   return code;
 }
@@ -784,11 +759,25 @@ ua_run(struct user_agent *ua,
   ORCAcode code;
 
   /* populate conn with parameters */
-  ua_conn_setup(conn, handle, body, method, endpoint);
+  ua_conn_setup(conn, body, method, endpoint);
 
   /* perform blocking request, and check results */
   if (ORCA_OK == (code = ua_conn_perform(conn))) {
-    code = ua_conn_get_results(conn, info);
+    struct ua_info _info = {0};
+
+    code = ua_info_extract(conn, &_info);
+
+    if (_info.httpcode >= 400 && _info.httpcode < 600) {
+      handle->err_cb(_info.body.buf, _info.body.len, handle->err_obj);
+    }
+    else if (_info.httpcode >= 200 && _info.httpcode < 300) {
+      handle->ok_cb(_info.body.buf, _info.body.len, handle->ok_obj);
+    }
+
+    if (info) 
+      memcpy(info, &_info, sizeof(struct ua_info));
+    else
+      ua_info_cleanup(&_info);
   }
 
   /* reset conn and mark it as free to use */

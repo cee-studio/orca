@@ -107,8 +107,8 @@ struct ua_info {
   enum http_method method;
   /** the HTTP response code */
   int httpcode;
-  /** total elapsed time for request completion (in micro-seconds) */
-  curl_off_t time_us;
+  /** fractional total elapsed time for request (in seconds) */
+  double elapsed_sec;
   /** the response header */
   struct ua_resp_header header;
   /** the response body */
@@ -248,25 +248,23 @@ void ua_conn_stop(struct ua_conn *conn);
  * @brief Setup a connection handle
  *
  * @param conn the connection handle
- * @param handle the optional response callbacks, can be NULL
  * @param body the optional request body, can be NULL
  * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  */
 void ua_conn_setup(struct ua_conn *conn,
-                   struct ua_resp_handle *handle,
                    struct sized_buffer *body,
                    enum http_method method,
                    char endpoint[]);
 
 /**
- * @brief Fetch information about previous request
+ * @brief Extract information from `conn` previous request
  *
- * @param conn the connection that performed a request
- * @param info handle containing information on previous request
- * @return ORCAcode for how the transfer went, ORCA_OK means success.
+ * @param conn the connection handle
+ * @param info handle to store information on previous request
+ * @return ORCAcode for how the operation went, ORCA_OK means success.
  */
-ORCAcode ua_conn_get_results(struct ua_conn *conn, struct ua_info *info);
+ORCAcode ua_info_extract(struct ua_conn *conn, struct ua_info *info);
 
 /**
  * @brief Get libcurl's easy handle assigned to `conn`

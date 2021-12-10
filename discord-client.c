@@ -74,8 +74,6 @@ discord_clone(const struct discord *orig_client)
   struct discord *clone_client = malloc(sizeof(struct discord));
 
   memcpy(clone_client, orig_client, sizeof(struct discord));
-  memset(&clone_client->adapter.err, 0, sizeof(clone_client->adapter.err));
-
   clone_client->is_original = false;
 
   return clone_client;
@@ -88,9 +86,6 @@ discord_cleanup(struct discord *client)
     logconf_cleanup(&client->conf);
     discord_adapter_cleanup(&client->adapter);
     discord_gateway_cleanup(&client->gw);
-  }
-  else {
-    ua_info_cleanup(&client->adapter.err.info);
   }
   free(client);
 }
@@ -118,11 +113,12 @@ discord_global_cleanup()
 const char *
 discord_strerror(ORCAcode code, struct discord *client)
 {
+  (void)client;
+
   switch (code) {
   default:
     return orca_strerror(code);
   case ORCA_DISCORD_JSON_CODE:
-    if (client) return client->adapter.err.jsonstr;
     return "Discord JSON Error Code: Failed request";
   case ORCA_DISCORD_BAD_AUTH:
     return "Discord Bad Authentication: Bad authentication token";

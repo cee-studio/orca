@@ -83,6 +83,7 @@ typedef void (*discord_idle_cb)(struct discord *client,
                                 const struct discord_user *bot);
 /** @} */
 
+
 /** @defgroup DiscordCallbacksApplicationCommand
  * @brief Application Command event callbacks
  * @see https://discord.com/developers/docs/topics/gateway#commands

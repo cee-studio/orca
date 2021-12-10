@@ -25,70 +25,16 @@
 
 #include "discord-voice-connections.h"
 
-/**
- * @brief The ratelimiting handler structure
- *
- * - Initializer:
- *   - discord_ratelimit_init()
- * - Cleanup:
- *   - discord_ratelimit_cleanup()
- */
-struct discord_ratelimit {
-  /** DISCORD_RATELIMIT logging module */
-  struct logconf conf;
-  /** buckets discovered */
-  struct discord_bucket *buckets;
-  /** for undefined routes */
-  struct discord_bucket *b_null;
-  /* request timeouts */
-  struct heap timeouts;
-  /* client-wide ratelimiting timeout */
-  struct {
-    /** global ratelimit */
-    u64_unix_ms_t wait_ms;
-    /** global rwlock  */
-    pthread_rwlock_t rwlock;
-    /** global lock */
-    pthread_mutex_t lock;
-  } * global;
-};
-
-/**
- * @brief Initialize ratelimit handler
- *
- * @param rlimit the ratelimit handler
- * @param conf optional pointer to a initialized logconf
- */
-void discord_ratelimit_init(struct discord_ratelimit *rlimit,
-                            struct logconf *conf);
-
-/**
- * @brief Free ratelimit handler
- *
- * @param rlimit the ratelimit handler
- */
-void discord_ratelimit_cleanup(struct discord_ratelimit *rlimit);
-
-/**
- * @brief Get global timeout timestamp
- *
- * @param rlimit the ratelimit handler
- * @return the most recent global timeout timestamp
- */
-u64_unix_ms_t discord_ratelimit_get_global_wait(
-  struct discord_ratelimit *rlimit);
-
 /** @brief Quickly set attributes for an object */
 #define DISCORD_REQUEST_ATTR_INIT(type, obj)                                  \
   {                                                                           \
-    obj, sizeof(struct type), type##_init_v, type##_from_json_v,              \
-      type##_cleanup_v                                                        \
+    obj, sizeof *obj, type##_init_v, type##_from_json_v, type##_cleanup_v     \
   }
 
 /** @brief Quickly set attributes for a list */
 #define DISCORD_REQUEST_ATTR_LIST_INIT(type, list)                            \
   {                                                                           \
-    list, 0, NULL, (void (*)(char *, size_t, void *))type##_list_from_json_v, \
+    list, 0, NULL, type##_list_from_json_v,                                   \
       (void (*)(void *))type##_list_free_v                                    \
   }
 
@@ -118,6 +64,70 @@ struct discord_async_attr {
 };
 
 /**
+ * @brief The ratelimiting handler structure
+ *
+ * - Initializer:
+ *   - discord_ratelimit_init()
+ * - Cleanup:
+ *   - discord_ratelimit_cleanup()
+ */
+struct discord_ratelimit {
+  /** DISCORD_RATELIMIT logging module */
+  struct logconf conf;
+  /** buckets discovered */
+  struct discord_bucket *buckets;
+  /** for undefined routes */
+  struct discord_bucket *b_null;
+
+  /* client-wide ratelimiting timeout */
+  struct {
+    /** global ratelimit */
+    u64_unix_ms_t wait_ms;
+    /** global rwlock  */
+    pthread_rwlock_t rwlock;
+    /** global lock */
+    pthread_mutex_t lock;
+  } * global;
+
+  /** async requests handling */
+  struct {
+    /** attributes for next async request */
+    struct discord_async_attr attr;
+    /** reusable buffer for async return objects */
+    struct sized_buffer obj;
+    /** idle request handles of type 'struct discord_request' */
+    QUEUE *idleq;
+    /* request timeouts */
+    struct heap timeouts;
+  } async;
+};
+
+/**
+ * @brief Initialize ratelimit handler
+ *
+ * @param rlimit the ratelimit handler
+ * @param conf optional pointer to a initialized logconf
+ */
+void discord_ratelimit_init(struct discord_ratelimit *rlimit,
+                            struct logconf *conf);
+
+/**
+ * @brief Free ratelimit handler
+ *
+ * @param rlimit the ratelimit handler
+ */
+void discord_ratelimit_cleanup(struct discord_ratelimit *rlimit);
+
+/**
+ * @brief Get global timeout timestamp
+ *
+ * @param rlimit the ratelimit handler
+ * @return the most recent global timeout timestamp
+ */
+u64_unix_ms_t discord_ratelimit_get_global_wait(
+  struct discord_ratelimit *rlimit);
+
+/**
  * @brief The handle used for performing HTTP Requests
  *
  * This is a wrapper over struct user_agent
@@ -128,40 +138,14 @@ struct discord_async_attr {
  *   - discord_adapter_cleanup()
  */
 struct discord_adapter {
-  struct {
-    /** if true next request will be dealt with asynchronously */
-    bool enable;
-    /** attributes for next async request */
-    struct discord_async_attr attr;
-  } async;
-
   /** DISCORD_HTTP or DISCORD_WEBHOOK logging module */
   struct logconf conf;
   /** the user agent handle for performing requests */
   struct user_agent *ua;
+  /** if true next request will be dealt with asynchronously */
+  bool async_enable;
   /** ratelimit handler structure */
   struct discord_ratelimit rlimit;
-
-  /** idle request handles of type 'struct discord_request' */
-  QUEUE *idleq;
-
-  /** previous request error context */
-  struct {
-    /** informational on the previous request */
-    struct ua_info info;
-    /** JSON error code on failed request */
-    int jsoncode;
-    /** the entire JSON response of the error */
-    char jsonstr[512];
-  } err;
-
-  /** reusable buffer for async return objects */
-  struct {
-    /** return object buffer */
-    uint8_t *buf;
-    /** size in memory */
-    size_t size;
-  } obj;
 };
 
 /**
@@ -255,16 +239,9 @@ struct discord_request {
 };
 
 /**
- * @brief Free a request handle
- *
- * @param cxt a pointer to the request
- */
-void discord_request_cleanup(struct discord_request *cxt);
-
-/**
  * @brief Perform a blocking request to Discord
  *
- * @param adapter the HTTP handle initialized with discord_adapter_init()
+ * @param rlimit the ratelimit handler
  * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
@@ -273,7 +250,7 @@ void discord_request_cleanup(struct discord_request *cxt);
  * @return a code for checking on how the transfer went ORCA_OK means the
  *        transfer was succesful
  */
-ORCAcode discord_request_perform(struct discord_adapter *adapter,
+ORCAcode discord_request_perform(struct discord_ratelimit *rlimit,
                                  struct discord_request_attr *attr,
                                  struct sized_buffer *body,
                                  enum http_method method,
@@ -281,7 +258,7 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
 /**
  * @brief Enqueue a request to be performed asynchronously
  *
- * @param adapter the HTTP handle initialized with discord_adapter_init()
+ * @param rlimit the ratelimit and request handler
  * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
  *        null if unecessary
@@ -290,7 +267,7 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter,
  * @return a code for checking on how the transfer went ORCA_OK means the
  *        request has been successfully enqueued
  */
-ORCAcode discord_request_perform_async(struct discord_adapter *adapter,
+ORCAcode discord_request_perform_async(struct discord_ratelimit *rlimit,
                                        struct discord_request_attr *attr,
                                        struct sized_buffer *body,
                                        enum http_method method,

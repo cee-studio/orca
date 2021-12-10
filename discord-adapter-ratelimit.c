@@ -122,29 +122,35 @@ _discord_bucket_get_match(struct discord_ratelimit *rlimit,
 }
 
 static void
+_discord_request_cleanup(struct discord_request *cxt)
+{
+  if (cxt->body.start) free(cxt->body.start);
+  free(cxt);
+}
+
+static void
 _discord_bucket_cleanup(struct discord_bucket *b)
 {
-  struct discord_request *cxt;
-  QUEUE queue;
+  QUEUE *ua_queues[] = { &b->waitq, &b->busyq };
+  int i;
 
   pthread_mutex_destroy(&b->lock);
 
-  /* cleanup pending requests */
-  QUEUE_MOVE(&b->waitq, &queue);
-  while (!QUEUE_EMPTY(&queue)) {
-    QUEUE *q = QUEUE_HEAD(&queue);
-    cxt = QUEUE_DATA(q, struct discord_request, entry);
-    QUEUE_REMOVE(&cxt->entry);
-    discord_request_cleanup(cxt);
-  }
+  /* cleanup bucket queues */
+  for (i = 0; i < sizeof(ua_queues) / sizeof(QUEUE *); ++i) {
+    struct discord_request *cxt;
+    QUEUE queue;
+    QUEUE *q;
 
-  /* cleanup on-going requests */
-  QUEUE_MOVE(&b->busyq, &queue);
-  while (!QUEUE_EMPTY(&queue)) {
-    QUEUE *q = QUEUE_HEAD(&queue);
-    cxt = QUEUE_DATA(q, struct discord_request, entry);
-    QUEUE_REMOVE(&cxt->entry);
-    discord_request_cleanup(cxt);
+    /* cleanup pending requests */
+    QUEUE_MOVE(ua_queues[i], &queue);
+    while (!QUEUE_EMPTY(&queue)) {
+      q = QUEUE_HEAD(&queue);
+      QUEUE_REMOVE(&cxt->entry);
+
+      cxt = QUEUE_DATA(q, struct discord_request, entry);
+      _discord_request_cleanup(cxt);
+    }
   }
 
   free(b);
@@ -167,8 +173,13 @@ discord_ratelimit_init(struct discord_ratelimit *rlimit, struct logconf *conf)
   /* for routes that still haven't discovered a bucket match */
   rlimit->b_null = _discord_bucket_init(rlimit, "", &hash, 1L);
 
+
+  /* idleq is malloc'd to guarantee a client cloned by discord_clone() will
+   * share the same queue with the original */
+  rlimit->async.idleq = malloc(sizeof(QUEUE));
+  QUEUE_INIT(rlimit->async.idleq);
   /* initialize min-heap for handling request timeouts */
-  heap_init(&rlimit->timeouts);
+  heap_init(&rlimit->async.timeouts);
 }
 
 /* cleanup routes and buckets */
@@ -176,6 +187,9 @@ void
 discord_ratelimit_cleanup(struct discord_ratelimit *rlimit)
 {
   struct discord_bucket *b, *b_tmp;
+  struct discord_request *cxt;
+  QUEUE queue;
+  QUEUE *q;
 
   /* cleanup buckets */
   HASH_ITER(hh, rlimit->buckets, b, b_tmp)
@@ -183,10 +197,24 @@ discord_ratelimit_cleanup(struct discord_ratelimit *rlimit)
     HASH_DEL(rlimit->buckets, b);
     _discord_bucket_cleanup(b);
   }
+
   /* cleanup global resources */
   pthread_rwlock_destroy(&rlimit->global->rwlock);
   pthread_mutex_destroy(&rlimit->global->lock);
   free(rlimit->global);
+
+  /* cleanup idle requests queue */
+  QUEUE_MOVE(rlimit->async.idleq, &queue);
+  while (!QUEUE_EMPTY(&queue)) {
+    q = QUEUE_HEAD(&queue);
+    cxt = QUEUE_DATA(q, struct discord_request, entry);
+    QUEUE_REMOVE(&cxt->entry);
+    _discord_request_cleanup(cxt);
+  }
+
+  if (rlimit->async.obj.size) free(rlimit->async.obj.start);
+
+  free(rlimit->async.idleq);
 }
 
 u64_unix_ms_t

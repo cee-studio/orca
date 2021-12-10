@@ -36,24 +36,16 @@ _discord_request_reset(struct discord_request *cxt)
   cxt->conn = NULL;
 }
 
-void
-discord_request_cleanup(struct discord_request *cxt)
-{
-  if (cxt->body.start) free(cxt->body.start);
-  _discord_request_reset(cxt);
-  free(cxt);
-}
-
 static void
 _discord_request_populate(struct discord_request *cxt,
-                          struct discord_adapter *adapter,
+                          struct discord_ratelimit *rlimit,
                           struct discord_request_attr *attr,
                           struct sized_buffer *body,
                           enum http_method method,
                           char endpoint[])
 {
   cxt->method = method;
-  cxt->done = adapter->async.attr.done;
+  cxt->done = rlimit->async.attr.done;
 
   if (attr)
     memcpy(&cxt->attr, attr, sizeof(struct discord_request_attr));
@@ -78,7 +70,7 @@ _discord_request_populate(struct discord_request *cxt,
   memcpy(cxt->endpoint, endpoint, sizeof(cxt->endpoint));
 
   /* bucket pertaining to the request */
-  cxt->bucket = discord_bucket_get(&adapter->rlimit, cxt->endpoint);
+  cxt->bucket = discord_bucket_get(rlimit, cxt->endpoint);
 }
 
 static void
@@ -88,36 +80,36 @@ _discord_request_set_timeout(struct discord_ratelimit *rlimit,
 {
   cxt->bucket->freeze = true;
   cxt->timeout_ms = timeout;
-  heap_insert(&rlimit->timeouts, &cxt->node, &timer_less_than);
+  heap_insert(&rlimit->async.timeouts, &cxt->node, &timer_less_than);
 }
 
 /* return true if there should be a retry attempt */
 static bool
-_discord_request_check_status(struct discord_adapter *adapter,
-                              ORCAcode *code,
-                              struct discord_request *cxt)
+_discord_request_check_status(struct discord_ratelimit *rlimit,
+                              struct discord_request *cxt,
+                              struct ua_info *info)
 {
-  if (*code != ORCA_HTTP_CODE) return false;
+  if (info->code != ORCA_HTTP_CODE) return false;
 
-  switch (adapter->err.info.httpcode) {
+  switch (info->httpcode) {
   case HTTP_FORBIDDEN:
   case HTTP_NOT_FOUND:
   case HTTP_BAD_REQUEST:
-    *code = ORCA_DISCORD_JSON_CODE;
+    info->code = ORCA_DISCORD_JSON_CODE;
     return false;
   case HTTP_UNAUTHORIZED:
-    logconf_fatal(&adapter->conf,
+    logconf_fatal(&rlimit->conf,
                   "UNAUTHORIZED: Please provide a valid authentication token");
-    *code = ORCA_DISCORD_BAD_AUTH;
+    info->code = ORCA_DISCORD_BAD_AUTH;
     return false;
   case HTTP_METHOD_NOT_ALLOWED:
-    logconf_fatal(&adapter->conf,
+    logconf_fatal(&rlimit->conf,
                   "METHOD_NOT_ALLOWED: The server couldn't recognize the "
                   "received HTTP method");
     return false;
   case HTTP_TOO_MANY_REQUESTS: {
-    struct sized_buffer body = ua_info_get_body(&adapter->err.info);
-    struct discord *client = CLIENT(&adapter->rlimit);
+    struct sized_buffer body = ua_info_get_body(info);
+    struct discord *client = CLIENT(rlimit);
     double retry_after = 1.0;
     bool is_global = false;
     char message[256] = "";
@@ -130,10 +122,10 @@ _discord_request_check_status(struct discord_adapter *adapter,
     if (is_global) {
       u64_unix_ms_t global;
 
-      global = discord_ratelimit_get_global_wait(&adapter->rlimit);
+      global = discord_ratelimit_get_global_wait(rlimit);
       delay_ms = (int64_t)(global - discord_timestamp(client));
 
-      logconf_warn(&adapter->conf,
+      logconf_warn(&rlimit->conf,
                    "429 GLOBAL RATELIMITING (wait: %" PRId64 " ms) : %s",
                    delay_ms, message);
 
@@ -150,26 +142,25 @@ _discord_request_check_status(struct discord_adapter *adapter,
       /* non-blocking timeout */
       u64_unix_ms_t timeout = discord_timestamp(client) + delay_ms;
 
-      logconf_warn(&adapter->conf,
+      logconf_warn(&rlimit->conf,
                    "429 RATELIMITING (timeout: %" PRId64 " ms) : %s", delay_ms,
                    message);
 
-      _discord_request_set_timeout(&adapter->rlimit, timeout, cxt);
+      _discord_request_set_timeout(rlimit, timeout, cxt);
 
       /* timed-out requests will be retried anyway */
       return false;
     }
 
-    logconf_warn(&adapter->conf,
-                 "429 RATELIMITING (wait: %" PRId64 " ms) : %s", delay_ms,
-                 message);
+    logconf_warn(&rlimit->conf, "429 RATELIMITING (wait: %" PRId64 " ms) : %s",
+                 delay_ms, message);
 
     cee_sleep_ms(delay_ms);
 
     return true;
   }
   default:
-    if (adapter->err.info.httpcode >= 500) {
+    if (info->httpcode >= 500) {
       /* TODO: server error, implement retry up to X amount logic */
     }
     return true;
@@ -196,7 +187,7 @@ _discord_request_timeout(struct discord_ratelimit *rlimit,
 
 /* enqueue a request to be executed asynchronously */
 ORCAcode
-discord_request_perform_async(struct discord_adapter *adapter,
+discord_request_perform_async(struct discord_ratelimit *rlimit,
                               struct discord_request_attr *attr,
                               struct sized_buffer *body,
                               enum http_method method,
@@ -204,60 +195,45 @@ discord_request_perform_async(struct discord_adapter *adapter,
 {
   struct discord_request *cxt;
 
-  if (QUEUE_EMPTY(adapter->idleq)) {
+  if (QUEUE_EMPTY(rlimit->async.idleq)) {
     /* create new request handler */
     cxt = calloc(1, sizeof(struct discord_request));
   }
   else {
     /* get from idle requests queue */
-    QUEUE *q = QUEUE_HEAD(adapter->idleq);
+    QUEUE *q = QUEUE_HEAD(rlimit->async.idleq);
     QUEUE_REMOVE(q);
 
     cxt = QUEUE_DATA(q, struct discord_request, entry);
+
     _discord_request_reset(cxt);
   }
   QUEUE_INIT(&cxt->entry);
 
-  _discord_request_populate(cxt, adapter, attr, body, method, endpoint);
+  _discord_request_populate(cxt, rlimit, attr, body, method, endpoint);
 
-  if (adapter->async.attr.high_p)
+  if (rlimit->async.attr.high_p)
     QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
   else
     QUEUE_INSERT_TAIL(&cxt->bucket->waitq, &cxt->entry);
 
+  /* reset for next call */
+  memset(&rlimit->async.attr, 0, sizeof(struct discord_async_attr));
+
   return ORCA_OK;
-}
-
-/* https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes
- */
-static void
-json_error_cb(char *str, size_t len, void *p_adapter)
-{
-  struct discord_adapter *adapter = p_adapter;
-  char message[256] = "";
-
-  json_extract(str, len, "(message):.*s (code):d", sizeof(message), message,
-               &adapter->err.jsoncode);
-  logconf_error(
-    &adapter->conf,
-    ANSICOLOR("(JSON Error %d) %s",
-              ANSI_BG_RED) " - See Discord's JSON Error Codes\n\t\t%.*s",
-    adapter->err.jsoncode, message, (int)len, str);
-
-  snprintf(adapter->err.jsonstr, sizeof(adapter->err.jsonstr), "%.*s",
-           (int)len, str);
 }
 
 /* perform a blocking request */
 ORCAcode
-discord_request_perform(struct discord_adapter *adapter,
+discord_request_perform(struct discord_ratelimit *rlimit,
                         struct discord_request_attr *attr,
                         struct sized_buffer *body,
                         enum http_method method,
                         char endpoint[])
 {
+  struct discord *client = CLIENT(rlimit);
   /* bucket pertaining to the request */
-  struct discord_bucket *b = discord_bucket_get(&adapter->rlimit, endpoint);
+  struct discord_bucket *b = discord_bucket_get(rlimit, endpoint);
   /* connection handle to perform connection */
   struct ua_conn *conn;
   /* orca error status */
@@ -265,7 +241,7 @@ discord_request_perform(struct discord_adapter *adapter,
   /* in case of request failure, try again */
   bool retry;
 
-  conn = ua_conn_start(adapter->ua);
+  conn = ua_conn_start(client->adapter.ua);
 
   if (HTTP_MIMEPOST == method)
     ua_conn_add_header(conn, "Content-Type", "multipart/form-data");
@@ -277,29 +253,41 @@ discord_request_perform(struct discord_adapter *adapter,
 
   pthread_mutex_lock(&b->lock);
   do {
-    ua_info_cleanup(&adapter->err.info);
-
-    discord_bucket_cooldown(&adapter->rlimit, b);
+    discord_bucket_cooldown(rlimit, b);
 
     /* perform blocking request, and check results */
-    if (ORCA_OK == (code = ua_conn_perform(conn))) {
-      code = ua_info_extract(conn, &adapter->err.info);
+    code = ua_conn_perform(conn);
+    switch (code) {
+    case ORCA_OK: {
+      struct ua_info info = { 0 };
+      struct sized_buffer body = ua_info_get_body(&info);
+
+      code = ua_info_extract(conn, &info);
+
+      retry = _discord_request_check_status(rlimit, NULL, &info);
+
+      discord_bucket_build(rlimit, b, endpoint, &info);
+
+      if (ORCA_OK == info.code && attr->obj) {
+        body = ua_info_get_body(&info);
+
+        if (attr->init) attr->init(attr->obj);
+
+        attr->from_json(body.start, body.size, attr->obj);
+      }
+
+      ua_info_cleanup(&info);
+    } break;
+    case ORCA_CURLE_INTERNAL:
+      logconf_error(&rlimit->conf, "Curl internal error, will retry again");
+      retry = true;
+      break;
+    default:
+      logconf_error(&rlimit->conf, "ORCA code: %d", code);
+      retry = false;
+      break;
     }
 
-    if (attr->obj
-        && (adapter->err.info.httpcode >= 200
-            && adapter->err.info.httpcode < 300))
-    {
-      struct sized_buffer body = ua_info_get_body(&adapter->err.info);
-
-      if (attr->init) attr->init(attr->obj);
-
-      attr->from_json(body.start, body.size, attr->obj);
-    }
-
-    retry = _discord_request_check_status(adapter, &code, NULL);
-
-    discord_bucket_build(&adapter->rlimit, b, endpoint, &adapter->err.info);
     ua_conn_reset(conn);
   } while (retry);
   pthread_mutex_unlock(&b->lock);
@@ -350,7 +338,7 @@ discord_request_check_timeouts_async(struct discord_ratelimit *rlimit)
   struct heap_node *node;
 
   while (1) {
-    node = heap_min(&rlimit->timeouts);
+    node = heap_min(&rlimit->async.timeouts);
     if (!node) break;
 
     cxt = CXT(node);
@@ -359,7 +347,7 @@ discord_request_check_timeouts_async(struct discord_ratelimit *rlimit)
       break;
     }
 
-    heap_remove(&rlimit->timeouts, node, &timer_less_than);
+    heap_remove(&rlimit->async.timeouts, node, &timer_less_than);
     cxt->bucket->freeze = false;
 
     QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);
@@ -435,46 +423,42 @@ discord_request_check_pending_async(struct discord_ratelimit *rlimit)
 }
 
 static void
-_discord_request_accept(struct discord_adapter *adapter,
-                        ORCAcode code,
-                        struct discord_request *cxt)
+_discord_request_accept_async(struct discord_ratelimit *rlimit,
+                              struct discord_request *cxt,
+                              struct ua_info *info)
 {
   /* increase buffer length if necessary */
-  if (cxt->attr.size > adapter->obj.size) {
-    void *tmp = realloc(adapter->obj.buf, cxt->attr.size);
+  if (cxt->attr.size > rlimit->async.obj.size) {
+    void *tmp = realloc(rlimit->async.obj.start, cxt->attr.size);
     VASSERT_S(tmp != NULL, "Couldn't increase buffer %zu -> %zu (bytes)",
-              adapter->obj.size, cxt->attr.size);
+              rlimit->async.obj.size, cxt->attr.size);
 
-    adapter->obj.buf = tmp;
-    adapter->obj.size = cxt->attr.size;
+    rlimit->async.obj.start = tmp;
+    rlimit->async.obj.size = cxt->attr.size;
   }
 
   /* initialize obj */
-  if (cxt->attr.init) cxt->attr.init(adapter->obj.buf);
+  if (cxt->attr.init) cxt->attr.init(rlimit->async.obj.start);
 
   /* fill obj fields with JSON values */
-  if (cxt->attr.from_json && ORCA_OK == code) {
-    struct sized_buffer body = ua_info_get_body(&adapter->err.info);
+  if (cxt->attr.from_json && ORCA_OK == info->code) {
+    struct sized_buffer body = ua_info_get_body(info);
 
-    cxt->attr.from_json(body.start, body.size, adapter->obj.buf);
+    cxt->attr.from_json(body.start, body.size, rlimit->async.obj.start);
   }
 
   /* user callback */
-  if (cxt->done) {
-    struct discord *client = CLIENT(&adapter->rlimit);
-
-    cxt->done(client, code, adapter->obj.buf);
-  }
+  if (cxt->done)
+    cxt->done(CLIENT(rlimit), info->code, rlimit->async.obj.start);
 
   /* cleanup obj fields */
-  if (cxt->attr.cleanup) cxt->attr.cleanup(adapter->obj.buf);
+  if (cxt->attr.cleanup) cxt->attr.cleanup(rlimit->async.obj.start);
 }
 
 void
 discord_request_check_results_async(struct discord_ratelimit *rlimit)
 {
-  struct discord_adapter *adapter = &CLIENT(rlimit)->adapter;
-  CURLM *mhandle = CLIENT(rlimit)->mhandle;
+  struct discord *client = CLIENT(rlimit);
   struct discord_request *cxt;
   struct CURLMsg *curlmsg;
   CURL *ehandle;
@@ -484,7 +468,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     int msgq = 0;
     bool retry;
 
-    curlmsg = curl_multi_info_read(mhandle, &msgq);
+    curlmsg = curl_multi_info_read(client->mhandle, &msgq);
 
     if (!curlmsg) break;
     if (CURLMSG_DONE != curlmsg->msg) continue;
@@ -494,32 +478,32 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
 
     switch (curlmsg->data.result) {
     case CURLE_OK: {
-      ua_info_cleanup(&adapter->err.info);
+      struct ua_info info = { 0 };
 
-      /* check request results and call user-callbacks */
-      code = ua_info_extract(cxt->conn, &adapter->err.info);
+      code = ua_info_extract(cxt->conn, &info);
 
-      retry = _discord_request_check_status(adapter, &code, cxt);
+      retry = _discord_request_check_status(rlimit, cxt, &info);
 
-      discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint,
-                           &adapter->err.info);
+      discord_bucket_build(rlimit, cxt->bucket, cxt->endpoint, &info);
 
-      _discord_request_accept(adapter, code, cxt);
-      break;
-    }
+      if (ORCA_OK == info.code) {
+        _discord_request_accept_async(rlimit, cxt, &info);
+      }
+
+      ua_info_cleanup(&info);
+    } break;
     case CURLE_READ_ERROR:
-      logconf_warn(&adapter->conf, "Read error, will retry again");
+      logconf_warn(&rlimit->conf, "Read error, will retry again");
       retry = true;
       break;
     default:
-      logconf_error(&adapter->conf, "(CURLE code: %d) %s",
-                    curlmsg->data.result);
+      logconf_error(&rlimit->conf, "CURLE code: %d", curlmsg->data.result);
       retry = false;
       break;
     }
 
     /* remove from busy queue */
-    curl_multi_remove_handle(mhandle, ehandle);
+    curl_multi_remove_handle(client->mhandle, ehandle);
     QUEUE_REMOVE(&cxt->entry);
 
     /* enqueue request for retry or recycle */
@@ -529,7 +513,7 @@ discord_request_check_results_async(struct discord_ratelimit *rlimit)
     }
     else {
       ua_conn_stop(cxt->conn);
-      QUEUE_INSERT_TAIL(adapter->idleq, &cxt->entry);
+      QUEUE_INSERT_TAIL(rlimit->async.idleq, &cxt->entry);
     }
   }
 }
@@ -544,13 +528,13 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
   QUEUE *q;
 
   /* cancel pending timeouts */
-  while ((node = heap_min(&rlimit->timeouts)) != NULL) {
+  while ((node = heap_min(&rlimit->async.timeouts)) != NULL) {
     cxt = CXT(node);
 
-    heap_remove(&rlimit->timeouts, node, &timer_less_than);
+    heap_remove(&rlimit->async.timeouts, node, &timer_less_than);
     cxt->bucket->freeze = false;
 
-    QUEUE_INSERT_TAIL(client->adapter.idleq, &cxt->entry);
+    QUEUE_INSERT_TAIL(rlimit->async.idleq, &cxt->entry);
   }
 
   /* cancel bucket's on-going transfers */
@@ -568,11 +552,11 @@ discord_request_stop_all(struct discord_ratelimit *rlimit)
 
       /* set for recycling */
       ua_conn_stop(cxt->conn);
-      QUEUE_INSERT_TAIL(client->adapter.idleq, q);
+      QUEUE_INSERT_TAIL(rlimit->async.idleq, q);
     }
 
     /* cancel pending tranfers */
-    QUEUE_ADD(client->adapter.idleq, &b->waitq);
+    QUEUE_ADD(rlimit->async.idleq, &b->waitq);
     QUEUE_INIT(&b->waitq);
   }
 }
@@ -588,10 +572,10 @@ discord_request_pause_all(struct discord_ratelimit *rlimit)
   QUEUE *q;
 
   /* move pending timeouts to bucket's waitq */
-  while ((node = heap_min(&rlimit->timeouts)) != NULL) {
+  while ((node = heap_min(&rlimit->async.timeouts)) != NULL) {
     cxt = CXT(node);
 
-    heap_remove(&rlimit->timeouts, node, &timer_less_than);
+    heap_remove(&rlimit->async.timeouts, node, &timer_less_than);
     cxt->bucket->freeze = false;
 
     QUEUE_INSERT_HEAD(&cxt->bucket->waitq, &cxt->entry);

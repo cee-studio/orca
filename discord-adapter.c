@@ -43,41 +43,16 @@ discord_adapter_init(struct discord_adapter *adapter,
 
   /* initialize ratelimit handler */
   discord_ratelimit_init(&adapter->rlimit, &adapter->conf);
-
-  /* idleq is malloc'd to guarantee a client cloned by discord_clone() will
-   * share the same queue with the original */
-  adapter->idleq = malloc(sizeof(QUEUE));
-  QUEUE_INIT(adapter->idleq);
 }
 
 void
 discord_adapter_cleanup(struct discord_adapter *adapter)
 {
-  struct discord_request *cxt;
-  QUEUE queue;
-  QUEUE *q;
-
   /* cleanup User-Agent handle */
   ua_cleanup(adapter->ua);
 
-  /* cleanup request's informational handle */
-  ua_info_cleanup(&adapter->err.info);
-
   /* cleanup ratelimit handle */
   discord_ratelimit_cleanup(&adapter->rlimit);
-
-  /* cleanup idle requests queue */
-  QUEUE_MOVE(adapter->idleq, &queue);
-  while (!QUEUE_EMPTY(&queue)) {
-    q = QUEUE_HEAD(&queue);
-    cxt = QUEUE_DATA(q, struct discord_request, entry);
-    QUEUE_REMOVE(&cxt->entry);
-    discord_request_cleanup(cxt);
-  }
-
-  if (adapter->obj.size) free(adapter->obj.buf);
-
-  free(adapter->idleq);
 }
 
 /* template function for performing requests */
@@ -90,7 +65,6 @@ discord_adapter_run(struct discord_adapter *adapter,
                     ...)
 {
   char endpoint[2048];
-  ORCAcode code;
   va_list args;
   int ret;
 
@@ -102,23 +76,22 @@ discord_adapter_run(struct discord_adapter *adapter,
 
   va_end(args);
 
-  /* whether request should be enqueued or executed on the spot */
-  if (true == adapter->async.enable) {
-    code =
-      discord_request_perform_async(adapter, attr, body, method, endpoint);
-    memset(&adapter->async, 0, sizeof(adapter->async));
-  }
-  else {
-    code = discord_request_perform(adapter, attr, body, method, endpoint);
+  /* enqueue asynchronous request */
+  if (true == adapter->async_enable) {
+    adapter->async_enable = false;
+    return discord_request_perform_async(&adapter->rlimit, attr, body, method,
+                                         endpoint);
   }
 
-  return code;
+  /* perform blocking request */
+  return discord_request_perform(&adapter->rlimit, attr, body, method,
+                                 endpoint);
 }
 
 void
 discord_adapter_set_async(struct discord_adapter *adapter,
                           struct discord_async_attr *attr)
 {
-  adapter->async.enable = true;
-  memcpy(&adapter->async.attr, attr, sizeof(struct discord_async_attr));
+  adapter->async_enable = true;
+  memcpy(&adapter->rlimit.async.attr, attr, sizeof(struct discord_async_attr));
 }

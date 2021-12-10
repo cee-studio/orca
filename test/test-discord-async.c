@@ -37,10 +37,10 @@ void on_disconnect(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  struct discord_request_attr attr = { .done = &disconnect, .high_p = true };
+  struct discord_async_attr attr = { .done = &disconnect, .high_p = true };
   struct discord_create_message_params params = { .content = "Disconnecting ..." };
 
-  discord_adapter_toggle_async(&client->adapter, &attr);
+  discord_adapter_set_async(&client->adapter, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
@@ -50,10 +50,10 @@ void on_reconnect(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  struct discord_request_attr attr = { .done = &reconnect, .high_p = true };
+  struct discord_async_attr attr = { .done = &reconnect, .high_p = true };
   struct discord_create_message_params params = { .content = "Reconnecting ..." };
 
-  discord_adapter_toggle_async(&client->adapter, &attr);
+  discord_adapter_set_async(&client->adapter, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 

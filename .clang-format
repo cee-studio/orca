@@ -17,7 +17,7 @@ AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterReturnType: TopLevelDefinitions
-# AlwaysBreakAfterReturnType: None
+# AlwaysBreakAfterReturnType: None # enable for 'main' files
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: true
 BinPackArguments: true

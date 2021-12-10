@@ -34,7 +34,7 @@ void on_cd(struct discord *client,
            const struct discord_user *bot,
            const struct discord_message *msg)
 {
-  if (msg->author->bot || msg->author->id != g_sudo_id) return;
+  if (msg->author->id != g_sudo_id) return;
 
   chdir(*msg->content ? msg->content : ".");
 
@@ -50,7 +50,7 @@ void on_less_like(struct discord *client,
                   const struct discord_user *bot,
                   const struct discord_message *msg)
 {
-  if (msg->author->bot || msg->author->id != g_sudo_id) return;
+  if (msg->author->id != g_sudo_id) return;
 
   struct discord_create_message_params params = { 0 };
   char buf[512];
@@ -84,7 +84,7 @@ void on_fallback(struct discord *client,
 {
   const size_t MAX_FSIZE = 5e6; // 5 mb
 
-  if (msg->author->bot || msg->author->id != g_sudo_id) return;
+  if (msg->author->id != g_sudo_id) return;
 
   FILE *fp = popen(msg->content, "r");
   if (NULL == fp) {

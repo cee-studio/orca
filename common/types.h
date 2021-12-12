@@ -51,18 +51,16 @@ typedef int ORCAcode;
 #define ORCA_CURL_NO_RESPONSE -2
 /** received a non-standard http code */
 #define ORCA_UNUSUAL_HTTP_CODE -3
-/** missing a mandatory function parameter */
-#define ORCA_MISSING_PARAMETER -4
-/** unexpected value for parameter */
-#define ORCA_BAD_PARAMETER -5
+/** bad value for parameter */
+#define ORCA_BAD_PARAMETER     -4
 /** internal failure when encoding or decoding JSON */
-#define ORCA_BAD_JSON -6
+#define ORCA_BAD_JSON -5
 /** curl's easy handle internal error */
-#define ORCA_CURLE_INTERNAL -7
+#define ORCA_CURLE_INTERNAL -6
 /** curl's multi handle internal error */
-#define ORCA_CURLM_INTERNAL -8
+#define ORCA_CURLM_INTERNAL -7
 /** attempt to initialize globals more than once */
-#define ORCA_GLOBAL_INIT -9
+#define ORCA_GLOBAL_INIT -8
 /** @} OrcaCodes */
 
 /** @defgroup OrcaDiscordCodes
@@ -101,6 +99,22 @@ typedef int ORCAcode;
  */
 #define CONTAINEROF(ptr, type, path)                                          \
   ((type *)((char *)(ptr)-offsetof(type, path)))
+
+/**
+ * @brief log and return `code` if `expect` condition is false
+ *
+ * @param expect the expected outcome
+ * @param client the discord client
+ * @param error return ORCAcode error
+ * @param ... optional reason
+ */
+#define ORCA_EXPECT(client, expect, code, ...)                                \
+  do {                                                                        \
+    if (!(expect)) {                                                          \
+      logconf_error(&(client)->conf, "Expected: " #expect ": " __VA_ARGS__);  \
+      return code;                                                            \
+    }                                                                         \
+  } while (0)
 
 /**
  * @brief Return a generic meaning for ORCAcode

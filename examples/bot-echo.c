@@ -81,7 +81,7 @@ void on_message_delete_bulk(struct discord *client,
 
   struct discord_create_message_params params = { .content = text };
 
-  discord_create_message(client, channel_id, &params, NULL);
+  discord_create_message_async(client, channel_id, &params, NULL);
 }
 
 int main(int argc, char *argv[])

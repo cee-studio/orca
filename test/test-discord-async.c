@@ -21,12 +21,12 @@ void on_ready(struct discord *client, const struct discord_user *me)
            me->discriminator);
 }
 
-void disconnect(struct discord *client, ORCAcode code, const void *obj)
+void disconnect(struct discord *client, const void *obj)
 {
   discord_shutdown(client);
 }
 
-void reconnect(struct discord *client, ORCAcode code, const void *obj)
+void reconnect(struct discord *client, const void *obj)
 {
   discord_reconnect(client, true);
 }
@@ -68,7 +68,6 @@ void on_single(struct discord *client,
 }
 
 void send_batch(struct discord *client,
-                ORCAcode code,
                 const struct discord_message *msg)
 {
   struct discord_create_message_params params = { 0 };
@@ -90,11 +89,10 @@ void on_spam(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  send_batch(client, ORCA_OK, msg);
+  send_batch(client, msg);
 }
 
 void send_msg(struct discord *client,
-              ORCAcode code,
               const struct discord_message *msg)
 {
   struct discord_create_message_params params = { 0 };
@@ -115,7 +113,7 @@ void on_spam_ordered(struct discord *client,
 {
   if (msg->author->bot) return;
 
-  send_msg(client, ORCA_OK, msg);
+  send_msg(client, msg);
 }
 
 int main(int argc, char *argv[])

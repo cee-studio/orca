@@ -59,18 +59,6 @@ sized_buffer_from_json(char *json, size_t len, void *data)
   p->size = asprintf(&p->start, "%.*s", (int)len, json);
 }
 
-ORCAcode /* @todo this is a temporary solution for easily wrapping JS */
-sb_discord_get_current_user(struct discord *client, struct sized_buffer *ret)
-{
-  struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
-                                       &sized_buffer_from_json };
-
-  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
-
-  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
-                             "/users/@me");
-}
-
 ORCAcode
 discord_get_current_user_guilds(struct discord *client,
                                 struct discord_guild ***ret)

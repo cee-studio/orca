@@ -28,7 +28,7 @@ _discord_gateway_close(struct discord_gateway *gw,
 {
   struct discord *client = CLIENT(gw, gw);
 
-  if (gw->reconnect->enable)
+  if (gw->status->retry.enable)
     discord_request_pause_all(&client->adapter.req);
   else
     discord_request_stop_all(&client->adapter.req);
@@ -118,7 +118,7 @@ send_identify(struct discord_gateway *gw)
   struct ws_info info = { 0 };
 
   /* Ratelimit check */
-  if (gw->now - gw->session.identify_tstamp < 5) {
+  if (gw->timer->now - gw->session.identify_tstamp < 5) {
     ++gw->session.concurrent;
     VASSERT_S(gw->session.concurrent < gw->session.start_limit.max_concurrency,
               "Reach identify request threshold (%d every 5 seconds)",
@@ -143,7 +143,7 @@ send_identify(struct discord_gateway *gw)
     ret, info.loginfo.counter + 1);
 
   /* get timestamp for this identify */
-  gw->session.identify_tstamp = gw->now;
+  gw->session.identify_tstamp = gw->timer->now;
 }
 
 /* send heartbeat pulse to websockets server in order
@@ -167,17 +167,17 @@ send_heartbeat(struct discord_gateway *gw)
     ret, info.loginfo.counter + 1);
 
   /* update heartbeat timestamp */
-  gw->hbeat.tstamp = gw->now;
+  gw->timer->hbeat = gw->timer->now;
 }
 
 static void
 on_hello(struct discord_gateway *gw)
 {
-  gw->hbeat.interval_ms = 0;
-  gw->hbeat.tstamp = gw->now;
+  gw->timer->interval = 0;
+  gw->timer->hbeat = gw->timer->now;
 
   json_extract(gw->payload.data.start, gw->payload.data.size,
-               "(heartbeat_interval):ld", &gw->hbeat.interval_ms);
+               "(heartbeat_interval):ld", &gw->timer->interval);
 
   if (gw->status->is_resumable)
     send_resume(gw);
@@ -757,13 +757,13 @@ on_dispatch(struct discord_gateway *gw)
   enum discord_gateway_events event;
 
   /* Ratelimit check */
-  if (gw->now - gw->session.event_tstamp < 60) {
+  if (gw->timer->now - gw->session.event_tstamp < 60) {
     ++gw->session.event_count;
     ASSERT_S(gw->session.event_count < 120,
              "Reach event dispatch threshold (120 every 60 seconds)");
   }
   else {
-    gw->session.event_tstamp = gw->now;
+    gw->session.event_tstamp = gw->timer->now;
     gw->session.event_count = 0;
   }
 
@@ -776,14 +776,14 @@ on_dispatch(struct discord_gateway *gw)
              "Missing session_id from READY event");
 
     gw->status->is_ready = true;
-    gw->reconnect->attempt = 0;
+    gw->status->retry.attempt = 0;
     if (gw->cmds.cbs.on_ready) on_event = &on_ready;
     send_heartbeat(gw);
     break;
   case DISCORD_GATEWAY_EVENTS_RESUMED:
     logconf_info(&gw->conf, "Succesfully resumed a Discord session!");
     gw->status->is_ready = true;
-    gw->reconnect->attempt = 0;
+    gw->status->retry.attempt = 0;
     /* @todo add callback */
     send_heartbeat(gw);
     break;
@@ -1000,7 +1000,7 @@ on_invalid_session(struct discord_gateway *gw)
   gw->status->shutdown = true;
   gw->status->is_resumable =
     strncmp(gw->payload.data.start, "false", gw->payload.data.size);
-  gw->reconnect->enable = true;
+  gw->status->retry.enable = true;
 
   if (gw->status->is_resumable) {
     reason = "Invalid session, will attempt to resume";
@@ -1021,7 +1021,7 @@ on_reconnect(struct discord_gateway *gw)
 
   gw->status->shutdown = true;
   gw->status->is_resumable = true;
-  gw->reconnect->enable = true;
+  gw->status->retry.enable = true;
 
   _discord_gateway_close(gw, DISCORD_GATEWAY_CLOSE_REASON_RECONNECT, reason,
                          sizeof(reason));
@@ -1031,9 +1031,11 @@ static void
 on_heartbeat_ack(struct discord_gateway *gw)
 {
   /* get request / response interval in milliseconds */
-  /* TODO: pthread_rwlock_wrlock() */
-  gw->hbeat.ping_ms = gw->now - gw->hbeat.tstamp;
-  logconf_trace(&gw->conf, "PING: %d ms", gw->hbeat.ping_ms);
+  pthread_rwlock_wrlock(&gw->timer->rwlock);
+  gw->timer->ping_ms = gw->timer->now - gw->timer->hbeat;
+  pthread_rwlock_unlock(&gw->timer->rwlock);
+
+  logconf_trace(&gw->conf, "PING: %d ms", gw->timer->ping_ms);
 }
 
 static void
@@ -1084,19 +1086,19 @@ on_close_cb(void *p_gw,
   case DISCORD_GATEWAY_CLOSE_REASON_INVALID_SHARD:
   case DISCORD_GATEWAY_CLOSE_REASON_DISALLOWED_INTENTS:
     gw->status->is_resumable = false;
-    gw->reconnect->enable = false;
+    gw->status->retry.enable = false;
     break;
   default: /*websocket/clouflare opcodes */
     if (WS_CLOSE_REASON_NORMAL == (enum ws_close_reason)opcode) {
       gw->status->is_resumable = true;
-      gw->reconnect->enable = false;
+      gw->status->retry.enable = false;
     }
     else {
       logconf_warn(
         &gw->conf,
         "Gateway will attempt to reconnect and start a new session");
       gw->status->is_resumable = false;
-      gw->reconnect->enable = true;
+      gw->status->retry.enable = true;
     }
     break;
   case DISCORD_GATEWAY_CLOSE_REASON_SESSION_TIMED_OUT:
@@ -1104,7 +1106,7 @@ on_close_cb(void *p_gw,
       &gw->conf,
       "Gateway will attempt to reconnect and resume current session");
     gw->status->is_resumable = false;
-    gw->reconnect->enable = true;
+    gw->status->retry.enable = true;
     break;
   }
 }
@@ -1189,14 +1191,14 @@ discord_gateway_init(struct discord_gateway *gw,
   gw->ws = ws_init(&cbs, &attr);
   logconf_branch(&gw->conf, conf, "DISCORD_GATEWAY");
 
+  gw->timer = calloc(1, sizeof *gw->timer);
+  if (pthread_rwlock_init(&gw->timer->rwlock, NULL))
+    ERR("Couldn't initialize pthread rwlock");
+
   /* client connection status */
   gw->status = calloc(1, sizeof *gw->status);
-
-  /* reconnect flags */
-  gw->reconnect = calloc(1, sizeof *gw->reconnect);
-  gw->reconnect->enable = true;
-  gw->reconnect->threshold = 5; /**< hard limit for now */
-  gw->reconnect->attempt = 0;
+  gw->status->retry.enable = true;
+  gw->status->retry.limit = 5; /**< hard limit for now */
 
   /* connection identify token */
   asprintf(&gw->id.token, "%.*s", (int)token->size, token->start);
@@ -1239,14 +1241,15 @@ discord_gateway_cleanup(struct discord_gateway *gw)
 {
   /* cleanup WebSockets handle */
   ws_cleanup(gw->ws);
+  /* cleanup timers */
+  pthread_rwlock_destroy(&gw->timer->rwlock);
+  free(gw->timer);
   /* cleanup bot identification */
   if (gw->id.token) free(gw->id.token);
   free(gw->id.properties);
   free(gw->id.presence);
   /* free client connection status */
   free(gw->status);
-  /* free client reconnect flags */
-  free(gw->reconnect);
   /* cleanup user bot */
   discord_user_cleanup(&gw->bot);
   /* cleanup user commands */
@@ -1319,8 +1322,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
     int numfds = 0;
 
     /* update WebSockets concept of "now" */
-    /* TODO: pthread_rwlock_wrlock() */
-    gw->now = ws_timestamp_update(gw->ws);
+    gw->timer->now = ws_timestamp_update(gw->ws);
 
     mcode = curl_multi_perform(client->mhandle, &is_running);
     if (mcode == CURLM_OK) {
@@ -1359,8 +1361,8 @@ _discord_gateway_loop(struct discord_gateway *gw)
     discord_request_check_pending_async(&client->adapter.req);
 
     /* check if timespan since first pulse is greater than
-     * minimum heartbeat interval required*/
-    if (gw->hbeat.interval_ms < gw->now - gw->hbeat.tstamp) {
+     * minimum heartbeat interval required */
+    if (gw->timer->interval < gw->timer->now - gw->timer->hbeat) {
       send_heartbeat(gw);
     }
 
@@ -1379,25 +1381,25 @@ discord_gateway_run(struct discord_gateway *gw)
 {
   ORCAcode code;
 
-  while (gw->reconnect->attempt < gw->reconnect->threshold) {
+  while (gw->status->retry.attempt < gw->status->retry.limit) {
     code = _discord_gateway_loop(gw);
 
-    if (code != ORCA_OK || !gw->reconnect->enable) {
+    if (code != ORCA_OK || !gw->status->retry.enable) {
       logconf_warn(&gw->conf, "Discord Gateway Shutdown");
       return code;
     }
 
-    ++gw->reconnect->attempt;
+    ++gw->status->retry.attempt;
 
-    logconf_info(&gw->conf, "Reconnect attempt #%d", gw->reconnect->attempt);
+    logconf_info(&gw->conf, "Reconnect attempt #%d", gw->status->retry.attempt);
   }
 
   /* reset for next run */
   memset(&gw->status, 0, sizeof(gw->status));
-  gw->reconnect->enable = false;
-  gw->reconnect->attempt = 0;
+  gw->status->retry.enable = false;
+  gw->status->retry.attempt = 0;
   logconf_fatal(&gw->conf, "Failed reconnecting to Discord after %d tries",
-                gw->reconnect->threshold);
+                gw->status->retry.limit);
 
   return ORCA_DISCORD_CONNECTION;
 }
@@ -1407,8 +1409,8 @@ discord_gateway_shutdown(struct discord_gateway *gw)
 {
   const char reason[] = "Client triggered shutdown";
 
-  /* TODO: pthread_rwlock_wrlock() */
-  gw->reconnect->enable = false;
+  /* TODO: pthread_cond_wait() */
+  gw->status->retry.enable = false;
   gw->status->shutdown = true;
   gw->status->is_resumable = false;
 
@@ -1421,8 +1423,8 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
   const char reason[] = "Client triggered reconnect";
   enum ws_close_reason opcode;
 
-  /* TODO: pthread_rwlock_wrlock() */
-  gw->reconnect->enable = true;
+  /* TODO: pthread_cond_wait() */
+  gw->status->retry.enable = true;
   gw->status->shutdown = true;
   gw->status->is_resumable = resume;
 

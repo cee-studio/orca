@@ -482,18 +482,19 @@ struct discord_gateway {
   /** the websockets handle that connects to Discord */
   struct websockets *ws;
 
-  /** Gateway's concept of "now" */
-  u64_unix_ms_t now;
-
-  /** reconnect structure */
+  /** timers kept for synchronization */
   struct {
-    /** will attempt reconnecting if true */
-    bool enable;
-    /** current reconnect attempt (resets to 0 when succesful) */
-    int attempt;
-    /** max amount of reconnects before giving up */
-    int threshold;
-  } * reconnect;
+    /** fixed interval between heartbeats */
+    u64_unix_ms_t interval;
+    /** last heartbeat pulse timestamp */
+    u64_unix_ms_t hbeat;
+    /** Gateway's concept of "now" */
+    u64_unix_ms_t now;
+    /** latency obtained from HEARTBEAT and HEARTBEAT_ACK interval */
+    int ping_ms;
+    /** ping rwlock  */
+    pthread_rwlock_t rwlock;
+  } * timer;
 
   /** status structure */
   struct {
@@ -503,6 +504,16 @@ struct discord_gateway {
     bool is_ready;
     /** if true shutdown websockets connection as soon as possible */
     bool shutdown;
+
+    /** retry structure */
+    struct {
+      /** will attempt reconnecting if true */
+      bool enable;
+      /** current retry attempt (resets to 0 when succesful) */
+      int attempt;
+      /** max amount of retries before giving up */
+      int limit;
+    } retry;
   } * status;
 
   /** the info sent for connection authentication */
@@ -538,16 +549,6 @@ struct discord_gateway {
     /** field 'd' */
     struct sized_buffer data;
   } payload;
-
-  /** heartbeating (keep-alive) structure */
-  struct {
-    /** fixed interval between heartbeats */
-    u64_unix_ms_t interval_ms;
-    /** start pulse timestamp in milliseconds */
-    u64_unix_ms_t tstamp;
-    /** latency calculated by HEARTBEAT and HEARTBEAT_ACK interval */
-    int ping_ms;
-  } hbeat;
 
   /** user-commands structure */
   struct {

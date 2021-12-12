@@ -7,6 +7,9 @@
 
 #include "cee-utils.h"
 
+/* MT-Unsafe alternative to discord_timestamp() */
+#define NOW(client) ((client)->gw.timer->now)
+
 void
 discord_request_init(struct discord_request *req, struct logconf *conf)
 {
@@ -288,7 +291,7 @@ _discord_request_get_info(struct discord_request *req,
 
     if (cxt) {
       /* non-blocking timeout */
-      u64_unix_ms_t timeout = discord_timestamp(client) + delay_ms;
+      u64_unix_ms_t timeout = NOW(client) + delay_ms;
 
       logconf_warn(&req->conf,
                    "429 RATELIMITING (timeout: %" PRId64 " ms) : %s", delay_ms,
@@ -321,7 +324,7 @@ _discord_context_timeout(struct discord_request *req,
                          struct discord_context *cxt)
 {
   struct discord *client = CLIENT(req, adapter.req);
-  u64_unix_ms_t now = discord_timestamp(client);
+  u64_unix_ms_t now = NOW(client);
   u64_unix_ms_t timeout = discord_bucket_get_timeout(req, cxt->bucket);
 
   if (now > timeout) return false;
@@ -487,7 +490,7 @@ discord_request_check_timeouts_async(struct discord_request *req)
     if (!hmin) break;
 
     cxt = CONTAINEROF(hmin, struct discord_context, node);
-    if (cxt->timeout_ms > discord_timestamp(client)) {
+    if (cxt->timeout_ms > NOW(client)) {
       /* current timestamp is lesser than lowest timeout */
       break;
     }
@@ -556,7 +559,7 @@ discord_request_check_pending_async(struct discord_request *req)
 
     /* if bucket is outdated then its necessary to send a single
      *      request to fetch updated values */
-    if (b->reset_tstamp < discord_timestamp(client)) {
+    if (b->reset_tstamp < NOW(client)) {
       _discord_request_send_single(req, b);
       continue;
     }

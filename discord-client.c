@@ -525,8 +525,9 @@ discord_get_ping(struct discord *client)
 {
   int ping_ms;
 
-  /* TODO: pthread_wrlock_rdlock() */
-  ping_ms = client->gw.hbeat.ping_ms;
+  pthread_rwlock_rdlock(&client->gw.timer->rwlock);
+  ping_ms = client->gw.timer->ping_ms;
+  pthread_rwlock_unlock(&client->gw.timer->rwlock);
 
   return ping_ms;
 }
@@ -535,12 +536,8 @@ uint64_t
 discord_timestamp(struct discord *client)
 {
   /* get WebSockets internal timestamp if available */
-  if (WS_CONNECTED == ws_get_status(client->gw.ws)) {
-    uint64_t now_tstamp;
-    /* TODO pthread_rwlock_rdlock() */
-    now_tstamp = client->gw.now;
-
-    return now_tstamp;
+  if (ws_is_functional(client->gw.ws)) {
+    return ws_timestamp(client->gw.ws);
   }
   return cee_timestamp_ms();
 }

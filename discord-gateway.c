@@ -585,7 +585,7 @@ on_message_delete(struct discord_gateway *gw, struct sized_buffer *data)
 static void
 on_message_delete_bulk(struct discord_gateway *gw, struct sized_buffer *data)
 {
-  const ja_u64 **ids = NULL;
+  u64_snowflake_t **ids = NULL;
   u64_snowflake_t channel_id = 0, guild_id = 0;
 
   json_extract(data->start, data->size,
@@ -594,7 +594,7 @@ on_message_delete_bulk(struct discord_gateway *gw, struct sized_buffer *data)
                "(guild_id):s_as_u64",
                &ja_u64_list_from_json, &ids, &channel_id, &guild_id);
 
-  ON(message_delete_bulk, ids, channel_id, guild_id);
+  ON(message_delete_bulk, (const u64_snowflake_t **)ids, channel_id, guild_id);
 
   free(ids);
 }

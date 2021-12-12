@@ -21,14 +21,8 @@ discord_delete_messages_by_author_id(struct discord *client,
   struct discord_message **messages = NULL;
   ORCAcode code;
 
-  if (!channel_id) {
-    logconf_error(&client->conf, "Missing 'channel_id");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!author_id) {
-    logconf_error(&client->conf, "Missing 'author_id");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, channel_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, author_id != 0, ORCA_BAD_PARAMETER);
 
   params.limit = 100;
   code = discord_get_channel_messages(client, channel_id, &params, &messages);
@@ -238,20 +232,6 @@ discord_embed_add_field(struct discord_embed *embed,
 {
   struct discord_embed_field field = { 0 };
 
-  if (ntl_length((ntl_t)embed->fields) >= DISCORD_EMBED_MAX_FIELDS) {
-    log_error("Reach embed fields threshold (max %d)",
-              DISCORD_EMBED_MAX_FIELDS);
-    return;
-  }
-  if (IS_EMPTY_STRING(name)) {
-    log_error("Missing 'name'");
-    return;
-  }
-  if (IS_EMPTY_STRING(value)) {
-    log_error("Missing 'value'");
-    return;
-  }
-
   field.Inline = Inline;
 
   if (name) asprintf(&field.name, "%s", name);
@@ -262,23 +242,13 @@ discord_embed_add_field(struct discord_embed *embed,
 }
 
 void
-discord_overwrite_append(NTL_T(struct discord_overwrite)
-                           * permission_overwrites,
+discord_overwrite_append(struct discord_overwrite ***permission_overwrites,
                          u64_snowflake_t id,
                          int type,
                          enum discord_bitwise_permission_flags allow,
                          enum discord_bitwise_permission_flags deny)
 {
   struct discord_overwrite new_overwrite = { 0 };
-
-  if (!id) {
-    log_error("Missing 'id'");
-    return;
-  }
-  if (!(0 == type || 1 == type)) {
-    log_error("'type' should be 0 (role) or 1 (member)");
-    return;
-  }
 
   new_overwrite.id = id;
   new_overwrite.type = type;
@@ -300,14 +270,8 @@ discord_get_channel_at_pos(struct discord *client,
   struct discord_channel **channels = NULL;
   ORCAcode code;
 
-  if (!guild_id) {
-    log_error("Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    log_error("Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   code = discord_get_guild_channels(client, guild_id, &channels);
   if (ORCA_OK != code) {
@@ -338,18 +302,12 @@ discord_disconnect_guild_member(struct discord *client,
                                 struct discord_guild_member *ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_guild_member, ret);
+    REQUEST_ATTR_INIT(discord_guild_member, ret);
   struct sized_buffer body;
   char buf[128];
 
-  if (!guild_id) {
-    log_error("Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!user_id) {
-    log_error("Missing 'user_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, user_id != 0, ORCA_BAD_PARAMETER);
 
   body.size = json_inject(buf, sizeof(buf), "(channel_id):null");
   body.start = buf;

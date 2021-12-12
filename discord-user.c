@@ -10,13 +10,9 @@
 ORCAcode
 discord_get_current_user(struct discord *client, struct discord_user *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_user, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_user, ret);
 
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me");
@@ -27,17 +23,10 @@ discord_get_user(struct discord *client,
                  const u64_snowflake_t user_id,
                  struct discord_user *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_user, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_user, ret);
 
-  if (!user_id) {
-    logconf_error(&client->conf, "Missing 'user_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, user_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/%" PRIu64, user_id);
@@ -48,15 +37,11 @@ discord_modify_current_user(struct discord *client,
                             struct discord_modify_current_user_params *params,
                             struct discord_user *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_user, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_user, ret);
   struct sized_buffer body;
   char buf[1024];
 
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
 
   body.size =
     discord_modify_current_user_params_to_json(buf, sizeof(buf), params);
@@ -80,10 +65,7 @@ sb_discord_get_current_user(struct discord *client, struct sized_buffer *ret)
   struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
                                        &sized_buffer_from_json };
 
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me");
@@ -94,12 +76,9 @@ discord_get_current_user_guilds(struct discord *client,
                                 struct discord_guild ***ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_LIST_INIT(discord_guild, ret);
+    REQUEST_ATTR_LIST_INIT(discord_guild, ret);
 
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me/guilds");
@@ -110,10 +89,7 @@ discord_leave_guild(struct discord *client, const u64_snowflake_t guild_id)
 {
   struct sized_buffer body = { "{}", 2 };
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, NULL, &body, HTTP_DELETE,
                              "/users/@me/guilds/%" PRIu64, guild_id);
@@ -124,15 +100,11 @@ discord_create_dm(struct discord *client,
                   struct discord_create_dm_params *params,
                   struct discord_channel *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[128];
 
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
 
   body.size = discord_create_dm_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
@@ -146,23 +118,13 @@ discord_create_group_dm(struct discord *client,
                         struct discord_create_group_dm_params *params,
                         struct discord_channel *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_channel, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_channel, ret);
   struct sized_buffer body;
   char buf[1024];
 
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params->access_tokens) {
-    logconf_error(&client->conf, "Missing 'params.access_tokens'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params->nicks) {
-    logconf_error(&client->conf, "Missing 'params.nicks'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params->access_tokens != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params->nicks != NULL, ORCA_BAD_PARAMETER);
 
   body.size = discord_create_group_dm_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
@@ -176,12 +138,9 @@ discord_get_user_connections(struct discord *client,
                              struct discord_connection ***ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_LIST_INIT(discord_connection, ret);
+    REQUEST_ATTR_LIST_INIT(discord_connection, ret);
 
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/users/@me/connections");

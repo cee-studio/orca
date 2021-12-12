@@ -9,14 +9,8 @@ slack_chat_post_message(struct slack *client,
                         struct sized_buffer *ret)
 {
 #if 0
-  if (!params) {
-    log_error("Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(params->channel)) {
-    log_error("Missing 'params.channel'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->channel), ORCA_BAD_PARAMETER);
 
   char *payload = NULL;
   size_t len = json_ainject(&payload,

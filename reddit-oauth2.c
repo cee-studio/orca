@@ -9,14 +9,8 @@ reddit_access_token(struct reddit *client,
                     struct sized_buffer *ret)
 {
 #if 0
-  if (!params) {
-    log_error("Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params->grant_type) {
-    log_error("Missing 'params.grant_type'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->grant_type), ORCA_BAD_PARAMETER);
 
   char query[1024];
   size_t len = 0;
@@ -25,10 +19,8 @@ reddit_access_token(struct reddit *client,
 
   if (STREQ(params->grant_type, "password")) { // script apps
     if (IS_EMPTY_STRING(params->username)) {
-      if (!client->username.size) {
-        log_error("Missing 'params.username'");
-        return ORCA_MISSING_PARAMETER;
-      }
+      ORCA_EXPECT(client, client->username.size != 0, ORCA_BAD_PARAMETER);
+
       len += snprintf(query + len, sizeof(query) - len, "&username=%.*s",
                       (int)client->username.size, client->username.start);
     }
@@ -38,10 +30,8 @@ reddit_access_token(struct reddit *client,
     }
 
     if (IS_EMPTY_STRING(params->password)) {
-      if (!client->password.size) {
-        log_error("Missing 'params.password'");
-        return ORCA_MISSING_PARAMETER;
-      }
+      ORCA_EXPECT(client, client->password.size != 0, ORCA_BAD_PARAMETER);
+
       len += snprintf(query + len, sizeof(query) - len, "&password=%.*s",
                       (int)client->password.size, client->password.start);
     }
@@ -52,21 +42,16 @@ reddit_access_token(struct reddit *client,
     ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   else if (STREQ(params->grant_type, "authorization_code")) { // web apps
-    if (IS_EMPTY_STRING(params->code)) {
-      log_error("Missing 'params.code'");
-      return ORCA_MISSING_PARAMETER;
-    }
-    if (IS_EMPTY_STRING(params->redirect_uri)) {
-      log_error("Missing 'params.redirect_uri'");
-      return ORCA_MISSING_PARAMETER;
-    }
+    ORCA_EXPECT(client, !IS_EMPTY_STRING(params->code), ORCA_BAD_PARAMETER);
+    ORCA_EXPECT(client, !IS_EMPTY_STRING(params->redirect_uri), ORCA_BAD_PARAMETER);
+
     len +=
       snprintf(query + len, sizeof(query) - len, "&code=%s&redirect_uri=%s",
                params->code, params->redirect_uri);
     ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   }
   else if (!STREQ(params->grant_type, "refresh_token")) {
-    log_error("Unknown 'grant_type' value (%s)", params->grant_type);
+    logconf_error(&client->conf, "Unknown 'grant_type' value (%s)", params->grant_type);
     return ORCA_BAD_PARAMETER;
   }
 

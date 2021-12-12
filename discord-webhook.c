@@ -12,23 +12,14 @@ discord_create_webhook(struct discord *client,
                        struct discord_create_webhook_params *params,
                        struct discord_webhook *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[1024];
 
-  if (!channel_id) {
-    logconf_error(&client->conf, "Missing 'channel_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params || IS_EMPTY_STRING(params->name)) {
-    logconf_error(&client->conf, "Missing 'params.name'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, channel_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->name), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   body.size = discord_create_webhook_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
@@ -43,16 +34,10 @@ discord_get_channel_webhooks(struct discord *client,
                              struct discord_webhook ***ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_LIST_INIT(discord_webhook, ret);
+    REQUEST_ATTR_LIST_INIT(discord_webhook, ret);
 
-  if (!channel_id) {
-    logconf_error(&client->conf, "Missing 'channel_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, channel_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/channels/%" PRIu64 "/webhooks", channel_id);
@@ -64,16 +49,10 @@ discord_get_guild_webhooks(struct discord *client,
                            struct discord_webhook ***ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_LIST_INIT(discord_webhook, ret);
+    REQUEST_ATTR_LIST_INIT(discord_webhook, ret);
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/webhooks", guild_id);
@@ -84,17 +63,10 @@ discord_get_webhook(struct discord *client,
                     const u64_snowflake_t webhook_id,
                     struct discord_webhook *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_webhook, ret);
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64, webhook_id);
@@ -106,21 +78,11 @@ discord_get_webhook_with_token(struct discord *client,
                                const char webhook_token[],
                                struct discord_webhook *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_webhook, ret);
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64 "/%s", webhook_id,
@@ -133,15 +95,11 @@ discord_modify_webhook(struct discord *client,
                        struct discord_modify_webhook_params *params,
                        struct discord_webhook *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[1024];
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
 
   body.size = discord_modify_webhook_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
@@ -158,19 +116,12 @@ discord_modify_webhook_with_token(
   struct discord_modify_webhook_with_token_params *params,
   struct discord_webhook *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   char buf[1024];
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
 
   body.size =
     discord_modify_webhook_with_token_params_to_json(buf, sizeof(buf), params);
@@ -185,10 +136,7 @@ ORCAcode
 discord_delete_webhook(struct discord *client,
                        const u64_snowflake_t webhook_id)
 {
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, NULL, NULL, HTTP_DELETE,
                              "/webhooks/%" PRIu64, webhook_id);
@@ -199,14 +147,8 @@ discord_delete_webhook_with_token(struct discord *client,
                                   const u64_snowflake_t webhook_id,
                                   const char webhook_token[])
 {
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, NULL, NULL, HTTP_DELETE,
                              "/webhooks/%" PRIu64 "/%s", webhook_id,
@@ -220,26 +162,16 @@ discord_execute_webhook(struct discord *client,
                         struct discord_execute_webhook_params *params,
                         struct discord_webhook *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_webhook, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_webhook, ret);
   struct sized_buffer body;
   enum http_method method;
   char buf[16384]; /**< @todo dynamic buffer */
   char query[4096] = "";
   size_t len = 0;
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
 
   if (params->wait) {
     len = snprintf(query, sizeof(query), "wait=1");
@@ -274,25 +206,12 @@ discord_get_webhook_message(struct discord *client,
                             const u64_snowflake_t message_id,
                             struct discord_message *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_message, ret);
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!message_id) {
-    logconf_error(&client->conf, "Missing 'message_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, message_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/webhooks/%" PRIu64 "/%s/%" PRIu64, webhook_id,
@@ -308,28 +227,15 @@ discord_edit_webhook_message(
   struct discord_edit_webhook_message_params *params,
   struct discord_message *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_message, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_message, ret);
   struct sized_buffer body;
   enum http_method method;
   char buf[16384]; /**< @todo dynamic buffer */
 
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!message_id) {
-    logconf_error(&client->conf, "Missing 'message_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, message_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
 
   body.size =
     discord_edit_webhook_message_params_to_json(buf, sizeof(buf), params);
@@ -354,18 +260,9 @@ discord_delete_webhook_message(struct discord *client,
                                const char webhook_token[],
                                const u64_snowflake_t message_id)
 {
-  if (!webhook_id) {
-    logconf_error(&client->conf, "Missing 'webhook_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(webhook_token)) {
-    logconf_error(&client->conf, "Missing 'webhook_token'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!message_id) {
-    logconf_error(&client->conf, "Missing 'message_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, webhook_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(webhook_token), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, message_id != 0, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, NULL, NULL, HTTP_DELETE,
                              "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,

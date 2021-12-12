@@ -12,16 +12,10 @@ discord_get_guild_template(struct discord *client,
                            struct discord_guild_template *ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_guild_template, ret);
+    REQUEST_ATTR_INIT(discord_guild_template, ret);
 
-  if (!code) {
-    logconf_error(&client->conf, "Missing 'code'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(code), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/templates/%s", code);
@@ -35,18 +29,12 @@ discord_create_guild_template(
   struct discord_guild_template *ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_guild_template, ret);
+    REQUEST_ATTR_INIT(discord_guild_template, ret);
   struct sized_buffer body;
   char buf[256];
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   body.size =
     discord_create_guild_template_params_to_json_v(buf, sizeof(buf), params);
@@ -63,16 +51,10 @@ discord_sync_guild_template(struct discord *client,
                             struct discord_guild_template *ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_guild_template, ret);
+    REQUEST_ATTR_INIT(discord_guild_template, ret);
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_PUT,
                              "/guilds/%" PRIu64 "/templates/%s", guild_id,

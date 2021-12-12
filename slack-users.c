@@ -8,14 +8,8 @@ slack_users_info(struct slack *client,
                  struct slack_users_info_params *params,
                  struct sized_buffer *ret)
 {
-  if (!params) {
-    log_error("Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(params->user)) {
-    log_error("Missing 'params.user'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->user), ORCA_BAD_PARAMETER);
 
   char query[4096];
   size_t len = 0;

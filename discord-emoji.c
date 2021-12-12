@@ -12,16 +12,10 @@ discord_list_guild_emojis(struct discord *client,
                           struct discord_emoji ***ret)
 {
   struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_LIST_INIT(discord_emoji, ret);
+    REQUEST_ATTR_LIST_INIT(discord_emoji, ret);
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/emojis", guild_id);
@@ -33,21 +27,11 @@ discord_get_guild_emoji(struct discord *client,
                         const u64_snowflake_t emoji_id,
                         struct discord_emoji *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_emoji, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_emoji, ret);
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!emoji_id) {
-    logconf_error(&client->conf, "Missing 'emoji_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, emoji_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/guilds/%" PRIu64 "/emojis/%" PRIu64, guild_id,
@@ -60,19 +44,12 @@ discord_create_guild_emoji(struct discord *client,
                            struct discord_create_guild_emoji_params *params,
                            struct discord_emoji *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_emoji, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_emoji, ret);
   struct sized_buffer body;
   char buf[2048];
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
 
   body.size =
     discord_create_guild_emoji_params_to_json(buf, sizeof(buf), params);
@@ -89,23 +66,13 @@ discord_modify_guild_emoji(struct discord *client,
                            struct discord_modify_guild_emoji_params *params,
                            struct discord_emoji *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_emoji, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_emoji, ret);
   struct sized_buffer body;
   char buf[2048];
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!emoji_id) {
-    logconf_error(&client->conf, "Missing 'emoji_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, emoji_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
 
   body.size =
     discord_modify_guild_emoji_params_to_json(buf, sizeof(buf), params);
@@ -121,14 +88,8 @@ discord_delete_guild_emoji(struct discord *client,
                            const u64_snowflake_t guild_id,
                            const u64_snowflake_t emoji_id)
 {
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!emoji_id) {
-    logconf_error(&client->conf, "Missing 'emoji_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, emoji_id != 0, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, NULL, NULL, HTTP_DELETE,
                              "/guilds/%" PRIu64 "/emojis/%" PRIu64, guild_id,

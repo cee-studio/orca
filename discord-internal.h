@@ -24,16 +24,29 @@
 
 #include "discord-voice-connections.h"
 
-/** @brief Quickly set attributes for an object */
-#define DISCORD_REQUEST_ATTR_INIT(type, obj)                                  \
+/** @brief Get client from its nested field */
+#define CLIENT(ptr, path) CONTAINEROF(ptr, struct discord, path)
+
+/**
+ * @brief Shortctur for setting attributes for a specs-generated struct
+ *
+ * @param type datatype of the struct
+ * @param pointer to specs-generated struct
+ */
+#define REQUEST_ATTR_INIT(type, obj)                                          \
   {                                                                           \
     obj, sizeof *obj, type##_init_v, type##_from_json_v, type##_cleanup_v     \
   }
 
-/** @brief Quickly set attributes for a list */
-#define DISCORD_REQUEST_ATTR_LIST_INIT(type, list)                            \
+/**
+ * @brief Shortcut for setting attributes for a specs-generated list
+ *
+ * @param type datatype of the list
+ * @param list pointer to specs-generated null terminated list
+ */
+#define REQUEST_ATTR_LIST_INIT(type, list)                                    \
   {                                                                           \
-    list, 0, NULL, type##_list_from_json_v,                                   \
+    list, sizeof **list, NULL, type##_list_from_json_v,                       \
       (void (*)(void *))type##_list_free_v                                    \
   }
 
@@ -54,11 +67,12 @@ struct discord_request_attr {
   struct discord_attachment **attachments;
 };
 
+/** @brief executed on a succesful request */
 typedef void (*discord_done_cb)(struct discord *client, const void *obj);
 
 /** @brief The async attributes for next request */
 struct discord_async_attr {
-  /** callback to be executed on request completion */
+  /** callback to be executed on a succesful request */
   discord_done_cb done;
   /** whether the next request is high priority */
   bool high_p;
@@ -612,9 +626,6 @@ void discord_gateway_shutdown(struct discord_gateway *gw);
  *        false restart a fresh session
  */
 void discord_gateway_reconnect(struct discord_gateway *gw, bool resume);
-
-/** @brief Get client from nested field */
-#define CLIENT(ptr, path) CONTAINEROF(ptr, struct discord, path)
 
 /**
  * @brief The Discord client handler

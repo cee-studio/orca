@@ -18,18 +18,10 @@ github_create_gist(struct github *client,
 {
   log_info("===create-gist===");
 
-  if (!params->description) {
-    log_error("Missing 'description'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params->title) {
-    log_error("Missing 'title'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params->contents) {
-    log_error("Missing 'contents'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->description), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->title), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->contents), ORCA_BAD_PARAMETER);
 
   char payload[4096];
   char fmt[2048];
@@ -58,15 +50,8 @@ github_get_gist(struct github *client, char *id, struct github_gist *ret)
 {
   log_info("===get-a-gist===");
 
-  if (!id) {
-    log_error("Missing 'id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-
-  if (!ret) {
-    log_error("Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(id), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
     &client->adapter,
@@ -80,10 +65,7 @@ github_gist_is_starred(struct github *client, char *id)
 {
   log_info("===gist-is-starred===");
 
-  if (!id) {
-    log_error("Missing 'id'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(id), ORCA_BAD_PARAMETER);
 
   return github_adapter_run(&client->adapter, NULL, NULL, HTTP_GET,
                             "/gists/%s/star", id);

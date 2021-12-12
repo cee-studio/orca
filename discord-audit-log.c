@@ -12,18 +12,11 @@ discord_get_guild_audit_log(struct discord *client,
                             struct discord_get_guild_audit_log_params *params,
                             struct discord_audit_log *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_audit_log, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_audit_log, ret);
   char query[1024] = "";
 
-  if (!guild_id) {
-    logconf_error(&client->conf, "Missing 'guild_id'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   if (params) {
     size_t offset = 0;

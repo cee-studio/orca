@@ -12,23 +12,13 @@ discord_get_invite(struct discord *client,
                    struct discord_get_invite_params *params,
                    struct discord_invite *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_invite, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_invite, ret);
   struct sized_buffer body;
   char buf[1024];
 
-  if (!invite_code) {
-    logconf_error(&client->conf, "Missing 'invite_code'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    logconf_error(&client->conf, "Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(invite_code), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   body.size = discord_get_invite_params_to_json(buf, sizeof(buf), params);
   body.start = buf;
@@ -42,13 +32,9 @@ discord_delete_invite(struct discord *client,
                       char *invite_code,
                       struct discord_invite *ret)
 {
-  struct discord_request_attr attr =
-    DISCORD_REQUEST_ATTR_INIT(discord_invite, ret);
+  struct discord_request_attr attr = REQUEST_ATTR_INIT(discord_invite, ret);
 
-  if (!invite_code) {
-    logconf_error(&client->conf, "Missing 'invite_code'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(invite_code), ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_DELETE,
                              "/invites/%s", invite_code);

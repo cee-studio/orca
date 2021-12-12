@@ -7,8 +7,8 @@ ORCAcode
 slack_apps_connections_open(struct slack *client, struct sized_buffer *ret)
 {
 #if 0
-  ASSERT_S(NULL != client->bot_token.start, "Missing bot token");
-  ASSERT_S(NULL != client->app_token.start, "Missing app token");
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->bot_token.start), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->app_token.start), ORCA_BAD_PARAMETER);
 
   char auth[128] = "";
   size_t len;

@@ -51,10 +51,7 @@ github_fill_repo_config(struct github *client, char *repo_config)
 {
   log_info("===github-fill-repo-config===");
 
-  if (!repo_config) {
-    log_error("repo_config is NULL.");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo_config), ORCA_BAD_PARAMETER);
 
   size_t len = 0;
   char *json = cee_load_whole_file(repo_config, &len);
@@ -138,14 +135,8 @@ github_update_my_fork(struct github *client, char **p_sha)
 {
   log_info("===update-my-fork===");
 
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.default_branch) {
-    log_error("Missing 'default_branch'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch), ORCA_BAD_PARAMETER);
 
   char *sha = NULL;
   ORCAcode code;
@@ -178,18 +169,9 @@ github_update_my_fork(struct github *client, char **p_sha)
 ORCAcode
 github_get_head_commit(struct github *client, char **p_sha)
 {
-  if (!p_sha) {
-    log_error("Missing 'p_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.default_branch) {
-    log_error("Missing 'default_branch'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, p_sha != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch), ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
     &client->adapter,
@@ -203,22 +185,10 @@ github_get_tree_sha(struct github *client, char *commit_sha, char **p_sha)
 {
   log_info("===get-tree-sha==");
 
-  if (!commit_sha) {
-    log_error("Missing 'commit_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!p_sha) {
-    log_error("Missing 'p_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(commit_sha), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, p_sha != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
     &client->adapter,
@@ -230,18 +200,9 @@ github_get_tree_sha(struct github *client, char *commit_sha, char **p_sha)
 ORCAcode
 github_create_blobs(struct github *client, struct github_file ** files)
 {
-  if (!files) {
-    log_error("Missing 'files'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, files != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
 
   int i;
   char *f_content;
@@ -252,10 +213,7 @@ github_create_blobs(struct github *client, struct github_file ** files)
     log_info("===creating blob for %s===", files[i]->path);
 
     f_content = cee_load_whole_file(files[i]->path, &f_len);
-    if (!f_content) {
-      log_error("Path doesn't exist: '%s'", files[i]->path);
-      return ORCA_BAD_PARAMETER;
-    }
+    ORCA_EXPECT(client, f_content != NULL, ORCA_BAD_PARAMETER, "File path doesn't exist");
 
     char *payload = NULL;
     size_t ret;
@@ -264,11 +222,9 @@ github_create_blobs(struct github *client, struct github_file ** files)
                        "(encoding):|utf-8|",
                        f_len, f_content);
 
-    if (!payload) {
-      log_error("Couldn't create JSON Payload");
-      free(f_content);
-      return ORCA_BAD_JSON;
-    }
+    free(f_content);
+
+    ORCA_EXPECT(client, payload != NULL, ORCA_BAD_JSON);
 
     code = github_adapter_run(
       &client->adapter,
@@ -278,7 +234,6 @@ github_create_blobs(struct github *client, struct github_file ** files)
       client->presets.repo);
 
     free(payload);
-    free(f_content);
   }
 
   return code;
@@ -310,22 +265,10 @@ github_create_tree(struct github *client,
 {
   log_info("==create-tree==");
 
-  if (!base_tree_sha) {
-    log_error("Missing 'base_tree_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!files) {
-    log_error("Missing 'files'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(base_tree_sha), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, files != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
 
   char payload[2048];
   size_t ret;
@@ -351,26 +294,11 @@ github_create_a_commit(struct github *client,
 {
   log_info("===create-a-commit===");
 
-  if (!tree_sha) {
-    log_error("Missing 'tree_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!parent_commit_sha) {
-    log_error("Missing 'parent_commit_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!commit_msg) {
-    log_error("Missing 'commit_msg'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(tree_sha), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(parent_commit_sha), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(commit_msg), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
 
   char payload[4096];
   size_t ret;
@@ -396,22 +324,10 @@ github_create_a_branch(struct github *client,
 {
   log_info("===create-a-branch===");
 
-  if (!head_commit_sha) {
-    log_error("Missing 'head_commit_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!branch) {
-    log_error("Missing 'branch'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(head_commit_sha), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(branch), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
 
   char payload[4096];
   size_t ret;
@@ -431,22 +347,10 @@ github_update_a_commit(struct github *client, char *branch, char *commit_sha)
 {
   log_info("===update-a-commit===");
 
-  if (!branch) {
-    log_error("Missing 'branch'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!commit_sha) {
-    log_error("Missing 'commit_sha'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(branch), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(commit_sha), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
 
   char payload[512];
   size_t ret;
@@ -466,22 +370,10 @@ github_create_a_pull_request(struct github *client,
 {
   log_info("===create-a-pull-request===");
 
-  if (!branch) {
-    log_error("Missing 'branch'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!pull_msg) {
-    log_error("Missing 'pull_msg'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!client->presets.default_branch) {
-    log_error("Missing 'default_branch'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(branch), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(pull_msg), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch), ORCA_BAD_PARAMETER);
 
   char payload[4096];
   size_t ret;
@@ -506,14 +398,8 @@ github_get_user(struct github *client,
 {
   log_info("===get-user===");
 
-  if (!username) {
-    log_error("Missing 'username'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!ret) {
-    log_error("Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(username), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
     &client->adapter,
@@ -530,15 +416,8 @@ github_get_repository(struct github *client,
 {
   log_info("===get-repository===");
 
-  if (!repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
-
-  if (!ret) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
     &client->adapter,

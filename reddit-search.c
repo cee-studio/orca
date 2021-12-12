@@ -8,59 +8,19 @@ ORCAcode reddit_search(struct reddit *client,
                        char subreddit[],
                        struct sized_buffer *ret)
 {
-  if (IS_EMPTY_STRING(subreddit)) {
-    log_error("Missing 'subreddit'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!params) {
-    log_error("Missing 'params'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (params->after && params->before) {
-    log_error("Can't have both 'params.after' and 'params.before'");
-    return ORCA_BAD_PARAMETER;
-  }
-  if (!cee_str_bounds_check(params->category, 5)) {
-    log_error("'params.category' should be no longer than 5 characters");
-    return ORCA_BAD_PARAMETER;
-  }
-  if (IS_EMPTY_STRING(params->q)) {
-    log_error("Missing 'params->q'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!cee_str_bounds_check(params->q, 512)) {
-    log_error("'params.q' should be no longer than 512 characters");
-    return ORCA_BAD_PARAMETER;
-  }
-  if (!IS_EMPTY_STRING(params->show) && !STREQ(params->show, "all")) {
-    log_error("'params.show' should be NULL or \"all\"");
-    return ORCA_BAD_PARAMETER;
-  }
-  if (!IS_EMPTY_STRING(params->sort)
-      && !(STREQ(params->sort, "relevance") || STREQ(params->sort, "hot")
-           || STREQ(params->sort, "top") || STREQ(params->sort, "new")
-           || STREQ(params->sort, "comments")))
-  {
-    log_error(
-      "'params.sort' should be one of: (relevance, hot, top, new, comments)");
-    return ORCA_BAD_PARAMETER;
-  }
-  if (!IS_EMPTY_STRING(params->t)
-      && !(STREQ(params->t, "hour") || STREQ(params->t, "day")
-           || STREQ(params->t, "week") || STREQ(params->t, "month")
-           || STREQ(params->t, "year") || STREQ(params->t, "all")))
-  {
-    log_error(
-      "'params.t' should be one of: (hour, day, week, month, year, all)");
-    return ORCA_BAD_PARAMETER;
-  }
-  if (!IS_EMPTY_STRING(params->type)
-      && !(STREQ(params->type, "sr") || STREQ(params->type, "link")
-           || STREQ(params->type, "user")))
-  {
-    log_error("'params.type' should be one of: (sr, link, user)");
-    return ORCA_BAD_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(subreddit), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, (!params->after) != (!params->before), ORCA_BAD_PARAMETER, "Can't have 'after' and 'before' at the same time");
+  ORCA_EXPECT(client, cee_str_bounds_check(params->category, 5) != 0, ORCA_BAD_PARAMETER, "Should be no longer than 5 characters");
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(params->q), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, cee_str_bounds_check(params->q, 512) != 0, ORCA_BAD_PARAMETER, "Should be no longer than 512 characters");
+  ORCA_EXPECT(client, IS_EMPTY_STRING(params->show) || STREQ(params->show, "all"), ORCA_BAD_PARAMETER, "'show' should be NULL or \"all\"");
+  if (!IS_EMPTY_STRING(params->sort))
+    ORCA_EXPECT(client, strstr(params->sort, "relevance,hot,top,new,comments"), ORCA_BAD_PARAMETER);
+  if (!IS_EMPTY_STRING(params->t))
+    ORCA_EXPECT(client, strstr(params->t, "hour,day,week.month,year,all"), ORCA_BAD_PARAMETER);
+  if (!IS_EMPTY_STRING(params->type))
+    ORCA_EXPECT(client, strstr(params->type, "sr,link,user"), ORCA_BAD_PARAMETER);
 
   if (!params->limit) // default is 25
     params->limit = 25;

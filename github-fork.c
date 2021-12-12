@@ -16,14 +16,8 @@ github_create_fork(struct github *client, char *owner, char *repo)
 {
   log_info("===create-fork===");
 
-  if (!owner) {
-    log_error("Missing 'owner'");
-    return ORCA_MISSING_PARAMETER;
-  }
-  if (!repo) {
-    log_error("Missing 'repo'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(owner), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
     &client->adapter,

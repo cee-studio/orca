@@ -42,10 +42,7 @@ discord_get_gateway(struct discord *client, struct sized_buffer *ret)
   struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
                                        &sized_buffer_from_json };
 
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/gateway");
@@ -57,10 +54,7 @@ discord_get_gateway_bot(struct discord *client, struct sized_buffer *ret)
   struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
                                        &sized_buffer_from_json };
 
-  if (!ret) {
-    logconf_error(&client->conf, "Missing 'ret'");
-    return ORCA_MISSING_PARAMETER;
-  }
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
                              "/gateway/bot");
@@ -1352,7 +1346,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
         discord_request_check_action(&client->adapter.req, msg);
     } while (1);
 
-    /* severed connection, exit*/
+    /* severed connection, exit */
     if (!is_running) break;
     /* client in the process of being shutdown */
     if (gw->status->shutdown) continue;

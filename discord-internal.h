@@ -482,6 +482,9 @@ struct discord_gateway {
   /** the websockets handle that connects to Discord */
   struct websockets *ws;
 
+  /** Gateway's concept of "now" */
+  u64_unix_ms_t now;
+
   /** reconnect structure */
   struct {
     /** will attempt reconnecting if true */

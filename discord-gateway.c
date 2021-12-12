@@ -118,7 +118,7 @@ send_identify(struct discord_gateway *gw)
   struct ws_info info = { 0 };
 
   /* Ratelimit check */
-  if ((ws_timestamp(gw->ws) - gw->session.identify_tstamp) < 5) {
+  if (gw->now - gw->session.identify_tstamp < 5) {
     ++gw->session.concurrent;
     VASSERT_S(gw->session.concurrent < gw->session.start_limit.max_concurrency,
               "Reach identify request threshold (%d every 5 seconds)",
@@ -143,7 +143,7 @@ send_identify(struct discord_gateway *gw)
     ret, info.loginfo.counter + 1);
 
   /* get timestamp for this identify */
-  gw->session.identify_tstamp = ws_timestamp(gw->ws);
+  gw->session.identify_tstamp = gw->now;
 }
 
 /* send heartbeat pulse to websockets server in order
@@ -166,14 +166,15 @@ send_heartbeat(struct discord_gateway *gw)
               ANSI_FG_BRIGHT_GREEN) " HEARTBEAT (%d bytes) [@@@_%zu_@@@]",
     ret, info.loginfo.counter + 1);
 
-  gw->hbeat.tstamp = ws_timestamp(gw->ws); /*update heartbeat timestamp */
+  /* update heartbeat timestamp */
+  gw->hbeat.tstamp = gw->now;
 }
 
 static void
 on_hello(struct discord_gateway *gw)
 {
   gw->hbeat.interval_ms = 0;
-  gw->hbeat.tstamp = ws_timestamp(gw->ws);
+  gw->hbeat.tstamp = gw->now;
 
   json_extract(gw->payload.data.start, gw->payload.data.size,
                "(heartbeat_interval):ld", &gw->hbeat.interval_ms);
@@ -756,13 +757,13 @@ on_dispatch(struct discord_gateway *gw)
   enum discord_gateway_events event;
 
   /* Ratelimit check */
-  if ((ws_timestamp(gw->ws) - gw->session.event_tstamp) < 60) {
+  if (gw->now - gw->session.event_tstamp < 60) {
     ++gw->session.event_count;
     ASSERT_S(gw->session.event_count < 120,
              "Reach event dispatch threshold (120 every 60 seconds)");
   }
   else {
-    gw->session.event_tstamp = ws_timestamp(gw->ws);
+    gw->session.event_tstamp = gw->now;
     gw->session.event_count = 0;
   }
 
@@ -1031,7 +1032,7 @@ on_heartbeat_ack(struct discord_gateway *gw)
 {
   /* get request / response interval in milliseconds */
   /* TODO: pthread_rwlock_wrlock() */
-  gw->hbeat.ping_ms = ws_timestamp(gw->ws) - gw->hbeat.tstamp;
+  gw->hbeat.ping_ms = gw->now - gw->hbeat.tstamp;
   logconf_trace(&gw->conf, "PING: %d ms", gw->hbeat.ping_ms);
 }
 
@@ -1318,7 +1319,8 @@ _discord_gateway_loop(struct discord_gateway *gw)
     int numfds = 0;
 
     /* update WebSockets concept of "now" */
-    ws_timestamp_update(gw->ws);
+    /* TODO: pthread_rwlock_wrlock() */
+    gw->now = ws_timestamp_update(gw->ws);
 
     mcode = curl_multi_perform(client->mhandle, &is_running);
     if (mcode == CURLM_OK) {
@@ -1358,7 +1360,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
 
     /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/
-    if (gw->hbeat.interval_ms < (ws_timestamp(gw->ws) - gw->hbeat.tstamp)) {
+    if (gw->hbeat.interval_ms < gw->now - gw->hbeat.tstamp) {
       send_heartbeat(gw);
     }
 

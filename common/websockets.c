@@ -799,9 +799,6 @@ ws_end(struct websockets *ws)
       break;
     }
   }
-  else {
-    logconf_warn(&ws->conf, "Exit before establishing a connection");
-  }
 
   curl_multi_remove_handle(ws->mhandle, ws->ehandle);
 

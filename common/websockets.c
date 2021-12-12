@@ -18,6 +18,8 @@
             mcode, curl_multi_strerror(mcode))
 
 struct websockets {
+  /** the logconf structure for logging @see logconf_setup() */
+  struct logconf conf;
   /** stores info on the latest transfer performed via websockets */
   struct ws_info info;
   /**
@@ -33,7 +35,7 @@ struct websockets {
   CURLM *mhandle;
   /** perform/receive individual WebSockets tranfers */
   CURL *ehandle;
-  /** timestamp updated every ws_perform() call */
+  /** timestamp updated every ws_timestamp_update() call */
   uint64_t now_tstamp;
   /** WebSockets connection URL @see ws_set_url() */
   char base_url[512 + 1];
@@ -47,14 +49,11 @@ struct websockets {
    * @see https://curl.se/libcurl/c/CURLOPT_ERRORBUFFER.html
    */
   char errbuf[CURL_ERROR_SIZE];
-  /** the logconf structure for logging @see logconf_setup() */
-  struct logconf conf;
   /** lock for functions that may be called in other threads */
   pthread_mutex_t lock;
   /** lock for reading/writing the event-loop timestamp */
   pthread_rwlock_t rwlock;
-  /** the event-loop thread id */
-  pthread_t tid;
+
   /**
    * user-triggered actions
    * @note the user may close the active connection via ws_close()
@@ -67,6 +66,7 @@ struct websockets {
     /** succesfully closed connection after ws_close() */
     WS_ACTION_END_CLOSE
   } action;
+
   /** close promise filled at ws_close() */
   struct {
     /** opcode reason for closing */
@@ -197,7 +197,9 @@ ws_close_opcode_print(enum ws_close_reason opcode)
     CASE_RETURN_STR(WS_CLOSE_REASON_PRIVATE_START);
     CASE_RETURN_STR(WS_CLOSE_REASON_PRIVATE_END);
   default:
-    if (opcode > WS_CLOSE_REASON_PRIVATE_START || opcode < WS_CLOSE_REASON_PRIVATE_END) {
+    if (opcode > WS_CLOSE_REASON_PRIVATE_START
+        || opcode < WS_CLOSE_REASON_PRIVATE_END)
+    {
       return "WS_CLOSE_REASON_PRIVATE";
     }
     return "WS_CLOSE_REASON_UNKNOWN";
@@ -304,7 +306,8 @@ cws_on_close_cb(void *p_ws,
     cwscode, len, ws->info.loginfo.counter);
 
   if (ws->cbs.on_close)
-    ws->cbs.on_close(ws->cbs.data, ws, &ws->info, (enum ws_close_reason)cwscode, reason, len);
+    ws->cbs.on_close(ws->cbs.data, ws, &ws->info,
+                     (enum ws_close_reason)cwscode, reason, len);
 
   ws->action = WS_ACTION_END_CLOSE;
 
@@ -747,11 +750,10 @@ ws_pong(struct websockets *ws,
 void
 ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
 {
-  ws->tid = pthread_self(); /* save the starting thread */
   memset(&ws->pending_close, 0, sizeof ws->pending_close);
   ws->action = WS_ACTION_NONE;
 
-  VASSERT_S(false == ws_is_alive(ws),
+  VASSERT_S(!ws_is_alive(ws),
             "[%s] Please shutdown current WebSockets connection before "
             "calling ws_start() (Current status: %s)",
             ws->conf.id, _ws_status_print(ws->status));
@@ -761,15 +763,13 @@ ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
             ws->conf.id);
 
   if (!ws->mhandle) ws->mhandle = curl_multi_init();
-
-  ws->ehandle = _ws_cws_new(ws, ws->protocols);
-
+  if (!ws->ehandle) ws->ehandle = _ws_cws_new(ws, ws->protocols);
   curl_multi_add_handle(ws->mhandle, ws->ehandle);
-
-  _ws_set_status(ws, WS_CONNECTING);
 
   if (ret_ehandle) *ret_ehandle = ws->ehandle;
   if (ret_mhandle) *ret_mhandle = ws->mhandle;
+
+  _ws_set_status(ws, WS_CONNECTING);
 }
 
 void
@@ -784,8 +784,9 @@ ws_end(struct websockets *ws)
   /* read messages/informationals from the individual transfers */
   curlmsg = curl_multi_info_read(ws->mhandle, &msgq);
   if (curlmsg && ws->ehandle == curlmsg->easy_handle) {
-    CURLcode ecode = curlmsg->data.result;
-    switch (ecode) {
+    CURLcode ecode;
+
+    switch (ecode = curlmsg->data.result) {
     case CURLE_OK:
     case CURLE_ABORTED_BY_CALLBACK: /* _ws_check_action_cb() */
       logconf_info(&ws->conf, "Disconnected gracefully");
@@ -798,9 +799,9 @@ ws_end(struct websockets *ws)
       logconf_error(&ws->conf, "Disconnected abruptly");
       break;
     }
-  }
 
-  curl_multi_remove_handle(ws->mhandle, ws->ehandle);
+    curl_multi_remove_handle(ws->mhandle, ws->ehandle);
+  }
 
   /* reset for next iteration */
   *ws->errbuf = '\0';
@@ -850,30 +851,24 @@ uint64_t
 ws_timestamp(struct websockets *ws)
 {
   uint64_t now_tstamp;
+
   pthread_rwlock_rdlock(&ws->rwlock);
   now_tstamp = ws->now_tstamp;
   pthread_rwlock_unlock(&ws->rwlock);
+
   return now_tstamp;
 }
 
-void
+uint64_t
 ws_timestamp_update(struct websockets *ws)
 {
+  uint64_t now_tstamp;
+
   pthread_rwlock_wrlock(&ws->rwlock);
-  ws->now_tstamp = cee_timestamp_ms();
+  now_tstamp = ws->now_tstamp = cee_timestamp_ms();
   pthread_rwlock_unlock(&ws->rwlock);
-}
 
-bool
-ws_is_alive(struct websockets *ws)
-{
-  return WS_DISCONNECTED != ws_get_status(ws);
-}
-
-bool
-ws_is_functional(struct websockets *ws)
-{
-  return WS_CONNECTED == ws_get_status(ws);
+  return now_tstamp;
 }
 
 void
@@ -894,28 +889,10 @@ ws_close(struct websockets *ws,
   pthread_mutex_unlock(&ws->lock);
 }
 
-bool
-ws_same_thread(struct websockets *ws)
-{
-  return ws->tid == pthread_self();
-}
-
-int
-ws_lock(struct websockets *ws)
-{
-  return pthread_mutex_lock(&ws->lock);
-}
-
-int
-ws_unlock(struct websockets *ws)
-{
-  return pthread_mutex_unlock(&ws->lock);
-}
-
 void
-ws_reqheader_add(struct websockets *ws, const char field[], const char value[])
+ws_add_header(struct websockets *ws, const char field[], const char value[])
 {
   ASSERT_S(ws_is_alive(ws),
-           "ws_start() must have been called prior to ws_reqheader_add()");
-  cws_reqheader_add(ws->ehandle, field, value);
+           "ws_start() must have been called prior to ws_add_header()");
+  cws_add_header(ws->ehandle, field, value);
 }

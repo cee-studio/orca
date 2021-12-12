@@ -74,9 +74,7 @@ enum ws_close_reason {
   WS_CLOSE_REASON_PRIVATE_END = 4999
 };
 
-/**
- * @brief WebSockets callbacks
- */
+/** @brief WebSockets callbacks */
 struct ws_callbacks {
   /**
    * @brief Called upon connection
@@ -87,6 +85,7 @@ struct ws_callbacks {
                      struct websockets *ws,
                      struct ws_info *info,
                      const char *protocols);
+
   /**
    * @brief Reports UTF-8 text messages.
    *
@@ -99,9 +98,8 @@ struct ws_callbacks {
                   struct ws_info *info,
                   const char *text,
                   size_t len);
-  /**
-   * @brief reports binary data.
-   */
+
+  /** @brief reports binary data.  */
   void (*on_binary)(void *data,
                     struct websockets *ws,
                     struct ws_info *info,
@@ -118,14 +116,14 @@ struct ws_callbacks {
                   struct ws_info *info,
                   const char *reason,
                   size_t len);
-  /**
-   * @brief reports PONG.
-   */
+
+  /** @brief reports PONG.  */
   void (*on_pong)(void *data,
                   struct websockets *ws,
                   struct ws_info *info,
                   const char *reason,
                   size_t len);
+
   /**
    * @brief reports server closed the connection with the given reason.
    *
@@ -138,9 +136,8 @@ struct ws_callbacks {
                    enum ws_close_reason wscode,
                    const char *reason,
                    size_t len);
-  /**
-   * @brief user arbitrary data to be passed around callbacks
-   */
+
+  /** @brief user arbitrary data to be passed around callbacks */
   void *data;
 };
 
@@ -149,6 +146,27 @@ struct ws_attr {
   /** pre-initialized logging module */
   struct logconf *conf;
 };
+
+/**
+ * @brief Check if a WebSockets connection is alive
+ *
+ * This will only return true if the connection status is
+ *        different than WS_DISCONNECTED
+ * @param ws the WebSockets handle created with ws_init()
+ * @return `true` if WebSockets status is different than
+ *        WS_DISCONNECTED, `false` otherwise.
+ */
+#define ws_is_alive(ws) (ws_get_status(ws) != WS_DISCONNECTED)
+
+/**
+ * @brief Check if WebSockets connection is functional
+ *
+ * This will only return true if the connection status is
+ *        WS_CONNECTED
+ * @param ws the WebSockets handle created with ws_init()
+ * @return `true` if is functional, `false` otherwise
+ */
+#define ws_is_functional(ws) (ws_get_status(ws) == WS_CONNECTED)
 
 /**
  * @brief Create a new (CURL-based) WebSockets handle
@@ -290,7 +308,8 @@ const char *ws_close_opcode_print(enum ws_close_reason opcode);
  * @brief The WebSockets event-loop concept of "now"
  *
  * @param ws the WebSockets handle created with ws_init()
- * @return the timestamp in milliseconds from when ws_perform() was last called
+ * @return the timestamp in milliseconds from when ws_timestamp_update() was
+ * last called
  * @note the timestamp is updated at the start of each event-loop iteration
  */
 uint64_t ws_timestamp(struct websockets *ws);
@@ -299,29 +318,9 @@ uint64_t ws_timestamp(struct websockets *ws);
  * @brief Update the WebSockets event-loop concept of "now"
  *
  * @param ws the WebSockets handle created with ws_init()
+ * @return the timestamp in milliseconds
  */
-void ws_timestamp_update(struct websockets *ws);
-
-/**
- * @brief Check if a WebSockets connection is alive
- *
- * This will only return true if the connection status is
- *        different than WS_DISCONNECTED
- * @param ws the WebSockets handle created with ws_init()
- * @return TRUE if WebSockets status is different than
- *        WS_DISCONNECTED, FALSE otherwise.
- */
-_Bool ws_is_alive(struct websockets *ws);
-
-/**
- * @brief Check if WebSockets connection is functional
- *
- * This will only return true if the connection status is
- *        WS_CONNECTED
- * @param ws the WebSockets handle created with ws_init()
- * @return true if is functional, false otherwise
- */
-_Bool ws_is_functional(struct websockets *ws);
+uint64_t ws_timestamp_update(struct websockets *ws);
 
 /**
  * @brief Thread-safe way to stop websockets connection
@@ -340,36 +339,15 @@ void ws_close(struct websockets *ws,
               const size_t len);
 
 /**
- * @brief Check if current thread is the same as the event-loop main-thread
- * @param ws the WebSockets handle created with ws_init()
- * @return true if its the same thread, false otherwise
- */
-_Bool ws_same_thread(struct websockets *ws);
-
-/**
- * @brief Lock WebSockets handle
- * @param ws the WebSockets handle created with ws_init()
- * @return pthread_mutex_lock return value
- */
-int ws_lock(struct websockets *ws);
-
-/**
- * @brief Unlock WebSockets handle
- * @param ws the WebSockets handle created with ws_init()
- * @return pthread_mutex_unlock return value
- */
-int ws_unlock(struct websockets *ws);
-
-/**
  * @brief Add a header field/value pair
  *
  * @param ws the WebSockets handle created with ws_init()
  * @param field the header field
  * @param value the header value
  */
-void ws_reqheader_add(struct websockets *ws,
-                      const char field[],
-                      const char value[]);
+void ws_add_header(struct websockets *ws,
+                   const char field[],
+                   const char value[]);
 
 #ifdef __cplusplus
 }

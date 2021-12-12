@@ -46,7 +46,7 @@ discord_adapter_init(struct discord_adapter *adapter,
   }
 
   /* initialize ratelimit handler */
-  discord_ratelimit_init(&adapter->rlimit, &adapter->conf);
+  discord_request_init(&adapter->req, &adapter->conf);
 }
 
 void
@@ -56,7 +56,7 @@ discord_adapter_cleanup(struct discord_adapter *adapter)
   ua_cleanup(adapter->ua);
 
   /* cleanup ratelimit handle */
-  discord_ratelimit_cleanup(&adapter->rlimit);
+  discord_request_cleanup(&adapter->req);
 }
 
 /* template function for performing requests */
@@ -83,13 +83,12 @@ discord_adapter_run(struct discord_adapter *adapter,
   /* enqueue asynchronous request */
   if (true == adapter->async_enable) {
     adapter->async_enable = false;
-    return discord_request_perform_async(&adapter->rlimit, attr, body, method,
+    return discord_request_perform_async(&adapter->req, attr, body, method,
                                          endpoint);
   }
 
   /* perform blocking request */
-  return discord_request_perform(&adapter->rlimit, attr, body, method,
-                                 endpoint);
+  return discord_request_perform(&adapter->req, attr, body, method, endpoint);
 }
 
 void
@@ -97,5 +96,5 @@ discord_adapter_set_async(struct discord_adapter *adapter,
                           struct discord_async_attr *attr)
 {
   adapter->async_enable = true;
-  memcpy(&adapter->rlimit.async.attr, attr, sizeof(struct discord_async_attr));
+  memcpy(&adapter->req.async.attr, attr, sizeof(struct discord_async_attr));
 }

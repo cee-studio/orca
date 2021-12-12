@@ -1101,14 +1101,13 @@ discord_list_joined_private_archived_threads(
 /* ASYNCHRONOUS WRAPPERS */
 
 ORCAcode
-discord_create_message_async(struct discord *client,
-                             const u64_snowflake_t channel_id,
-                             struct discord_create_message_params *params,
-                             void (*ret)(struct discord *client,
-                                         ORCAcode code,
-                                         const struct discord_message *msg))
+discord_create_message_async(
+  struct discord *client,
+  const u64_snowflake_t channel_id,
+  struct discord_create_message_params *params,
+  void (*done)(struct discord *client, const struct discord_message *ret))
 {
-  struct discord_async_attr attr = { (discord_async_cb)ret };
+  struct discord_async_attr attr = { (discord_done_cb)done };
 
   discord_adapter_set_async(&client->adapter, &attr);
   return discord_create_message(client, channel_id, params, NULL);

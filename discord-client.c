@@ -409,28 +409,10 @@ discord_set_on_message_create(struct discord *client,
 }
 
 void
-discord_set_on_sb_message_create(struct discord *client,
-                                 discord_sb_message_cb callback)
-{
-  client->gw.cmds.cbs.sb_on_message_create = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
-                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
-}
-
-void
 discord_set_on_message_update(struct discord *client,
                               discord_message_cb callback)
 {
   client->gw.cmds.cbs.on_message_update = callback;
-  discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
-                                | DISCORD_GATEWAY_DIRECT_MESSAGES);
-}
-
-void
-discord_set_on_sb_message_update(struct discord *client,
-                                 discord_sb_message_cb callback)
-{
-  client->gw.cmds.cbs.sb_on_message_update = callback;
   discord_add_intents(client, DISCORD_GATEWAY_GUILD_MESSAGES
                                 | DISCORD_GATEWAY_DIRECT_MESSAGES);
 }

@@ -93,7 +93,18 @@ typedef int ORCAcode;
 /** @} OrcaLimits */
 
 /**
+ * @brief Get container `type` from a field `ptr`
+ *
+ * @param ptr the field contained in `type`
+ * @param type the container datatype
+ * @param path the path to the field from the container POV
+ */
+#define CONTAINEROF(ptr, type, path)                                          \
+  ((type *)((char *)(ptr)-offsetof(type, path)))
+
+/**
  * @brief Return a generic meaning for ORCAcode
+ *
  * @param code the ORCAcode to be explained
  * @return a string containing the code meaning
  */

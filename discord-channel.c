@@ -416,10 +416,10 @@ discord_bulk_delete_messages(struct discord *client,
   count = ntl_length_max((ntl_t)messages, 101);
   ORCA_EXPECT(client, count >= 2 && count <= 100, ORCA_BAD_PARAMETER);
 
-  for (i = 0; messages[i]; ++i) {
-    u64_unix_ms_t timestamp = (*messages[i] >> 22) + 1420070400000;
+  for (i = 0; i < count; ++i) {
+    u64_unix_ms_t tstamp = (*messages[i] >> 22) + 1420070400000;
 
-    ORCA_EXPECT(client, now <= timestamp || now - timestamp <= 1209600000,
+    ORCA_EXPECT(client, now <= tstamp || now - tstamp <= 1209600000,
                 ORCA_BAD_PARAMETER,
                 "Messages should not be older than 2 weeks.");
   }

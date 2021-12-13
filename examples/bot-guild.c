@@ -15,22 +15,22 @@ void on_ready(struct discord *client)
 }
 
 void on_log_role_create(struct discord *client,
-                        const u64_snowflake_t guild_id,
+                        u64_snowflake_t guild_id,
                         const struct discord_role *role)
 {
   log_warn("Role (%" PRIu64 ") created", role->id);
 }
 
 void on_log_role_update(struct discord *client,
-                        const u64_snowflake_t guild_id,
+                        u64_snowflake_t guild_id,
                         const struct discord_role *role)
 {
   log_warn("Role (%" PRIu64 ") updated", role->id);
 }
 
 void on_log_role_delete(struct discord *client,
-                        const u64_snowflake_t guild_id,
-                        const u64_snowflake_t role_id)
+                        u64_snowflake_t guild_id,
+                        u64_snowflake_t role_id)
 {
   log_warn("Role (%" PRIu64 ") deleted", role_id);
 }

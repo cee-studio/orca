@@ -17,7 +17,7 @@ void on_ready(struct discord *client)
 }
 
 void on_log_guild_member_add(struct discord *client,
-                             const u64_snowflake_t guild_id,
+                             u64_snowflake_t guild_id,
                              const struct discord_guild_member *member)
 {
   log_info("%s#%s joined guild %" PRIu64, member->user->username,
@@ -25,7 +25,7 @@ void on_log_guild_member_add(struct discord *client,
 }
 
 void on_log_guild_member_update(struct discord *client,
-                                const u64_snowflake_t guild_id,
+                                u64_snowflake_t guild_id,
                                 const struct discord_guild_member *member)
 {
   char nick[128] = "";
@@ -38,7 +38,7 @@ void on_log_guild_member_update(struct discord *client,
 }
 
 void on_log_guild_member_remove(struct discord *client,
-                                const u64_snowflake_t guild_id,
+                                u64_snowflake_t guild_id,
                                 const struct discord_user *user)
 {
   log_info("%s#%s left guild %" PRIu64, user->username, user->discriminator,

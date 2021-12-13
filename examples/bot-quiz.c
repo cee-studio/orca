@@ -141,7 +141,7 @@ void on_ready(struct discord *client)
  * session exists by checking if there is a corresponding role attributed to
  * the user */
 void close_existing_sessions(struct discord *client,
-                             const u64_snowflake_t guild_id,
+                             u64_snowflake_t guild_id,
                              const struct discord_guild_member *member)
 {
   /* @sqlite simply fetching a database row by the user_id should be enough to
@@ -178,7 +178,7 @@ void close_existing_sessions(struct discord *client,
 
 u64_snowflake_t create_session_channel(
   struct discord *client,
-  const u64_snowflake_t guild_id,
+  u64_snowflake_t guild_id,
   const struct discord_guild_member *member)
 {
   struct discord_channel ch = { 0 };
@@ -222,8 +222,8 @@ u64_snowflake_t create_session_channel(
  * need a unique
  *  role created per user that associates himself and a session's channel */
 u64_snowflake_t add_session_role(struct discord *client,
-                                 const u64_snowflake_t guild_id,
-                                 const u64_snowflake_t channel_id,
+                                 u64_snowflake_t guild_id,
+                                 u64_snowflake_t channel_id,
                                  const struct discord_guild_member *member)
 {
   char text[64];
@@ -248,7 +248,7 @@ u64_snowflake_t add_session_role(struct discord *client,
 }
 
 void start_new_session(struct discord *client,
-                       const u64_snowflake_t guild_id,
+                       u64_snowflake_t guild_id,
                        const struct discord_guild_member *member)
 {
   u64_snowflake_t session_channel_id, session_role_id;
@@ -323,10 +323,10 @@ void send_next_question(struct discord *client,
 }
 
 void on_reaction_add(struct discord *client,
-                     const u64_snowflake_t user_id,
-                     const u64_snowflake_t channel_id,
-                     const u64_snowflake_t message_id,
-                     const u64_snowflake_t guild_id,
+                     u64_snowflake_t user_id,
+                     u64_snowflake_t channel_id,
+                     u64_snowflake_t message_id,
+                     u64_snowflake_t guild_id,
                      const struct discord_guild_member *member,
                      const struct discord_emoji *emoji)
 {

@@ -14,7 +14,7 @@ void on_ready(struct discord *client)
 }
 
 void on_guild_ban_add(struct discord *client,
-                      const u64_snowflake_t guild_id,
+                      u64_snowflake_t guild_id,
                       const struct discord_user *user)
 {
   struct discord_channel general = { 0 };
@@ -36,7 +36,7 @@ void on_guild_ban_add(struct discord *client,
 }
 
 void on_guild_ban_remove(struct discord *client,
-                         const u64_snowflake_t guild_id,
+                         u64_snowflake_t guild_id,
                          const struct discord_user *user)
 {
   struct discord_channel general = { 0 };

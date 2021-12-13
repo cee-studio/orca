@@ -14,10 +14,10 @@ void on_ready(struct discord *client)
 }
 
 void on_reaction_add(struct discord *client,
-                     const u64_snowflake_t user_id,
-                     const u64_snowflake_t channel_id,
-                     const u64_snowflake_t message_id,
-                     const u64_snowflake_t guild_id,
+                     u64_snowflake_t user_id,
+                     u64_snowflake_t channel_id,
+                     u64_snowflake_t message_id,
+                     u64_snowflake_t guild_id,
                      const struct discord_guild_member *member,
                      const struct discord_emoji *emoji)
 {
@@ -57,9 +57,9 @@ void on_message_update(struct discord *client,
 }
 
 void on_message_delete(struct discord *client,
-                       const u64_snowflake_t id,
-                       const u64_snowflake_t channel_id,
-                       const u64_snowflake_t guild_id)
+                       u64_snowflake_t id,
+                       u64_snowflake_t channel_id,
+                       u64_snowflake_t guild_id)
 {
   struct discord_create_message_params params = {
     .content = "Did that message just disappear?"
@@ -70,8 +70,8 @@ void on_message_delete(struct discord *client,
 
 void on_message_delete_bulk(struct discord *client,
                             const u64_snowflake_t **ids,
-                            const u64_snowflake_t channel_id,
-                            const u64_snowflake_t guild_id)
+                            u64_snowflake_t channel_id,
+                            u64_snowflake_t guild_id)
 {
   char text[128];
   sprintf(text, "Where did those %zu messages go?", ntl_length((ntl_t)ids));

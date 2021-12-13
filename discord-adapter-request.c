@@ -581,10 +581,6 @@ discord_request_check_action(struct discord_request *req, struct CURLMsg *msg)
     struct ua_info info = { 0 };
     struct sized_buffer body;
 
-    ASSERT_S(msg->easy_handle, "WHAT");
-    ASSERT_S(cxt, "WHAT");
-    ASSERT_S(cxt->conn, "WHAT");
-
     ua_info_extract(cxt->conn, &info);
     retry = _discord_request_get_info(req, cxt, &info);
 

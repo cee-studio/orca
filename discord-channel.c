@@ -857,7 +857,7 @@ discord_create_message_async(struct discord *client,
                              void (*done)(struct discord *client,
                                           const struct discord_message *ret))
 {
-  struct discord_async_attr attr = { (discord_done_cb)done };
+  struct discord_async_attr attr = { (discord_on_done)done };
 
   discord_adapter_set_async(&client->adapter, &attr);
   return discord_create_message(client, channel_id, params, NULL);

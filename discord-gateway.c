@@ -9,8 +9,7 @@
 #include "discord-internal.h"
 
 /* shorten event callback for maintainability purposes */
-#define ON(event, ...)                                                        \
-  gw->cmds.cbs.on_##event(CLIENT(gw, gw), &gw->bot, ##__VA_ARGS__)
+#define ON(event, ...) gw->cmds.cbs.on_##event(CLIENT(gw, gw), ##__VA_ARGS__)
 
 static void
 sized_buffer_from_json(char *json, size_t len, void *data)
@@ -545,7 +544,7 @@ on_message_create(struct discord_gateway *gw, struct sized_buffer *data)
         ++msg.content;
       }
 
-      cmd->cb(client, &gw->bot, &msg);
+      cmd->cb(client, &msg);
 
       msg.content = tmp; /* retrieve original ptr */
     }
@@ -962,7 +961,7 @@ on_dispatch(struct discord_gateway *gw)
     struct discord *client = CLIENT(gw, gw);
     enum discord_event_scheduler mode;
 
-    mode = gw->cmds.scheduler(client, &gw->bot, &gw->payload.data, event);
+    mode = gw->cmds.scheduler(client, &gw->payload.data, event);
     switch (mode) {
     case DISCORD_EVENT_IGNORE:
       return;
@@ -1157,9 +1156,8 @@ on_text_cb(void *p_gw,
   }
 }
 
-static enum discord_event_scheduler
+static discord_event_scheduler_t
 default_scheduler_cb(struct discord *a,
-                     struct discord_user *b,
                      struct sized_buffer *c,
                      enum discord_gateway_events d)
 {
@@ -1391,7 +1389,8 @@ discord_gateway_run(struct discord_gateway *gw)
 
     ++gw->status->retry.attempt;
 
-    logconf_info(&gw->conf, "Reconnect attempt #%d", gw->status->retry.attempt);
+    logconf_info(&gw->conf, "Reconnect attempt #%d",
+                 gw->status->retry.attempt);
   }
 
   /* reset for next run */

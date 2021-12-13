@@ -28,7 +28,7 @@
 #define CLIENT(ptr, path) CONTAINEROF(ptr, struct discord, path)
 
 /**
- * @brief Shortctur for setting attributes for a specs-generated struct
+ * @brief Shortcut for setting attributes for a specs-generated struct
  *
  * @param type datatype of the struct
  * @param pointer to specs-generated struct
@@ -68,12 +68,12 @@ struct discord_request_attr {
 };
 
 /** @brief executed on a succesful request */
-typedef void (*discord_done_cb)(struct discord *client, const void *obj);
+typedef void (*discord_on_done)(struct discord *client, const void *obj);
 
 /** @brief The async attributes for next request */
 struct discord_async_attr {
   /** callback to be executed on a succesful request */
-  discord_done_cb done;
+  discord_on_done done;
   /** whether the next request is high priority */
   bool high_p;
 };
@@ -88,22 +88,23 @@ struct discord_context {
   /** the request's bucket */
   struct discord_bucket *bucket;
   /** callback to be executed on request completion */
-  discord_done_cb done;
-  /** the request's request body @note buffer is kept and recycled */
+  discord_on_done done;
+
+  /** the request's body @note buffer is kept and recycled */
   struct {
     struct sized_buffer buf;
     size_t memsize;
   } body;
+
   /** the request's http method */
   enum http_method method;
   /** the request's endpoint */
   char endpoint[2048];
-  /** the connection handler assigned at discord_request_check_pending()
-   */
+  /** the connection handler assigned at discord_request_check_pending() */
   struct ua_conn *conn;
   /** the request bucket's queue entry */
   QUEUE entry;
-  /** the min-heap node (for timeouts) */
+  /** the min-heap node (for selecting timeouts) */
   struct heap_node node;
   /** the timeout timestamp */
   u64_unix_ms_t timeout_ms;
@@ -397,82 +398,82 @@ void discord_adapter_set_async(struct discord_adapter *adapter,
 struct discord_gateway_cmd_cbs {
   char *start;
   size_t size;
-  discord_message_cb cb;
+  discord_on_message cb;
 };
 
 struct discord_gateway_cbs {
   /** triggers on every event loop iteration */
-  discord_idle_cb on_idle;
+  discord_on_idle on_idle;
 
   /** triggers when connection first establishes */
-  discord_idle_cb on_ready;
+  discord_on_idle on_ready;
 
   /** triggers when a command is created */
-  discord_application_command_cb on_application_command_create;
+  discord_on_application_command on_application_command_create;
   /** triggers when a command is updated */
-  discord_application_command_cb on_application_command_update;
+  discord_on_application_command on_application_command_update;
   /** triggers when a command is deleted */
-  discord_application_command_cb on_application_command_delete;
+  discord_on_application_command on_application_command_delete;
 
   /** triggers when a channel is created */
-  discord_channel_cb on_channel_create;
+  discord_on_channel on_channel_create;
   /** triggers when a channel is updated */
-  discord_channel_cb on_channel_update;
+  discord_on_channel on_channel_update;
   /** triggers when a channel is deleted */
-  discord_channel_cb on_channel_delete;
+  discord_on_channel on_channel_delete;
   /** triggers when a channel pinned messages updates */
-  discord_channel_pins_update_cb on_channel_pins_update;
+  discord_on_channel_pins_update on_channel_pins_update;
   /** triggers when a thread is created */
-  discord_channel_cb on_thread_create;
+  discord_on_channel on_thread_create;
   /** triggers when a thread is updated */
-  discord_channel_cb on_thread_update;
+  discord_on_channel on_thread_update;
   /** triggers when a thread is deleted */
-  discord_channel_cb on_thread_delete;
+  discord_on_channel on_thread_delete;
 
   /** triggers when a ban occurs */
-  discord_guild_ban_cb on_guild_ban_add;
+  discord_on_guild_ban on_guild_ban_add;
   /** triggers when a ban is removed */
-  discord_guild_ban_cb on_guild_ban_remove;
+  discord_on_guild_ban on_guild_ban_remove;
 
   /** triggers when a guild member joins a guild */
-  discord_guild_member_cb on_guild_member_add;
+  discord_on_guild_member on_guild_member_add;
   /** triggers when a guild member is removed from a guild */
-  discord_guild_member_remove_cb on_guild_member_remove;
+  discord_on_guild_member_remove on_guild_member_remove;
   /** triggers when a guild member status is updated (ex: receive role) */
-  discord_guild_member_cb on_guild_member_update;
+  discord_on_guild_member on_guild_member_update;
 
   /** triggers when a guild role is created */
-  discord_guild_role_cb on_guild_role_create;
+  discord_on_guild_role on_guild_role_create;
   /** triggers when a guild role is updated */
-  discord_guild_role_cb on_guild_role_update;
+  discord_on_guild_role on_guild_role_update;
   /** triggers when a guild role is deleted */
-  discord_guild_role_delete_cb on_guild_role_delete;
+  discord_on_guild_role_delete on_guild_role_delete;
 
   /** triggers when a interaction is created  */
-  discord_interaction_cb on_interaction_create;
+  discord_on_interaction on_interaction_create;
 
   /** triggers when a message is created */
-  discord_message_cb on_message_create;
+  discord_on_message on_message_create;
   /** trigger when a message is updated */
-  discord_message_cb on_message_update;
+  discord_on_message on_message_update;
   /** triggers when a message is deleted */
-  discord_message_delete_cb on_message_delete;
+  discord_on_message_delete on_message_delete;
   /** triggers when a bulk of messages is deleted */
-  discord_message_delete_bulk_cb on_message_delete_bulk;
+  discord_on_message_delete_bulk on_message_delete_bulk;
   /** triggers when a reaction is added to a message */
-  discord_message_reaction_add_cb on_message_reaction_add;
+  discord_on_message_reaction_add on_message_reaction_add;
   /** triggers when a reaction is removed from a message */
-  discord_message_reaction_remove_cb on_message_reaction_remove;
+  discord_on_message_reaction_remove on_message_reaction_remove;
   /** triggers when all reactions are removed from a message */
-  discord_message_reaction_remove_all_cb on_message_reaction_remove_all;
+  discord_on_message_reaction_remove_all on_message_reaction_remove_all;
   /** triggers when all occurences of a specific reaction is removed from a
    * message */
-  discord_message_reaction_remove_emoji_cb on_message_reaction_remove_emoji;
+  discord_on_message_reaction_remove_emoji on_message_reaction_remove_emoji;
 
   /** triggers when a voice state is updated */
-  discord_voice_state_update_cb on_voice_state_update;
+  discord_on_voice_state_update on_voice_state_update;
   /** triggers when a voice server is updated */
-  discord_voice_server_update_cb on_voice_server_update;
+  discord_on_voice_server_update on_voice_server_update;
 };
 
 /** @brief The handle used for establishing a WebSockets connection */
@@ -496,7 +497,7 @@ struct discord_gateway {
     pthread_rwlock_t rwlock;
   } * timer;
 
-  /** status structure */
+  /** session status structure */
   struct {
     /** will attempt to resume session if connection shutsdowns */
     bool is_resumable;
@@ -505,7 +506,7 @@ struct discord_gateway {
     /** if true shutdown websockets connection as soon as possible */
     bool shutdown;
 
-    /** retry structure */
+    /** retry connection structure */
     struct {
       /** will attempt reconnecting if true */
       bool enable;
@@ -521,7 +522,8 @@ struct discord_gateway {
   /** the session id (for resuming lost connections) */
   char session_id[512];
 
-  /** session structure */
+  /** on-going session structure */
+  /* TODO: should be shared between copies */
   struct {
     int shards;
     struct discord_session_start_limit start_limit;
@@ -567,7 +569,7 @@ struct discord_gateway {
      * context on how each event callback is executed
      *          @see discord_set_event_scheduler()
      */
-    discord_event_scheduler_cb scheduler;
+    discord_event_scheduler scheduler;
   } cmds;
 };
 

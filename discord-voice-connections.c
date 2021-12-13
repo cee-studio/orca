@@ -113,9 +113,7 @@ on_ready(struct discord_voice *vc)
   vc->is_ready = true;
   vc->reconnect.attempt = 0;
 
-  if (client->voice_cbs.on_ready) {
-    client->voice_cbs.on_ready(vc);
-  }
+  if (client->voice_cbs.on_ready) client->voice_cbs.on_ready(vc);
 }
 
 static void
@@ -123,9 +121,8 @@ on_session_description(struct discord_voice *vc)
 {
   struct discord *client = vc->p_client;
 
-  if (client->voice_cbs.on_session_descriptor) {
+  if (client->voice_cbs.on_session_descriptor)
     client->voice_cbs.on_session_descriptor(vc);
-  }
 }
 
 static void
@@ -144,8 +141,7 @@ on_speaking(struct discord_voice *vc)
                "(ssrc):d",
                &user_id, &speaking, &delay, &ssrc);
 
-  client->voice_cbs.on_speaking(client, vc, &vc->p_client->gw.bot, user_id,
-                                speaking, delay, ssrc);
+  client->voice_cbs.on_speaking(client, vc, user_id, speaking, delay, ssrc);
 }
 
 static void
@@ -167,7 +163,7 @@ on_client_disconnect(struct discord_voice *vc)
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(user_id):s_as_u64", &user_id);
 
-  client->voice_cbs.on_client_disconnect(client, vc, &client->gw.bot, user_id);
+  client->voice_cbs.on_client_disconnect(client, vc, user_id);
 }
 
 static void
@@ -181,8 +177,7 @@ on_codec(struct discord_voice *vc)
   json_extract(vc->payload.event_data.start, vc->payload.event_data.size,
                "(audio_codec):s, (video_codec):s", &audio_codec, &video_codec);
 
-  client->voice_cbs.on_codec(client, vc, &client->gw.bot, audio_codec,
-                             video_codec);
+  client->voice_cbs.on_codec(client, vc, audio_codec, video_codec);
 }
 
 static void
@@ -591,8 +586,7 @@ event_loop(struct discord_voice *vc)
       send_heartbeat(vc);
       vc->hbeat.tstamp = ws_timestamp(vc->ws); /*update heartbeat timestamp */
     }
-    if (client->voice_cbs.on_idle)
-      client->voice_cbs.on_idle(client, vc, &vc->p_client->gw.bot);
+    if (client->voice_cbs.on_idle) client->voice_cbs.on_idle(client, vc);
   }
   ws_end(vc->ws);
 
@@ -695,88 +689,10 @@ _discord_on_voice_server_update(struct discord *client,
   }
 }
 
-static void
-noop_voice_state_update_cb(struct discord *a,
-                           const struct discord_user *b,
-                           const struct discord_voice_state *c)
-{
-  return;
-}
-static void
-noop_voice_server_update_cb(struct discord *a,
-                            const struct discord_user *b,
-                            const char *c,
-                            const u64_snowflake_t d,
-                            const char *endpoint)
-{
-  return;
-}
-static void
-noop_idle_cb(struct discord *a,
-             struct discord_voice *b,
-             const struct discord_user *c)
-{
-  return;
-}
-static void
-noop_on_speaking(struct discord *a,
-                 struct discord_voice *b,
-                 const struct discord_user *c,
-                 const u64_snowflake_t d,
-                 const int e,
-                 const int f,
-                 const int g)
-{
-  return;
-}
-static void
-noop_on_voice_client_disconnect(struct discord *a,
-                                struct discord_voice *b,
-                                const struct discord_user *c,
-                                const u64_snowflake_t d)
-{
-  return;
-}
-static void
-noop_on_voice_codec(struct discord *a,
-                    struct discord_voice *b,
-                    const struct discord_user *c,
-                    const char d[],
-                    const char e[])
-{
-  return;
-}
-static void
-noop_on_ready(struct discord_voice *a)
-{
-  return;
-}
-static void
-noop_on_session_descriptor(struct discord_voice *a)
-{
-  return;
-}
-static void
-noop_on_udp_server_connected(struct discord_voice *a)
-{
-  return;
-}
-
 void
 discord_voice_connections_init(struct discord *client)
 {
   int i;
-
-  client->gw.cmds.cbs.on_voice_state_update = noop_voice_state_update_cb;
-  client->gw.cmds.cbs.on_voice_server_update = noop_voice_server_update_cb;
-
-  client->voice_cbs.on_idle = noop_idle_cb;
-  client->voice_cbs.on_ready = noop_on_ready;
-  client->voice_cbs.on_client_disconnect = noop_on_voice_client_disconnect;
-  client->voice_cbs.on_session_descriptor = noop_on_session_descriptor;
-  client->voice_cbs.on_codec = noop_on_voice_codec;
-  client->voice_cbs.on_speaking = noop_on_speaking;
-  client->voice_cbs.on_udp_server_connected = noop_on_udp_server_connected;
 
   for (i = 0; i < DISCORD_MAX_VOICE_CONNECTIONS; ++i) {
     client->vcs[i].p_voice_cbs = &client->voice_cbs;

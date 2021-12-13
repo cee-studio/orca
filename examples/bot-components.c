@@ -53,15 +53,15 @@ char JSON_STRING[] =
   "    }\n"
   "]\n";
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client)
 {
+  const struct discord_user *bot = discord_get_self(client);
+
   log_info("Components-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-void on_dynamic(struct discord *client,
-                const struct discord_user *bot,
-                const struct discord_message *msg)
+void on_dynamic(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -80,9 +80,7 @@ void on_dynamic(struct discord *client,
   discord_component_list_free(components);
 }
 
-void on_static(struct discord *client,
-               const struct discord_user *bot,
-               const struct discord_message *msg)
+void on_static(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -147,7 +145,6 @@ void on_static(struct discord *client,
 }
 
 void on_interaction_create(struct discord *client,
-                           const struct discord_user *bot,
                            const struct discord_interaction *interaction)
 {
   log_info("Interaction %" PRIu64 " received", interaction->id);
@@ -191,7 +188,6 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   discord_global_init();
-
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 

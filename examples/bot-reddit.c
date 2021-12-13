@@ -33,8 +33,10 @@ struct {
   } D;
 } BOT;
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client)
 {
+  const struct discord_user *bot = discord_get_self(client);
+
   log_info("Reddit-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
@@ -94,7 +96,6 @@ struct discord_embed *embed_reddit_search_result(
 }
 
 void on_reaction_add(struct discord *client,
-                     const struct discord_user *bot,
                      const u64_snowflake_t user_id,
                      const u64_snowflake_t channel_id,
                      const u64_snowflake_t message_id,
@@ -104,9 +105,9 @@ void on_reaction_add(struct discord *client,
 {
   if (member->user->bot) return;
 
+  const struct discord_user *bot = discord_get_self(client);
   struct discord_create_message_params params = { 0 };
   struct discord_message msg;
-  discord_message_init(&msg);
 
   discord_get_channel_message(client, channel_id, message_id, &msg);
 
@@ -188,9 +189,7 @@ void on_reaction_add(struct discord *client,
   discord_message_cleanup(&msg);
 }
 
-void on_search(struct discord *client,
-               const struct discord_user *bot,
-               const struct discord_message *msg)
+void on_search(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -337,9 +336,7 @@ void search_reddit_cb(void *data)
   free(embed);
 }
 
-void on_comment(struct discord *client,
-                const struct discord_user *bot,
-                const struct discord_message *msg)
+void on_comment(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -433,7 +430,6 @@ void cleanup_BOT()
 }
 
 enum discord_event_scheduler scheduler(struct discord *client,
-                                       struct discord_user *bot,
                                        struct sized_buffer *event_data,
                                        enum discord_gateway_events event)
 {

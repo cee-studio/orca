@@ -5,14 +5,15 @@
 
 #include "discord.h"
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client)
 {
+  const struct discord_user *bot = discord_get_self(client);
+
   log_info("Echo-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
 void on_reaction_add(struct discord *client,
-                     const struct discord_user *bot,
                      const u64_snowflake_t user_id,
                      const u64_snowflake_t channel_id,
                      const u64_snowflake_t message_id,
@@ -27,7 +28,6 @@ void on_reaction_add(struct discord *client,
 }
 
 void on_message_create(struct discord *client,
-                       const struct discord_user *bot,
                        const struct discord_message *msg)
 {
   if (msg->author->bot) return;
@@ -47,7 +47,6 @@ void on_message_create(struct discord *client,
 }
 
 void on_message_update(struct discord *client,
-                       const struct discord_user *bot,
                        const struct discord_message *msg)
 {
   struct discord_create_message_params params = {
@@ -58,7 +57,6 @@ void on_message_update(struct discord *client,
 }
 
 void on_message_delete(struct discord *client,
-                       const struct discord_user *bot,
                        const u64_snowflake_t id,
                        const u64_snowflake_t channel_id,
                        const u64_snowflake_t guild_id)
@@ -71,7 +69,6 @@ void on_message_delete(struct discord *client,
 }
 
 void on_message_delete_bulk(struct discord *client,
-                            const struct discord_user *bot,
                             const u64_snowflake_t **ids,
                             const u64_snowflake_t channel_id,
                             const u64_snowflake_t guild_id)
@@ -93,7 +90,6 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   discord_global_init();
-
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
@@ -117,6 +113,5 @@ int main(int argc, char *argv[])
   discord_run(client);
 
   discord_cleanup(client);
-
   discord_global_cleanup();
 }

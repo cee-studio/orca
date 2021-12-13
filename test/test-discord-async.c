@@ -15,10 +15,12 @@ struct user_cxt {
   unsigned long long counter;
 };
 
-void on_ready(struct discord *client, const struct discord_user *me)
+void on_ready(struct discord *client)
 {
-  log_info("Succesfully connected to Discord as %s#%s!", me->username,
-           me->discriminator);
+  const struct discord_user *bot = discord_get_self(client);
+
+  log_info("Succesfully connected to Discord as %s#%s!", bot->username,
+           bot->discriminator);
 }
 
 void disconnect(struct discord *client, const void *obj)
@@ -31,35 +33,31 @@ void reconnect(struct discord *client, const void *obj)
   discord_reconnect(client, true);
 }
 
-void on_disconnect(struct discord *client,
-                   const struct discord_user *bot,
-                   const struct discord_message *msg)
+void on_disconnect(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
   struct discord_async_attr attr = { .done = &disconnect, .high_p = true };
-  struct discord_create_message_params params = { .content = "Disconnecting ..." };
+  struct discord_create_message_params params = { .content =
+                                                    "Disconnecting ..." };
 
   discord_adapter_set_async(&client->adapter, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void on_reconnect(struct discord *client,
-                  const struct discord_user *bot,
-                  const struct discord_message *msg)
+void on_reconnect(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
   struct discord_async_attr attr = { .done = &reconnect, .high_p = true };
-  struct discord_create_message_params params = { .content = "Reconnecting ..." };
+  struct discord_create_message_params params = { .content =
+                                                    "Reconnecting ..." };
 
   discord_adapter_set_async(&client->adapter, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void on_single(struct discord *client,
-               const struct discord_user *bot,
-               const struct discord_message *msg)
+void on_single(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -67,8 +65,7 @@ void on_single(struct discord *client,
   discord_create_message_async(client, msg->channel_id, &params, NULL);
 }
 
-void send_batch(struct discord *client,
-                const struct discord_message *msg)
+void send_batch(struct discord *client, const struct discord_message *msg)
 {
   struct discord_create_message_params params = { 0 };
   char text[32];
@@ -83,17 +80,14 @@ void send_batch(struct discord *client,
   discord_create_message_async(client, msg->channel_id, &params, &send_batch);
 }
 
-void on_spam(struct discord *client,
-             const struct discord_user *bot,
-             const struct discord_message *msg)
+void on_spam(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
   send_batch(client, msg);
 }
 
-void send_msg(struct discord *client,
-              const struct discord_message *msg)
+void send_msg(struct discord *client, const struct discord_message *msg)
 {
   struct discord_create_message_params params = { 0 };
   struct user_cxt *cxt = discord_get_data(client);
@@ -107,9 +101,7 @@ void send_msg(struct discord *client,
   ++cxt->counter;
 }
 
-void on_spam_ordered(struct discord *client,
-                     const struct discord_user *bot,
-                     const struct discord_message *msg)
+void on_spam_ordered(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 

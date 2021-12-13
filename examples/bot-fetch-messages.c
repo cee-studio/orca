@@ -120,7 +120,6 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   discord_global_init();
-
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
@@ -135,6 +134,5 @@ int main(int argc, char *argv[])
   fetch_member_msgs(client, guild_id, user_id);
 
   discord_cleanup(client);
-
   discord_global_cleanup();
 }

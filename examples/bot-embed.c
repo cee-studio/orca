@@ -45,15 +45,15 @@ char JSON_STRING[] =
   "  ]\n"
   "}";
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client)
 {
+  const struct discord_user *bot = discord_get_self(client);
+
   log_info("Embed-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-void on_dynamic(struct discord *client,
-                const struct discord_user *bot,
-                const struct discord_message *msg)
+void on_dynamic(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -72,9 +72,7 @@ void on_dynamic(struct discord *client,
   discord_embed_cleanup(&embed);
 }
 
-void on_static(struct discord *client,
-               const struct discord_user *bot,
-               const struct discord_message *msg)
+void on_static(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 
@@ -120,9 +118,7 @@ void on_static(struct discord *client,
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
-void on_builder(struct discord *client,
-                const struct discord_user *bot,
-                const struct discord_message *msg)
+void on_builder(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
 

@@ -129,8 +129,10 @@ void parse_session_config()
   free(t_questions);
 }
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client)
 {
+  const struct discord_user *bot = discord_get_self(client);
+
   log_info("Quiz-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
@@ -147,12 +149,14 @@ void close_existing_sessions(struct discord *client,
 
   /* Check if user already has a session role assigned to */
   struct discord_role **rls = NULL;
+
   discord_get_guild_roles(client, guild_id, &rls);
 
   for (size_t i = 0; rls[i]; ++i) {
+    u64_snowflake_t channel_id, user_id;
+
     if (strncmp("TMP", rls[i]->name, 3)) continue;
 
-    u64_snowflake_t channel_id, user_id;
     sscanf(rls[i]->name, "TMP%" PRIu64 "_%" PRIu64, &user_id, &channel_id);
 
     if (member->user->id == user_id) {
@@ -178,7 +182,6 @@ u64_snowflake_t create_session_channel(
   const struct discord_guild_member *member)
 {
   struct discord_channel ch = { 0 };
-
   struct discord_create_guild_channel_params params1 = {
     .name = g_session.chat_name, .topic = g_session.chat_topic
   };
@@ -224,16 +227,18 @@ u64_snowflake_t add_session_role(struct discord *client,
                                  const struct discord_guild_member *member)
 {
   char text[64];
+  struct discord_create_guild_role_params params2 = { .name = text };
+  struct discord_role ret_role = { 0 };
+
   snprintf(text, sizeof(text), "TMP%" PRIu64 "_%" PRIu64, member->user->id,
            channel_id);
 
-  struct discord_role ret_role = { 0 };
-  struct discord_create_guild_role_params params2 = { .name = text };
   discord_create_guild_role(client, guild_id, &params2, &ret_role);
   if (!ret_role.id) return 0;
 
   //@todo turn this into a public function
   ja_u64_list_append((ja_u64 ***)&member->roles, &ret_role.id);
+
   struct discord_modify_guild_member_params params3 = { .roles =
                                                           member->roles };
   discord_modify_guild_member(client, guild_id, member->user->id, &params3,
@@ -246,6 +251,8 @@ void start_new_session(struct discord *client,
                        const u64_snowflake_t guild_id,
                        const struct discord_guild_member *member)
 {
+  u64_snowflake_t session_channel_id, session_role_id;
+
 #if 1 /* @sqlite this section can be replaced by a simple DB fetch, try to    \
          fetch a row by the user_id, if it doesn't exist create a new session \
          and store in DB, otherwise if it exists you can delete the           \
@@ -253,7 +260,6 @@ void start_new_session(struct discord *client,
           session, (or continue/restart the quiz in the same channel) */
   close_existing_sessions(client, guild_id, member);
 
-  u64_snowflake_t session_channel_id, session_role_id;
   session_channel_id = create_session_channel(client, guild_id, member);
   if (!session_channel_id) return; // couldn't create channel, return
 
@@ -266,7 +272,6 @@ void start_new_session(struct discord *client,
 #endif
 
   struct discord_message ret_msg = { 0 };
-
   struct discord_create_message_params params = {
     .content = "Would you like to start?"
   };
@@ -284,6 +289,7 @@ void send_next_question(struct discord *client,
                         struct question *question)
 {
   char text[DISCORD_MAX_PAYLOAD_LEN];
+
   if (session->curr_question == g_session.questions_per_session) {
     sprintf(
       text, "You got %d out of %d! (%.1f%%)", session->hits,
@@ -317,7 +323,6 @@ void send_next_question(struct discord *client,
 }
 
 void on_reaction_add(struct discord *client,
-                     const struct discord_user *bot,
                      const u64_snowflake_t user_id,
                      const u64_snowflake_t channel_id,
                      const u64_snowflake_t message_id,
@@ -326,6 +331,7 @@ void on_reaction_add(struct discord *client,
                      const struct discord_emoji *emoji)
 {
   if (member->user->bot) return; // ignore bots
+
   if ((message_id == g_session.message_id)
       && (0 == strcmp(emoji->name, g_session.reaction_emoji)))
   { // close existing quiz session / start new quiz session
@@ -386,7 +392,6 @@ int main(int argc, char *argv[])
   setlocale(LC_ALL, "");
 
   discord_global_init();
-
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client);
 
@@ -404,6 +409,5 @@ int main(int argc, char *argv[])
   discord_run(client);
 
   discord_cleanup(client);
-
   discord_global_cleanup();
 }

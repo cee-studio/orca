@@ -238,15 +238,15 @@ void embed_from_json(char *str, size_t len, void *p_embed)
   free(l_docs);
 }
 
-void on_ready(struct discord *client, const struct discord_user *bot)
+void on_ready(struct discord *client)
 {
+  const struct discord_user *bot = discord_get_self(client);
+
   log_info("EliteBGS-Bot succesfully connected to Discord as %s#%s!",
            bot->username, bot->discriminator);
 }
 
-void on_command(struct discord *client,
-                const struct discord_user *bot,
-                const struct discord_message *msg)
+void on_command(struct discord *client, const struct discord_message *msg)
 {
   // make sure bot doesn't echoes other bots
   if (msg->author->bot) return;

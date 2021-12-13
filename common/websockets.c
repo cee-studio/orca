@@ -853,7 +853,7 @@ ws_perform(struct websockets *ws, uint64_t wait_ms)
     mcode = curl_multi_wait(ws->mhandle, NULL, 0, wait_ms, &numfds);
   }
 
-  if (mcode != CURLM_OK) CURLE_LOG(ws, mcode);
+  if (mcode != CURLM_OK) CURLM_LOG(ws, mcode);
 
   return is_running != 0;
 }

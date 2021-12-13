@@ -68,9 +68,13 @@ discord_adapter_run(struct discord_adapter *adapter,
                     char endpoint_fmt[],
                     ...)
 {
+  static struct discord_request_attr blank_attr = { 0 };
   char endpoint[2048];
   va_list args;
   int ret;
+
+  /* have it point somewhere */
+  if (!attr) attr = &blank_attr;
 
   /* build the endpoint string */
   va_start(args, endpoint_fmt);

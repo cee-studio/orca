@@ -249,6 +249,38 @@ get_dispatch_event(char name[])
 }
 
 static void
+on_guild_create(struct discord_gateway *gw, struct sized_buffer *data)
+{
+  struct discord_guild guild = { 0 };
+  discord_guild_from_json(data->start, data->size, &guild);
+
+  ON(guild_create, &guild);
+
+  discord_guild_cleanup(&guild);
+}
+
+static void
+on_guild_update(struct discord_gateway *gw, struct sized_buffer *data)
+{
+  struct discord_guild guild = { 0 };
+  discord_guild_from_json(data->start, data->size, &guild);
+
+  ON(guild_update, &guild);
+
+  discord_guild_cleanup(&guild);
+}
+
+static void
+on_guild_delete(struct discord_gateway *gw, struct sized_buffer *data)
+{
+  u64_snowflake_t guild_id = 0;
+  json_extract(data->start, data->size,
+               "(id):s_as_u64",
+               &guild_id);
+  ON(guild_delete, guild_id);
+}
+
+static void
 on_guild_role_create(struct discord_gateway *gw, struct sized_buffer *data)
 {
   struct discord_role role;
@@ -830,13 +862,16 @@ on_dispatch(struct discord_gateway *gw)
     /** @todo implement */
     break;
   case DISCORD_GATEWAY_EVENTS_GUILD_CREATE:
-    /** @todo implement */
+    if (gw->cmds.cbs.on_guild_create)
+      on_event = &on_guild_create;
     break;
   case DISCORD_GATEWAY_EVENTS_GUILD_UPDATE:
-    /** @todo implement */
+    if (gw->cmds.cbs.on_guild_update)
+      on_event = &on_guild_update;
     break;
   case DISCORD_GATEWAY_EVENTS_GUILD_DELETE:
-    /** @todo implement */
+    if (gw->cmds.cbs.on_guild_delete)
+      on_event = &on_guild_delete;
     break;
   case DISCORD_GATEWAY_EVENTS_GUILD_BAN_ADD:
     if (gw->cmds.cbs.on_guild_ban_add) on_event = &on_guild_ban_add;

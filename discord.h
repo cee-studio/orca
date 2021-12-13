@@ -113,6 +113,14 @@ typedef void (*discord_on_channel_pins_update)(
  * @see https://discord.com/developers/docs/topics/gateway#guilds
  *  @{ */
 
+/** @brief Guild Create/Update callback */
+typedef void (*discord_on_guild)(struct discord *client,
+                                 const struct discord_guild *guild);
+
+/** @brief Guild Delete callback */
+typedef void (*discord_on_guild_delete)(struct discord *client,
+                                        const u64_snowflake_t guild_id);
+
 /** @brief Guild Role Create/Update callback */
 typedef void (*discord_on_guild_role)(struct discord *client,
                                       u64_snowflake_t guild_id,
@@ -470,6 +478,39 @@ void discord_set_on_thread_update(struct discord *client,
  */
 void discord_set_on_thread_delete(struct discord *client,
                                   discord_on_channel callback);
+
+/**
+ * @brief Set a callback that triggers when a guild's information becomes available
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ * @note this function will automatically set intent(s) to make the callback
+ * triggerable
+ */
+void discord_set_on_guild_create(struct discord *client,
+                                 discord_on_guild callback);
+
+/**
+ * @brief Set a callback that triggers when a guild's information becomes updated
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ * @note this function will automatically set intent(s) to make the callback
+ * triggerable
+ */
+void discord_set_on_guild_update(struct discord *client,
+                                 discord_on_guild callback);
+
+/**
+ * @brief Set a callback that triggers when removed from a guild
+ *
+ * @param client the client created with discord_init()
+ * @param callback the callback that will be executed
+ * @note this function will automatically set intent(s) to make the callback
+ * triggerable
+ */
+void discord_set_on_guild_delete(struct discord *client,
+                                 discord_on_guild_delete callback);
 /**
  * @brief Set a callback that triggers when a guild role is created
  *

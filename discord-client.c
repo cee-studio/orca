@@ -405,6 +405,27 @@ discord_set_on_thread_delete(struct discord *client,
   discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
 }
 
+void discord_set_on_guild_create(struct discord *client,
+                                 discord_on_guild callback)
+{
+  client->gw.cmds.cbs.on_guild_create = callback;
+  discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
+}
+
+void discord_set_on_guild_update(struct discord *client,
+                                 discord_on_guild callback)
+{
+  client->gw.cmds.cbs.on_guild_update = callback;
+  discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
+}
+
+void discord_set_on_guild_delete(struct discord *client,
+                                 discord_on_guild_delete callback)
+{
+  client->gw.cmds.cbs.on_guild_delete = callback;
+  discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
+}
+
 void
 discord_set_on_message_create(struct discord *client,
                               discord_on_message callback)

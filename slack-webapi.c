@@ -66,11 +66,11 @@ slack_webapi_run(struct slack_webapi *webapi,
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
   ORCAcode code;
-  code = ua_run(webapi->ua, NULL,
-                &(struct ua_resp_handle){
-                  .ok_cb = resp_body ? &sized_buffer_from_json : NULL,
-                  .ok_obj = resp_body },
-                req_body, http_method, endpoint);
+  code = ua_easy_run(webapi->ua, NULL,
+                     &(struct ua_resp_handle){
+                       .ok_cb = resp_body ? &sized_buffer_from_json : NULL,
+                       .ok_obj = resp_body },
+                     req_body, http_method, endpoint);
 
   va_end(args);
 

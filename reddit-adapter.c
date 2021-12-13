@@ -79,11 +79,11 @@ reddit_adapter_run(struct reddit_adapter *adapter,
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
   ORCAcode code;
-  code = ua_run(adapter->ua, NULL,
-                &(struct ua_resp_handle){
-                  .ok_cb = resp_body ? &sized_buffer_from_json : NULL,
-                  .ok_obj = resp_body },
-                req_body, http_method, endpoint);
+  code = ua_easy_run(adapter->ua, NULL,
+                     &(struct ua_resp_handle){
+                       .ok_cb = resp_body ? &sized_buffer_from_json : NULL,
+                       .ok_obj = resp_body },
+                     req_body, http_method, endpoint);
 
   va_end(args);
 

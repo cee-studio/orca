@@ -274,5 +274,5 @@ jsua_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
   }
 
   /* @todo map Error codes to JS Error objects */
-  return ua_run(ua, p_info, NULL, &body, method, endpoint);
+  return ua_easy_run(ua, p_info, NULL, &body, method, endpoint);
 }

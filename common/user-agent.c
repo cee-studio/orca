@@ -273,36 +273,32 @@ _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
 {
   struct ua_resp_header *header = p_userdata;
   size_t bufsize = size * nmemb;
-  ptrdiff_t offset;
-  char *ptr;
+  char *start = buf;
+  char *end = buf + bufsize - sizeof("\r\n");
 
-  /* returns if can't find ':' field/value delimiter */
-  if (!(ptr = strchr(buf, ':'))) return bufsize;
+  /* get ':' delimiter position */
+  for (; buf != end && *buf != ':'; ++buf)
+    continue;
+  if (*buf != ':') return bufsize;
 
-  /* get ':' delimiter opsition */
-  offset = ptr - buf;
-
-  /* returns if can't find CRLF match */
-  if (!(ptr = strstr(ptr + 1, "\r\n"))) return bufsize;
-
+  /* increase reusable header buffer if neccessary */
   if (header->bufsize < (header->len + bufsize + 1)) {
     header->bufsize = header->len + bufsize + 1;
     header->buf = realloc(header->buf, header->bufsize);
   }
-  memcpy(&header->buf[header->len], buf, bufsize);
+  memcpy(&header->buf[header->len], start, bufsize);
 
   /* get the field part of the string */
   header->pairs[header->n_pairs].field.idx = header->len;
-  header->pairs[header->n_pairs].field.size = offset;
+  header->pairs[header->n_pairs].field.size = buf - start;
 
-  /* skip black characters (starts after the ':' delimiter) */
-  for (offset += 1; offset < bufsize; ++offset) {
-    if (!isspace(buf[offset])) break;
-  }
+  /* skip blank characters after ':' delimiter */
+  for (buf += 1; buf != end && isspace(*buf); ++buf)
+    continue;
 
   /* get the value part of the string */
-  header->pairs[header->n_pairs].value.idx = header->len + offset;
-  header->pairs[header->n_pairs].value.size = (ptr - buf) - offset;
+  header->pairs[header->n_pairs].value.idx = header->len + (buf - start);
+  header->pairs[header->n_pairs].value.size = (end - start) - (buf - start);
 
   header->len += bufsize;
 
@@ -380,6 +376,8 @@ _ua_conn_init(struct user_agent *ua)
                    &_ua_conn_respheader_cb);
   /* set ptr to response header to be filled at callback */
   curl_easy_setopt(new_ehandle, CURLOPT_HEADERDATA, &new_conn->info.header);
+  /* make libcurl safe on a multithreaded context and avoid SIGPIPE */
+  curl_easy_setopt(new_ehandle, CURLOPT_NOSIGNAL, 1L);
 
   new_conn->ehandle = new_ehandle;
   new_conn->ua = ua;
@@ -763,7 +761,7 @@ ua_run(struct user_agent *ua,
 
   /* perform blocking request, and check results */
   if (ORCA_OK == (code = ua_conn_perform(conn))) {
-    struct ua_info _info = {0};
+    struct ua_info _info = { 0 };
 
     code = ua_info_extract(conn, &_info);
 
@@ -774,7 +772,7 @@ ua_run(struct user_agent *ua,
       handle->ok_cb(_info.body.buf, _info.body.len, handle->ok_obj);
     }
 
-    if (info) 
+    if (info)
       memcpy(info, &_info, sizeof(struct ua_info));
     else
       ua_info_cleanup(&_info);

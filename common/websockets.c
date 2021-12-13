@@ -8,14 +8,11 @@
 #include "websockets.h"
 #include "cee-utils.h"
 
-#define CURLE_CHECK(ws, ecode)                                                \
-  VASSERT_S(                                                                  \
-    CURLE_OK == ecode, "[%s] (CURLE code: %d) %s", ws->conf.id, ecode,        \
-    IS_EMPTY_STRING(ws->errbuf) ? curl_easy_strerror(ecode) : ws->errbuf)
-
-#define CURLM_CHECK(ws, mcode)                                                \
-  VASSERT_S(CURLM_OK == mcode, "[%s] (CURLM code: %d) %s", ws->conf.id,       \
-            mcode, curl_multi_strerror(mcode))
+#define CURLM_LOG(ws, mcode)                                                  \
+  do {                                                                        \
+    logconf_fatal(&ws->conf, "(CURLM code: %d) %s", mcode,                    \
+                  curl_multi_strerror(mcode));                                \
+  } while (0)
 
 struct websockets {
   /** the logconf structure for logging @see logconf_setup() */
@@ -67,7 +64,7 @@ struct websockets {
     WS_ACTION_END_CLOSE
   } action;
 
-  /** close promise filled at ws_close() */
+  /** close context filled at ws_close() */
   struct {
     /** opcode reason for closing */
     enum ws_close_reason code;
@@ -167,6 +164,9 @@ _ws_curl_tls_check(
   (void)data;
   (void)size;
 
+  /* avoid busy-waiting in case loop is kept alive even if the TLS connection
+   *        has been closed
+   * TODO: look for a better solution */
   if (CURLINFO_TEXT == type && WS_CONNECTED == ws->status
       && strstr(data, "close notify (256)"))
   {
@@ -231,8 +231,10 @@ _ws_set_status_nolock(struct websockets *ws, enum ws_status status)
   switch (status) {
   case WS_DISCONNECTED:
     VASSERT_S(WS_DISCONNECTING == ws->status,
-              "[%s] (Internal Error) Disconnect abruptly (Current status: %s)",
+              "[%s] Status should be WS_DISCONNECTING before WS_DISCONNECTED "
+              "(current status: %s)",
               ws->conf.id, _ws_status_print(ws->status));
+
     logconf_debug(&ws->conf, "Change status to WS_DISCONNECTED");
     break;
   case WS_CONNECTED:
@@ -240,6 +242,7 @@ _ws_set_status_nolock(struct websockets *ws, enum ws_status status)
       WS_CONNECTING == ws->status,
       "[%s] Missing ws_start() before the event loop (Current status: %s)",
       ws->conf.id, _ws_status_print(ws->status));
+
     logconf_debug(&ws->conf, "Change status to WS_CONNECTED");
     break;
   case WS_DISCONNECTING:
@@ -363,6 +366,7 @@ cws_on_ping_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
     (struct sized_buffer){(char*)reason, len},
     "WS_RCV_PING");
 #endif
+
   logconf_trace(
     &ws->conf,
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " PING (%zu bytes) [@@@_%zu_@@@]", len,
@@ -386,6 +390,7 @@ cws_on_pong_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
     (struct sized_buffer){(char*)reason, len},
     "WS_RCV_PONG");
 #endif
+
   logconf_trace(
     &ws->conf,
     ANSICOLOR("RCV", ANSI_FG_YELLOW) " PONG (%zu bytes) [@@@_%zu_@@@]", len,
@@ -414,6 +419,7 @@ _ws_check_action_cb(void *p_userdata,
   case WS_ACTION_BEGIN_CLOSE:
     logconf_warn(&ws->conf, "Received pending %s, closing the connection ...",
                  ws_close_opcode_print(ws->pending_close.code));
+
     _ws_close(ws, ws->pending_close.code, ws->pending_close.reason);
   /* fall-through */
   case WS_ACTION_NONE:
@@ -444,37 +450,26 @@ _ws_cws_new(struct websockets *ws, const char ws_protocols[])
                                    .data = ws };
 
   CURL *new_ehandle = cws_new(ws->base_url, ws_protocols, &cws_cbs);
-  CURLcode ecode;
 
   /* set error buffer for capturing CURL error descriptions */
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_ERRORBUFFER, ws->errbuf);
-  CURLE_CHECK(ws, ecode);
+  curl_easy_setopt(new_ehandle, CURLOPT_ERRORBUFFER, ws->errbuf);
   /* enable follow redirections */
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_FOLLOWLOCATION, 1L);
-  CURLE_CHECK(ws, ecode);
+  curl_easy_setopt(new_ehandle, CURLOPT_FOLLOWLOCATION, 1L);
   /* enable progress function (a callback that executes constantly) */
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_XFERINFOFUNCTION,
-                           &_ws_check_action_cb);
-  CURLE_CHECK(ws, ecode);
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_XFERINFODATA, ws);
-  CURLE_CHECK(ws, ecode);
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_NOPROGRESS, 0L);
-  CURLE_CHECK(ws, ecode);
+  curl_easy_setopt(new_ehandle, CURLOPT_XFERINFOFUNCTION,
+                   &_ws_check_action_cb);
+  curl_easy_setopt(new_ehandle, CURLOPT_XFERINFODATA, ws);
+  curl_easy_setopt(new_ehandle, CURLOPT_NOPROGRESS, 0L);
+  /* make libcurl safe in a multithreaded context and avoid SIGPIPE */
+  curl_easy_setopt(new_ehandle, CURLOPT_NOSIGNAL, 1L);
 
 #ifdef _ORCA_DEBUG_WEBSOCKETS
-  ecode =
-    curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _ws_curl_debug_trace);
-  CURLE_CHECK(ws, ecode);
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_VERBOSE, 1L);
-  CURLE_CHECK(ws, ecode);
+  curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _ws_curl_debug_trace);
+  curl_easy_setopt(new_ehandle, CURLOPT_VERBOSE, 1L);
 #else
-  ecode =
-    curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _ws_curl_tls_check);
-  CURLE_CHECK(ws, ecode);
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_VERBOSE, 1L);
-  CURLE_CHECK(ws, ecode);
-  ecode = curl_easy_setopt(new_ehandle, CURLOPT_DEBUGDATA, ws);
-  CURLE_CHECK(ws, ecode);
+  curl_easy_setopt(new_ehandle, CURLOPT_DEBUGFUNCTION, _ws_curl_tls_check);
+  curl_easy_setopt(new_ehandle, CURLOPT_VERBOSE, 1L);
+  curl_easy_setopt(new_ehandle, CURLOPT_DEBUGDATA, ws);
 #endif
 
   return new_ehandle;
@@ -500,6 +495,7 @@ _ws_close(struct websockets *ws,
       ANSICOLOR("Failed", ANSI_FG_RED) " at SEND CLOSE : Connection already "
                                        "closed [@@@_%zu_@@@]",
       ws->info.loginfo.counter);
+
     return false;
   }
   if (WS_DISCONNECTING == ws->status) {
@@ -508,6 +504,7 @@ _ws_close(struct websockets *ws,
       ANSICOLOR("Failed", ANSI_FG_RED) " at SEND CLOSE : Close already taking "
                                        "place [@@@_%zu_@@@]",
       ws->info.loginfo.counter);
+
     return false;
   }
   _ws_set_status_nolock(ws, WS_DISCONNECTING);
@@ -517,8 +514,10 @@ _ws_close(struct websockets *ws,
       &ws->conf,
       ANSICOLOR("Failed", ANSI_FG_RED) " at SEND CLOSE(%d): %s [@@@_%zu_@@@]",
       code, reason, ws->info.loginfo.counter);
+
     return false;
   }
+
   return true;
 }
 
@@ -660,6 +659,7 @@ ws_send_text(struct websockets *ws,
         "Failed",
         ANSI_FG_RED) " at SEND TEXT : No active connection [@@@_%zu_@@@]",
       ws->info.loginfo.counter);
+
     return false;
   }
 
@@ -670,8 +670,10 @@ ws_send_text(struct websockets *ws,
       &ws->conf,
       ANSICOLOR("Failed", ANSI_FG_RED) " at SEND TEXT [@@@_%zu_@@@]",
       ws->info.loginfo.counter);
+
     return false;
   }
+
   return true;
 }
 
@@ -691,6 +693,7 @@ ws_ping(struct websockets *ws,
     (struct sized_buffer){(char*)reason, len},
     "WS_SEND_PING");
 #endif
+
   logconf_trace(
     &ws->conf,
     ANSICOLOR("SEND", ANSI_FG_GREEN) " PING (%zu bytes) [@@@_%zu_@@@]", len,
@@ -700,14 +703,17 @@ ws_ping(struct websockets *ws,
     logconf_error(
       &ws->conf,
       ANSICOLOR("Failed", ANSI_FG_RED) " at SEND PING : No active connection");
+
     return false;
   }
 
   if (!cws_ping(ws->ehandle, reason, len)) {
     logconf_error(&ws->conf,
                   ANSICOLOR("Failed", ANSI_FG_RED) " at SEND PING.");
+
     return false;
   }
+
   return true;
 }
 
@@ -727,6 +733,7 @@ ws_pong(struct websockets *ws,
     (struct sized_buffer){(char*)reason, len},
     "WS_SEND_PONG");
 #endif
+
   logconf_trace(
     &ws->conf,
     ANSICOLOR("SEND", ANSI_FG_GREEN) " PONG (%zu bytes) [@@@_%zu_@@@]", len,
@@ -736,14 +743,17 @@ ws_pong(struct websockets *ws,
     logconf_error(
       &ws->conf,
       ANSICOLOR("Failed", ANSI_FG_RED) " at SEND PONG : No active connection");
+
     return false;
   }
 
   if (!cws_pong(ws->ehandle, reason, len)) {
     logconf_error(&ws->conf,
                   ANSICOLOR("Failed", ANSI_FG_RED) " at SEND PONG.");
+
     return false;
   }
+
   return true;
 }
 
@@ -757,6 +767,7 @@ ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
             "[%s] Please shutdown current WebSockets connection before "
             "calling ws_start() (Current status: %s)",
             ws->conf.id, _ws_status_print(ws->status));
+
   VASSERT_S(NULL == ws->ehandle,
             "[%s] (Internal error) Attempt to reconnect without properly "
             "closing the connection",
@@ -837,12 +848,12 @@ ws_perform(struct websockets *ws, uint64_t wait_ms)
    *        inherently single-threaded. websockets.c doesn't create
    *        new threads.
    */
-  mcode = curl_multi_perform(ws->mhandle, &is_running);
-  CURLM_CHECK(ws, mcode);
+  if (CURLM_OK == (mcode = curl_multi_perform(ws->mhandle, &is_running))) {
+    /* wait for some activity or timeout after "wait_ms" elapsed */
+    mcode = curl_multi_wait(ws->mhandle, NULL, 0, wait_ms, &numfds);
+  }
 
-  /* wait for some activity or timeout after "wait_ms" elapsed */
-  mcode = curl_multi_wait(ws->mhandle, NULL, 0, wait_ms, &numfds);
-  CURLM_CHECK(ws, mcode);
+  if (mcode != CURLM_OK) CURLE_LOG(ws, mcode);
 
   return is_running != 0;
 }
@@ -884,8 +895,10 @@ ws_close(struct websockets *ws,
   pthread_mutex_lock(&ws->lock);
   ws->action = WS_ACTION_BEGIN_CLOSE;
   ws->pending_close.code = code;
+
   snprintf(ws->pending_close.reason, sizeof(ws->pending_close.reason), "%.*s",
            (int)len, reason);
+
   pthread_mutex_unlock(&ws->lock);
 }
 

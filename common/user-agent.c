@@ -15,7 +15,7 @@
 
 #define CURLE_LOG(conn, ecode)                                                \
   do {                                                                        \
-    log_fatal("[%s] (CURLE code: %d) %s", conn->ua->conf.id, ecode,           \
+    logconf_fatal(&conn->ua->conf, "(CURLE code: %d) %s", ecode,           \
               IS_EMPTY_STRING(conn->errbuf) ? curl_easy_strerror(ecode)       \
                                             : conn->errbuf);                  \
   } while (0)
@@ -279,9 +279,11 @@ _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
   /* get ':' delimiter position */
   for (; buf != end && *buf != ':'; ++buf)
     continue;
+
+  /* no ':' found means no field/value pair */
   if (*buf != ':') return bufsize;
 
-  /* increase reusable header buffer if necessary */
+  /* increase reusable header buffer only if necessary */
   if (header->bufsize < (header->len + bufsize + 1)) {
     header->bufsize = header->len + bufsize + 1;
     header->buf = realloc(header->buf, header->bufsize);
@@ -553,6 +555,7 @@ _ua_conn_set_method(struct ua_conn *conn,
 
   /* make sure body points to something */
   if (!body) body = &blank_body;
+
   /* for safe-keeping */
   conn->info.method = method;
   conn->body = body;
@@ -656,9 +659,14 @@ ua_conn_setup(struct ua_conn *conn,
 ORCAcode
 ua_info_extract(struct ua_conn *conn, struct ua_info *info)
 {
-  struct sized_buffer logheader = { conn->info.header.buf,
-                                    conn->info.header.len };
-  struct sized_buffer logbody = { conn->info.body.buf, conn->info.body.len };
+  struct sized_buffer logheader = {
+    conn->info.header.buf,
+    conn->info.header.len,
+  };
+  struct sized_buffer logbody = {
+    conn->info.body.buf,
+    conn->info.body.len,
+  };
   struct logconf *conf = &conn->ua->conf;
   char *resp_url = NULL;
 
@@ -682,6 +690,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       ANSICOLOR("SERVER ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
+
     info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode >= 400) {
@@ -690,6 +699,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       ANSICOLOR("CLIENT ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
+
     info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode >= 300) {
@@ -698,6 +708,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       ANSICOLOR("REDIRECTING", ANSI_FG_YELLOW) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
+
     info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode >= 200) {
@@ -705,6 +716,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
       conf, ANSICOLOR("SUCCESS", ANSI_FG_GREEN) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
+
     info->code = ORCA_OK;
   }
   else if (info->httpcode >= 100) {
@@ -712,14 +724,17 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
                  ANSICOLOR("INFO", ANSI_FG_GRAY) " (%d)%s - %s [@@@_%zu_@@@]",
                  info->httpcode, http_code_print(info->httpcode),
                  http_reason_print(info->httpcode), info->loginfo.counter);
+
     info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode > 0) {
     logconf_error(conf, "Unusual HTTP response code: %d", info->httpcode);
+
     info->code = ORCA_UNUSUAL_HTTP_CODE;
   }
   else {
     logconf_error(conf, "No http response received by libcurl");
+
     info->code = ORCA_CURL_NO_RESPONSE;
   }
 
@@ -745,7 +760,7 @@ ua_conn_perform(struct ua_conn *conn)
   return ORCA_OK;
 }
 
-/* template function for performing synchronous requests */
+/* template function for performing blocking requests */
 ORCAcode
 ua_run(struct user_agent *ua,
        struct ua_info *info,
@@ -811,6 +826,7 @@ ua_info_get_header(struct ua_info *info, char field[])
       /* found field match, get value */
       value.start = info->header.buf + info->header.pairs[i].value.idx;
       value.size = info->header.pairs[i].value.size;
+
       return value;
     }
   }
@@ -826,5 +842,6 @@ const struct sized_buffer
 ua_info_get_body(struct ua_info *info)
 {
   struct sized_buffer body = { info->body.buf, info->body.len };
+
   return body;
 }

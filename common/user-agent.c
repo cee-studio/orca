@@ -15,9 +15,9 @@
 
 #define CURLE_LOG(conn, ecode)                                                \
   do {                                                                        \
-    logconf_fatal(&conn->ua->conf, "(CURLE code: %d) %s", ecode,           \
-              IS_EMPTY_STRING(conn->errbuf) ? curl_easy_strerror(ecode)       \
-                                            : conn->errbuf);                  \
+    logconf_fatal(&conn->ua->conf, "(CURLE code: %d) %s", ecode,              \
+                  IS_EMPTY_STRING(conn->errbuf) ? curl_easy_strerror(ecode)   \
+                                                : conn->errbuf);              \
   } while (0)
 
 struct user_agent {
@@ -762,12 +762,12 @@ ua_conn_perform(struct ua_conn *conn)
 
 /* template function for performing blocking requests */
 ORCAcode
-ua_run(struct user_agent *ua,
-       struct ua_info *info,
-       struct ua_resp_handle *handle,
-       struct sized_buffer *body,
-       enum http_method method,
-       char endpoint[])
+ua_easy_run(struct user_agent *ua,
+            struct ua_info *info,
+            struct ua_resp_handle *handle,
+            struct sized_buffer *body,
+            enum http_method method,
+            char endpoint[])
 {
   struct ua_conn *conn = ua_conn_start(ua);
   ORCAcode code;

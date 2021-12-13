@@ -165,7 +165,7 @@ void ua_set_url(struct user_agent *ua, const char base_url[]);
 const char *ua_get_url(struct user_agent *ua);
 
 /**
- * @brief Run a REST transfer
+ * @brief Perform a blocking REST transfer
  *
  * @param ua the User-Agent handle created with ua_init()
  * @param info optional informational handle on how the request went
@@ -174,13 +174,16 @@ const char *ua_get_url(struct user_agent *ua);
  * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
  * @return ORCAcode for how the transfer went, ORCA_OK means success.
+ * @note This is an easy, yet highly abstracted way of performing requests.
+ *        If a higher control is necessary, users are better off using the
+ *        functions of `ua_conn_xxx()` family.
  */
-ORCAcode ua_run(struct user_agent *ua,
-                struct ua_info *info,
-                struct ua_resp_handle *handle,
-                struct sized_buffer *body,
-                enum http_method method,
-                char endpoint[]);
+ORCAcode ua_easy_run(struct user_agent *ua,
+                     struct ua_info *info,
+                     struct ua_resp_handle *handle,
+                     struct sized_buffer *body,
+                     enum http_method method,
+                     char endpoint[]);
 
 /**
  * @brief Get a connection handle and mark it as running

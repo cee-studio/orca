@@ -661,6 +661,7 @@ discord_request_stop_all(struct discord_request *req)
       cxt = QUEUE_DATA(q, struct discord_context, entry);
       ehandle = ua_conn_get_easy_handle(cxt->conn);
 
+      /* TODO: UB if calling inside of libcurl's callbacks */
       curl_multi_remove_handle(client->mhandle, ehandle);
 
       /* set for recycling */
@@ -706,6 +707,7 @@ discord_request_pause_all(struct discord_request *req)
       cxt = QUEUE_DATA(q, struct discord_context, entry);
       ehandle = ua_conn_get_easy_handle(cxt->conn);
 
+      /* TODO: UB if calling inside of libcurl's callbacks */
       curl_multi_remove_handle(client->mhandle, ehandle);
 
       QUEUE_INSERT_HEAD(&b->waitq, q);

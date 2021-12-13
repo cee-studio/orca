@@ -10,16 +10,14 @@
 
 #define GITHUB_BASE_API_URL "https://api.github.com"
 
-void
-github_adapter_cleanup(struct github_adapter *adapter)
-{
-  ua_cleanup(adapter->ua);
-}
-
 static void
-curl_easy_setopt_cb(CURL *ehandle, void *data)
+setopt_cb(struct ua_conn *conn, void *p_presets)
 {
-  struct github_presets *presets = data;
+  struct github_presets *presets = p_presets;
+  CURL *ehandle = ua_conn_get_easy_handle(conn);
+
+  ua_conn_add_header(conn, "Accept", "application/vnd.github.v3+json");
+
   curl_easy_setopt(ehandle, CURLOPT_USERNAME, presets->username);
   curl_easy_setopt(ehandle, CURLOPT_USERPWD, presets->token);
 }
@@ -29,47 +27,97 @@ github_adapter_init(struct github_adapter *adapter,
                     struct logconf *conf,
                     struct github_presets *presets)
 {
-#if 0
-  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
+  struct ua_attr attr = { 0 };
+
+  attr.conf = conf;
+  adapter->ua = ua_init(&attr);
   ua_set_url(adapter->ua, GITHUB_BASE_API_URL);
-  ua_reqheader_add(adapter->ua, "Accept", "application/vnd.github.v3+json");
-  ua_curl_easy_setopt(adapter->ua, presets, &curl_easy_setopt_cb);
-#endif
+
+  logconf_branch(&adapter->conf, conf, "GITHUB_HTTP");
+
+  ua_set_opt(adapter->ua, presets, &setopt_cb);
 }
 
-static void
-__log_error(char *str, size_t len, void *p)
+void
+github_adapter_cleanup(struct github_adapter *adapter)
 {
-  log_error("%.*s", (int)len, str);
+  ua_cleanup(adapter->ua);
+}
+
+static ORCAcode
+_github_adapter_perform(struct github_adapter *adapter,
+                       struct github_request_attr *attr,
+                       struct sized_buffer *body,
+                       enum http_method method,
+                       char endpoint[])
+{
+  struct ua_conn *conn = ua_conn_start(adapter->ua);
+  ORCAcode code;
+  bool retry;
+
+  /* populate conn with parameters */
+  ua_conn_setup(conn, body, method, endpoint);
+
+  do {
+    /* perform blocking request, and check results */
+    switch (code = ua_conn_perform(conn)) {
+    case ORCA_OK: {
+      struct ua_info info = { 0 };
+      struct sized_buffer body;
+
+      ua_info_extract(conn, &info);
+
+      body = ua_info_get_body(&info);
+      if (ORCA_OK == info.code && attr->obj) {
+        if (attr->init) attr->init(attr->obj);
+
+        attr->from_json(body.start, body.size, attr->obj);
+      }
+
+      ua_info_cleanup(&info);
+    } break;
+    case ORCA_CURLE_INTERNAL:
+      logconf_error(&adapter->conf, "Curl internal error, will retry again");
+      retry = true;
+      break;
+    default:
+      logconf_error(&adapter->conf, "ORCA code: %d", code);
+      retry = false;
+      break;
+    }
+
+    ua_conn_reset(conn);
+  } while (retry);
+
+  ua_conn_stop(conn);
+
+  return code;
 }
 
 /* template function for performing requests */
 ORCAcode
 github_adapter_run(struct github_adapter *adapter,
-                   struct ua_resp_handle *resp_handle,
-                   struct sized_buffer *req_body,
-                   enum http_method http_method,
+                   struct github_request_attr *attr,
+                   struct sized_buffer *body,
+                   enum http_method method,
                    char endpoint_fmt[],
                    ...)
 {
-  va_list args;
+  static struct github_request_attr blank_attr = { 0 };
   char endpoint[2048];
+  va_list args;
+  int ret;
 
+  /* have it point somewhere */
+  if (!attr) attr = &blank_attr;
+
+  /* build the endpoint string */
   va_start(args, endpoint_fmt);
-  int ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
+
+  ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
   ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
-
-  /* IF UNSET, SET TO DEFAULT ERROR HANDLING CALLBACKS */
-  if (resp_handle && !resp_handle->err_cb) {
-    resp_handle->err_cb = &__log_error;
-    resp_handle->err_obj = NULL;
-  }
-
-  ORCAcode code;
-  code =
-    ua_run(adapter->ua, NULL, resp_handle, req_body, http_method, endpoint);
 
   va_end(args);
 
-  return code;
+  return _github_adapter_perform(adapter, attr, body, method, endpoint);
 }

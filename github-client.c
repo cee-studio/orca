@@ -14,8 +14,8 @@
 
 static void
 _github_presets_init(struct github_presets *presets,
-                     char *username,
-                     char *token,
+                     const struct sized_buffer *username,
+                     const struct sized_buffer *token,
                      const char *repo_config)
 {
 
@@ -35,26 +35,27 @@ _github_presets_init(struct github_presets *presets,
     free(json);
   }
 
-  presets->username = username;
-  presets->token = token;
+  asprintf(&presets->username, "%.*s", (int)username->size, username->start);
+  asprintf(&presets->token, "%.*s", (int)token->size, token->start);
 }
 
 void
 github_write_json(char *json, size_t len, void *user_obj)
 {
   struct sized_buffer *new_user_obj = user_obj;
+
   new_user_obj->size = asprintf(&new_user_obj->start, "%.*s", (int)len, json);
 }
 
 ORCAcode
 github_fill_repo_config(struct github *client, char *repo_config)
 {
-  log_info("===github-fill-repo-config===");
+  size_t len = 0;
+  char *json;
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(repo_config), ORCA_BAD_PARAMETER);
 
-  size_t len = 0;
-  char *json = cee_load_whole_file(repo_config, &len);
+  json = cee_load_whole_file(repo_config, &len);
 
   json_extract(json, len, "(owner):?s,(repo):?s,(default_branch):?s",
                &client->presets.owner, &client->presets.repo,
@@ -66,21 +67,15 @@ github_fill_repo_config(struct github *client, char *repo_config)
 }
 
 static void
-load_object_sha(char *str, size_t len, void *pp)
+object_sha_from_json(char *str, size_t len, void *pp)
 {
   json_extract(str, len, "(object.sha):?s", (char **)pp);
 }
 
 static void
-load_sha(char *json, size_t len, void *pp)
+sha_from_json(char *json, size_t len, void *pp)
 {
   json_extract(json, len, "(sha):?s", (char **)pp);
-}
-
-static void
-__log_trace(char *str, size_t len, void *p)
-{
-  log_trace("%.*s", (int)len, str);
 }
 
 struct github *
@@ -88,12 +83,14 @@ github_init(const char username[],
             const char token[],
             const char repo_config[])
 {
-  struct github *new_client = calloc(1, sizeof *new_client);
+  const struct sized_buffer _username = { (char *)username, strlen(username) };
+  const struct sized_buffer _token = { (char *)token, strlen(token) };
+  struct github *new_client;
 
+  new_client = calloc(1, sizeof *new_client);
   logconf_setup(&new_client->conf, "GITHUB", NULL);
 
-  _github_presets_init(&new_client->presets, strdup(username), strdup(token),
-                       repo_config);
+  _github_presets_init(&new_client->presets, &_username, &_token, repo_config);
 
   github_adapter_init(&new_client->adapter, &new_client->conf,
                       &new_client->presets);
@@ -104,25 +101,23 @@ github_init(const char username[],
 struct github *
 github_config_init(const char config_file[], const char repo_config[])
 {
-  struct github *new_client = calloc(1, sizeof *new_client);
+  struct sized_buffer username, token;
+  struct github *new_client;
+  FILE *fp;
 
-  FILE *fp = fopen(config_file, "rb");
+  fp = fopen(config_file, "rb");
   VASSERT_S(fp != NULL, "Couldn't open '%s': %s", config_file,
             strerror(errno));
 
+  new_client = calloc(1, sizeof *new_client);
   logconf_setup(&new_client->conf, "GITHUB", fp);
 
   fclose(fp);
 
-  struct sized_buffer t_username, t_token;
-  t_username = logconf_get_field(&new_client->conf, "github.username");
-  t_token = logconf_get_field(&new_client->conf, "github.token");
+  username = logconf_get_field(&new_client->conf, "github.username");
+  token = logconf_get_field(&new_client->conf, "github.token");
 
-  char *username, *token;
-  asprintf(&username, "%.*s", (int)t_username.size, t_username.start);
-  asprintf(&token, "%.*s", (int)t_token.size, t_token.start);
-
-  _github_presets_init(&new_client->presets, username, token, repo_config);
+  _github_presets_init(&new_client->presets, &username, &token, repo_config);
 
   github_adapter_init(&new_client->adapter, &new_client->conf,
                       &new_client->presets);
@@ -131,118 +126,125 @@ github_config_init(const char config_file[], const char repo_config[])
 }
 
 ORCAcode
-github_update_my_fork(struct github *client, char **p_sha)
+github_update_my_fork(struct github *client, char **ret)
 {
-  log_info("===update-my-fork===");
-
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch), ORCA_BAD_PARAMETER);
-
+  struct github_request_attr attr = { &ret, 0, NULL, &object_sha_from_json };
+  struct sized_buffer body;
   char *sha = NULL;
+  char buf[2048];
   ORCAcode code;
-  code = github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &load_object_sha, .ok_obj = &sha },
-    NULL, HTTP_GET, "/repos/%s/%s/git/refs/heads/%s", client->presets.owner,
-    client->presets.repo, client->presets.default_branch);
 
-  if (ORCA_OK != code) {
-    log_error("Couldn't fetch sha");
-    return code;
-  }
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch),
+              ORCA_BAD_PARAMETER);
 
-  char payload[2048];
-  size_t ret = json_inject(payload, sizeof(payload), "(sha):s", sha);
+  code =
+    github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
+                       "/repos/%s/%s/git/refs/heads/%s", client->presets.owner,
+                       client->presets.repo, client->presets.default_branch);
 
-  if (p_sha)
-    *p_sha = sha;
+  ORCA_EXPECT(client, ORCA_OK == code, code, "Couldn't fetch sha");
+
+  body.size = json_inject(buf, sizeof(buf), "(sha):s", sha);
+  body.start = buf;
+
+  if (ret)
+    *ret = sha;
   else
     free(sha);
 
-  return github_adapter_run(
-    &client->adapter, &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-    &(struct sized_buffer){ payload, ret }, HTTP_PATCH,
-    "/repos/%s/%s/git/refs/heads/%s", client->presets.username,
-    client->presets.repo, client->presets.default_branch);
+  return github_adapter_run(&client->adapter, NULL, &body, HTTP_PATCH,
+                            "/repos/%s/%s/git/refs/heads/%s",
+                            client->presets.username, client->presets.repo,
+                            client->presets.default_branch);
 }
 
 ORCAcode
-github_get_head_commit(struct github *client, char **p_sha)
+github_get_head_commit(struct github *client, char **ret)
 {
-  ORCA_EXPECT(client, p_sha != NULL, ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch), ORCA_BAD_PARAMETER);
+  struct github_request_attr attr = { ret, 0, NULL, &object_sha_from_json };
 
-  return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &load_object_sha, .ok_obj = p_sha },
-    NULL, HTTP_GET, "/repos/%s/%s/git/refs/heads/%s", client->presets.username,
-    client->presets.repo, client->presets.default_branch);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch),
+              ORCA_BAD_PARAMETER);
+
+  return github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
+                            "/repos/%s/%s/git/refs/heads/%s",
+                            client->presets.username, client->presets.repo,
+                            client->presets.default_branch);
 }
 
 ORCAcode
-github_get_tree_sha(struct github *client, char *commit_sha, char **p_sha)
+github_get_tree_sha(struct github *client, char *commit_sha, char **ret)
 {
-  log_info("===get-tree-sha==");
+  struct github_request_attr attr = { ret, 0, NULL, &sha_from_json };
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(commit_sha), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, p_sha != NULL, ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo),
+              ORCA_BAD_PARAMETER);
 
   return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &load_sha, .ok_obj = p_sha }, NULL,
-    HTTP_GET, "/repos/%s/%s/git/trees/%s", client->presets.username,
-    client->presets.repo, commit_sha);
+    &client->adapter, &attr, NULL, HTTP_GET, "/repos/%s/%s/git/trees/%s",
+    client->presets.username, client->presets.repo, commit_sha);
 }
 
 ORCAcode
-github_create_blobs(struct github *client, struct github_file ** files)
+github_create_blobs(struct github *client, struct github_file **files)
 {
-  ORCA_EXPECT(client, files != NULL, ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
-
-  int i;
-  char *f_content;
-  size_t f_len;
+  struct github_request_attr attr = { NULL, 0, NULL, &sha_from_json };
+  struct sized_buffer body;
   ORCAcode code;
+  char *buf;
+  int i;
+
+  ORCA_EXPECT(client, files != NULL, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo),
+              ORCA_BAD_PARAMETER);
 
   for (i = 0; files[i]; ++i) {
-    log_info("===creating blob for %s===", files[i]->path);
+    char *f_content;
+    size_t f_len;
 
     f_content = cee_load_whole_file(files[i]->path, &f_len);
-    ORCA_EXPECT(client, f_content != NULL, ORCA_BAD_PARAMETER, "File path doesn't exist");
+    ORCA_EXPECT(client, f_content != NULL, ORCA_BAD_PARAMETER,
+                "File path doesn't exist");
 
-    char *payload = NULL;
-    size_t ret;
-    ret = json_ainject(&payload,
-                       "(content):.*s"
-                       "(encoding):|utf-8|",
-                       f_len, f_content);
+    buf = NULL;
 
+    body.size = json_ainject(&buf,
+                             "(content):.*s"
+                             "(encoding):|utf-8|",
+                             f_len, f_content);
+    body.start = buf;
     free(f_content);
 
-    ORCA_EXPECT(client, payload != NULL, ORCA_BAD_JSON);
+    ORCA_EXPECT(client, buf != NULL, ORCA_BAD_JSON);
 
-    code = github_adapter_run(
-      &client->adapter,
-      &(struct ua_resp_handle){ .ok_cb = &load_sha, .ok_obj = &files[i]->sha },
-      &(struct sized_buffer){ payload, ret }, HTTP_POST,
-      "/repos/%s/%s/git/blobs", client->presets.username,
-      client->presets.repo);
+    attr.obj = &files[i]->sha;
 
-    free(payload);
+    code = github_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
+                              "/repos/%s/%s/git/blobs",
+                              client->presets.username, client->presets.repo);
+
+    free(buf);
   }
 
   return code;
 }
 
 static size_t
-node2json(char *str, size_t size, void *p)
+node_to_json(char *str, size_t size, void *p)
 {
   struct github_file *f = p;
+
   return json_inject(str, size,
                      "(path):s"
                      "(mode):|100644|"
@@ -252,37 +254,37 @@ node2json(char *str, size_t size, void *p)
 }
 
 static int
-node_list2json(char *buf, size_t size, void *p)
+node_list_to_json(char *buf, size_t size, void *p)
 {
-  return ntl_to_buf(buf, size, (void **)p, NULL, node2json);
+  return ntl_to_buf(buf, size, (void **)p, NULL, &node_to_json);
 }
 
 ORCAcode
 github_create_tree(struct github *client,
                    char *base_tree_sha,
-                   struct github_file ** files,
-                   char **p_tree_sha)
+                   struct github_file **files,
+                   char **ret)
 {
-  log_info("==create-tree==");
+  struct github_request_attr attr = { ret, 0, NULL, &sha_from_json };
+  struct sized_buffer body;
+  char buf[2048];
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(base_tree_sha), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, files != NULL, ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo),
+              ORCA_BAD_PARAMETER);
 
-  char payload[2048];
-  size_t ret;
-  ret = json_inject(payload, sizeof(payload),
-                    "(tree):F"
-                    "(base_tree):s",
-                    &node_list2json, files, base_tree_sha);
+  body.size = json_inject(buf, sizeof(buf),
+                          "(tree):F"
+                          "(base_tree):s",
+                          &node_list_to_json, files, base_tree_sha);
+  body.start = buf;
 
-  return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = p_tree_sha ? &load_sha : NULL,
-                              .ok_obj = p_tree_sha },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST,
-    "/repos/%s/%s/git/trees", client->presets.username, client->presets.repo);
+  return github_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
+                            "/repos/%s/%s/git/trees", client->presets.username,
+                            client->presets.repo);
 }
 
 ORCAcode
@@ -290,31 +292,30 @@ github_create_a_commit(struct github *client,
                        char *tree_sha,
                        char *parent_commit_sha,
                        char *commit_msg,
-                       char **p_commit_sha)
+                       char **ret)
 {
-  log_info("===create-a-commit===");
+  struct github_request_attr attr = { ret, 0, NULL, &sha_from_json };
+  struct sized_buffer body;
+  char buf[4096];
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(tree_sha), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(parent_commit_sha), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(commit_msg), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo),
+              ORCA_BAD_PARAMETER);
 
-  char payload[4096];
-  size_t ret;
-  ret = json_inject(payload, sizeof(payload),
-                    "(message):s"
-                    "(tree):s"
-                    "(parents):[s]",
-                    commit_msg, tree_sha, parent_commit_sha);
+  body.size = json_inject(buf, sizeof(buf),
+                          "(message):s"
+                          "(tree):s"
+                          "(parents):[s]",
+                          commit_msg, tree_sha, parent_commit_sha);
+  body.start = buf;
 
-  return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = p_commit_sha ? &load_sha : NULL,
-                              .ok_obj = p_commit_sha },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST,
-    "/repos/%s/%s/git/commits", client->presets.username,
-    client->presets.repo);
+  return github_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
+                            "/repos/%s/%s/git/commits",
+                            client->presets.username, client->presets.repo);
 }
 
 ORCAcode
@@ -322,45 +323,46 @@ github_create_a_branch(struct github *client,
                        char *head_commit_sha,
                        char *branch)
 {
-  log_info("===create-a-branch===");
+  struct sized_buffer body;
+  char buf[4096];
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(head_commit_sha), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(branch), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo),
+              ORCA_BAD_PARAMETER);
 
-  char payload[4096];
-  size_t ret;
-  ret = json_inject(payload, sizeof(payload),
-                    "(ref):|refs/heads/%s|"
-                    "(sha):s",
-                    branch, head_commit_sha);
+  body.size = json_inject(buf, sizeof(buf),
+                          "(ref):|refs/heads/%s|"
+                          "(sha):s",
+                          branch, head_commit_sha);
+  body.start = buf;
 
-  return github_adapter_run(
-    &client->adapter, &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST, "/repos/%s/%s/git/refs",
-    client->presets.username, client->presets.repo);
+  return github_adapter_run(&client->adapter, NULL, &body, HTTP_POST,
+                            "/repos/%s/%s/git/refs", client->presets.username,
+                            client->presets.repo);
 }
 
 ORCAcode
 github_update_a_commit(struct github *client, char *branch, char *commit_sha)
 {
-  log_info("===update-a-commit===");
+  struct sized_buffer body;
+  char buf[512];
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(branch), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(commit_sha), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.repo),
+              ORCA_BAD_PARAMETER);
 
-  char payload[512];
-  size_t ret;
-  ret = json_inject(payload, sizeof(payload), "(sha):s", commit_sha);
+  body.size = json_inject(buf, sizeof(buf), "(sha):s", commit_sha);
+  body.start = buf;
 
   return github_adapter_run(
-    &client->adapter, &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-    &(struct sized_buffer){ payload, ret }, HTTP_PATCH,
-    "/repos/%s/%s/git/refs/heads/%s", client->presets.username,
-    client->presets.repo, branch);
+    &client->adapter, NULL, NULL, HTTP_PATCH, "/repos/%s/%s/git/refs/heads/%s",
+    client->presets.username, client->presets.repo, branch);
 }
 
 ORCAcode
@@ -368,44 +370,46 @@ github_create_a_pull_request(struct github *client,
                              char *branch,
                              char *pull_msg)
 {
-  log_info("===create-a-pull-request===");
+  struct sized_buffer body;
+  char buf[4096];
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(branch), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(pull_msg), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.username),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->presets.default_branch),
+              ORCA_BAD_PARAMETER);
 
-  char payload[4096];
-  size_t ret;
-  ret = json_inject(payload, sizeof(payload),
-                    "(title):s"
-                    "(body):s"
-                    "(head):|%s:%s|"
-                    "(base):s",
-                    branch, pull_msg, client->presets.username, branch,
-                    client->presets.default_branch);
+  body.size = json_inject(buf, sizeof(buf),
+                          "(title):s"
+                          "(body):s"
+                          "(head):|%s:%s|"
+                          "(base):s",
+                          branch, pull_msg, client->presets.username, branch,
+                          client->presets.default_branch);
+  body.start = buf;
 
-  return github_adapter_run(
-    &client->adapter, &(struct ua_resp_handle){ .ok_cb = &__log_trace },
-    &(struct sized_buffer){ payload, ret }, HTTP_POST, "/repos/%s/%s/pulls",
-    client->presets.owner, client->presets.repo);
+  return github_adapter_run(&client->adapter, NULL, &body, HTTP_POST,
+                            "/repos/%s/%s/pulls", client->presets.owner,
+                            client->presets.repo);
 }
 
 ORCAcode
-github_get_user(struct github *client,
-                char *username,
-                struct github_user *ret)
+github_get_user(struct github *client, char *username, struct github_user *ret)
 {
-  log_info("===get-user===");
+  struct github_request_attr attr = {
+    ret,
+    sizeof *ret,
+    &github_user_init_v,
+    &github_user_from_json_v,
+    &github_user_cleanup_v,
+  };
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(username), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
-  return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &github_user_from_json_v,
-                              .ok_obj = ret },
-    NULL, HTTP_GET, "/users/%s", username);
+  return github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
+                            "/users/%s", username);
 }
 
 ORCAcode
@@ -414,13 +418,11 @@ github_get_repository(struct github *client,
                       char *repo,
                       struct sized_buffer *ret)
 {
-  log_info("===get-repository===");
+  struct github_request_attr attr = { ret, 0, NULL, &github_write_json };
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
-  return github_adapter_run(
-    &client->adapter,
-    &(struct ua_resp_handle){ .ok_cb = &github_write_json, .ok_obj = ret },
-    NULL, HTTP_GET, "/repos/%s/%s", owner, repo);
+  return github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
+                            "/repos/%s/%s", owner, repo);
 }

@@ -274,14 +274,14 @@ _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
   struct ua_resp_header *header = p_userdata;
   size_t bufsize = size * nmemb;
   char *start = buf;
-  char *end = buf + bufsize - sizeof("\r\n");
+  char *end = buf + bufsize - 2; /* ignore \r\n */
 
   /* get ':' delimiter position */
   for (; buf != end && *buf != ':'; ++buf)
     continue;
   if (*buf != ':') return bufsize;
 
-  /* increase reusable header buffer if neccessary */
+  /* increase reusable header buffer if necessary */
   if (header->bufsize < (header->len + bufsize + 1)) {
     header->bufsize = header->len + bufsize + 1;
     header->buf = realloc(header->buf, header->bufsize);
@@ -304,6 +304,7 @@ _ua_conn_respheader_cb(char *buf, size_t size, size_t nmemb, void *p_userdata)
 
   /* update amount of headers */
   ++header->n_pairs;
+
   ASSERT_S(header->n_pairs < UA_MAX_HEADER_PAIRS,
            "Out of bounds write attempt");
 
@@ -376,7 +377,7 @@ _ua_conn_init(struct user_agent *ua)
                    &_ua_conn_respheader_cb);
   /* set ptr to response header to be filled at callback */
   curl_easy_setopt(new_ehandle, CURLOPT_HEADERDATA, &new_conn->info.header);
-  /* make libcurl safe on a multithreaded context and avoid SIGPIPE */
+  /* make libcurl safe in a multithreaded context and avoid SIGPIPE */
   curl_easy_setopt(new_ehandle, CURLOPT_NOSIGNAL, 1L);
 
   new_conn->ehandle = new_ehandle;

@@ -430,6 +430,13 @@ struct discord_gateway_cbs {
   /** triggers when a thread is deleted */
   discord_on_channel on_thread_delete;
 
+  /** triggers when guild info is ready, or a guild has joined */
+  discord_on_guild on_guild_create;
+  /** triggers when a guild's information is updated */
+  discord_on_guild on_guild_update;
+  /** triggers when removed from guild */
+  discord_on_guild_delete on_guild_delete;
+
   /** triggers when a ban occurs */
   discord_on_guild_ban on_guild_ban_add;
   /** triggers when a ban is removed */

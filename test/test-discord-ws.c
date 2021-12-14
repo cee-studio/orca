@@ -9,6 +9,7 @@
 #include "json-actor.h" /* json_extract() */
 
 #define THREADPOOL_SIZE "4"
+#define PREFIX          "!"
 
 pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 bool g_keep_spamming = true;
@@ -83,6 +84,30 @@ void on_spam(struct discord *client, const struct discord_message *msg)
   }
 }
 
+void on_spam_block(struct discord *client, const struct discord_message *msg)
+{
+  if (msg->author->bot) return;
+
+  struct discord_create_message_params params = { .content = "No 1" };
+  discord_create_message(client, msg->channel_id, &params, NULL);
+}
+
+void on_spam_block_continue(struct discord *client,
+                            const struct discord_message *msg)
+{
+  const struct discord_user *bot = discord_get_self(client);
+  char text[32];
+  int number;
+
+  if (msg->author->id != bot->id) return;
+
+  sscanf(msg->content, "No %d", &number);
+  snprintf(text, sizeof(text), "No %d", 1 + number);
+
+  struct discord_create_message_params params = { .content = text };
+  discord_create_message(client, msg->channel_id, &params, NULL);
+}
+
 void on_stop(struct discord *client, const struct discord_message *msg)
 {
   if (msg->author->bot) return;
@@ -126,10 +151,21 @@ enum discord_event_scheduler scheduler(struct discord *client,
 
     json_extract(data->start, data->size, "(content):.*s", sizeof(cmd), cmd);
 
-    if (0 == strcmp("ping", cmd)) {
+    if (0 == strcmp(PREFIX "ping", cmd)
+        || 0 == strcmp(PREFIX "spam-block", cmd)) {
       return DISCORD_EVENT_MAIN_THREAD;
     }
+    else if (0 == strncmp("No", cmd, 2)) {
+      struct discord_message msg = { 0 };
+
+      discord_message_from_json(data->start, data->size, &msg);
+      on_spam_block_continue(client, &msg);
+      discord_message_cleanup(&msg);
+
+      return DISCORD_EVENT_IGNORE;
+    }
   }
+
   return DISCORD_EVENT_WORKER_THREAD;
 }
 
@@ -151,11 +187,12 @@ int main(int argc, char *argv[])
   /* trigger event callbacks in a multi-threaded fashion */
   discord_set_event_scheduler(client, &scheduler);
 
-  discord_set_prefix(client, "!");
+  discord_set_prefix(client, PREFIX);
   discord_set_on_ready(client, &on_ready);
   discord_set_on_command(client, "disconnect", &on_disconnect);
   discord_set_on_command(client, "reconnect", &on_reconnect);
   discord_set_on_command(client, "spam", &on_spam);
+  discord_set_on_command(client, "spam-block", &on_spam_block);
   discord_set_on_command(client, "stop", &on_stop);
   discord_set_on_command(client, "force_error", &on_force_error);
   discord_set_on_command(client, "ping", &on_ping);

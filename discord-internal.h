@@ -504,34 +504,16 @@ struct discord_gateway {
     pthread_rwlock_t rwlock;
   } * timer;
 
-  /** session status structure */
-  struct {
-    /** will attempt to resume session if connection shutsdowns */
-    bool is_resumable;
-    /** can start sending/receiving additional events to discord */
-    bool is_ready;
-    /** if true shutdown websockets connection as soon as possible */
-    bool shutdown;
-
-    /** retry connection structure */
-    struct {
-      /** will attempt reconnecting if true */
-      bool enable;
-      /** current retry attempt (resets to 0 when succesful) */
-      int attempt;
-      /** max amount of retries before giving up */
-      int limit;
-    } retry;
-  } * status;
-
   /** the info sent for connection authentication */
   struct discord_identify id;
-  /** the session id (for resuming lost connections) */
-  char session_id[512];
 
   /** on-going session structure */
-  /* TODO: should be shared between copies */
   struct {
+    /** whether client is ready to start sending/receiving events */
+    bool is_ready;
+    /** session id for resuming lost connections */
+    char id[512];
+
     int shards;
     struct discord_session_start_limit start_limit;
     /** active concurrent sessions */
@@ -542,7 +524,27 @@ struct discord_gateway {
     u64_unix_ms_t event_tstamp;
     /** event counter to avoid reaching limit of 120 events per 60 sec */
     int event_count;
-  } session;
+
+    /** session status */
+    enum {
+      /** client is currently offline */
+      DISCORD_SESSION_OFFLINE = 0,
+      /** client will attempt to resume session after reconnect */
+      DISCORD_SESSION_RESUMABLE = 1 << 0,
+      /** client in the process of being shutdown */
+      DISCORD_SESSION_SHUTDOWN = 1 << 1
+    } status;
+
+    /** retry connection structure */
+    struct {
+      /** will attempt reconnecting if true */
+      bool enable;
+      /** current retry attempt (resets to 0 when succesful) */
+      int attempt;
+      /** max amount of retries before giving up */
+      int limit;
+    } retry;
+  } * session;
 
   /** the client's user structure */
   struct discord_user bot;

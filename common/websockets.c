@@ -823,18 +823,15 @@ ws_end(struct websockets *ws)
 }
 
 bool
-ws_perform(struct websockets *ws, uint64_t wait_ms)
+ws_easy_run(struct websockets *ws, uint64_t wait_ms, uint64_t *tstamp)
 {
   int is_running = 0;
   CURLMcode mcode;
   /* unused but curl_multi_wait() demands it */
   int numfds = 0;
 
-  /**
-   * Update WebSockets concept of "now"
-   * @see ws_timestamp()
-   */
-  ws_timestamp_update(ws);
+  /** update WebSockets concept of "now" */
+  *tstamp = ws_timestamp_update(ws);
 
   /**
    * Perform Read/Write pending sockets activity (if any)

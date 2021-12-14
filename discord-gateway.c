@@ -1340,21 +1340,10 @@ _discord_gateway_loop(struct discord_gateway *gw)
   ws_set_url(gw->ws, url, NULL);
   ws_start(gw->ws, &ws_ehandle, &client->mhandle);
   while (1) {
-    int is_running = 0;
-    CURLMcode mcode;
-    int numfds = 0;
+    int is_running;
 
-    /* update client concept of "now" */
-    gw->timer->now = ws_timestamp_update(gw->ws);
-
-    mcode = curl_multi_perform(client->mhandle, &is_running);
-    if (mcode == CURLM_OK) {
-      mcode = curl_multi_wait(client->mhandle, NULL, 0, 5, &numfds);
-    }
-    if (mcode != CURLM_OK) {
-      logconf_error(&gw->conf, "(CURLM code: %d)", mcode);
-      break;
-    }
+    /* check for pending transfer */
+    is_running = ws_easy_run(gw->ws, 5, &gw->timer->now);
 
     /* ask for any messages/informationals from the individual transfers */
     do {

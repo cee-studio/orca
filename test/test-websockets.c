@@ -86,12 +86,6 @@ void on_close_cb(void *data,
 int main(int argc, char *argv[])
 {
   char *config_file = "../config.json";
-  char *url = NULL;
-  int start = 0, end = 10;
-  int opt;
-  FILE *fp;
-  struct logconf conf;
-  struct websockets *ws;
   struct ws_callbacks cbs = {
     .on_connect = &on_connect_cb,
     .on_text = &on_text_cb,
@@ -99,6 +93,14 @@ int main(int argc, char *argv[])
     .on_pong = &on_pong_cb,
     .on_close = &on_close_cb,
   };
+  struct websockets *ws;
+  struct logconf conf;
+  uint64_t tstamp;
+
+  char *url = NULL;
+  int start = 0, end = 10;
+  int opt;
+  FILE *fp;
 
   while (-1 != (opt = getopt(argc, argv, "hu:s:e:c:"))) {
     switch (opt) {
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
 
   /* run the event-loop */
   ws_start(ws, NULL, NULL);
-  while (true == ws_perform(ws, 5))
+  while (true == ws_easy_run(ws, 5, &tstamp))
     ;
   ws_end(ws);
 

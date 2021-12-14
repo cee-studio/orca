@@ -305,16 +305,18 @@ void
 slack_sm_run(struct slack *client)
 {
   struct slack_sm *sm = &client->sm;
+  uint64_t tstamp;
+
   ASSERT_S(WS_DISCONNECTED == ws_get_status(sm->ws),
            "Can't run websockets recursively");
 
   ws_start(sm->ws, NULL, NULL);
-
   while (1) {
-    if (!ws_perform(sm->ws, 5)) break; /* exit event loop */
-    if (!sm->is_ready) continue; /* wait until on_hello() */
+    /* break on failure */
+    if (!ws_easy_run(sm->ws, 5, &tstamp)) break;
 
-    /* connection established */
+    /* wait until client is ready */
+    if (!sm->is_ready) continue;
 
     /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required */

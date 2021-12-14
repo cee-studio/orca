@@ -558,27 +558,19 @@ static void
 event_loop(struct discord_voice *vc)
 {
   struct discord *client = vc->p_client;
+  uint64_t tstamp;
 
   /* everything goes well, ws event_loop to serve */
   /* the ws server side events */
   ws_start(vc->ws, NULL, NULL);
   while (1) {
-    if (!ws_perform(vc->ws, 5)) {
-      /* severed connection */
-      break;
-    }
+    /* break on severed connection */
+    if (!ws_easy_run(vc->ws, 5, &tstamp)) break;
 
-    if (vc->shutdown) {
-      /* wait until connection shutdown */
-      continue;
-    }
-
-    if (!vc->is_ready) {
-      /* wait until on_ready() */
-      continue;
-    }
-
-    /* connection is established */
+    /* wait until connection shutdown */
+    if (vc->shutdown) continue;
+    /* wait until client is ready */
+    if (!vc->is_ready) continue;
 
     /* check if timespan since first pulse is greater than
      * minimum heartbeat interval required*/

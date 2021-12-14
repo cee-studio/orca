@@ -1095,7 +1095,7 @@ on_close_cb(void *p_gw,
     close_opcode_print(opcode), opcode, len, (int)len, reason);
 
   /* user-triggered shutdown */
-  if (gw->session->status | DISCORD_SESSION_SHUTDOWN) return;
+  if (gw->session->status & DISCORD_SESSION_SHUTDOWN) return;
 
   /* mark as in the process of being shutdown */
   gw->session->status |= DISCORD_SESSION_SHUTDOWN;

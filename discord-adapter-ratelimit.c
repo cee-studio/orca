@@ -42,9 +42,9 @@ _discord_bucket_get_route(const char endpoint[], char buf[32])
 
 struct discord_bucket *
 discord_bucket_init(struct discord_request *req,
-                     const char route[],
-                     const struct sized_buffer *hash,
-                     const long limit)
+                    const char route[],
+                    const struct sized_buffer *hash,
+                    const long limit)
 {
   struct discord_bucket *b;
   int ret;
@@ -74,7 +74,8 @@ discord_bucket_init(struct discord_request *req,
   return b;
 }
 
-void discord_buckets_cleanup(struct discord_request *req)
+void
+discord_buckets_cleanup(struct discord_request *req)
 {
   struct discord_bucket *b, *b_tmp;
 
@@ -152,22 +153,14 @@ discord_bucket_get_timeout(struct discord_request *req,
   return (global > reset) ? global : reset;
 }
 
-void
-discord_bucket_cooldown(struct discord_request *req, struct discord_bucket *b)
+int64_t
+discord_bucket_get_wait(struct discord_request *req, struct discord_bucket *b)
 {
   struct discord *client = CLIENT(req, adapter.req);
   u64_unix_ms_t now = discord_timestamp(client);
   u64_unix_ms_t reset = discord_bucket_get_timeout(req, b);
-  int64_t delay_ms = (int64_t)(reset - now);
 
-  if (delay_ms > 0) {
-    /* block thread's runtime for delay amount */
-    logconf_info(&req->conf, "[%.4s] RATELIMITING (wait %" PRId64 " ms)",
-                 b->hash, delay_ms);
-    cee_sleep_ms(delay_ms);
-  }
-
-  --b->remaining;
+  return (int64_t)(reset - now);
 }
 
 /* attempt to find a bucket associated with this route */

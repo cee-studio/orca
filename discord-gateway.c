@@ -1354,7 +1354,7 @@ _discord_gateway_loop(struct discord_gateway *gw)
     CURLMcode mcode;
     int numfds = 0;
 
-    /* update WebSockets concept of "now" */
+    /* update client concept of "now" */
     gw->timer->now = ws_timestamp_update(gw->ws);
 
     mcode = curl_multi_perform(client->mhandle, &is_running);

@@ -31,7 +31,7 @@
  * @brief Shortcut for setting attributes for a specs-generated struct
  *
  * @param type datatype of the struct
- * @param pointer to specs-generated struct
+ * @param obj pointer to specs-generated struct
  */
 #define REQUEST_ATTR_INIT(type, obj)                                          \
   {                                                                           \
@@ -299,14 +299,14 @@ u64_unix_ms_t discord_bucket_get_timeout(struct discord_request *req,
                                          struct discord_bucket *b);
 
 /**
- * @brief Trigger bucket pending cooldown
+ * @brief Get bucket pending cooldown time in milliseconds
  *
  * @param req the request handler
  * @param the bucket to wait on cooldown
- * @note blocking function
+ * @return amount to sleep for in milliseconds
  */
-void discord_bucket_cooldown(struct discord_request *req,
-                             struct discord_bucket *bucket);
+int64_t discord_bucket_get_wait(struct discord_request *req,
+                                struct discord_bucket *bucket);
 
 /**
  * @brief Get a `struct discord_bucket` assigned to `route`

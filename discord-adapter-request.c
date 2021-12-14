@@ -437,6 +437,11 @@ discord_request_perform(struct discord_request *req,
       break;
     }
 
+    /* in the off-chance of having consecutive blocking calls, update timestamp
+     *        used for ratelimiting
+     * TODO: create discord_timestamp_update() */
+    ws_timestamp_update(client->gw.ws);
+
     ua_conn_reset(conn);
   } while (retry);
   pthread_mutex_unlock(&b->lock);

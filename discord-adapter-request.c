@@ -264,7 +264,7 @@ _discord_request_get_info(struct discord_request *req,
     double retry_after = 1.0;
     bool is_global = false;
     char message[256] = "";
-    int64_t delay_ms = 0LL;
+    int64_t wait_ms = 0LL;
 
     json_extract(body.start, body.size,
                  "(global):b (message):.*s (retry_after):lf", &is_global,
@@ -274,27 +274,27 @@ _discord_request_get_info(struct discord_request *req,
       u64_unix_ms_t global;
 
       global = discord_request_get_global_wait(req);
-      delay_ms = (int64_t)(global - discord_timestamp(client));
+      wait_ms = (int64_t)(global - discord_timestamp(client));
 
       logconf_warn(&req->conf,
                    "429 GLOBAL RATELIMITING (wait: %" PRId64 " ms) : %s",
-                   delay_ms, message);
+                   wait_ms, message);
 
       /* TODO: this blocks the event loop, which means Gateway's heartbeating
        * won't work */
-      cee_sleep_ms(delay_ms);
+      cee_sleep_ms(wait_ms);
 
       return true;
     }
 
-    delay_ms = (int64_t)(1000 * retry_after);
+    wait_ms = (int64_t)(1000 * retry_after);
 
     if (cxt) {
       /* non-blocking timeout */
-      u64_unix_ms_t timeout = NOW(client) + delay_ms;
+      u64_unix_ms_t timeout = NOW(client) + wait_ms;
 
       logconf_warn(&req->conf,
-                   "429 RATELIMITING (timeout: %" PRId64 " ms) : %s", delay_ms,
+                   "429 RATELIMITING (timeout: %" PRId64 " ms) : %s", wait_ms,
                    message);
 
       _discord_context_set_timeout(req, timeout, cxt);
@@ -304,9 +304,9 @@ _discord_request_get_info(struct discord_request *req,
     }
 
     logconf_warn(&req->conf, "429 RATELIMITING (wait: %" PRId64 " ms) : %s",
-                 delay_ms, message);
+                 wait_ms, message);
 
-    cee_sleep_ms(delay_ms);
+    cee_sleep_ms(wait_ms);
 
     return true;
   }
@@ -406,7 +406,15 @@ discord_request_perform(struct discord_request *req,
 
   pthread_mutex_lock(&b->lock);
   do {
-    discord_bucket_cooldown(req, b);
+    int64_t wait_ms = discord_bucket_get_wait(req, b);
+
+    if (wait_ms > 0) {
+      /* block thread's runtime for delay amount */
+      logconf_info(&req->conf, "[%.4s] RATELIMITING (wait %" PRId64 " ms)",
+                   b->hash, wait_ms);
+
+      cee_sleep_ms(wait_ms);
+    }
 
     /* perform blocking request, and check results */
     switch (code = ua_conn_perform(conn)) {
@@ -424,6 +432,12 @@ discord_request_perform(struct discord_request *req,
         attr->from_json(body.start, body.size, attr->obj);
       }
 
+      /* in the off-chance of having consecutive blocking calls, update
+       *        timestamp used for ratelimiting
+       * TODO: redundant for REST-only clients
+       * TODO: create discord_timestamp_update() */
+      ws_timestamp_update(client->gw.ws);
+
       discord_bucket_build(req, b, endpoint, &info);
       ua_info_cleanup(&info);
     } break;
@@ -436,11 +450,6 @@ discord_request_perform(struct discord_request *req,
       retry = false;
       break;
     }
-
-    /* in the off-chance of having consecutive blocking calls, update timestamp
-     *        used for ratelimiting
-     * TODO: create discord_timestamp_update() */
-    ws_timestamp_update(client->gw.ws);
 
     ua_conn_reset(conn);
   } while (retry);

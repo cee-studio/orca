@@ -14,11 +14,9 @@
 #include "queue.h"
 
 #define CURLE_LOG(conn, ecode)                                                \
-  do {                                                                        \
-    logconf_fatal(&conn->ua->conf, "(CURLE code: %d) %s", ecode,              \
-                  IS_EMPTY_STRING(conn->errbuf) ? curl_easy_strerror(ecode)   \
-                                                : conn->errbuf);              \
-  } while (0)
+  logconf_fatal(&conn->ua->conf, "(CURLE code: %d) %s", ecode,                \
+                IS_EMPTY_STRING(conn->errbuf) ? curl_easy_strerror(ecode)     \
+                                              : conn->errbuf)
 
 struct user_agent {
   /**

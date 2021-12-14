@@ -9,10 +9,8 @@
 #include "cee-utils.h"
 
 #define CURLM_LOG(ws, mcode)                                                  \
-  do {                                                                        \
-    logconf_fatal(&ws->conf, "(CURLM code: %d) %s", mcode,                    \
-                  curl_multi_strerror(mcode));                                \
-  } while (0)
+  logconf_fatal(&ws->conf, "(CURLM code: %d) %s", mcode,                      \
+                curl_multi_strerror(mcode))
 
 struct websockets {
   /** the logconf structure for logging @see logconf_setup() */

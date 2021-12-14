@@ -56,7 +56,7 @@ void update_last_tick_ms(uint64_t *tick_ms)
                                         .ok_obj = tick_ms };
 
   /* Fetch ticks from ELITEBGS API */
-  ua_run(g_elitebgs_ua, NULL, &resp_handle, NULL, HTTP_GET, "/ticks");
+  ua_easy_run(g_elitebgs_ua, NULL, &resp_handle, NULL, HTTP_GET, "/ticks");
 }
 
 char *happiness_localised(char *happiness_band)
@@ -277,10 +277,10 @@ void on_command(struct discord *client, const struct discord_message *msg)
   snprintf(endpoint, sizeof(endpoint), "/factions%s", query);
 
   /* Fetch factions from ELITEBGS API */
-  ua_run(g_elitebgs_ua, NULL,
-         &(struct ua_resp_handle){ .ok_cb = &embed_from_json,
-                                   .ok_obj = &new_embed },
-         NULL, HTTP_GET, endpoint);
+  ua_easy_run(g_elitebgs_ua, NULL,
+             &(struct ua_resp_handle){ .ok_cb = &embed_from_json,
+                                       .ok_obj = &new_embed },
+             NULL, HTTP_GET, endpoint);
 
   /* Send embed to channel if embed was loaded */
   struct discord_create_message_params params = { 0 };

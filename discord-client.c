@@ -21,6 +21,11 @@ _discord_init(struct discord *new_client)
   discord_gateway_init(&new_client->gw, &new_client->conf, &new_client->token);
   discord_voice_connections_init(new_client);
 
+  /* fetch the client user structure */
+  if (new_client->token.size) {
+    discord_get_current_user(new_client, &new_client->self);
+  }
+
   new_client->is_original = true;
 }
 
@@ -86,6 +91,7 @@ discord_cleanup(struct discord *client)
     logconf_cleanup(&client->conf);
     discord_adapter_cleanup(&client->adapter);
     discord_gateway_cleanup(&client->gw);
+    discord_user_cleanup(&client->self);
   }
   free(client);
 }
@@ -179,7 +185,7 @@ discord_set_prefix(struct discord *client, char *prefix)
 const struct discord_user*
 discord_get_self(struct discord *client)
 {
-  return &client->gw.bot;
+  return &client->self;
 }
 
 void

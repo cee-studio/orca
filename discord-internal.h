@@ -498,13 +498,17 @@ struct discord_gateway {
     u64_unix_ms_t hbeat;
     /** Gateway's concept of "now" */
     u64_unix_ms_t now;
+    /** timestamp of last succesful identify request */
+    u64_unix_ms_t identify;
+    /** timestamp of last succesful event timestamp in ms (resets every 60s) */
+    u64_unix_ms_t event;
     /** latency obtained from HEARTBEAT and HEARTBEAT_ACK interval */
     int ping_ms;
     /** ping rwlock  */
     pthread_rwlock_t rwlock;
   } * timer;
 
-  /** the info sent for connection authentication */
+  /** the identify structure for client authentication */
   struct discord_identify id;
 
   /** on-going session structure */
@@ -513,15 +517,12 @@ struct discord_gateway {
     bool is_ready;
     /** session id for resuming lost connections */
     char id[512];
-
+    /** amount of shards being used by this session */
     int shards;
+    /** session limits */
     struct discord_session_start_limit start_limit;
     /** active concurrent sessions */
     int concurrent;
-    /** timestamp of last succesful identify request */
-    u64_unix_ms_t identify_tstamp;
-    /** timestamp of last succesful event timestamp in ms (resets every 60s) */
-    u64_unix_ms_t event_tstamp;
     /** event counter to avoid reaching limit of 120 events per 60 sec */
     int event_count;
 
@@ -546,9 +547,6 @@ struct discord_gateway {
     } retry;
   } * session;
 
-  /** the client's user structure */
-  struct discord_user bot;
-
   /** response-payload structure */
   struct {
     /** field 'op' */
@@ -563,21 +561,17 @@ struct discord_gateway {
 
   /** user-commands structure */
   struct {
-    /** the prefix expected before every command @see discord_set_prefix() */
+    /** the prefix expected for every command */
     struct sized_buffer prefix;
     /** user's command/callback pair @see discord_set_on_command() */
     struct discord_gateway_cmd_cbs *pool;
     /** amount of command/callback pairs in pool */
     size_t amt;
-    /** user's default callback incase prefix matches but command doesn't */
+    /** fallback function incase prefix matches but command doesn't */
     struct discord_gateway_cmd_cbs on_default;
-
     /** user's callbacks */
     struct discord_gateway_cbs cbs;
-    /**
-     * context on how each event callback is executed
-     *          @see discord_set_event_scheduler()
-     */
+    /** event execution flow callback */
     discord_event_scheduler scheduler;
   } cmds;
 };
@@ -670,6 +664,8 @@ struct discord {
   struct discord_voice vcs[DISCORD_MAX_VOICE_CONNECTIONS];
   /** @todo create a analogous struct for Gateway's callbacks */
   struct discord_voice_cbs voice_cbs;
+  /** the client's user structure */
+  struct discord_user self;
   /** space for user arbitrary data */
   void *data;
 };

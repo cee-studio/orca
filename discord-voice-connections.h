@@ -103,8 +103,6 @@ struct discord_voice {
   /** @note obtained from on_voice_state_update() */
   /** the session id @note obtained from on_voice_state_update() */
   char session_id[128];
-  /** the bot user id @note obtained from on_voice_state_update() */
-  u64_snowflake_t bot_id;
   /** the websockets handle that binds to Discord Voice Connections */
   struct websockets *ws;
   /** @brief handle reconnect logic */
@@ -117,9 +115,9 @@ struct discord_voice {
     /** max amount of reconnects before giving up */
     unsigned char threshold;
   } reconnect;
+
   /** will attempt to resume session if connection shutsdown */
   bool is_resumable;
-
   /** redirect to a different voice server */
   bool is_redirect;
   /** can start sending/receiving additional events to discord */

@@ -118,7 +118,7 @@ send_identify(struct discord_gateway *gw)
   struct ws_info info = { 0 };
 
   /* Ratelimit check */
-  if (gw->timer->now - gw->session->identify_tstamp < 5) {
+  if (gw->timer->now - gw->timer->identify < 5) {
     ++gw->session->concurrent;
     VASSERT_S(gw->session->concurrent
                 < gw->session->start_limit.max_concurrency,
@@ -144,7 +144,7 @@ send_identify(struct discord_gateway *gw)
     ret, info.loginfo.counter + 1);
 
   /* get timestamp for this identify */
-  gw->session->identify_tstamp = gw->timer->now;
+  gw->timer->identify = gw->timer->now;
 }
 
 /* send heartbeat pulse to websockets server in order
@@ -715,12 +715,12 @@ on_message_reaction_remove_emoji(struct discord_gateway *gw,
 static void
 on_voice_state_update(struct discord_gateway *gw, struct sized_buffer *data)
 {
+  struct discord *client = CLIENT(gw, gw);
   struct discord_voice_state vs;
 
   discord_voice_state_from_json(data->start, data->size, &vs);
 
-  if (vs.user_id == gw->bot.id) {
-    struct discord *client = CLIENT(gw, gw);
+  if (vs.user_id == client->self.id) {
     /* we only care about the voice_state_update of bot */
     _discord_on_voice_state_update(client, &vs);
   }
@@ -788,13 +788,13 @@ on_dispatch(struct discord_gateway *gw)
   enum discord_gateway_events event;
 
   /* Ratelimit check */
-  if (gw->timer->now - gw->session->event_tstamp < 60) {
+  if (gw->timer->now - gw->timer->event < 60) {
     ++gw->session->event_count;
     ASSERT_S(gw->session->event_count < 120,
              "Reach event dispatch threshold (120 every 60 seconds)");
   }
   else {
-    gw->session->event_tstamp = gw->timer->now;
+    gw->timer->event = gw->timer->now;
     gw->session->event_count = 0;
   }
 
@@ -1245,9 +1245,6 @@ discord_gateway_init(struct discord_gateway *gw,
   /* default callbacks */
   gw->cmds.scheduler = default_scheduler_cb;
 
-  /* fetch and store the bot info */
-  if (token->size) discord_get_current_user(client, &gw->bot);
-
   /* check for default prefix in config file */
   buf = logconf_get_field(conf, "discord.default_prefix");
   if (buf.size) {
@@ -1278,8 +1275,6 @@ discord_gateway_cleanup(struct discord_gateway *gw)
   free(gw->id.presence);
   /* cleanup client session */
   free(gw->session);
-  /* cleanup user bot */
-  discord_user_cleanup(&gw->bot);
   /* cleanup user commands */
   if (gw->cmds.pool) free(gw->cmds.pool);
   if (gw->cmds.prefix.start) free(gw->cmds.prefix.start);

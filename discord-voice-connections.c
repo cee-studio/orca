@@ -65,6 +65,7 @@ send_resume(struct discord_voice *vc)
 static void
 send_identify(struct discord_voice *vc)
 {
+  const struct discord_user *self = discord_get_self(vc->p_client);
   char buf[1024];
   int ret;
 
@@ -76,7 +77,7 @@ send_identify(struct discord_voice *vc)
                     "(session_id):s"
                     "(token):s"
                     "}",
-                    &vc->guild_id, &vc->bot_id, vc->session_id, vc->token);
+                    &vc->guild_id, &self->id, vc->session_id, vc->token);
   ASSERT_S(ret < sizeof(buf), "Out of bounds write attempt");
 
   logconf_info(
@@ -349,7 +350,6 @@ _discord_voice_init(struct discord_voice *new_vc,
   new_vc->p_client = client;
   new_vc->guild_id = guild_id;
   new_vc->channel_id = channel_id;
-  new_vc->bot_id = client->gw.bot.id;
 
   if (NULL == new_vc->ws) {
     struct ws_callbacks cbs = {

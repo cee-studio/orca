@@ -19,11 +19,11 @@ int commit(char *base_url, struct logconf *conf)
   struct ua_resp_handle handle = { .ok_cb = load, .ok_obj = NULL };
   struct ua_info info = { 0 };
 
-  ua_run(data, &info, &handle, &body, HTTP_POST, "/echo?m=POST");
-  ua_run(data, &info, &handle, &body, HTTP_PATCH, "/echo?m=PATCH");
-  ua_run(data, &info, &handle, &body, HTTP_GET, "/echo?m=GET");
-  ua_run(data, &info, &handle, &body, HTTP_PUT, "/echo?m=PUT");
-  ua_run(data, &info, &handle, &body, HTTP_DELETE, "/echo?m=DELETE");
+  ua_easy_run(data, &info, &handle, &body, HTTP_POST, "/echo?m=POST");
+  ua_easy_run(data, &info, &handle, &body, HTTP_PATCH, "/echo?m=PATCH");
+  ua_easy_run(data, &info, &handle, &body, HTTP_GET, "/echo?m=GET");
+  ua_easy_run(data, &info, &handle, &body, HTTP_PUT, "/echo?m=PUT");
+  ua_easy_run(data, &info, &handle, &body, HTTP_DELETE, "/echo?m=DELETE");
 
   curl_global_cleanup();
 

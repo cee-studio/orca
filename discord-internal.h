@@ -223,14 +223,6 @@ u64_unix_ms_t discord_adapter_get_global_wait(struct discord_adapter *adapter);
  */
 void discord_adapter_stop_all(struct discord_adapter *adapter);
 
-/**
- * @brief Pause all on-going timed-out requests
- *
- * The requests will be moved over to bucket's 'waitq' queue
- * @param adapter the handle initialized with discord_adapter_init()
- */
-void discord_adapter_pause_all(struct discord_adapter *adapter);
-
 /** @brief The bucket struct for handling ratelimiting */
 struct discord_bucket {
   /** the route associated with this bucket */

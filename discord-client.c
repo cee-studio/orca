@@ -269,7 +269,10 @@ discord_run(struct discord *client)
       if (code != ORCA_OK) break;
     } while (1);
 
-    if (!discord_gateway_end(&client->gw)) break;
+    if (discord_gateway_end(&client->gw)) {
+      discord_adapter_stop_all(&client->adapter);
+      break;
+    }
   }
 
   return code;

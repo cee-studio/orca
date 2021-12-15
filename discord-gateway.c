@@ -19,22 +19,6 @@ sized_buffer_from_json(char *json, size_t len, void *data)
   p->size = asprintf(&p->start, "%.*s", (int)len, json);
 }
 
-static void
-_discord_gateway_close(struct discord_gateway *gw,
-                       const enum ws_close_reason opcode,
-                       const char reason[],
-                       const size_t len)
-{
-  struct discord *client = CLIENT(gw, gw);
-
-  if (gw->session->retry.enable)
-    discord_adapter_pause_all(&client->adapter);
-  else
-    discord_adapter_stop_all(&client->adapter);
-
-  ws_close(gw->ws, opcode, reason, len);
-}
-
 ORCAcode
 discord_get_gateway(struct discord *client, struct sized_buffer *ret)
 {
@@ -1007,7 +991,7 @@ on_invalid_session(struct discord_gateway *gw)
   }
   gw->session->retry.enable = true;
 
-  _discord_gateway_close(gw, opcode, reason, SIZE_MAX);
+  ws_close(gw->ws, opcode, reason, SIZE_MAX);
 }
 
 static void
@@ -1018,7 +1002,7 @@ on_reconnect(struct discord_gateway *gw)
   gw->session->status = DISCORD_SESSION_RESUMABLE | DISCORD_SESSION_SHUTDOWN;
   gw->session->retry.enable = true;
 
-  _discord_gateway_close(gw, DISCORD_GATEWAY_CLOSE_REASON_RECONNECT, reason,
+  ws_close(gw->ws, DISCORD_GATEWAY_CLOSE_REASON_RECONNECT, reason,
                          sizeof(reason));
 }
 
@@ -1317,14 +1301,14 @@ discord_gateway_end(struct discord_gateway *gw)
     gw->session->retry.enable = false;
     gw->session->retry.attempt = 0;
 
-    return false;
+    return true;
   }
 
   ++gw->session->retry.attempt;
 
   logconf_info(&gw->conf, "Reconnect attempt #%d", gw->session->retry.attempt);
 
-  return true;
+  return false;
 }
 
 ORCAcode
@@ -1366,7 +1350,7 @@ discord_gateway_shutdown(struct discord_gateway *gw)
   gw->session->retry.enable = false;
   gw->session->status = DISCORD_SESSION_SHUTDOWN;
 
-  _discord_gateway_close(gw, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
+  ws_close(gw->ws, WS_CLOSE_REASON_NORMAL, reason, sizeof(reason));
 }
 
 void
@@ -1386,5 +1370,5 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
     opcode = WS_CLOSE_REASON_NORMAL;
   }
 
-  _discord_gateway_close(gw, opcode, reason, sizeof(reason));
+  ws_close(gw->ws, opcode, reason, sizeof(reason));
 }

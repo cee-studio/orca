@@ -169,8 +169,8 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
 /**
  * @brief Perform a request to Discord
  *
- * This functions is a selector over discord_request_run() or
- *        discord_request_run_async()
+ * This functions is a selector over discord_adapter_run() or
+ *        discord_adapter_run_async()
  * @param adapter the handle initialized with discord_adapter_init()
  * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
@@ -205,7 +205,7 @@ void discord_adapter_set_async(struct discord_adapter *adapter,
  * @param adapter the handle initialized with discord_adapter_init()
  * @return `ORCA_OK` means nothing out of the ordinary
  */
-ORCAcode discord_request_perform(struct discord_adapter *adapter);
+ORCAcode discord_adapter_perform(struct discord_adapter *adapter);
 
 /**
  * @brief Get global timeout timestamp
@@ -213,42 +213,7 @@ ORCAcode discord_request_perform(struct discord_adapter *adapter);
  * @param adapter the handle initialized with discord_adapter_init()
  * @return the most recent global timeout timestamp
  */
-u64_unix_ms_t discord_request_get_global_wait(struct discord_adapter *adapter);
-
-/**
- * @brief Perform a blocking request to Discord
- *
- * @param adapter the handle initialized with discord_adapter_init()
- * @param attr attributes of request
- * @param body the body sent for methods that require (ex: post), leave as
- *        null if unecessary
- * @param method the method in opcode format of the request being sent
- * @param endpoint the fully-formed request's endpoint
- * @return a code for checking on how the transfer went ORCA_OK means the
- *        transfer was succesful
- */
-ORCAcode discord_request_run(struct discord_adapter *adapter,
-                             struct discord_request_attr *attr,
-                             struct sized_buffer *body,
-                             enum http_method method,
-                             char endpoint[]);
-/**
- * @brief Enqueue a request to be performed asynchronously
- *
- * @param adapter the handle initialized with discord_adapter_init()
- * @param attr attributes of request
- * @param body the body sent for methods that require (ex: post), leave as
- *        null if unecessary
- * @param method the method in opcode format of the request being sent
- * @param endpoint the fully-formed request's endpoint
- * @return a code for checking on how the transfer went ORCA_OK means the
- *        request has been successfully enqueued
- */
-ORCAcode discord_request_run_async(struct discord_adapter *adapter,
-                                   struct discord_request_attr *attr,
-                                   struct sized_buffer *body,
-                                   enum http_method method,
-                                   char endpoint[]);
+u64_unix_ms_t discord_adapter_get_global_wait(struct discord_adapter *adapter);
 
 /**
  * @brief Stop all on-going, pending and timed-out requests
@@ -256,7 +221,7 @@ ORCAcode discord_request_run_async(struct discord_adapter *adapter,
  * The requests will be moved over to client's 'idleq' queue
  * @param adapter the handle initialized with discord_adapter_init()
  */
-void discord_request_stop_all(struct discord_adapter *adapter);
+void discord_adapter_stop_all(struct discord_adapter *adapter);
 
 /**
  * @brief Pause all on-going timed-out requests
@@ -264,7 +229,7 @@ void discord_request_stop_all(struct discord_adapter *adapter);
  * The requests will be moved over to bucket's 'waitq' queue
  * @param adapter the handle initialized with discord_adapter_init()
  */
-void discord_request_pause_all(struct discord_adapter *adapter);
+void discord_adapter_pause_all(struct discord_adapter *adapter);
 
 /** @brief The bucket struct for handling ratelimiting */
 struct discord_bucket {

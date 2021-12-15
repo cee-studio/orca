@@ -265,7 +265,7 @@ discord_run(struct discord *client)
       code = discord_gateway_perform(&client->gw);
       if (code != ORCA_OK) break;
 
-      code = discord_request_perform(&client->adapter);
+      code = discord_adapter_perform(&client->adapter);
       if (code != ORCA_OK) break;
     } while (1);
 

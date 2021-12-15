@@ -131,7 +131,7 @@ _discord_bucket_get_match(struct discord_adapter *adapter,
 }
 
 u64_unix_ms_t
-discord_request_get_global_wait(struct discord_adapter *adapter)
+discord_adapter_get_global_wait(struct discord_adapter *adapter)
 {
   u64_unix_ms_t global;
 
@@ -147,7 +147,7 @@ u64_unix_ms_t
 discord_bucket_get_timeout(struct discord_adapter *adapter,
                            struct discord_bucket *b)
 {
-  u64_unix_ms_t global = discord_request_get_global_wait(adapter);
+  u64_unix_ms_t global = discord_adapter_get_global_wait(adapter);
   u64_unix_ms_t reset = (b->remaining < 1) ? b->reset_tstamp : 0ULL;
 
   return (global > reset) ? global : reset;

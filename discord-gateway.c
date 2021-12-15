@@ -28,9 +28,9 @@ _discord_gateway_close(struct discord_gateway *gw,
   struct discord *client = CLIENT(gw, gw);
 
   if (gw->session->retry.enable)
-    discord_request_pause_all(&client->adapter);
+    discord_adapter_pause_all(&client->adapter);
   else
-    discord_request_stop_all(&client->adapter);
+    discord_adapter_stop_all(&client->adapter);
 
   ws_close(gw->ws, opcode, reason, len);
 }

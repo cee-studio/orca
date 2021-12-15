@@ -787,6 +787,8 @@ on_dispatch(struct discord_gateway *gw)
   /* get dispatch event opcode */
   enum discord_gateway_events event;
 
+  /* TODO: this should only apply for user dispatched payloads? */
+#if 0
   /* Ratelimit check */
   if (gw->timer->now - gw->timer->event < 60000) {
     ++gw->session->event_count;
@@ -797,6 +799,7 @@ on_dispatch(struct discord_gateway *gw)
     gw->timer->event = gw->timer->now;
     gw->session->event_count = 0;
   }
+#endif
 
   switch (event = get_dispatch_event(gw->payload.name)) {
   case DISCORD_GATEWAY_EVENTS_READY:

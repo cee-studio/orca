@@ -5,7 +5,7 @@
 #include <assert.h>
 
 #include "discord.h"
-#include "discord-voice-connections.h"
+#include "discord-internal.h"
 
 void on_ready(struct discord *client)
 {

@@ -11,19 +11,12 @@
 /* shorten event callback for maintainability purposes */
 #define ON(event, ...) gw->cmds.cbs.on_##event(CLIENT(gw, gw), ##__VA_ARGS__)
 
-static void
-sized_buffer_from_json(char *json, size_t len, void *data)
-{
-  struct sized_buffer *p = data;
-
-  p->size = asprintf(&p->start, "%.*s", (int)len, json);
-}
-
 ORCAcode
 discord_get_gateway(struct discord *client, struct sized_buffer *ret)
 {
   struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
-                                       &sized_buffer_from_json };
+                                       (void (*)(char *, size_t, void *))
+                                         & cee_sized_buffer_from_json };
 
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
@@ -35,7 +28,8 @@ ORCAcode
 discord_get_gateway_bot(struct discord *client, struct sized_buffer *ret)
 {
   struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
-                                       &sized_buffer_from_json };
+                                       (void (*)(char *, size_t, void *))
+                                         & cee_sized_buffer_from_json };
 
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
@@ -807,8 +801,6 @@ on_dispatch(struct discord_gateway *gw)
 
     gw->session->is_ready = true;
     gw->session->retry.attempt = 0;
-
-    if (gw->cmds.cbs.on_resume) on_resume = &on_resume;
 
     send_heartbeat(gw);
 

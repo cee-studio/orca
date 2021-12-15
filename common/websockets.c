@@ -294,12 +294,13 @@ cws_on_close_cb(void *p_ws,
                 size_t len)
 {
   struct websockets *ws = p_ws;
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody = { (char *)reason, len };
 
   _ws_set_status(ws, WS_DISCONNECTING);
 
-  logconf_http(
-    &ws->conf, &ws->info.loginfo, ws->base_url, (struct sized_buffer){ "", 0 },
-    (struct sized_buffer){ (char *)reason, len }, "WS_RCV_CLOSE(%d)", cwscode);
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_RCV_CLOSE(%d)", cwscode);
 
   logconf_trace(
     &ws->conf,
@@ -319,10 +320,11 @@ static void
 cws_on_text_cb(void *p_ws, CURL *ehandle, const char *text, size_t len)
 {
   struct websockets *ws = p_ws;
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody = { (char *)text, len };
 
-  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url,
-               (struct sized_buffer){ "", 0 },
-               (struct sized_buffer){ (char *)text, len }, "WS_RCV_TEXT");
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_RCV_TEXT");
 
   logconf_trace(
     &ws->conf,
@@ -336,10 +338,11 @@ static void
 cws_on_binary_cb(void *p_ws, CURL *ehandle, const void *mem, size_t len)
 {
   struct websockets *ws = p_ws;
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody = { (char *)mem, len };
 
-  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url,
-               (struct sized_buffer){ "", 0 },
-               (struct sized_buffer){ (char *)mem, len }, "WS_RCV_BINARY");
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_RCV_BINARY");
 
   logconf_trace(
     &ws->conf,
@@ -354,15 +357,12 @@ static void
 cws_on_ping_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
 {
   struct websockets *ws = p_ws;
-
 #if 0
-  logconf_http(
-    &ws->conf, 
-    &ws->info.loginfo,
-    ws->base_url, 
-    (struct sized_buffer){"", 0},
-    (struct sized_buffer){(char*)reason, len},
-    "WS_RCV_PING");
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody   = { (char *)reason, len };
+
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_RCV_PING");
 #endif
 
   logconf_trace(
@@ -378,15 +378,12 @@ static void
 cws_on_pong_cb(void *p_ws, CURL *ehandle, const char *reason, size_t len)
 {
   struct websockets *ws = p_ws;
-
 #if 0
-  logconf_http(
-    &ws->conf, 
-    &ws->info.loginfo,
-    ws->base_url, 
-    (struct sized_buffer){"", 0},
-    (struct sized_buffer){(char*)reason, len},
-    "WS_RCV_PONG");
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody   = { (char *)reason, len };
+
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_RCV_PONG");
 #endif
 
   logconf_trace(
@@ -478,9 +475,10 @@ _ws_close(struct websockets *ws,
           enum ws_close_reason code,
           const char reason[])
 {
-  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url,
-               (struct sized_buffer){ "", 0 },
-               (struct sized_buffer){ (char *)reason, strlen(reason) },
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody = { (char *)reason, strlen(reason) };
+
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
                "WS_SEND_CLOSE(%d)", code);
 
   logconf_trace(&ws->conf,
@@ -542,14 +540,20 @@ default_on_ping(void *a,
 }
 
 struct websockets *
-ws_init(struct ws_callbacks *cbs, struct ws_attr *attr)
+ws_init(struct ws_callbacks *cbs, CURLM *mhandle, struct ws_attr *attr)
 {
+  struct logconf *conf = NULL;
   struct websockets *new_ws;
 
-  new_ws = calloc(1, sizeof *new_ws);
-  logconf_branch(&new_ws->conf, attr ? attr->conf : NULL, "WEBSOCKETS");
+  if (attr) {
+    conf = attr->conf;
+  }
 
-  new_ws->cbs = *cbs;
+  new_ws = calloc(1, sizeof *new_ws);
+  logconf_branch(&new_ws->conf, conf, "WEBSOCKETS");
+
+  if (cbs) new_ws->cbs = *cbs;
+  new_ws->mhandle = mhandle;
 
   /** respond ping with a pong by default */
   if (!new_ws->cbs.on_ping) new_ws->cbs.on_ping = &default_on_ping;
@@ -593,7 +597,6 @@ ws_set_url(struct websockets *ws,
 void
 ws_cleanup(struct websockets *ws)
 {
-  if (ws->mhandle) curl_multi_cleanup(ws->mhandle);
   if (ws->ehandle) cws_free(ws->ehandle);
   pthread_mutex_destroy(&ws->lock);
   pthread_rwlock_destroy(&ws->rwlock);
@@ -606,8 +609,11 @@ ws_send_binary(struct websockets *ws,
                const char msg[],
                size_t msglen)
 {
-  logconf_http(&ws->conf, NULL, ws->base_url, (struct sized_buffer){ "", 0 },
-               (struct sized_buffer){ (char *)msg, msglen }, "WS_SEND_BINARY");
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody = { (char *)msg, msglen };
+
+  logconf_http(&ws->conf, NULL, ws->base_url, logheader, logbody,
+               "WS_SEND_BINARY");
 
   logconf_trace(
     &ws->conf,
@@ -642,8 +648,11 @@ ws_send_text(struct websockets *ws,
              const char text[],
              size_t len)
 {
-  logconf_http(&ws->conf, NULL, ws->base_url, (struct sized_buffer){ "", 0 },
-               (struct sized_buffer){ (char *)text, len }, "WS_SEND_TEXT");
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody = { (char *)text, len };
+
+  logconf_http(&ws->conf, NULL, ws->base_url, logheader, logbody,
+               "WS_SEND_TEXT");
 
   logconf_trace(
     &ws->conf,
@@ -681,15 +690,12 @@ ws_ping(struct websockets *ws,
         const char *reason,
         size_t len)
 {
-/* disabled because this creates too many entries */
 #if 0
-  logconf_http(
-    &ws->conf, 
-    &ws->info.loginfo,
-    ws->base_url, 
-    (struct sized_buffer){"", 0},
-    (struct sized_buffer){(char*)reason, len},
-    "WS_SEND_PING");
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody   = { (char *)reason, len };
+
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_SEND_PING");
 #endif
 
   logconf_trace(
@@ -721,15 +727,12 @@ ws_pong(struct websockets *ws,
         const char *reason,
         size_t len)
 {
-/* disabled because this creates too many entries */
 #if 0
-  logconf_http(
-    &ws->conf, 
-    &ws->info.loginfo,
-    ws->base_url, 
-    (struct sized_buffer){"", 0},
-    (struct sized_buffer){(char*)reason, len},
-    "WS_SEND_PONG");
+  struct sized_buffer logheader = { "", 0 };
+  struct sized_buffer logbody   = { (char *)reason, len };
+
+  logconf_http(&ws->conf, &ws->info.loginfo, ws->base_url, logheader, logbody,
+               "WS_SEND_PONG");
 #endif
 
   logconf_trace(
@@ -756,7 +759,7 @@ ws_pong(struct websockets *ws,
 }
 
 void
-ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
+ws_start(struct websockets *ws)
 {
   memset(&ws->pending_close, 0, sizeof ws->pending_close);
   ws->action = WS_ACTION_NONE;
@@ -771,12 +774,8 @@ ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle)
             "closing the connection",
             ws->conf.id);
 
-  if (!ws->mhandle) ws->mhandle = curl_multi_init();
   if (!ws->ehandle) ws->ehandle = _ws_cws_new(ws, ws->protocols);
   curl_multi_add_handle(ws->mhandle, ws->ehandle);
-
-  if (ret_ehandle) *ret_ehandle = ws->ehandle;
-  if (ret_mhandle) *ret_mhandle = ws->mhandle;
 
   _ws_set_status(ws, WS_CONNECTING);
 }

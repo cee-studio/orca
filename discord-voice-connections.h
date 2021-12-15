@@ -99,12 +99,13 @@ struct discord_voice {
   /** the new url after a voice region change @note obtained from
    * on_voice_server_update() */
   char new_url[512];
-
-  /** @note obtained from on_voice_state_update() */
-  /** the session id @note obtained from on_voice_state_update() */
+  /** @note obtained from on_voice_state_update()
+   * the session id @note obtained from on_voice_state_update() */
   char session_id[128];
+  CURLM *mhandle;
   /** the websockets handle that binds to Discord Voice Connections */
   struct websockets *ws;
+
   /** @brief handle reconnect logic */
   /* RECONNECT STRUCTURE */
   struct {

@@ -330,6 +330,7 @@ _discord_voice_cleanup(struct discord_voice *vc)
 {
   /* close the descriptor */
   /* kill the child process */
+  free(vc->mhandle);
   if (vc->ws) ws_cleanup(vc->ws);
   free(vc);
 }
@@ -362,12 +363,14 @@ _discord_voice_init(struct discord_voice *new_vc,
       .conf = &client->conf,
     };
 
-    new_vc->ws = ws_init(&cbs, &attr);
+    new_vc->mhandle = curl_multi_init();
+    new_vc->ws = ws_init(&cbs, new_vc->mhandle, &attr);
     logconf_branch(&new_vc->conf, &client->conf, "DISCORD_VOICE");
 
     new_vc->reconnect.threshold = 5; /**< hard limit for now */
     new_vc->reconnect.enable = true;
   }
+
   reset_vc(new_vc);
 }
 
@@ -562,7 +565,7 @@ event_loop(struct discord_voice *vc)
 
   /* everything goes well, ws event_loop to serve */
   /* the ws server side events */
-  ws_start(vc->ws, NULL, NULL);
+  ws_start(vc->ws);
   while (1) {
     /* break on severed connection */
     if (!ws_easy_run(vc->ws, 5, &tstamp)) break;

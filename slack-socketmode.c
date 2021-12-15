@@ -43,9 +43,9 @@ send_acknowledge(struct slack_sm *sm, const char envelope_id[])
 static void
 on_hello(struct slack_sm *sm, const char *text, size_t len)
 {
-  sm->is_ready = true;
+  sm->is_ready          = true;
   sm->hbeat.interval_ms = 0;
-  sm->hbeat.tstamp = cee_timestamp_ms();
+  sm->hbeat.tstamp      = cee_timestamp_ms();
 
   long interval_s = 0;
   json_extract((char *)text, len,
@@ -94,8 +94,8 @@ static void *
 context_run(void *p_cxt)
 {
   struct slack_event_cxt *cxt = p_cxt;
-  bool is_main_thread = cxt->is_main_thread;
-  cxt->tid = pthread_self();
+  bool is_main_thread         = cxt->is_main_thread;
+  cxt->tid                    = pthread_self();
 
   if (!is_main_thread)
     log_info("Thread " ANSICOLOR("starts", ANSI_FG_RED) " to serve %s",
@@ -145,21 +145,22 @@ on_events(struct slack_sm *sm, struct sized_buffer *data, char str_type[])
   struct slack_event_cxt cxt;
   asprintf(&cxt.data.start, "%.*s", (int)data->size, data->start);
   cxt.data.size = data->size;
-  cxt.p_sm = sm;
-  cxt.type = type;
-  cxt.on_event = on_event;
+  cxt.p_sm      = sm;
+  cxt.type      = type;
+  cxt.on_event  = on_event;
   snprintf(cxt.str_type, sizeof(cxt.str_type), "%s", str_type);
 
   enum slack_event_handling_mode mode =
     sm->event_handler(sm->p_client, &cxt.data, cxt.type);
   switch (mode) {
-  case SLACK_EVENT_IGNORE: return;
+  case SLACK_EVENT_IGNORE:
+    return;
   case SLACK_EVENT_MAIN_THREAD:
     cxt.is_main_thread = true;
     context_run(&cxt);
     return;
   case SLACK_EVENT_CHILD_THREAD: {
-    cxt.is_main_thread = false;
+    cxt.is_main_thread            = false;
     struct slack_event_cxt *p_cxt = malloc(sizeof *p_cxt);
     memcpy(p_cxt, &cxt, sizeof(cxt));
     pthread_t tid;
@@ -168,7 +169,8 @@ on_events(struct slack_sm *sm, struct sized_buffer *data, char str_type[])
     if (pthread_detach(tid)) ERR("Couldn't detach thread");
     return;
   }
-  default: ERR("Unknown event handling mode (code: %d)", mode);
+  default:
+    ERR("Unknown event handling mode (code: %d)", mode);
   }
 }
 
@@ -217,8 +219,8 @@ on_text_cb(void *p_sm,
     return;
   }
 
-  struct sized_buffer data = { 0 };
-  char event_type[64] = "";
+  struct sized_buffer data      = { 0 };
+  char event_type[64]           = "";
   bool accepts_response_payload = false;
   if (STREQ(type, "events_api")) {
     json_extract((char *)text, len,
@@ -257,8 +259,8 @@ refresh_connection(struct slack_sm *sm)
   struct sized_buffer resp_body = { 0 };
   slack_apps_connections_open(sm->p_client, &resp_body);
 
-  bool status = false;
-  char *base_url = NULL;
+  bool status                  = false;
+  char *base_url               = NULL;
   struct sized_buffer messages = { 0 };
   json_extract(resp_body.start, resp_body.size,
                "(ok):b, (url):?s, (response_metadata.messages):T", &status,
@@ -277,16 +279,14 @@ refresh_connection(struct slack_sm *sm)
 void
 slack_sm_init(struct slack_sm *sm, struct logconf *conf)
 {
-  ASSERT_S(NULL != sm->p_client, "Not meant to be called standalone");
+  struct ws_callbacks cbs = { .data       = sm,
+                              .on_connect = &on_connect_cb,
+                              .on_text    = &on_text_cb,
+                              .on_close   = &on_close_cb };
+  struct ws_attr attr     = { .conf = conf };
 
-  struct ws_callbacks cbs = {
-    .data = sm,
-    .on_connect = &on_connect_cb,
-    .on_text = &on_text_cb,
-    .on_close = &on_close_cb,
-  };
-  struct ws_attr attr = { .conf = conf };
-  sm->ws = ws_init(&cbs, &attr);
+  sm->mhandle = curl_multi_init();
+  sm->ws      = ws_init(&cbs, sm->mhandle, &attr);
   logconf_branch(&sm->conf, conf, "SLACK_SOCKETMODE");
 
   sm->event_handler = &noop_event_handler;
@@ -297,6 +297,7 @@ slack_sm_init(struct slack_sm *sm, struct logconf *conf)
 void
 slack_sm_cleanup(struct slack_sm *sm)
 {
+  curl_multi_cleanup(sm->mhandle);
   ws_cleanup(sm->ws);
 }
 
@@ -310,7 +311,7 @@ slack_sm_run(struct slack *client)
   ASSERT_S(WS_DISCONNECTED == ws_get_status(sm->ws),
            "Can't run websockets recursively");
 
-  ws_start(sm->ws, NULL, NULL);
+  ws_start(sm->ws);
   while (1) {
     /* break on failure */
     if (!ws_easy_run(sm->ws, 5, &tstamp)) break;

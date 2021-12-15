@@ -182,7 +182,7 @@ discord_set_prefix(struct discord *client, char *prefix)
     asprintf(&client->gw.cmds.prefix.start, "%s", prefix);
 }
 
-const struct discord_user*
+const struct discord_user *
 discord_get_self(struct discord *client)
 {
   return &client->self;
@@ -255,7 +255,24 @@ discord_set_on_ready(struct discord *client, discord_on_idle callback)
 ORCAcode
 discord_run(struct discord *client)
 {
-  return discord_gateway_run(&client->gw);
+  ORCAcode code;
+
+  while (1) {
+    code = discord_gateway_start(&client->gw);
+    if (code != ORCA_OK) break;
+
+    do {
+      code = discord_gateway_perform(&client->gw);
+      if (code != ORCA_OK) break;
+
+      code = discord_adapter_perform(&client->adapter);
+      if (code != ORCA_OK) break;
+    } while (1);
+
+    if (!discord_gateway_end(&client->gw)) break;
+  }
+
+  return code;
 }
 
 void
@@ -411,22 +428,23 @@ discord_set_on_thread_delete(struct discord *client,
   discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
 }
 
-void discord_set_on_guild_create(struct discord *client,
-                                 discord_on_guild callback)
+void
+discord_set_on_guild_create(struct discord *client, discord_on_guild callback)
 {
   client->gw.cmds.cbs.on_guild_create = callback;
   discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
 }
 
-void discord_set_on_guild_update(struct discord *client,
-                                 discord_on_guild callback)
+void
+discord_set_on_guild_update(struct discord *client, discord_on_guild callback)
 {
   client->gw.cmds.cbs.on_guild_update = callback;
   discord_add_intents(client, DISCORD_GATEWAY_GUILDS);
 }
 
-void discord_set_on_guild_delete(struct discord *client,
-                                 discord_on_guild_delete callback)
+void
+discord_set_on_guild_delete(struct discord *client,
+                            discord_on_guild_delete callback)
 {
   client->gw.cmds.cbs.on_guild_delete = callback;
   discord_add_intents(client, DISCORD_GATEWAY_GUILDS);

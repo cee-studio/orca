@@ -41,7 +41,7 @@ _discord_bucket_get_route(const char endpoint[], char buf[32])
 }
 
 struct discord_bucket *
-discord_bucket_init(struct discord_request *req,
+discord_bucket_init(struct discord_adapter *adapter,
                     const char route[],
                     const struct sized_buffer *hash,
                     const long limit)
@@ -67,48 +67,48 @@ discord_bucket_init(struct discord_request *req,
   QUEUE_INIT(&b->waitq);
   QUEUE_INIT(&b->busyq);
 
-  pthread_mutex_lock(&req->global->lock);
-  HASH_ADD_STR(req->buckets, route, b);
-  pthread_mutex_unlock(&req->global->lock);
+  pthread_mutex_lock(&adapter->global->lock);
+  HASH_ADD_STR(adapter->buckets, route, b);
+  pthread_mutex_unlock(&adapter->global->lock);
 
   return b;
 }
 
 void
-discord_buckets_cleanup(struct discord_request *req)
+discord_buckets_cleanup(struct discord_adapter *adapter)
 {
   struct discord_bucket *b, *b_tmp;
 
   /* cleanup buckets */
-  HASH_ITER(hh, req->buckets, b, b_tmp)
+  HASH_ITER(hh, adapter->buckets, b, b_tmp)
   {
-    HASH_DEL(req->buckets, b);
+    HASH_DEL(adapter->buckets, b);
     pthread_mutex_destroy(&b->lock);
     free(b);
   }
 }
 
 static struct discord_bucket *
-_discord_bucket_find(struct discord_request *req, const char route[])
+_discord_bucket_find(struct discord_adapter *adapter, const char route[])
 {
   struct discord_bucket *b;
 
   /* attempt to find bucket with key 'route' */
-  pthread_mutex_lock(&req->global->lock);
-  HASH_FIND_STR(req->buckets, route, b);
-  pthread_mutex_unlock(&req->global->lock);
+  pthread_mutex_lock(&adapter->global->lock);
+  HASH_FIND_STR(adapter->buckets, route, b);
+  pthread_mutex_unlock(&adapter->global->lock);
 
   return b;
 }
 
 static struct discord_bucket *
-_discord_bucket_get_match(struct discord_request *req,
+_discord_bucket_get_match(struct discord_adapter *adapter,
                           const char endpoint[],
                           struct ua_info *info)
 {
   char buf[32]; /* for reentrancy, stores 'major' parameter */
   const char *route = _discord_bucket_get_route(endpoint, buf);
-  struct discord_bucket *b = _discord_bucket_find(req, route);
+  struct discord_bucket *b = _discord_bucket_find(adapter, route);
 
   /* create bucket if it doesn't exist yet */
   if (!b) {
@@ -116,14 +116,14 @@ _discord_bucket_get_match(struct discord_request *req,
 
     if (!hash.size) {
       /* bucket not specified */
-      b = req->b_null;
+      b = adapter->b_null;
     }
     else {
       struct sized_buffer limit =
         ua_info_get_header(info, "x-ratelimit-limit");
       long _limit = limit.size ? strtol(limit.start, NULL, 10) : LONG_MAX;
 
-      b = discord_bucket_init(req, route, &hash, _limit);
+      b = discord_bucket_init(adapter, route, &hash, _limit);
     }
   }
 
@@ -131,69 +131,71 @@ _discord_bucket_get_match(struct discord_request *req,
 }
 
 u64_unix_ms_t
-discord_request_get_global_wait(struct discord_request *req)
+discord_adapter_get_global_wait(struct discord_adapter *adapter)
 {
   u64_unix_ms_t global;
 
-  pthread_rwlock_rdlock(&req->global->rwlock);
-  global = req->global->wait_ms;
-  pthread_rwlock_unlock(&req->global->rwlock);
+  pthread_rwlock_rdlock(&adapter->global->rwlock);
+  global = adapter->global->wait_ms;
+  pthread_rwlock_unlock(&adapter->global->rwlock);
 
   return global;
 }
 
 /* return ratelimit timeout timestamp for this bucket */
 u64_unix_ms_t
-discord_bucket_get_timeout(struct discord_request *req,
+discord_bucket_get_timeout(struct discord_adapter *adapter,
                            struct discord_bucket *b)
 {
-  u64_unix_ms_t global = discord_request_get_global_wait(req);
+  u64_unix_ms_t global = discord_adapter_get_global_wait(adapter);
   u64_unix_ms_t reset = (b->remaining < 1) ? b->reset_tstamp : 0ULL;
 
   return (global > reset) ? global : reset;
 }
 
 int64_t
-discord_bucket_get_wait(struct discord_request *req, struct discord_bucket *b)
+discord_bucket_get_wait(struct discord_adapter *adapter,
+                        struct discord_bucket *b)
 {
-  struct discord *client = CLIENT(req, adapter.req);
+  struct discord *client = CLIENT(adapter, adapter);
   u64_unix_ms_t now = discord_timestamp(client);
-  u64_unix_ms_t reset = discord_bucket_get_timeout(req, b);
+  u64_unix_ms_t reset = discord_bucket_get_timeout(adapter, b);
 
   return (int64_t)(reset - now);
 }
 
 /* attempt to find a bucket associated with this route */
 struct discord_bucket *
-discord_bucket_get(struct discord_request *req, const char endpoint[])
+discord_bucket_get(struct discord_adapter *adapter, const char endpoint[])
 {
   char buf[32]; /* for reentrancy, stores 'major' parameter */
   const char *route = _discord_bucket_get_route(endpoint, buf);
-  struct discord_bucket *b = _discord_bucket_find(req, route);
+  struct discord_bucket *b = _discord_bucket_find(adapter, route);
 
   if (b) {
-    logconf_trace(&req->conf, "[%.4s] Found a bucket match for route '%s'!",
-                  b->hash, b->route);
+    logconf_trace(&adapter->conf,
+                  "[%.4s] Found a bucket match for route '%s'!", b->hash,
+                  b->route);
 
     return b;
   }
 
-  logconf_trace(&req->conf,
+  logconf_trace(&adapter->conf,
                 "[null] Couldn't match any discovered bucket to route '%s'",
                 route);
 
-  return req->b_null;
+  return adapter->b_null;
 }
 
 /* attempt to parse rate limit's header fields to the bucket
  *  linked with the connection which was performed */
 static void
-_discord_bucket_populate(struct discord_request *req,
+_discord_bucket_populate(struct discord_adapter *adapter,
                          struct discord_bucket *b,
                          struct ua_info *info)
 {
   struct sized_buffer remaining, reset, reset_after;
-  struct discord *client = CLIENT(req, adapter.req);
+  struct discord *client = CLIENT(adapter, adapter);
   u64_unix_ms_t now = discord_timestamp(client);
   long _remaining;
 
@@ -218,9 +220,9 @@ _discord_bucket_populate(struct discord_request *req,
 
     if (global.size) {
       /* lock all buckets */
-      pthread_rwlock_wrlock(&req->global->rwlock);
-      req->global->wait_ms = reset_tstamp;
-      pthread_rwlock_unlock(&req->global->rwlock);
+      pthread_rwlock_wrlock(&adapter->global->rwlock);
+      adapter->global->wait_ms = reset_tstamp;
+      pthread_rwlock_unlock(&adapter->global->rwlock);
     }
     else {
       /* lock single bucket, timeout at discord_adapter_run() */
@@ -246,7 +248,7 @@ _discord_bucket_populate(struct discord_request *req,
   }
 
   logconf_debug(
-    &req->conf,
+    &adapter->conf,
     "[%.4s] Remaining = %ld | Reset = %" PRIu64 " (%" PRId64 " ms)", b->hash,
     b->remaining, b->reset_tstamp, (int64_t)(b->reset_tstamp - now));
 }
@@ -254,7 +256,7 @@ _discord_bucket_populate(struct discord_request *req,
 /* in case of asynchronous requests, check if successive requests with
  * null buckets can be matched to a new route */
 static void
-_discord_bucket_null_filter(struct discord_request *req,
+_discord_bucket_null_filter(struct discord_adapter *adapter,
                             struct discord_bucket *b,
                             const char endpoint[])
 {
@@ -262,8 +264,8 @@ _discord_bucket_null_filter(struct discord_request *req,
   QUEUE queue;
   QUEUE *q;
 
-  QUEUE_MOVE(&req->b_null->waitq, &queue);
-  QUEUE_INIT(&req->b_null->waitq);
+  QUEUE_MOVE(&adapter->b_null->waitq, &queue);
+  QUEUE_INIT(&adapter->b_null->waitq);
 
   while (!QUEUE_EMPTY(&queue)) {
     q = QUEUE_HEAD(&queue);
@@ -275,35 +277,35 @@ _discord_bucket_null_filter(struct discord_request *req,
       cxt->bucket = b;
     }
     else {
-      QUEUE_INSERT_TAIL(&req->b_null->waitq, q);
+      QUEUE_INSERT_TAIL(&adapter->b_null->waitq, q);
     }
   }
 }
 
 /* attempt to create and/or update bucket's values */
 void
-discord_bucket_build(struct discord_request *req,
+discord_bucket_build(struct discord_adapter *adapter,
                      struct discord_bucket *b,
                      const char endpoint[],
                      struct ua_info *info)
 {
   /* if new route, find out its bucket */
-  if (b == req->b_null) {
+  if (b == adapter->b_null) {
     /* match bucket with hash (from discovered or create a new one) */
-    b = _discord_bucket_get_match(req, endpoint, info);
-    if (b == req->b_null) {
-      logconf_debug(&req->conf, "[null] No bucket match for route '%s'",
+    b = _discord_bucket_get_match(adapter, endpoint, info);
+    if (b == adapter->b_null) {
+      logconf_debug(&adapter->conf, "[null] No bucket match for route '%s'",
                     endpoint);
 
       return;
     }
 
-    logconf_debug(&req->conf, "[%.4s] Bucket match for route '%s'", b->hash,
-                  b->route);
+    logconf_debug(&adapter->conf, "[%.4s] Bucket match for route '%s'",
+                  b->hash, b->route);
 
-    _discord_bucket_null_filter(req, b, endpoint);
+    _discord_bucket_null_filter(adapter, b, endpoint);
   }
 
   /* update bucket's values */
-  _discord_bucket_populate(req, b, info);
+  _discord_bucket_populate(adapter, b, info);
 }

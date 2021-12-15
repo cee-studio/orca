@@ -28,9 +28,9 @@ _discord_gateway_close(struct discord_gateway *gw,
   struct discord *client = CLIENT(gw, gw);
 
   if (gw->session->retry.enable)
-    discord_request_pause_all(&client->adapter.req);
+    discord_adapter_pause_all(&client->adapter);
   else
-    discord_request_stop_all(&client->adapter.req);
+    discord_adapter_stop_all(&client->adapter);
 
   ws_close(gw->ws, opcode, reason, len);
 }
@@ -787,8 +787,10 @@ on_dispatch(struct discord_gateway *gw)
   /* get dispatch event opcode */
   enum discord_gateway_events event;
 
+  /* TODO: this should only apply for user dispatched payloads? */
+#if 0
   /* Ratelimit check */
-  if (gw->timer->now - gw->timer->event < 60) {
+  if (gw->timer->now - gw->timer->event < 60000) {
     ++gw->session->event_count;
     ASSERT_S(gw->session->event_count < 120,
              "Reach event dispatch threshold (120 every 60 seconds)");
@@ -797,6 +799,8 @@ on_dispatch(struct discord_gateway *gw)
     gw->timer->event = gw->timer->now;
     gw->session->event_count = 0;
   }
+#endif
+  
 #define CASE_EVENT_SET(gateway_event_name,function_name)\
   case DISCORD_GATEWAY_EVENTS_##gateway_event_name:\
     if (gw->cmds.cbs.function_name)\
@@ -1178,7 +1182,8 @@ discord_gateway_init(struct discord_gateway *gw,
   attr.conf = conf;
 
   /* Web-Sockets handler */
-  gw->ws = ws_init(&cbs, &attr);
+  gw->mhandle = curl_multi_init();
+  gw->ws = ws_init(&cbs, gw->mhandle, &attr);
   logconf_branch(&gw->conf, conf, "DISCORD_GATEWAY");
 
   gw->timer = calloc(1, sizeof *gw->timer);
@@ -1192,6 +1197,7 @@ discord_gateway_init(struct discord_gateway *gw,
 
   /* connection identify token */
   asprintf(&gw->id.token, "%.*s", (int)token->size, token->start);
+
   /* connection identify properties */
   gw->id.properties = calloc(1, sizeof *gw->id.properties);
   gw->id.properties->os = "POSIX";
@@ -1227,6 +1233,7 @@ void
 discord_gateway_cleanup(struct discord_gateway *gw)
 {
   /* cleanup WebSockets handle */
+  curl_multi_cleanup(gw->mhandle);
   ws_cleanup(gw->ws);
   /* cleanup timers */
   pthread_rwlock_destroy(&gw->timer->rwlock);
@@ -1242,35 +1249,22 @@ discord_gateway_cleanup(struct discord_gateway *gw)
   if (gw->cmds.prefix.start) free(gw->cmds.prefix.start);
 }
 
-static void
-_discord_gateway_check_action(struct discord_gateway *gw, struct CURLMsg *msg)
-{
-  switch (msg->data.result) {
-  case CURLE_OK:
-  case CURLE_ABORTED_BY_CALLBACK:
-    logconf_info(&gw->conf, "Disconnected gracefully");
-    break;
-  case CURLE_READ_ERROR:
-  default:
-    logconf_error(&gw->conf, "Disconnected abruptly (CURLE code: %d",
-                  msg->data.result);
-    break;
-  }
-}
-
-/* the event loop to serve the events sent by Discord */
-static ORCAcode
-_discord_gateway_loop(struct discord_gateway *gw)
+ORCAcode
+discord_gateway_start(struct discord_gateway *gw)
 {
   struct discord *client = CLIENT(gw, gw);
   /* get gateway bot info */
   struct sized_buffer json = { 0 };
   /* build URL that will be used to connect to Discord */
   char *base_url, url[1024];
-  /* websockets easy handle */
-  CURL *ws_ehandle;
   /* snprintf() OOB check */
   size_t ret;
+
+  if (gw->session->retry.attempt >= gw->session->retry.limit) {
+    logconf_fatal(&gw->conf, "Failed reconnecting to Discord after %d tries",
+                  gw->session->retry.limit);
+    return ORCA_DISCORD_CONNECTION;
+  }
 
   if (discord_get_gateway_bot(client, &json)) {
     logconf_fatal(&gw->conf, "Couldn't retrieve Gateway Bot information");
@@ -1300,87 +1294,67 @@ _discord_gateway_loop(struct discord_gateway *gw)
   }
 
   ws_set_url(gw->ws, url, NULL);
-  ws_start(gw->ws, &ws_ehandle, &client->mhandle);
-  while (1) {
-    int is_running;
+  ws_start(gw->ws);
 
-    /* check for pending transfer */
-    is_running = ws_easy_run(gw->ws, 5, &gw->timer->now);
+  return ORCA_OK;
+}
 
-    /* ask for any messages/informationals from the individual transfers */
-    do {
-      int msgq = 0;
-      struct CURLMsg *msg = curl_multi_info_read(client->mhandle, &msgq);
-
-      if (!msg) break;
-      if (CURLMSG_DONE != msg->msg) continue;
-
-      curl_multi_remove_handle(client->mhandle, msg->easy_handle);
-
-      /* check for websockets or request action */
-      if (msg->easy_handle == ws_ehandle)
-        _discord_gateway_check_action(gw, msg);
-      else
-        discord_request_check_action(&client->adapter.req, msg);
-    } while (1);
-
-    /* severed connection, exit */
-    if (!is_running) break;
-
-    /* client is in the process of shutting down */
-    if (gw->session->status & DISCORD_SESSION_SHUTDOWN) continue;
-    /* client is in the process of connecting */
-    if (!gw->session->is_ready) continue;
-
-    discord_request_check_timeouts_async(&client->adapter.req);
-    discord_request_check_pending_async(&client->adapter.req);
-
-    /* check if timespan since first pulse is greater than
-     * minimum heartbeat interval required */
-    if (gw->timer->interval < gw->timer->now - gw->timer->hbeat) {
-      send_heartbeat(gw);
-    }
-
-    if (gw->cmds.cbs.on_idle) ON(idle);
-  }
+bool
+discord_gateway_end(struct discord_gateway *gw)
+{
   ws_end(gw->ws);
 
   /* keep only resumable information */
   gw->session->status &= DISCORD_SESSION_RESUMABLE;
   gw->session->is_ready = false;
 
-  return ORCA_OK;
+  if (!gw->session->retry.enable) {
+    logconf_warn(&gw->conf, "Discord Gateway Shutdown");
+
+    /* reset for next run */
+    gw->session->status = DISCORD_SESSION_OFFLINE;
+    gw->session->is_ready = false;
+    gw->session->retry.enable = false;
+    gw->session->retry.attempt = 0;
+
+    return false;
+  }
+
+  ++gw->session->retry.attempt;
+
+  logconf_info(&gw->conf, "Reconnect attempt #%d", gw->session->retry.attempt);
+
+  return true;
 }
 
 ORCAcode
-discord_gateway_run(struct discord_gateway *gw)
+discord_gateway_perform(struct discord_gateway *gw)
 {
-  ORCAcode code;
-
-  while (gw->session->retry.attempt < gw->session->retry.limit) {
-    code = _discord_gateway_loop(gw);
-
-    if (code != ORCA_OK || !gw->session->retry.enable) {
-      logconf_warn(&gw->conf, "Discord Gateway Shutdown");
-      return code;
-    }
-
-    ++gw->session->retry.attempt;
-
-    logconf_info(&gw->conf, "Reconnect attempt #%d",
-                 gw->session->retry.attempt);
+  /* check for pending transfer, exit on failure */
+  if (!ws_easy_run(gw->ws, 5, &gw->timer->now)) {
+    return ORCA_DISCORD_CONNECTION;
+    ;
   }
 
-  /* reset for next run */
-  gw->session->status = DISCORD_SESSION_OFFLINE;
-  gw->session->is_ready = false;
-  gw->session->retry.enable = false;
-  gw->session->retry.attempt = 0;
+  /* client is in the process of shutting down */
+  if (gw->session->status & DISCORD_SESSION_SHUTDOWN) {
+    return ORCA_OK;
+  }
 
-  logconf_fatal(&gw->conf, "Failed reconnecting to Discord after %d tries",
-                gw->session->retry.limit);
+  /* client is in the process of connecting */
+  if (!gw->session->is_ready) {
+    return ORCA_OK;
+  }
 
-  return ORCA_DISCORD_CONNECTION;
+  /* check if timespan since first pulse is greater than
+   * minimum heartbeat interval required */
+  if (gw->timer->interval < gw->timer->now - gw->timer->hbeat) {
+    send_heartbeat(gw);
+  }
+
+  if (gw->cmds.cbs.on_idle) ON(idle);
+
+  return ORCA_OK;
 }
 
 void
@@ -1388,7 +1362,7 @@ discord_gateway_shutdown(struct discord_gateway *gw)
 {
   const char reason[] = "Client triggered shutdown";
 
-  /* TODO: pthread_cond_wait() */
+  /* TODO: MT-Unsafe section */
   gw->session->retry.enable = false;
   gw->session->status = DISCORD_SESSION_SHUTDOWN;
 
@@ -1401,7 +1375,7 @@ discord_gateway_reconnect(struct discord_gateway *gw, bool resume)
   const char reason[] = "Client triggered reconnect";
   enum ws_close_reason opcode;
 
-  /* TODO: pthread_cond_wait() */
+  /* TODO: MT-Unsafe section */
   gw->session->retry.enable = true;
   gw->session->status = DISCORD_SESSION_SHUTDOWN;
   if (resume) {

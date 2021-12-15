@@ -94,6 +94,8 @@ int main(int argc, char *argv[])
     .on_close = &on_close_cb,
   };
   struct websockets *ws;
+  struct ws_attr attr = { 0 };
+  CURLM *mhandle = NULL;
   struct logconf conf;
   uint64_t tstamp;
 
@@ -119,16 +121,19 @@ int main(int argc, char *argv[])
   logconf_setup(&conf, "TEST", fp);
 
   /* init websockets handle */
-  ws = ws_init(&cbs, &(struct ws_attr){ .conf = &conf });
+  mhandle = curl_multi_init();
+  attr.conf = &conf;
+  ws = ws_init(&cbs, mhandle, &attr);
   ws_set_url(ws, url, NULL);
 
   /* run the event-loop */
-  ws_start(ws, NULL, NULL);
+  ws_start(ws);
   while (true == ws_easy_run(ws, 5, &tstamp))
     ;
   ws_end(ws);
 
   ws_cleanup(ws);
+  curl_multi_cleanup(mhandle);
   logconf_cleanup(&conf);
   fclose(fp);
 }

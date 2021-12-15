@@ -100,7 +100,7 @@ struct discord_context {
   enum http_method method;
   /** the request's endpoint */
   char endpoint[2048];
-  /** the connection handler assigned at discord_request_check_pending() */
+  /** the connection handler assigned */
   struct ua_conn *conn;
   /** the request bucket's queue entry */
   QUEUE entry;
@@ -110,10 +110,16 @@ struct discord_context {
   u64_unix_ms_t timeout_ms;
 };
 
-/** @brief The request handler structure */
-struct discord_request {
-  /** DISCORD_RATELIMIT logging module */
+/** @brief The handle used for performing HTTP Requests */
+struct discord_adapter {
+  /** DISCORD_HTTP or DISCORD_WEBHOOK logging module */
   struct logconf conf;
+  /** the user agent handle for performing requests */
+  struct user_agent *ua;
+  /** if true next request will be dealt with asynchronously */
+  bool async_enable;
+  /** curl_multi handle for non-blocking requests */
+  CURLM *mhandle;
   /** buckets discovered */
   struct discord_bucket *buckets;
   /** for undefined routes */
@@ -143,208 +149,6 @@ struct discord_request {
 };
 
 /**
- * @brief Initialize request handler
- *
- * @param req the request handler
- * @param conf optional pointer to a initialized logconf
- */
-void discord_request_init(struct discord_request *req, struct logconf *conf);
-
-/**
- * @brief Free request handler resources
- *
- * @param req the request handler
- */
-void discord_request_cleanup(struct discord_request *req);
-
-/**
- * @brief Get global timeout timestamp
- *
- * @param req the request handler
- * @return the most recent global timeout timestamp
- */
-u64_unix_ms_t discord_request_get_global_wait(struct discord_request *req);
-
-/**
- * @brief Perform a blocking request to Discord
- *
- * @param req the request handler
- * @param attr attributes of request
- * @param body the body sent for methods that require (ex: post), leave as
- *        null if unecessary
- * @param method the method in opcode format of the request being sent
- * @param endpoint the fully-formed request's endpoint
- * @return a code for checking on how the transfer went ORCA_OK means the
- *        transfer was succesful
- */
-ORCAcode discord_request_perform(struct discord_request *req,
-                                 struct discord_request_attr *attr,
-                                 struct sized_buffer *body,
-                                 enum http_method method,
-                                 char endpoint[]);
-/**
- * @brief Enqueue a request to be performed asynchronously
- *
- * @param req the request and request handler
- * @param attr attributes of request
- * @param body the body sent for methods that require (ex: post), leave as
- *        null if unecessary
- * @param method the method in opcode format of the request being sent
- * @param endpoint the fully-formed request's endpoint
- * @return a code for checking on how the transfer went ORCA_OK means the
- *        request has been successfully enqueued
- */
-ORCAcode discord_request_perform_async(struct discord_request *req,
-                                       struct discord_request_attr *attr,
-                                       struct sized_buffer *body,
-                                       enum http_method method,
-                                       char endpoint[]);
-
-/**
- * @brief Check and execute timed-out requests
- *
- * @param req the request handler
- */
-void discord_request_check_timeouts_async(struct discord_request *req);
-
-/**
- * @brief Check and send pending bucket's requests
- *
- * Send pending requests for non-busy buckets. A busy bucket is classified as
- *        one currently waiting on ratelimiting, or updating its values
- * @param req the request handler
- */
-void discord_request_check_pending_async(struct discord_request *req);
-
-/**
- * @brief Check individual request action
- *
- * The request will be moved to `adapter->idle` queue for recycling. Bucket
- *        values will be updated, and user-defined callback may be triggered.
- * @param req the request handler
- * @param msg request that some action has occured, obtained via
- * curl_multi_info_read()
- */
-void discord_request_check_action(struct discord_request *req,
-                                  struct CURLMsg *msg);
-
-/**
- * @brief Stop all on-going, pending and timed-out requests
- *
- * The requests will be moved over to client's 'idleq' queue
- * @param req the request handler
- */
-void discord_request_stop_all(struct discord_request *req);
-
-/**
- * @brief Pause all on-going timed-out requests
- *
- * The requests will be moved over to bucket's 'waitq' queue
- * @param req the request handler
- */
-void discord_request_pause_all(struct discord_request *req);
-
-/** @brief The bucket struct for handling ratelimiting */
-struct discord_bucket {
-  /** the route associated with this bucket */
-  char route[128];
-  /** the hash associated with this bucket (logging purposes) */
-  char hash[64];
-  /** maximum connections this bucket can handle before ratelimit */
-  long limit;
-  /** connections this bucket can do before waiting for cooldown */
-  long remaining;
-  /** timestamp of when cooldown timer resets */
-  u64_unix_ms_t reset_tstamp;
-  /** synchronize ratelimiting between threads */
-  pthread_mutex_t lock;
-  /** pending requests of type 'struct discord_context' */
-  QUEUE waitq;
-  /** busy requests of type 'struct discord_context' */
-  QUEUE busyq;
-  /** avoid excessive timeouts */
-  bool freeze;
-  /** makes this structure hashable */
-  UT_hash_handle hh;
-};
-
-/**
- * @brief Initialize a individual bucket and assign it to `req`
- *
- * @param req the request handler
- * @param route the bucket's route
- * @param hash the bucket's hash (for identification purposes)
- * @param limit the bucket's request threshold
- */
-struct discord_bucket *discord_bucket_init(struct discord_request *req,
-                                           const char route[],
-                                           const struct sized_buffer *hash,
-                                           const long limit);
-
-/**
- * @brief Cleanup all buckets allocated
- *
- * @param req the request handler
- */
-void discord_buckets_cleanup(struct discord_request *req);
-
-/**
- * @brief Return bucket timeout timestamp
- *
- * @param req the request handler
- * @param b the bucket to be checked for time out
- * @return the timeout timestamp
- */
-u64_unix_ms_t discord_bucket_get_timeout(struct discord_request *req,
-                                         struct discord_bucket *b);
-
-/**
- * @brief Get bucket pending cooldown time in milliseconds
- *
- * @param req the request handler
- * @param the bucket to wait on cooldown
- * @return amount to sleep for in milliseconds
- */
-int64_t discord_bucket_get_wait(struct discord_request *req,
-                                struct discord_bucket *bucket);
-
-/**
- * @brief Get a `struct discord_bucket` assigned to `route`
- *
- * @param req the request handler
- * @param endpoint endpoint that will be checked for a bucket match
- * @return bucket assigned to `route` or `request->b_null` if no match found
- */
-struct discord_bucket *discord_bucket_get(struct discord_request *req,
-                                          const char route[]);
-
-/**
- * @brief Update the bucket with response header data
- *
- * @param req the request handler
- * @param bucket NULL when bucket is first discovered
- * @param route the route associated with the bucket
- * @param info informational struct containing details on the current transfer
- * @note If the bucket was just discovered it will be created here.
- */
-void discord_bucket_build(struct discord_request *req,
-                          struct discord_bucket *bucket,
-                          const char route[],
-                          struct ua_info *info);
-
-/** @brief The handle used for performing HTTP Requests */
-struct discord_adapter {
-  /** DISCORD_HTTP or DISCORD_WEBHOOK logging module */
-  struct logconf conf;
-  /** the user agent handle for performing requests */
-  struct user_agent *ua;
-  /** if true next request will be dealt with asynchronously */
-  bool async_enable;
-  /** request handler structure */
-  struct discord_request req;
-};
-
-/**
  * @brief Initialize the fields of a Discord Adapter handle
  *
  * @param adapter a pointer to the http handle
@@ -365,8 +169,8 @@ void discord_adapter_cleanup(struct discord_adapter *adapter);
 /**
  * @brief Perform a request to Discord
  *
- * This functions is a selector over discord_request_perform() or
- *        discord_request_perform_async()
+ * This functions is a selector over discord_adapter_run() or
+ *        discord_adapter_run_async()
  * @param adapter the handle initialized with discord_adapter_init()
  * @param attr attributes of request
  * @param body the body sent for methods that require (ex: post), leave as
@@ -394,6 +198,126 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
  */
 void discord_adapter_set_async(struct discord_adapter *adapter,
                                struct discord_async_attr *attr);
+
+/**
+ * @brief Check and manage on-going, pending and timed-out requests
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @return `ORCA_OK` means nothing out of the ordinary
+ */
+ORCAcode discord_adapter_perform(struct discord_adapter *adapter);
+
+/**
+ * @brief Get global timeout timestamp
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @return the most recent global timeout timestamp
+ */
+u64_unix_ms_t discord_adapter_get_global_wait(struct discord_adapter *adapter);
+
+/**
+ * @brief Stop all on-going, pending and timed-out requests
+ *
+ * The requests will be moved over to client's 'idleq' queue
+ * @param adapter the handle initialized with discord_adapter_init()
+ */
+void discord_adapter_stop_all(struct discord_adapter *adapter);
+
+/**
+ * @brief Pause all on-going timed-out requests
+ *
+ * The requests will be moved over to bucket's 'waitq' queue
+ * @param adapter the handle initialized with discord_adapter_init()
+ */
+void discord_adapter_pause_all(struct discord_adapter *adapter);
+
+/** @brief The bucket struct for handling ratelimiting */
+struct discord_bucket {
+  /** the route associated with this bucket */
+  char route[128];
+  /** the hash associated with this bucket (logging purposes) */
+  char hash[64];
+  /** maximum connections this bucket can handle before ratelimit */
+  long limit;
+  /** connections this bucket can do before waiting for cooldown */
+  long remaining;
+  /** timestamp of when cooldown timer resets */
+  u64_unix_ms_t reset_tstamp;
+  /** synchronize ratelimiting between threads */
+  pthread_mutex_t lock;
+  /** pending requests of type 'struct discord_context' */
+  QUEUE waitq;
+  /** busy requests of type 'struct discord_context' */
+  QUEUE busyq;
+  /** avoid excessive timeouts */
+  bool freeze;
+  /** makes this structure hashable */
+  UT_hash_handle hh;
+};
+
+/**
+ * @brief Initialize a individual bucket and assign it to `adapter`
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param route the bucket's route
+ * @param hash the bucket's hash (for identification purposes)
+ * @param limit the bucket's request threshold
+ */
+struct discord_bucket *discord_bucket_init(struct discord_adapter *adapter,
+                                           const char route[],
+                                           const struct sized_buffer *hash,
+                                           const long limit);
+
+/**
+ * @brief Cleanup all buckets allocated
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ */
+void discord_buckets_cleanup(struct discord_adapter *adapter);
+
+/**
+ * @brief Return bucket timeout timestamp
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param b the bucket to be checked for time out
+ * @return the timeout timestamp
+ */
+u64_unix_ms_t discord_bucket_get_timeout(struct discord_adapter *adapter,
+                                         struct discord_bucket *b);
+
+/**
+ * @brief Get bucket pending cooldown time in milliseconds
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param the bucket to wait on cooldown
+ * @return amount to sleep for in milliseconds
+ */
+int64_t discord_bucket_get_wait(struct discord_adapter *adapter,
+                                struct discord_bucket *bucket);
+
+/**
+ * @brief Get a `struct discord_bucket` assigned to `route`
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param endpoint endpoint that will be checked for a bucket match
+ * @return bucket assigned to `route` or `adapter->b_null` if no match found
+ */
+struct discord_bucket *discord_bucket_get(struct discord_adapter *adapter,
+                                          const char route[]);
+
+/**
+ * @brief Update the bucket with response header data
+ *
+ * @param adapter the handle initialized with discord_adapter_init()
+ * @param bucket NULL when bucket is first discovered
+ * @param route the route associated with the bucket
+ * @param info informational struct containing details on the current transfer
+ * @note If the bucket was just discovered it will be created here.
+ */
+void discord_bucket_build(struct discord_adapter *adapter,
+                          struct discord_bucket *bucket,
+                          const char route[],
+                          struct ua_info *info);
 
 struct discord_gateway_cmd_cbs {
   char *start;
@@ -489,6 +413,8 @@ struct discord_gateway {
   struct logconf conf;
   /** the websockets handle that connects to Discord */
   struct websockets *ws;
+  /** curl_multi handle for non-blocking transfer over websockets */
+  CURLM *mhandle;
 
   /** timers kept for synchronization */
   struct {
@@ -596,7 +522,7 @@ struct discord_event {
 /**
  * @brief Initialize the fields of Discord Gateway handle
  *
- * @param gw a pointer to the gateway handle
+ * @param gw the gateway handle to be initialized
  * @param conf optional pointer to a initialized logconf
  * @param token the bot token
  */
@@ -607,18 +533,33 @@ void discord_gateway_init(struct discord_gateway *gw,
 /**
  * @brief Free a Discord Gateway handle
  *
- * @param gw a pointer to the gateway handle
+ * @param gw the handle initialized with discord_gateway_init()
  */
 void discord_gateway_cleanup(struct discord_gateway *gw);
 
 /**
- * @brief Start a connection to the Discord Gateway
+ * @brief Initialize handle with the new session primitives
  *
  * @param gw the handle initialized with discord_gateway_init()
- * @return ORCAcode for how the run went, ORCA_OK means nothing out of the
- *        ordinary
+ * @return `ORCA_OK` means nothing out of the ordinary
  */
-ORCAcode discord_gateway_run(struct discord_gateway *gw);
+ORCAcode discord_gateway_start(struct discord_gateway *gw);
+
+/**
+ * @brief Cleanup and reset `gw` session primitives
+ *
+ * @param ws the WebSockets handle created with ws_init()
+ * @return `true` if session can be retried, `false` otherwise
+ */
+bool discord_gateway_end(struct discord_gateway *gw);
+
+/**
+ * @brief Check and manage on-going Gateway session
+ *
+ * @param req the request handler
+ * @return `ORCA_OK` means nothing out of the ordinary
+ */
+ORCAcode discord_gateway_perform(struct discord_gateway *gw);
 
 /**
  * @brief Gracefully shutdown a ongoing Discord connection over WebSockets
@@ -654,8 +595,6 @@ struct discord {
   bool is_original;
   /** the bot token */
   struct sized_buffer token;
-  /** libcurl's IO multiplexer */
-  CURLM *mhandle;
   /** the HTTP adapter for performing requests */
   struct discord_adapter adapter;
   /** the WebSockets handle for establishing a connection to Discord */

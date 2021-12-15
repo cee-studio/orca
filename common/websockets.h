@@ -172,10 +172,11 @@ struct ws_attr {
  * @brief Create a new (CURL-based) WebSockets handle
  *
  * @param cbs set of functions to call back when server report events.
+ * @param mhandle user-owned curl_multi handle for performing non-blocking transfers
  * @param attr optional attributes to override defaults
  * @return newly created WebSockets handle, free with ws_cleanup()
  */
-struct websockets *ws_init(struct ws_callbacks *cbs, struct ws_attr *attr);
+struct websockets *ws_init(struct ws_callbacks *cbs, CURLM *mhandle, struct ws_attr *attr);
 
 /**
  * @brief Free a WebSockets handle created with ws_init()
@@ -263,24 +264,19 @@ _Bool ws_pong(struct websockets *ws,
  * @brief Signals connecting state before entering the WebSockets event loop
  *
  * @param ws the WebSockets handle created with ws_init()
- * @param ehandle optional pointer to the newly created libcurl's easy handle
- * @param mhandle optional pointer to the newly created libcurl's multi handle
- * @note Helper over _ws_set_status(ws, WS_CONNECTING)
  */
-void ws_start(struct websockets *ws, CURL **ret_ehandle, CURLM **ret_mhandle);
+void ws_start(struct websockets *ws);
 
 /**
  * @brief Cleanup and reset `ws` connection resources
  *
  * @param ws the WebSockets handle created with ws_init()
- * @note Helper over _ws_set_status(ws, WS_DISCONNECT)
  */
 void ws_end(struct websockets *ws);
 
 /**
  * @brief Reads/Write available data from WebSockets
  *
- * Generic helper over `curl_multi_perform()` and `curl_multi_wait()`.
  * @param ws the WebSockets handle created with ws_init()
  * @param wait_ms limit amount in milliseconds to wait for until activity
  * @param tstamp get current timestamp for this iteration

@@ -34,6 +34,7 @@ ORCAcode slack_webapi_run(struct slack_webapi *webapi,
 struct slack_sm {
   struct websockets *ws;
   struct logconf conf;
+  CURLM *mhandle;
 
   bool is_ready;
 

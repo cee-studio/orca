@@ -800,6 +800,11 @@ on_dispatch(struct discord_gateway *gw)
     gw->session->event_count = 0;
   }
 #endif
+  
+#define CASE_EVENT_SET(gateway_event_name,function_name)\
+  case DISCORD_GATEWAY_EVENTS_##gateway_event_name:\
+    if (gw->cmds.cbs.function_name)\
+      on_event = function_name
 
   switch (event = get_dispatch_event(gw->payload.name)) {
   case DISCORD_GATEWAY_EVENTS_READY:
@@ -822,39 +827,26 @@ on_dispatch(struct discord_gateway *gw)
     /* @todo add callback */
     send_heartbeat(gw);
     break;
-  case DISCORD_GATEWAY_EVENTS_APPLICATION_COMMAND_CREATE:
-    if (gw->cmds.cbs.on_application_command_create)
-      on_event = &on_application_command_create;
+
+  CASE_EVENT_SET(APPLICATION_COMMAND_CREATE, on_application_command_create);
     break;
-  case DISCORD_GATEWAY_EVENTS_APPLICATION_COMMAND_UPDATE:
-    if (gw->cmds.cbs.on_application_command_update)
-      on_event = &on_application_command_update;
+  CASE_EVENT_SET(APPLICATION_COMMAND_UPDATE, on_application_command_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_APPLICATION_COMMAND_DELETE:
-    if (gw->cmds.cbs.on_application_command_delete)
-      on_event = &on_application_command_delete;
+  CASE_EVENT_SET(APPLICATION_COMMAND_DELETE, on_application_command_delete);
     break;
-  case DISCORD_GATEWAY_EVENTS_CHANNEL_CREATE:
-    if (gw->cmds.cbs.on_channel_create) on_event = &on_channel_create;
+  CASE_EVENT_SET(CHANNEL_CREATE, on_channel_create);
     break;
-  case DISCORD_GATEWAY_EVENTS_CHANNEL_UPDATE:
-    if (gw->cmds.cbs.on_channel_update) on_event = &on_channel_update;
+  CASE_EVENT_SET(CHANNEL_UPDATE, on_channel_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_CHANNEL_DELETE:
-    if (gw->cmds.cbs.on_channel_delete) on_event = &on_channel_delete;
+  CASE_EVENT_SET(CHANNEL_DELETE, on_channel_delete);
     break;
-  case DISCORD_GATEWAY_EVENTS_CHANNEL_PINS_UPDATE:
-    if (gw->cmds.cbs.on_channel_pins_update)
-      on_event = &on_channel_pins_update;
+  CASE_EVENT_SET(CHANNEL_PINS_UPDATE, on_channel_pins_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_THREAD_CREATE:
-    if (gw->cmds.cbs.on_thread_create) on_event = &on_thread_create;
+  CASE_EVENT_SET(THREAD_CREATE, on_thread_create);
     break;
-  case DISCORD_GATEWAY_EVENTS_THREAD_UPDATE:
-    if (gw->cmds.cbs.on_thread_update) on_event = &on_thread_update;
+  CASE_EVENT_SET(THREAD_UPDATE, on_thread_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_THREAD_DELETE:
-    if (gw->cmds.cbs.on_thread_delete) on_event = &on_thread_delete;
+  CASE_EVENT_SET(THREAD_DELETE, on_thread_delete);
     break;
   case DISCORD_GATEWAY_EVENTS_THREAD_LIST_SYNC:
     /** @todo implement */
@@ -865,20 +857,15 @@ on_dispatch(struct discord_gateway *gw)
   case DISCORD_GATEWAY_EVENTS_THREAD_MEMBERS_UPDATE:
     /** @todo implement */
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_CREATE:
-    if (gw->cmds.cbs.on_guild_create) on_event = &on_guild_create;
+  CASE_EVENT_SET(GUILD_CREATE, on_guild_create);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_UPDATE:
-    if (gw->cmds.cbs.on_guild_update) on_event = &on_guild_update;
+  CASE_EVENT_SET(GUILD_UPDATE, on_guild_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_DELETE:
-    if (gw->cmds.cbs.on_guild_delete) on_event = &on_guild_delete;
+  CASE_EVENT_SET(GUILD_DELETE, on_guild_delete);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_BAN_ADD:
-    if (gw->cmds.cbs.on_guild_ban_add) on_event = &on_guild_ban_add;
+  CASE_EVENT_SET(GUILD_BAN_ADD, on_guild_ban_add);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_BAN_REMOVE:
-    if (gw->cmds.cbs.on_guild_ban_remove) on_event = &on_guild_ban_remove;
+  CASE_EVENT_SET(GUILD_BAN_REMOVE, on_guild_ban_remove);
     break;
   case DISCORD_GATEWAY_EVENTS_GUILD_EMOJIS_UPDATE:
     /** @todo implement */
@@ -889,25 +876,17 @@ on_dispatch(struct discord_gateway *gw)
   case DISCORD_GATEWAY_EVENTS_GUILD_INTEGRATIONS_UPDATE:
     /** @todo implement */
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_ADD:
-    if (gw->cmds.cbs.on_guild_member_add) on_event = &on_guild_member_add;
+  CASE_EVENT_SET(GUILD_MEMBER_ADD, on_guild_member_add);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_UPDATE:
-    if (gw->cmds.cbs.on_guild_member_update)
-      on_event = &on_guild_member_update;
+  CASE_EVENT_SET(GUILD_MEMBER_UPDATE, on_guild_member_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_MEMBER_REMOVE:
-    if (gw->cmds.cbs.on_guild_member_remove)
-      on_event = &on_guild_member_remove;
+  CASE_EVENT_SET(GUILD_MEMBER_REMOVE, on_guild_member_remove);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_ROLE_CREATE:
-    if (gw->cmds.cbs.on_guild_role_create) on_event = &on_guild_role_create;
+  CASE_EVENT_SET(GUILD_ROLE_CREATE, on_guild_role_create);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_ROLE_UPDATE:
-    if (gw->cmds.cbs.on_guild_role_update) on_event = &on_guild_role_update;
+  CASE_EVENT_SET(GUILD_ROLE_UPDATE, on_guild_role_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_GUILD_ROLE_DELETE:
-    if (gw->cmds.cbs.on_guild_role_delete) on_event = &on_guild_role_delete;
+  CASE_EVENT_SET(GUILD_ROLE_DELETE, on_guild_role_delete);
     break;
   case DISCORD_GATEWAY_EVENTS_INTEGRATION_CREATE:
     /** @todo implement */
@@ -918,8 +897,7 @@ on_dispatch(struct discord_gateway *gw)
   case DISCORD_GATEWAY_EVENTS_INTEGRATION_DELETE:
     /** @todo implement */
     break;
-  case DISCORD_GATEWAY_EVENTS_INTERACTION_CREATE:
-    if (gw->cmds.cbs.on_interaction_create) on_event = &on_interaction_create;
+  CASE_EVENT_SET(INTERACTION_CREATE, on_interaction_create);
     break;
   case DISCORD_GATEWAY_EVENTS_INVITE_CREATE:
     /** @todo implement */
@@ -931,31 +909,19 @@ on_dispatch(struct discord_gateway *gw)
     if (gw->cmds.pool || gw->cmds.cbs.on_message_create)
       on_event = &on_message_create;
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_UPDATE:
-    if (gw->cmds.cbs.on_message_update) on_event = &on_message_update;
+  CASE_EVENT_SET(MESSAGE_UPDATE, on_message_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE:
-    if (gw->cmds.cbs.on_message_delete) on_event = &on_message_delete;
+  CASE_EVENT_SET(MESSAGE_DELETE, on_message_delete);
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE_BULK:
-    if (gw->cmds.cbs.on_message_delete_bulk)
-      on_event = &on_message_delete_bulk;
+  CASE_EVENT_SET(MESSAGE_DELETE_BULK, on_message_delete_bulk);
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_ADD:
-    if (gw->cmds.cbs.on_message_reaction_add)
-      on_event = &on_message_reaction_add;
+  CASE_EVENT_SET(MESSAGE_REACTION_ADD, on_message_reaction_add);
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE:
-    if (gw->cmds.cbs.on_message_reaction_remove)
-      on_event = &on_message_reaction_remove;
+  CASE_EVENT_SET(MESSAGE_REACTION_REMOVE, on_message_reaction_remove);
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE_ALL:
-    if (gw->cmds.cbs.on_message_reaction_remove_all)
-      on_event = &on_message_reaction_remove_all;
+  CASE_EVENT_SET(MESSAGE_REACTION_REMOVE_ALL, on_message_reaction_remove_all);
     break;
-  case DISCORD_GATEWAY_EVENTS_MESSAGE_REACTION_REMOVE_EMOJI:
-    if (gw->cmds.cbs.on_message_reaction_remove_emoji)
-      on_event = &on_message_reaction_remove_emoji;
+  CASE_EVENT_SET(MESSAGE_REACTION_REMOVE_EMOJI, on_message_reaction_remove_emoji);
     break;
   case DISCORD_GATEWAY_EVENTS_PRESENCE_UPDATE:
     /** @todo implement */
@@ -975,12 +941,9 @@ on_dispatch(struct discord_gateway *gw)
   case DISCORD_GATEWAY_EVENTS_USER_UPDATE:
     /** @todo implement */
     break;
-  case DISCORD_GATEWAY_EVENTS_VOICE_STATE_UPDATE:
-    if (gw->cmds.cbs.on_voice_state_update) on_event = &on_voice_state_update;
+  CASE_EVENT_SET(VOICE_STATE_UPDATE, on_voice_state_update);
     break;
-  case DISCORD_GATEWAY_EVENTS_VOICE_SERVER_UPDATE:
-    if (gw->cmds.cbs.on_voice_server_update)
-      on_event = &on_voice_server_update;
+  CASE_EVENT_SET(VOICE_SERVER_UPDATE, on_voice_server_update);
     break;
   case DISCORD_GATEWAY_EVENTS_WEBHOOKS_UPDATE:
     /** @todo implement */
@@ -991,7 +954,7 @@ on_dispatch(struct discord_gateway *gw)
                  event);
     break;
   }
-
+#undef CASE_EVENT_SET
   /* user subscribed to event */
   if (on_event) {
     struct discord *client = CLIENT(gw, gw);

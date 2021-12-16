@@ -22,8 +22,6 @@ slack_config_init(const char config_file[])
   new_client->app_token =
     logconf_get_field(&new_client->conf, "slack.app_token");
 
-  new_client->webapi.p_client = new_client;
-  new_client->sm.p_client = new_client;
   slack_webapi_init(&new_client->webapi, &new_client->conf,
                     &new_client->bot_token);
   slack_sm_init(&new_client->sm, &new_client->conf);

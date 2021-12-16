@@ -10,12 +10,32 @@
 #include "user-agent.h"
 #include "websockets.h"
 #include "cee-utils.h"
+#include "work.h"
+
+#define SLACK_BASE_API_URL "https://slack.com/api"
+
+/** @brief Get client from its nested field */
+#define CLIENT(ptr, path) CONTAINEROF(ptr, struct slack, path)
+
+
+struct slack_request_attr {
+  /** the object itself */
+  void *obj;
+  /** size of `obj` in bytes */
+  size_t size;
+  /** initialize `obj` fields */
+  void (*init)(void *obj);
+  /** callback for filling `obj` with JSON values */
+  void (*from_json)(char *json, size_t len, void *obj);
+  /** perform a cleanup on `obj` */
+  void (*cleanup)(void *obj);
+  /** override default URL */
+  char *base_url;
+};
 
 struct slack_webapi {
   struct user_agent *ua;
   struct logconf conf;
-
-  struct slack *p_client;
 };
 
 /* ADAPTER PRIVATE FUNCTIONS */
@@ -26,7 +46,7 @@ void slack_webapi_init(struct slack_webapi *webapi,
 void slack_webapi_cleanup(struct slack_webapi *webapi);
 
 ORCAcode slack_webapi_run(struct slack_webapi *webapi,
-                          struct sized_buffer *ret,
+                          struct slack_request_attr *attr,
                           struct sized_buffer *body,
                           enum http_method method,
                           char endpoint_fmt[],
@@ -68,8 +88,6 @@ struct slack_sm {
   /** Handle context on how each event callback is executed @see
    * slack_set_event_handler() */
   slack_event_mode_cb event_handler;
-
-  struct slack *p_client;
 };
 
 /* SOCKET MODE PRIVATE FUNCTIONS */
@@ -86,17 +104,14 @@ struct slack {
   struct logconf conf;
 };
 
-struct slack_event_cxt {
-  /** the thread id */
-  pthread_t tid;
+struct slack_event {
   /** a copy of payload data */
   struct sized_buffer data;
   /** the sm client */
-  struct slack_sm *p_sm;
+  struct slack_sm *sm;
   char str_type[64];
   enum slack_sm_types type;
   void (*on_event)(struct slack_sm *sm, struct sized_buffer *data);
-  bool is_main_thread;
 };
 
 #endif /* SLACK_INTERNAL_H */

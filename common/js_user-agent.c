@@ -142,9 +142,6 @@ UserAgent_prototype_run(js_State *J)
     js_pushnumber(J, (double)info.httpcode);
     js_setproperty(J, -2, "httpCode");
 
-    js_pushstring(J, http_method_print(info.method));
-    js_setproperty(J, -2, "httpMethod");
-
     js_pushstring(J, body.start);
     js_setproperty(J, -2, "responseBody");
   }
@@ -257,22 +254,22 @@ ORCAcode
 jsua_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
 {
   struct sized_buffer body = { 0 };
-  enum http_method method;
-  char *endpoint;
+  struct ua_conn_attr attr = { 0 };
 
   if (!js_isstring(J, 1))
     js_typeerror(J, "Expected 'first' argument to be a 'string'");
   if (!js_isstring(J, 2))
     js_typeerror(J, "Expected 'second' argument to be a 'string'");
 
-  method = http_method_eval((char *)js_tostring(J, 1));
-  endpoint = (char *)js_tostring(J, 2);
+  attr.method = http_method_eval((char *)js_tostring(J, 1));
+  attr.endpoint = (char *)js_tostring(J, 2);
 
   if (js_isobject(J, 3) || js_isstring(J, 3)) {
     body.start = (char *)js_tostring(J, 3);
     body.size = strlen(body.start);
   }
+  attr.body = &body;
 
   /* @todo map Error codes to JS Error objects */
-  return ua_easy_run(ua, p_info, NULL, &body, method, endpoint);
+  return ua_easy_run(ua, p_info, NULL, &attr);
 }

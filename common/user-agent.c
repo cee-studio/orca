@@ -620,37 +620,36 @@ _ua_conn_set_method(struct ua_conn *conn,
 
 /* combine base url with endpoint and assign it to 'conn' */
 static void
-_ua_conn_set_url(struct ua_conn *conn, char _base_url[], char endpoint[])
+_ua_conn_set_url(struct ua_conn *conn, char base_url[], char endpoint[])
 {
-  struct sized_buffer base_url;
-  size_t len = endpoint ? strlen(endpoint) : 0;
-  size_t fullsize;
+  size_t size = 2;
   CURLcode ecode;
   size_t ret;
 
-  if (!_base_url) {
-    base_url = conn->ua->base_url;
+  if (!base_url) {
+    base_url = conn->ua->base_url.start;
+    size += conn->ua->base_url.size;
   }
   else {
-    base_url.start = _base_url;
-    base_url.size = strlen(_base_url);
+    size += strlen(base_url);
   }
 
-  fullsize = base_url.size + len + 2;
+  if (!endpoint)
+    endpoint = "";
+  else
+    size += strlen(endpoint);
 
   /* increase buffer length if necessary */
-  if (fullsize > conn->url.size) {
-    void *tmp = realloc(conn->url.start, fullsize);
+  if (size > conn->url.size) {
+    void *tmp = realloc(conn->url.start, size);
     ASSERT_S(NULL != tmp, "Couldn't increase buffer's length");
 
     conn->url.start = tmp;
-    conn->url.size = fullsize;
+    conn->url.size = size;
   }
 
   /* append endpoint to base url */
-  ret = snprintf(conn->url.start, conn->url.size, "%.*s%.*s",
-                 (int)base_url.size, base_url.start, (int)len, endpoint);
-
+  ret = snprintf(conn->url.start, conn->url.size, "%s%s", base_url, endpoint);
   ASSERT_S(ret < conn->url.size, "Out of bounds write attempt");
 
   logconf_trace(&conn->ua->conf, "Request URL: %s", conn->url.start);

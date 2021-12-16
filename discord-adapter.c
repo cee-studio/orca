@@ -7,7 +7,7 @@
 #include "discord-internal.h"
 
 /* MT-Unsafe alternative to discord_timestamp() */
-#define NOW(client) ((client)->gw.timer->now)
+#define NOW(p_adapter) (CLIENT(p_adapter, adapter)->gw.timer->now)
 
 static void
 setopt_cb(struct ua_conn *conn, void *p_token)
@@ -245,7 +245,6 @@ _discord_adapter_get_info(struct discord_adapter *adapter,
     return false;
   case HTTP_TOO_MANY_REQUESTS: {
     struct sized_buffer body = ua_info_get_body(info);
-    struct discord *client = CLIENT(adapter, adapter);
     double retry_after = 1.0;
     bool is_global = false;
     char message[256] = "";
@@ -256,6 +255,7 @@ _discord_adapter_get_info(struct discord_adapter *adapter,
                  sizeof(message), message, &retry_after);
 
     if (is_global) {
+      struct discord *client = CLIENT(adapter, adapter);
       u64_unix_ms_t global;
 
       global = discord_adapter_get_global_wait(adapter);
@@ -276,7 +276,7 @@ _discord_adapter_get_info(struct discord_adapter *adapter,
 
     if (cxt) {
       /* non-blocking timeout */
-      u64_unix_ms_t timeout = NOW(client) + wait_ms;
+      u64_unix_ms_t timeout = NOW(adapter) + wait_ms;
 
       logconf_warn(&adapter->conf,
                    "429 RATELIMITING (timeout: %" PRId64 " ms) : %s", wait_ms,
@@ -314,16 +314,16 @@ _discord_adapter_run_sync(struct discord_adapter *adapter,
                           enum http_method method,
                           char endpoint[])
 {
-  struct discord *client = CLIENT(adapter, adapter);
   /* bucket pertaining to the request */
   struct discord_bucket *b = discord_bucket_get(adapter, endpoint);
+  struct ua_conn_attr conn_attr = { method, body, endpoint };
   /* throw-away for ua_conn_set_mime() */
   struct discord_context cxt = { 0 };
   struct ua_conn *conn;
   ORCAcode code;
   bool retry;
 
-  conn = ua_conn_start(client->adapter.ua);
+  conn = ua_conn_start(adapter->ua);
 
   if (HTTP_MIMEPOST == method) {
     cxt.attr.attachments = attr->attachments;
@@ -335,7 +335,8 @@ _discord_adapter_run_sync(struct discord_adapter *adapter,
   else {
     ua_conn_add_header(conn, "Content-Type", "application/json");
   }
-  ua_conn_setup(conn, body, method, endpoint);
+
+  ua_conn_setup(conn, &conn_attr);
 
   pthread_mutex_lock(&b->lock);
   do {
@@ -352,6 +353,7 @@ _discord_adapter_run_sync(struct discord_adapter *adapter,
     /* perform blocking request, and check results */
     switch (code = ua_conn_perform(conn)) {
     case ORCA_OK: {
+      struct discord *client = CLIENT(adapter, adapter);
       struct ua_info info = { 0 };
       struct sized_buffer body;
 
@@ -513,8 +515,7 @@ static bool
 _discord_context_timeout(struct discord_adapter *adapter,
                          struct discord_context *cxt)
 {
-  struct discord *client = CLIENT(adapter, adapter);
-  u64_unix_ms_t now = NOW(client);
+  u64_unix_ms_t now = NOW(adapter);
   u64_unix_ms_t timeout = discord_bucket_get_timeout(adapter, cxt->bucket);
 
   if (now > timeout) return false;
@@ -568,13 +569,15 @@ static ORCAcode
 _discord_adapter_send(struct discord_adapter *adapter,
                       struct discord_context *cxt)
 {
-  struct discord *client = CLIENT(adapter, adapter);
+  struct ua_conn_attr conn_attr = { 0 };
   CURLMcode mcode;
   CURL *ehandle;
 
-  cxt->conn = ua_conn_start(client->adapter.ua);
+  cxt->conn = ua_conn_start(adapter->ua);
 
-  ehandle = ua_conn_get_easy_handle(cxt->conn);
+  conn_attr.method = cxt->method;
+  conn_attr.body = &cxt->body.buf;
+  conn_attr.endpoint = cxt->endpoint;
 
   if (HTTP_MIMEPOST == cxt->method) {
     ua_conn_add_header(cxt->conn, "Content-Type", "multipart/form-data");
@@ -583,7 +586,9 @@ _discord_adapter_send(struct discord_adapter *adapter,
   else {
     ua_conn_add_header(cxt->conn, "Content-Type", "application/json");
   }
-  ua_conn_setup(cxt->conn, &cxt->body.buf, cxt->method, cxt->endpoint);
+  ua_conn_setup(cxt->conn, &conn_attr);
+
+  ehandle = ua_conn_get_easy_handle(cxt->conn);
 
   /* link 'cxt' to 'ehandle' for easy retrieval */
   curl_easy_setopt(ehandle, CURLOPT_PRIVATE, cxt);
@@ -600,7 +605,6 @@ _discord_adapter_send(struct discord_adapter *adapter,
 static ORCAcode
 _discord_adapter_check_timeouts(struct discord_adapter *adapter)
 {
-  struct discord *client = CLIENT(adapter, adapter);
   struct discord_context *cxt;
   struct heap_node *hmin;
 
@@ -609,7 +613,7 @@ _discord_adapter_check_timeouts(struct discord_adapter *adapter)
     if (!hmin) break;
 
     cxt = CONTAINEROF(hmin, struct discord_context, node);
-    if (cxt->timeout_ms > NOW(client)) {
+    if (cxt->timeout_ms > NOW(adapter)) {
       /* current timestamp is lesser than lowest timeout */
       break;
     }
@@ -672,7 +676,6 @@ _discord_adapter_send_batch(struct discord_adapter *adapter,
 static ORCAcode
 _discord_adapter_check_pending(struct discord_adapter *adapter)
 {
-  struct discord *client = CLIENT(adapter, adapter);
   struct discord_bucket *b;
 
   /* iterate over buckets in search of pending requests */
@@ -684,7 +687,7 @@ _discord_adapter_check_pending(struct discord_adapter *adapter)
 
     /* if bucket is outdated then its necessary to send a single
      *      request to fetch updated values */
-    if (b->reset_tstamp < NOW(client)) {
+    if (b->reset_tstamp < NOW(adapter)) {
       _discord_adapter_send_single(adapter, b);
       continue;
     }

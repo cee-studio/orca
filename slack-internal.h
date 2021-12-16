@@ -22,12 +22,13 @@ struct slack_webapi {
 void slack_webapi_init(struct slack_webapi *webapi,
                        struct logconf *conf,
                        struct sized_buffer *token);
+
 void slack_webapi_cleanup(struct slack_webapi *webapi);
 
 ORCAcode slack_webapi_run(struct slack_webapi *webapi,
-                          struct sized_buffer *p_resp_body,
-                          struct sized_buffer *req_body,
-                          enum http_method http_method,
+                          struct sized_buffer *ret,
+                          struct sized_buffer *body,
+                          enum http_method method,
                           char endpoint_fmt[],
                           ...);
 

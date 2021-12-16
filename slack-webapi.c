@@ -42,37 +42,35 @@ slack_webapi_cleanup(struct slack_webapi *webapi)
   ua_cleanup(webapi->ua);
 }
 
-static void
-sized_buffer_from_json(char *json, size_t len, void *data)
-{
-  struct sized_buffer *p = data;
-  p->size = asprintf(&p->start, "%.*s", (int)len, json);
-}
-
 /* template function for performing requests */
 ORCAcode
 slack_webapi_run(struct slack_webapi *webapi,
-                 struct sized_buffer *resp_body,
-                 struct sized_buffer *req_body,
-                 enum http_method http_method,
+                 struct sized_buffer *ret,
+                 struct sized_buffer *body,
+                 enum http_method method,
                  char endpoint_fmt[],
                  ...)
 {
-  va_list args;
+  struct ua_resp_handle handle = { ret
+                                     ? (void (*)(char *, size_t, void *))
+                                         & cee_sized_buffer_from_json
+                                     : NULL,
+                                   ret };
+  struct ua_conn_attr conn_attr = { 0 };
   char endpoint[2048];
+  va_list args;
+  size_t len;
 
   va_start(args, endpoint_fmt);
-  int ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
-  ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
-  ORCAcode code;
-  code = ua_easy_run(webapi->ua, NULL,
-                     &(struct ua_resp_handle){
-                       .ok_cb = resp_body ? &sized_buffer_from_json : NULL,
-                       .ok_obj = resp_body },
-                     req_body, http_method, endpoint);
+  len = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
+  ASSERT_S(len < sizeof(endpoint), "Out of bounds write attempt");
 
   va_end(args);
 
-  return code;
+  conn_attr.method = method;
+  conn_attr.body = body;
+  conn_attr.endpoint = endpoint;
+
+  return ua_easy_run(webapi->ua, NULL, &handle, &conn_attr);
 }

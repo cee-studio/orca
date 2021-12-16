@@ -51,11 +51,11 @@ struct discord_embed *embed_reddit_search_result(
 
   code = reddit_search(BOT.R.client,
                        &(struct reddit_search_params){
-                         .q = (keywords && *keywords) ? keywords : NULL,
-                         .before = (before && *before) ? before : NULL,
-                         .after = (after && *after) ? after : NULL,
-                         .sort = (sort && *sort) ? sort : NULL,
-                         .restrict_sr = (strcmp(subreddits, "all") != 0) },
+                         .q = keywords,
+                         .before = before,
+                         .after = after,
+                         .sort = sort,
+                         .restrict_sr = strcmp(subreddits, "all") != 0 },
                        subreddits, &resp_body);
 
   struct discord_embed *embed = malloc(sizeof *embed);

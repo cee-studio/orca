@@ -51,12 +51,13 @@ _github_adapter_perform(struct github_adapter *adapter,
                        enum http_method method,
                        char endpoint[])
 {
+  struct ua_conn_attr conn_attr = { method, body, endpoint };
   struct ua_conn *conn = ua_conn_start(adapter->ua);
   ORCAcode code;
   bool retry;
 
   /* populate conn with parameters */
-  ua_conn_setup(conn, body, method, endpoint);
+  ua_conn_setup(conn, &conn_attr);
 
   do {
     /* perform blocking request, and check results */

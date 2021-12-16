@@ -13,8 +13,7 @@ setopt_cb(struct ua_conn *conn, void *p_client)
 {
   CURL *ehandle = ua_conn_get_easy_handle(conn);
   struct reddit *client = p_client;
-
-  char client_id[512], client_secret[512], auth[512];
+  char client_id[512], client_secret[512], ua[512];
   int ret;
 
   ret = snprintf(client_id, sizeof(client_id), "%.*s",
@@ -25,12 +24,12 @@ setopt_cb(struct ua_conn *conn, void *p_client)
                  (int)client->client_secret.size, client->client_secret.start);
   ASSERT_S(ret < sizeof(client_secret), "Out of bounds write attempt");
 
-  ret = snprintf(auth, sizeof(auth),
+  ret = snprintf(ua, sizeof(ua),
                  "orca:github.com/cee-studio/orca:v.0 (by /u/%.*s)",
                  (int)client->username.size, client->username.start);
-  ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
+  ASSERT_S(ret < sizeof(ua), "Out of bounds write attempt");
 
-  ua_conn_add_header(conn, "User-Agent", auth);
+  ua_conn_add_header(conn, "User-Agent", ua);
   ua_conn_add_header(conn, "Content-Type",
                      "application/x-www-form-urlencoded");
 
@@ -41,51 +40,103 @@ setopt_cb(struct ua_conn *conn, void *p_client)
 void
 reddit_adapter_init(struct reddit_adapter *adapter, struct logconf *conf)
 {
-  adapter->ua = ua_init(&(struct ua_attr){ .conf = conf });
+  struct reddit *client = CONTAINEROF(adapter, struct reddit, adapter);
+  struct ua_attr attr = { 0 };
 
-  ua_set_url(adapter->ua, BASE_API_URL);
+  attr.conf = conf;
+  adapter->ua = ua_init(&attr);
+
   logconf_branch(&adapter->conf, conf, "REDDIT_HTTP");
+  ua_set_url(adapter->ua, REDDIT_BASE_OAUTH_URL);
 
-  ua_set_opt(adapter->ua, adapter->p_client, &setopt_cb);
+  ua_set_opt(adapter->ua, client, &setopt_cb);
 }
 
 void
 reddit_adapter_cleanup(struct reddit_adapter *adapter)
 {
+  if (adapter->auth) free(adapter->auth);
   ua_cleanup(adapter->ua);
 }
 
-static void
-sized_buffer_from_json(char *json, size_t len, void *data)
+static ORCAcode
+_reddit_adapter_run_sync(struct reddit_adapter *adapter,
+                         struct reddit_request_attr *attr,
+                         struct sized_buffer *body,
+                         enum http_method method,
+                         char endpoint[])
 {
-  struct sized_buffer *p = data;
-  p->size = asprintf(&p->start, "%.*s", (int)len, json);
+  struct ua_conn_attr conn_attr = { method, body, endpoint, attr->base_url };
+  struct ua_conn *conn = ua_conn_start(adapter->ua);
+  ORCAcode code;
+  bool retry;
+
+  /* populate conn with parameters */
+  ua_conn_setup(conn, &conn_attr);
+
+  if (adapter->auth) {
+    ua_conn_add_header(conn, "Authorization", adapter->auth);
+  }
+
+  do {
+    /* perform blocking request, and check results */
+    switch (code = ua_conn_perform(conn)) {
+    case ORCA_OK: {
+      struct ua_info info = { 0 };
+      struct sized_buffer body;
+
+      ua_info_extract(conn, &info);
+
+      body = ua_info_get_body(&info);
+      if (ORCA_OK == info.code && attr->obj) {
+        if (attr->init) attr->init(attr->obj);
+
+        attr->from_json(body.start, body.size, attr->obj);
+      }
+
+      ua_info_cleanup(&info);
+    } break;
+    case ORCA_CURLE_INTERNAL:
+      logconf_error(&adapter->conf, "Curl internal error, will retry again");
+      retry = true;
+      break;
+    default:
+      logconf_error(&adapter->conf, "ORCA code: %d", code);
+      retry = false;
+      break;
+    }
+
+    ua_conn_reset(conn);
+  } while (retry);
+
+  ua_conn_stop(conn);
+
+  return code;
 }
 
 /* template function for performing requests */
 ORCAcode
 reddit_adapter_run(struct reddit_adapter *adapter,
-                   struct sized_buffer *resp_body,
-                   struct sized_buffer *req_body,
-                   enum http_method http_method,
+                   struct reddit_request_attr *attr,
+                   struct sized_buffer *body,
+                   enum http_method method,
                    char endpoint_fmt[],
                    ...)
 {
-  va_list args;
+  static struct reddit_request_attr blank_attr = { 0 };
   char endpoint[2048];
+  va_list args;
+  int ret;
+
+  /* have it point somewhere */
+  if (!attr) attr = &blank_attr;
 
   va_start(args, endpoint_fmt);
-  int ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
-  ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
-  ORCAcode code;
-  code = ua_easy_run(adapter->ua, NULL,
-                     &(struct ua_resp_handle){
-                       .ok_cb = resp_body ? &sized_buffer_from_json : NULL,
-                       .ok_obj = resp_body },
-                     req_body, http_method, endpoint);
+  ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
+  ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
   va_end(args);
 
-  return code;
+  return _reddit_adapter_run_sync(adapter, attr, body, method, endpoint);
 }

@@ -19,7 +19,7 @@ setopt_cb(struct ua_conn *conn, void *p_token)
   ASSERT_S(ret < sizeof(auth), "Out of bounds write attempt");
 
   ua_conn_add_header(conn, "Authorization", auth);
-  ua_conn_add_header(webapi->ua, "Content-type",
+  ua_conn_add_header(conn, "Content-type",
                      "application/x-www-form-urlencoded");
 
 #if 0 /* enable for debugging */
@@ -32,7 +32,10 @@ slack_webapi_init(struct slack_webapi *webapi,
                   struct logconf *conf,
                   struct sized_buffer *token)
 {
-  webapi->ua = ua_init(&(struct ua_attr){ .conf = conf });
+  struct ua_attr attr = { 0 };
+
+  attr.conf = conf;
+  webapi->ua = ua_init(&attr);
   ua_set_url(webapi->ua, SLACK_BASE_API_URL);
   logconf_branch(&webapi->conf, conf, "SLACK_WEBAPI");
 
@@ -41,7 +44,7 @@ slack_webapi_init(struct slack_webapi *webapi,
   }
   ASSERT_S(NULL != token->start, "Missing bot token");
 
-  ua_set_opt(adapter->ua, token, &setopt_cb);
+  ua_set_opt(webapi->ua, token, &setopt_cb);
 }
 
 void
@@ -76,14 +79,23 @@ slack_webapi_run(struct slack_webapi *webapi,
   return ua_easy_run(webapi->ua, NULL, &handle, &conn_attr);
 }
 
+/******************************************************************************
+ * Functions specific to Slack Apps
+ ******************************************************************************/
+
 ORCAcode
 slack_apps_connections_open(struct slack *client, struct sized_buffer *ret)
 {
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->bot_token.start), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->app_token.start), ORCA_BAD_PARAMETER);
-
+  struct slack_request_attr attr = { ret, 0, NULL,
+                                     (void (*)(char *, size_t, void *))
+                                       & cee_sized_buffer_from_json };
   char auth[128] = "";
   size_t len;
+
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->bot_token.start),
+              ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(client->app_token.start),
+              ORCA_BAD_PARAMETER);
 
   len = snprintf(auth, sizeof(auth), "Bearer %.*s",
                  (int)client->app_token.size, client->app_token.start);
@@ -91,7 +103,7 @@ slack_apps_connections_open(struct slack *client, struct sized_buffer *ret)
   ua_reqheader_add(client->webapi.ua, "Authorization", auth);
 
   ORCAcode code;
-  code = slack_webapi_run(&client->webapi, ret, NULL, HTTP_POST,
+  code = slack_webapi_run(&client->webapi, &attr, NULL, HTTP_POST,
                           "/apps.connections.open");
 
   len = snprintf(auth, sizeof(auth), "Bearer %.*s",
@@ -102,88 +114,82 @@ slack_apps_connections_open(struct slack *client, struct sized_buffer *ret)
   return code;
 }
 
+/******************************************************************************
+ * Functions specific to Slack Auth
+ ******************************************************************************/
+
 ORCAcode
 slack_auth_test(struct slack *client, struct sized_buffer *ret)
 {
-  return slack_webapi_run(&client->webapi, ret, NULL, HTTP_POST,
+  struct slack_request_attr attr = { ret, 0, NULL,
+                                     (void (*)(char *, size_t, void *))
+                                       & cee_sized_buffer_from_json };
+
+  return slack_webapi_run(&client->webapi, &attr, NULL, HTTP_POST,
                           "/auth.test");
 }
+
+/******************************************************************************
+ * Functions specific to Slack Chat
+ ******************************************************************************/
 
 ORCAcode
 slack_chat_post_message(struct slack *client,
                         struct slack_chat_post_message_params *params,
                         struct sized_buffer *ret)
 {
-#if 0
+  struct slack_request_attr attr = {
+    ret,  0,
+    NULL, (void (*)(char *, size_t, void *)) & cee_sized_buffer_from_json,
+    NULL, "application/json"
+  };
+  struct sized_buffer body;
+  char buf[16384]; /**< @todo dynamic buffer */
+
   ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(params->channel), ORCA_BAD_PARAMETER);
 
-  char *payload = NULL;
-  size_t len = json_ainject(&payload,
-                            "(token):s"
-                            "(channel):s"
-#if 0
-                "(as_user):b"
-#endif
-                            "(icon_url):s"
-                            "(icon_emoji):s"
-                            "(text):s"
-                            "(thread_ts):s"
-                            "(username):s",
-                            params->token, params->channel,
-#if 0
-                &params->as_user,
-#endif
-                            params->icon_url, params->icon_emoji, params->text,
-                            params->thread_ts, params->username);
+  body.size = slack_chat_post_message_params_to_json(buf, sizeof(buf), params);
+  body.start = buf;
 
-  if (!payload) {
-    log_error("Couldn't create payload");
-    return ORCA_BAD_PARAMETER;
-  }
-
-  ua_reqheader_add(client->webapi.ua, "Content-type", "application/json");
-
-  ORCAcode code;
-  code = slack_webapi_run(&client->webapi, ret,
-                          &(struct sized_buffer){ payload, len }, HTTP_POST,
+  return slack_webapi_run(&client->webapi, &attr, &body, HTTP_POST,
                           "/chat.postMessage");
-
-  ua_reqheader_add(client->webapi.ua, "Content-type",
-                   "application/x-www-form-urlencoded");
-
-  free(payload);
-
-  return code;
-#else
-  return -1;
-#endif
 }
+
+/******************************************************************************
+ * Functions specific to Slack Users
+ ******************************************************************************/
 
 ORCAcode
 slack_users_info(struct slack *client,
                  struct slack_users_info_params *params,
                  struct sized_buffer *ret)
 {
+  struct slack_request_attr attr = { ret, 0, NULL,
+                                     (void (*)(char *, size_t, void *))
+                                       & cee_sized_buffer_from_json };
+  struct sized_buffer body;
+  char buf[4096];
+  size_t len;
+
   ORCA_EXPECT(client, params != NULL, ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, !IS_EMPTY_STRING(params->user), ORCA_BAD_PARAMETER);
 
-  char query[4096];
-  size_t len = 0;
+  len = snprintf(buf, sizeof(buf), "user=%s", params->user);
+  ASSERT_S(len < sizeof(buf), "Out of bounds write attempt");
 
-  len += snprintf(query + len, sizeof(query) - len, "user=%s", params->user);
-  ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
   if (params->token) {
-    len +=
-      snprintf(query + len, sizeof(query) - len, "&token=%s", params->token);
-    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
+    len += snprintf(buf + len, sizeof(buf) - len, "&token=%s", params->token);
+    ASSERT_S(len < sizeof(buf), "Out of bounds write attempt");
   }
   if (params->include_locale) {
-    len += snprintf(query + len, sizeof(query) - len, "&include_locale=true");
-    ASSERT_S(len < sizeof(query), "Out of bounds write attempt");
+    len += snprintf(buf + len, sizeof(buf) - len, "&include_locale=true");
+    ASSERT_S(len < sizeof(buf), "Out of bounds write attempt");
   }
 
-  return slack_webapi_run(&client->webapi, ret,
-                          &(struct sized_buffer){ query, len }, HTTP_POST,
+  body.start = buf;
+  body.size = len;
+
+  return slack_webapi_run(&client->webapi, &attr, &body, HTTP_POST,
                           "/users.info");
 }

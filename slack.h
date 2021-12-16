@@ -6,6 +6,9 @@
 #include "types.h"
 #include "logconf.h"
 
+/* see specs/slack/ for specs */
+#include "specs-code/slack/one-specs.h"
+
 struct slack; /* forward declaration */
 
 /** @todo generate as specs */
@@ -56,42 +59,31 @@ void slack_sm_set_on_view_submission(struct slack *client,
 void slack_sm_run(struct slack *client);
 void slack_sm_shutdown(struct slack *client);
 
+/******************************************************************************
+ * Functions specific to Slack Apps
+ ******************************************************************************/
+
 ORCAcode slack_apps_connections_open(struct slack *client,
                                      struct sized_buffer *ret);
+
+/******************************************************************************
+ * Functions specific to Slack Auth
+ ******************************************************************************/
+
 ORCAcode slack_auth_test(struct slack *client, struct sized_buffer *ret);
 
-/* https://api.slack.com/methods/chat.postMessage */
-struct slack_chat_post_message_params {
-  char *token;
-  char *channel;
-  bool as_user;
-  /* @todo attachments */
-  /* @todo blocks */
-  char *container_id;
-  char *draft_id;
-  char *file_annotation;
-  char *icon_emoji;
-  char *icon_url;
-  bool link_names;
-  bool mrkdwn;
-  char *parse;
-  bool reply_broadcast;
-  char *text;
-  char *thread_ts;
-  bool unfurl_links;
-  bool unfurl_media;
-  char *username;
-};
+/******************************************************************************
+ * Functions specific to Slack Chat
+ ******************************************************************************/
+
 ORCAcode slack_chat_post_message(struct slack *client,
                                  struct slack_chat_post_message_params *params,
                                  struct sized_buffer *ret);
 
-/* https://api.slack.com/methods/users.info */
-struct slack_users_info_params {
-  char *token;
-  char *user;
-  bool include_locale;
-};
+/******************************************************************************
+ * Functions specific to Slack Users
+ ******************************************************************************/
+
 ORCAcode slack_users_info(struct slack *client,
                           struct slack_users_info_params *params,
                           struct sized_buffer *ret);

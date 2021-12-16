@@ -6,10 +6,6 @@
 #include "github.h"
 #include "github-internal.h"
 
-#include "cee-utils.h"
-
-#define GITHUB_BASE_API_URL "https://api.github.com"
-
 static void
 setopt_cb(struct ua_conn *conn, void *p_presets)
 {
@@ -133,6 +129,31 @@ static void
 sha_from_json(char *json, size_t len, void *pp)
 {
   json_extract(json, len, "(sha):?s", (char **)pp);
+}
+
+ORCAcode
+github_get_repository(struct github *client,
+                      char *owner,
+                      char *repo,
+                      struct sized_buffer *ret)
+{
+  struct github_request_attr attr = { ret, 0, NULL, &github_write_json };
+
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
+
+  return github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
+                            "/repos/%s/%s", owner, repo);
+}
+
+ORCAcode
+github_create_fork(struct github *client, char *owner, char *repo)
+{
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(owner), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
+
+  return github_adapter_run(&client->adapter, NULL, NULL, HTTP_POST,
+                            "/repos/%s/%s/forks", owner, repo);
 }
 
 ORCAcode
@@ -404,6 +425,10 @@ github_create_a_pull_request(struct github *client,
                             client->presets.repo);
 }
 
+/******************************************************************************
+ * Functions specific to Github Users
+ ******************************************************************************/
+
 ORCAcode
 github_get_user(struct github *client, char *username, struct github_user *ret)
 {
@@ -423,28 +448,17 @@ github_get_user(struct github *client, char *username, struct github_user *ret)
 }
 
 ORCAcode
-github_get_repository(struct github *client,
-                      char *owner,
-                      char *repo,
-                      struct sized_buffer *ret)
+github_get_gist(struct github *client, char *id, struct github_gist *ret)
 {
-  struct github_request_attr attr = { ret, 0, NULL, &github_write_json };
+  struct github_request_attr attr = { ret, sizeof *ret, &github_gist_init_v,
+                                      &github_gist_from_json_v,
+                                      &github_gist_cleanup_v };
 
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, !IS_EMPTY_STRING(id), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
 
   return github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
-                            "/repos/%s/%s", owner, repo);
-}
-
-ORCAcode
-github_create_fork(struct github *client, char *owner, char *repo)
-{
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(owner), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(repo), ORCA_BAD_PARAMETER);
-
-  return github_adapter_run(&client->adapter, NULL, NULL, HTTP_POST,
-                            "/repos/%s/%s/forks", owner, repo);
+                            "/gists/%s", id);
 }
 
 ORCAcode
@@ -479,20 +493,6 @@ github_create_gist(struct github *client,
 
   return github_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                             "/gists");
-}
-
-ORCAcode
-github_get_gist(struct github *client, char *id, struct github_gist *ret)
-{
-  struct github_request_attr attr = { ret, sizeof *ret, &github_gist_init_v,
-                                      &github_gist_from_json_v,
-                                      &github_gist_cleanup_v };
-
-  ORCA_EXPECT(client, !IS_EMPTY_STRING(id), ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
-
-  return github_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
-                            "/gists/%s", id);
 }
 
 ORCAcode

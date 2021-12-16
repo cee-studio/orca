@@ -29,8 +29,8 @@ struct slack_request_attr {
   void (*from_json)(char *json, size_t len, void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
-  /** override default URL */
-  char *base_url;
+  /** override default content-type */
+  char *content_type;
 };
 
 struct slack_webapi {

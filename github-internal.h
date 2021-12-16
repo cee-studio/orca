@@ -2,6 +2,7 @@
 #define GITHUB_INTERNAL_H
 
 #include "user-agent.h"
+#include "cee-utils.h"
 
 struct github_presets {
   char *owner;

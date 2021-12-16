@@ -61,8 +61,6 @@ struct ua_conn {
   struct sized_buffer url;
   /** the conn request header */
   struct curl_slist *header;
-  /** pointer to request body (won't claim ownership) */
-  struct sized_buffer *body;
 
   struct {
     /** user arbitrary data for callback */
@@ -433,7 +431,6 @@ static void
 _ua_info_reset(struct ua_info *info)
 {
   info->httpcode = 0;
-  info->elapsed_sec = 0;
   info->body.len = 0;
   info->header.len = 0;
   info->header.n_pairs = 0;
@@ -441,13 +438,28 @@ _ua_info_reset(struct ua_info *info)
 
 /* TODO: src should be 'struct ua_conn' */
 static void
-_ua_info_populate(struct ua_info *dest, struct ua_info *src)
+_ua_info_populate(struct ua_info *info, struct ua_conn *conn)
 {
-  memcpy(dest, src, sizeof(struct ua_info));
-  dest->body.len =
-    asprintf(&dest->body.buf, "%.*s", (int)src->body.len, src->body.buf);
-  dest->header.len =
-    asprintf(&dest->header.buf, "%.*s", (int)src->header.len, src->header.buf);
+  struct sized_buffer header = { conn->info.header.buf,
+                                 conn->info.header.len };
+  struct sized_buffer body = { conn->info.body.buf, conn->info.body.len };
+  char *resp_url = NULL;
+
+  memcpy(info, &conn->info, sizeof(struct ua_info));
+
+  info->body.len =
+    asprintf(&info->body.buf, "%.*s", (int)body.size, body.start);
+  info->header.len =
+    asprintf(&info->header.buf, "%.*s", (int)header.size, header.start);
+
+  /* get response's code */
+  curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE, &info->httpcode);
+  /* get response's url */
+  curl_easy_getinfo(conn->ehandle, CURLINFO_EFFECTIVE_URL, &resp_url);
+
+  logconf_http(&conn->ua->conf, &conn->info.loginfo, resp_url, header, body,
+               "HTTP_RCV_%s(%d)", http_code_print(info->httpcode),
+               info->httpcode);
 }
 
 void
@@ -551,12 +563,21 @@ _ua_conn_set_method(struct ua_conn *conn,
 {
   static struct sized_buffer blank_body = { "", 0 };
 
+  char logbuf[1024] = "";
+  struct sized_buffer logheader = { logbuf, sizeof(logbuf) };
+  const char *method_str = http_method_print(method);
+  struct logconf *conf = &conn->ua->conf;
+
+  ua_conn_print_header(conn, logbuf, sizeof(logbuf));
+
   /* make sure body points to something */
   if (!body) body = &blank_body;
 
-  /* for safe-keeping */
-  conn->info.method = method;
-  conn->body = body;
+  logconf_http(conf, &conn->info.loginfo, conn->url.start, logheader, *body,
+               "HTTP_SEND_%s", method_str);
+
+  logconf_trace(conf, ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
+                method_str, conn->info.loginfo.counter);
 
   /* resets any preexisting CUSTOMREQUEST */
   curl_easy_setopt(conn->ehandle, CURLOPT_CUSTOMREQUEST, NULL);
@@ -599,12 +620,23 @@ _ua_conn_set_method(struct ua_conn *conn,
 
 /* combine base url with endpoint and assign it to 'conn' */
 static void
-_ua_conn_set_url(struct ua_conn *conn, char endpoint[], size_t len)
+_ua_conn_set_url(struct ua_conn *conn, char _base_url[], char endpoint[])
 {
-  const struct sized_buffer *base_url = &conn->ua->base_url;
-  size_t fullsize = base_url->size + len + 2;
+  struct sized_buffer base_url;
+  size_t len = endpoint ? strlen(endpoint) : 0;
+  size_t fullsize;
   CURLcode ecode;
   size_t ret;
+
+  if (!_base_url) {
+    base_url = conn->ua->base_url;
+  }
+  else {
+    base_url.start = _base_url;
+    base_url.size = strlen(_base_url);
+  }
+
+  fullsize = base_url.size + len + 2;
 
   /* increase buffer length if necessary */
   if (fullsize > conn->url.size) {
@@ -617,7 +649,8 @@ _ua_conn_set_url(struct ua_conn *conn, char endpoint[], size_t len)
 
   /* append endpoint to base url */
   ret = snprintf(conn->url.start, conn->url.size, "%.*s%.*s",
-                 (int)base_url->size, base_url->start, (int)len, endpoint);
+                 (int)base_url.size, base_url.start, (int)len, endpoint);
+
   ASSERT_S(ret < conn->url.size, "Out of bounds write attempt");
 
   logconf_trace(&conn->ua->conf, "Request URL: %s", conn->url.start);
@@ -628,63 +661,22 @@ _ua_conn_set_url(struct ua_conn *conn, char endpoint[], size_t len)
 }
 
 void
-ua_conn_setup(struct ua_conn *conn,
-              struct sized_buffer *body,
-              enum http_method method,
-              char endpoint[])
+ua_conn_setup(struct ua_conn *conn, struct ua_conn_attr *attr)
 {
-  char logbuf[1024] = "";
-  struct sized_buffer logheader = { logbuf, sizeof(logbuf) };
-  struct logconf *conf = &conn->ua->conf;
-  const char *method_str;
-
-  _ua_conn_set_url(conn, endpoint, strlen(endpoint));
-  _ua_conn_set_method(conn, method, body);
-
-  /* log request to be sent */
-  method_str = http_method_print(conn->info.method);
-
-  ua_conn_print_header(conn, logbuf, sizeof(logbuf));
-
-  logconf_http(conf, &conn->info.loginfo, conn->url.start, logheader,
-               *conn->body, "HTTP_SEND_%s", method_str);
-
-  logconf_trace(conf, ANSICOLOR("SEND", ANSI_FG_GREEN) " %s [@@@_%zu_@@@]",
-                method_str, conn->info.loginfo.counter);
+  _ua_conn_set_url(conn, attr->base_url, attr->endpoint);
+  _ua_conn_set_method(conn, attr->method, attr->body);
 }
 
 /* get request results */
 ORCAcode
 ua_info_extract(struct ua_conn *conn, struct ua_info *info)
 {
-  struct sized_buffer logheader = {
-    conn->info.header.buf,
-    conn->info.header.len,
-  };
-  struct sized_buffer logbody = {
-    conn->info.body.buf,
-    conn->info.body.len,
-  };
-  struct logconf *conf = &conn->ua->conf;
-  char *resp_url = NULL;
-
-  _ua_info_populate(info, &conn->info);
-
-  /* get request's total elapsed time */
-  curl_easy_getinfo(conn->ehandle, CURLINFO_TOTAL_TIME, &info->elapsed_sec);
-  /* get response's code */
-  curl_easy_getinfo(conn->ehandle, CURLINFO_RESPONSE_CODE, &info->httpcode);
-  /* get response's url */
-  curl_easy_getinfo(conn->ehandle, CURLINFO_EFFECTIVE_URL, &resp_url);
-
-  logconf_http(conf, &conn->info.loginfo, resp_url, logheader, logbody,
-               "HTTP_RCV_%s(%d)", http_code_print(info->httpcode),
-               info->httpcode);
+  _ua_info_populate(info, conn);
 
   /* triggers response callbacks */
   if (info->httpcode >= 500 && info->httpcode < 600) {
     logconf_error(
-      conf,
+      &conn->ua->conf,
       ANSICOLOR("SERVER ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
@@ -693,7 +685,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
   }
   else if (info->httpcode >= 400) {
     logconf_error(
-      conf,
+      &conn->ua->conf,
       ANSICOLOR("CLIENT ERROR", ANSI_FG_RED) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
@@ -702,7 +694,7 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
   }
   else if (info->httpcode >= 300) {
     logconf_warn(
-      conf,
+      &conn->ua->conf,
       ANSICOLOR("REDIRECTING", ANSI_FG_YELLOW) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
@@ -711,14 +703,15 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
   }
   else if (info->httpcode >= 200) {
     logconf_info(
-      conf, ANSICOLOR("SUCCESS", ANSI_FG_GREEN) " (%d)%s - %s [@@@_%zu_@@@]",
+      &conn->ua->conf,
+      ANSICOLOR("SUCCESS", ANSI_FG_GREEN) " (%d)%s - %s [@@@_%zu_@@@]",
       info->httpcode, http_code_print(info->httpcode),
       http_reason_print(info->httpcode), info->loginfo.counter);
 
     info->code = ORCA_OK;
   }
   else if (info->httpcode >= 100) {
-    logconf_info(conf,
+    logconf_info(&conn->ua->conf,
                  ANSICOLOR("INFO", ANSI_FG_GRAY) " (%d)%s - %s [@@@_%zu_@@@]",
                  info->httpcode, http_code_print(info->httpcode),
                  http_reason_print(info->httpcode), info->loginfo.counter);
@@ -726,12 +719,13 @@ ua_info_extract(struct ua_conn *conn, struct ua_info *info)
     info->code = ORCA_HTTP_CODE;
   }
   else if (info->httpcode > 0) {
-    logconf_error(conf, "Unusual HTTP response code: %d", info->httpcode);
+    logconf_error(&conn->ua->conf, "Unusual HTTP response code: %d",
+                  info->httpcode);
 
     info->code = ORCA_UNUSUAL_HTTP_CODE;
   }
   else {
-    logconf_error(conf, "No http response received by libcurl");
+    logconf_error(&conn->ua->conf, "No http response received by libcurl");
 
     info->code = ORCA_CURL_NO_RESPONSE;
   }
@@ -763,15 +757,13 @@ ORCAcode
 ua_easy_run(struct user_agent *ua,
             struct ua_info *info,
             struct ua_resp_handle *handle,
-            struct sized_buffer *body,
-            enum http_method method,
-            char endpoint[])
+            struct ua_conn_attr *attr)
 {
   struct ua_conn *conn = ua_conn_start(ua);
   ORCAcode code;
 
   /* populate conn with parameters */
-  ua_conn_setup(conn, body, method, endpoint);
+  if (attr) ua_conn_setup(conn, attr);
 
   /* perform blocking request, and check results */
   if (ORCA_OK == (code = ua_conn_perform(conn))) {

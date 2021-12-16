@@ -18,12 +18,6 @@ extern "C" {
 struct user_agent;
 struct ua_conn;
 
-/** @brief User-Agent handle initialization attributes */
-struct ua_attr {
-  /** pre-initialized logging module */
-  struct logconf *conf;
-};
-
 /** @brief HTTP methods */
 enum http_method {
   HTTP_INVALID = -1,
@@ -33,6 +27,24 @@ enum http_method {
   HTTP_MIMEPOST,
   HTTP_PATCH,
   HTTP_PUT
+};
+
+/** @brief User-Agent handle initialization attributes */
+struct ua_attr {
+  /** pre-initialized logging module */
+  struct logconf *conf;
+};
+
+/** @brief Connection attributes */
+struct ua_conn_attr {
+  /** the HTTP method of this transfer (GET, POST, ...) */
+  enum http_method method;
+  /** the optional request body, can be NULL */
+  struct sized_buffer *body;
+  /** the endpoint to be appended to the base URL */
+  char *endpoint;
+  /** optional base_url to override ua_set_url(), can be NULL */
+  char *base_url;
 };
 
 /* COMMON HTTP RESPONSE CODES
@@ -80,7 +92,7 @@ struct ua_resp_header {
   struct {
     struct {
       /** offset index of 'buf' for the start of field or value */
-      uintptr_t idx;
+      size_t idx;
       /** length of individual field or value */
       size_t size;
     } field, value;
@@ -105,12 +117,8 @@ struct ua_info {
   struct loginfo loginfo;
   /** response code for latest request */
   ORCAcode code;
-  /** last used HTTP method */
-  enum http_method method;
   /** the HTTP response code */
-  int httpcode;
-  /** fractional total elapsed time for request (in seconds) */
-  double elapsed_sec;
+  long httpcode;
   /** the response header */
   struct ua_resp_header header;
   /** the response body */
@@ -170,6 +178,7 @@ const char *ua_get_url(struct user_agent *ua);
  * @param ua the User-Agent handle created with ua_init()
  * @param info optional informational handle on how the request went
  * @param handle the optional response callbacks, can be NULL
+ * @param attr connection attributes
  * @param body the optional request body, can be NULL
  * @param method the HTTP method of this transfer (GET, POST, ...)
  * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
@@ -181,9 +190,7 @@ const char *ua_get_url(struct user_agent *ua);
 ORCAcode ua_easy_run(struct user_agent *ua,
                      struct ua_info *info,
                      struct ua_resp_handle *handle,
-                     struct sized_buffer *body,
-                     enum http_method method,
-                     char endpoint[]);
+                     struct ua_conn_attr *attr);
 
 /**
  * @brief Get a connection handle and mark it as running
@@ -253,14 +260,9 @@ void ua_conn_stop(struct ua_conn *conn);
  * @brief Setup a connection handle
  *
  * @param conn the connection handle
- * @param body the optional request body, can be NULL
- * @param method the HTTP method of this transfer (GET, POST, ...)
- * @param endpoint the endpoint to be appended to the URL set at ua_set_url()
+ * @param attr attributes to be set for conn
  */
-void ua_conn_setup(struct ua_conn *conn,
-                   struct sized_buffer *body,
-                   enum http_method method,
-                   char endpoint[]);
+void ua_conn_setup(struct ua_conn *conn, struct ua_conn_attr *attr);
 
 /**
  * @brief Extract information from `conn` previous request

@@ -6,6 +6,8 @@
 #include "github.h"
 #include "github-internal.h"
 
+#include "json-actor.h"
+
 static void
 setopt_cb(struct ua_conn *conn, void *p_presets)
 {
@@ -72,6 +74,8 @@ _github_adapter_perform(struct github_adapter *adapter,
       }
 
       ua_info_cleanup(&info);
+
+      retry = false;
     } break;
     case ORCA_CURLE_INTERNAL:
       logconf_error(&adapter->conf, "Curl internal error, will retry again");

@@ -95,6 +95,8 @@ _reddit_adapter_run_sync(struct reddit_adapter *adapter,
       }
 
       ua_info_cleanup(&info);
+
+      retry = false;
     } break;
     case ORCA_CURLE_INTERNAL:
       logconf_error(&adapter->conf, "Curl internal error, will retry again");
@@ -140,6 +142,10 @@ reddit_adapter_run(struct reddit_adapter *adapter,
 
   return _reddit_adapter_run_sync(adapter, attr, body, method, endpoint);
 }
+
+/******************************************************************************
+ * Functions specific to Reddit Auth
+ ******************************************************************************/
 
 ORCAcode
 reddit_access_token(struct reddit *client,
@@ -231,6 +237,10 @@ reddit_access_token(struct reddit *client,
   return code;
 }
 
+/******************************************************************************
+ * Functions specific to Reddit Links & Comments
+ ******************************************************************************/
+
 ORCAcode
 reddit_comment(struct reddit *client,
                struct reddit_comment_params *params,
@@ -285,6 +295,10 @@ reddit_comment(struct reddit *client,
   return reddit_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                             "/api/comment");
 }
+
+/******************************************************************************
+ * Functions specific to Reddit Search
+ ******************************************************************************/
 
 ORCAcode
 reddit_search(struct reddit *client,

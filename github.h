@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "json-actor-boxed.h"
-#include "types.h"
+#include "common.h"
 #include "logconf.h"
 
 /* see specs/github/ for specs */
@@ -29,10 +29,6 @@ struct github *github_config_init(const char config_file[],
 void github_write_json(char *json, size_t len, void *user_obj);
 
 ORCAcode github_fill_repo_config(struct github *client, char *repo_config);
-
-/******************************************************************************
- * Functions specific to Github Repositories
- ******************************************************************************/
 
 ORCAcode github_get_repository(struct github *client,
                                char *owner,
@@ -75,17 +71,9 @@ ORCAcode github_create_a_pull_request(struct github *client,
                                       char *branch,
                                       char *pull_msg);
 
-/******************************************************************************
- * Functions specific to Github Users
- ******************************************************************************/
-
 ORCAcode github_get_user(struct github *client,
                          char *username,
                          struct github_user *ret);
-
-/******************************************************************************
- * Functions specific to Github Gist
- ******************************************************************************/
 
 ORCAcode github_get_gist(struct github *client,
                          char *id,

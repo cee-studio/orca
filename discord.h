@@ -13,8 +13,11 @@
 
 #include <stdbool.h>
 #include "json-actor-boxed.h"
-#include "types.h"
+#include "common.h"
 #include "logconf.h"
+
+/* see specs/discord/ for specs */
+#include "specs-code/discord/one-specs.h"
 
 #define DISCORD_API_BASE_URL                 "https://discord.com/api/v9"
 #define DISCORD_GATEWAY_URL_SUFFIX           "?v=9&encoding=json"
@@ -71,9 +74,6 @@ struct discord_voice_cbs;
  *  @{ */
 #define DISCORD_WEBHOOK_NAME_LEN 4 * 80 + 1
 /** @} */
-
-/* see specs/discord/ for specs */
-#include "specs-code/discord/one-specs.h"
 
 /** @defgroup DiscordCallbacksGeneral
  * @brief General-purpose callbacks

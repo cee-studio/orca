@@ -27,29 +27,6 @@
 /** @brief Get client from its nested field */
 #define CLIENT(ptr, path) CONTAINEROF(ptr, struct discord, path)
 
-/**
- * @brief Shortcut for setting attributes for a specs-generated struct
- *
- * @param type datatype of the struct
- * @param obj pointer to specs-generated struct
- */
-#define REQUEST_ATTR_INIT(type, obj)                                          \
-  {                                                                           \
-    obj, sizeof *obj, type##_init_v, type##_from_json_v, type##_cleanup_v     \
-  }
-
-/**
- * @brief Shortcut for setting attributes for a specs-generated list
- *
- * @param type datatype of the list
- * @param list pointer to specs-generated null terminated list
- */
-#define REQUEST_ATTR_LIST_INIT(type, list)                                    \
-  {                                                                           \
-    list, sizeof **list, NULL, type##_list_from_json_v,                       \
-      (void (*)(void *))type##_list_free_v                                    \
-  }
-
 /** @brief Behavior of request return object */
 struct discord_request_attr {
   /** the object itself */
@@ -69,17 +46,6 @@ struct discord_request_attr {
 
 /** @brief executed on a succesful request */
 typedef void (*discord_on_done)(struct discord *client, const void *obj);
-
-/**
- * @brief Shortcut for wrapping async versions of request functions
- *
- * @param callback the return callback (if any)
- * @param wrap the original function to be wrapped
- */
-#define ASYNC_SET(callback, wrap)                                             \
-  struct discord_async_attr attr = { (discord_on_done)done };                 \
-  discord_adapter_set_async(&client->adapter, &attr);                         \
-  return (wrap)
 
 /** @brief The async attributes for next request */
 struct discord_async_attr {

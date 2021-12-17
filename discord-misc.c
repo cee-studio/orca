@@ -295,28 +295,6 @@ discord_get_channel_at_pos(struct discord *client,
   return code;
 }
 
-ORCAcode
-discord_disconnect_guild_member(struct discord *client,
-                                const u64_snowflake_t guild_id,
-                                const u64_snowflake_t user_id,
-                                struct discord_guild_member *ret)
-{
-  struct discord_request_attr attr =
-    REQUEST_ATTR_INIT(discord_guild_member, ret);
-  struct sized_buffer body;
-  char buf[128];
-
-  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
-  ORCA_EXPECT(client, user_id != 0, ORCA_BAD_PARAMETER);
-
-  body.size = json_inject(buf, sizeof(buf), "(channel_id):null");
-  body.start = buf;
-
-  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
-                             "/guilds/%" PRIu64 "/members/%" PRIu64, guild_id,
-                             user_id);
-}
-
 void
 discord_presence_add_activity(struct discord_presence_status *presence,
                               struct discord_activity *activity)

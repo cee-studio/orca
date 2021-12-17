@@ -133,7 +133,7 @@ UserAgent_prototype_run(js_State *J)
   struct user_agent *ua = js_touserdata(J, 0, "UserAgent");
   struct ua_info info = { 0 };
 
-  jsua_run(J, ua, &info);
+  jsua_easy_run(J, ua, &info);
 
   js_newobject(J);
   {
@@ -155,7 +155,7 @@ UserAgent_prototype_string(js_State *J)
   struct sized_buffer body, new_body = { 0 };
   struct ua_info info = { 0 };
 
-  jsua_run(J, ua, &info);
+  jsua_easy_run(J, ua, &info);
 
   body = ua_info_get_body(&info);
 
@@ -251,7 +251,7 @@ jsua_init(js_State *J)
 }
 
 ORCAcode
-jsua_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
+jsua_easy_run(js_State *J, struct user_agent *ua, struct ua_info *p_info)
 {
   struct sized_buffer body = { 0 };
   struct ua_conn_attr attr = { 0 };

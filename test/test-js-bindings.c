@@ -17,7 +17,7 @@ void js_request(js_State *J)
   struct user_agent *ua = ua_init(&(struct ua_attr){ .conf = &conf });
   ua_set_url(ua, "http://www.example.com/");
 
-  if (ORCA_OK == jsua_run(J, ua, NULL)) {
+  if (ORCA_OK == jsua_easy_run(J, ua, NULL)) {
     printf("Request was a success!\n");
   }
 

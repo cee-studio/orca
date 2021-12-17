@@ -760,10 +760,13 @@ dispatch_run(void *p_cxt)
 static void
 on_dispatch(struct discord_gateway *gw)
 {
+  struct discord *client = CLIENT(gw, gw);
+
   /* event-callback selector */
   void (*on_event)(struct discord_gateway *, struct sized_buffer *) = NULL;
   /* get dispatch event opcode */
   enum discord_gateway_events event;
+  enum discord_event_scheduler mode;
 
   /* TODO: this should only apply for user dispatched payloads? */
 #if 0
@@ -970,37 +973,33 @@ on_dispatch(struct discord_gateway *gw)
     break;
   }
 
+  mode = gw->cmds.scheduler(client, &gw->payload.data, event);
+  if (!on_event) return;
+
   /* user subscribed to event */
-  if (on_event) {
-    struct discord *client = CLIENT(gw, gw);
-    enum discord_event_scheduler mode;
+  switch (mode) {
+  case DISCORD_EVENT_IGNORE:
+    break;
+  case DISCORD_EVENT_MAIN_THREAD:
+    on_event(gw, &gw->payload.data);
+    break;
+  case DISCORD_EVENT_WORKER_THREAD: {
+    struct discord_event *cxt = malloc(sizeof *cxt);
+    int ret;
 
-    mode = gw->cmds.scheduler(client, &gw->payload.data, event);
-    switch (mode) {
-    case DISCORD_EVENT_IGNORE:
-      return;
-    case DISCORD_EVENT_MAIN_THREAD:
-      on_event(gw, &gw->payload.data);
-      return;
-    case DISCORD_EVENT_WORKER_THREAD: {
-      struct discord_event *cxt = malloc(sizeof *cxt);
-      int ret;
+    cxt->name = strdup(gw->payload.name);
+    cxt->gw = &(discord_clone(client)->gw);
+    cxt->data.size =
+      asprintf(&cxt->data.start, "%.*s", (int)gw->payload.data.size,
+               gw->payload.data.start);
+    cxt->event = event;
+    cxt->on_event = on_event;
 
-      cxt->name = strdup(gw->payload.name);
-      cxt->gw = &(discord_clone(client)->gw);
-      cxt->data.size =
-        asprintf(&cxt->data.start, "%.*s", (int)gw->payload.data.size,
-                 gw->payload.data.start);
-      cxt->event = event;
-      cxt->on_event = on_event;
-
-      ret = work_run(&dispatch_run, cxt);
-      VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
-    }
-      return;
-    default:
-      ERR("Unknown event handling mode (code: %d)", mode);
-    }
+    ret = work_run(&dispatch_run, cxt);
+    VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
+  } break;
+  default:
+    ERR("Unknown event handling mode (code: %d)", mode);
   }
 }
 

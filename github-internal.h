@@ -3,6 +3,7 @@
 
 #include "user-agent.h"
 #include "cee-utils.h"
+#include "json-actor.h"
 
 struct github_presets {
   char *owner;

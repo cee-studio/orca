@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "work.h"
+
 #include "slack.h"
 #include "slack-internal.h"
 

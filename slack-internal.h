@@ -6,7 +6,6 @@
 #include "json-actor.h"
 #include "json-actor-boxed.h"
 
-#include "logconf.h" /* struct logconf */
 #include "user-agent.h"
 #include "websockets.h"
 #include "cee-utils.h"

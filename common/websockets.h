@@ -11,7 +11,7 @@ extern "C" {
 
 #include <curl/curl.h>
 
-#include "types.h" /* ORCAcode */
+#include "common.h" /* ORCAcode */
 #include "logconf.h" /* logging facilities */
 
 /**

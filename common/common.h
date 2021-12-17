@@ -1,9 +1,7 @@
-/**
- * @file types.h
- */
+/** @file common.h */
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef COMMON_H
+#define COMMON_H
 
 #include <stdint.h>
 
@@ -52,7 +50,7 @@ typedef int ORCAcode;
 /** received a non-standard http code */
 #define ORCA_UNUSUAL_HTTP_CODE -3
 /** bad value for parameter */
-#define ORCA_BAD_PARAMETER     -4
+#define ORCA_BAD_PARAMETER -4
 /** internal failure when encoding or decoding JSON */
 #define ORCA_BAD_JSON -5
 /** curl's easy handle internal error */
@@ -124,8 +122,18 @@ typedef int ORCAcode;
  */
 const char *orca_strerror(ORCAcode code);
 
+/** 
+ * @brief Initialize global shared-resources not API-specific
+ *
+ * @return ORCA_OK on success, ORCA_GLOBAL_INIT on error
+ */
+ORCAcode orca_global_init();
+
+/** @brief Cleanup global shared-resources */
+void orca_global_cleanup();
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* TYPES_H */
+#endif /* COMMON_H */

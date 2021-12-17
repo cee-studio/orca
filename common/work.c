@@ -8,10 +8,11 @@
 
 /** true after threadpool initialization */
 static _Bool once;
+
 /** request thread and optional callback execution thread */
 static threadpool_t *tpool;
 
-ORCAcode
+int
 work_global_init(void)
 {
   static int nthreads = 0;
@@ -19,7 +20,7 @@ work_global_init(void)
   const char *val;
   char *p_end;
 
-  if (once) return ORCA_GLOBAL_INIT;
+  if (once) return 1;
 
   /* get threadpool thread amount */
   val = getenv("ORCA_THREADPOOL_SIZE");
@@ -43,7 +44,7 @@ work_global_init(void)
 
   once = 1;
 
-  return ORCA_OK;
+  return 0;
 }
 
 int

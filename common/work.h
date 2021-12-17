@@ -9,15 +9,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "types.h" /* ORCAcode */
-
 /**
  * @brief Initialize global threadpool and priority queue
- * @return ORCAcode, ORCA_OK means nothing out of the ordinary
- * @warning ORCA_GLOBAL_INIT will be returned if this function is called more
- * than once
+ * @return `0` on success, `1` if it has already been initialized
  */
-ORCAcode work_global_init(void);
+int work_global_init(void);
 
 /**
  * @brief Cleanup global threadpool and priority queue

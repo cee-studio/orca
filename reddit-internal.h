@@ -8,9 +8,6 @@
 #include "websockets.h"
 #include "cee-utils.h"
 
-#define REDDIT_BASE_API_URL   "https://www.reddit.com"
-#define REDDIT_BASE_OAUTH_URL "https://oauth.reddit.com"
-
 struct reddit_request_attr {
   /** the object itself */
   void *obj;

@@ -10,22 +10,9 @@
 #include "user-agent.h"
 #include "websockets.h"
 #include "cee-utils.h"
-#include "work.h"
-
-#define SLACK_BASE_API_URL "https://slack.com/api"
 
 /** @brief Get client from its nested field */
 #define CLIENT(ptr, path) CONTAINEROF(ptr, struct slack, path)
-
-/**
- * @brief Shortcut for setting request attributes expecting a raw JSON response
- *
- * @param ret_json pointer to `struct sized_buffer` to store JSON at
- */
-#define REQUEST_ATTR_RAW_INIT(ret_json)                                                   \
-  {                                                                                       \
-    ret_json, 0, NULL, (void (*)(char *, size_t, void *))&cee_sized_buffer_from_json, NULL \
-  }
 
 struct slack_request_attr {
   /** the object itself */
@@ -102,7 +89,7 @@ struct slack_sm {
     /** triggers when a view_submission interaction occurs */
     slack_on_event on_view_submission;
 
-    /** 
+    /**
      * Handle context on how each event callback is executed
      * @see slack_set_scheduler() */
     slack_event_scheduler scheduler;

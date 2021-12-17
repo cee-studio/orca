@@ -9,6 +9,9 @@
 /* see specs/reddit/ for specs */
 #include "specs-code/reddit/one-specs.h"
 
+#define REDDIT_BASE_API_URL   "https://www.reddit.com"
+#define REDDIT_BASE_OAUTH_URL "https://oauth.reddit.com"
+
 struct reddit *reddit_init(const char username[],
                            const char password[],
                            const char client_id[],

@@ -6,7 +6,16 @@
 #include "github.h"
 #include "github-internal.h"
 
-#include "json-actor.h"
+/**
+ * @brief Shortcut for setting attributes for a specs-generated struct
+ *
+ * @param type datatype of the struct
+ * @param obj pointer to specs-generated struct
+ */
+#define REQUEST_ATTR_INIT(type, obj)                                          \
+  {                                                                           \
+    obj, sizeof *obj, type##_init_v, type##_from_json_v, type##_cleanup_v     \
+  }
 
 static void
 setopt_cb(struct ua_conn *conn, void *p_presets)
@@ -163,7 +172,7 @@ github_create_fork(struct github *client, char *owner, char *repo)
 ORCAcode
 github_update_my_fork(struct github *client, char **ret)
 {
-  struct github_request_attr attr = { &ret, 0, NULL, &object_sha_from_json };
+  struct github_request_attr attr = { ret, 0, NULL, &object_sha_from_json };
   struct sized_buffer body;
   char *sha = NULL;
   char buf[2048];
@@ -436,13 +445,7 @@ github_create_a_pull_request(struct github *client,
 ORCAcode
 github_get_user(struct github *client, char *username, struct github_user *ret)
 {
-  struct github_request_attr attr = {
-    ret,
-    sizeof *ret,
-    &github_user_init_v,
-    &github_user_from_json_v,
-    &github_user_cleanup_v,
-  };
+  struct github_request_attr attr = REQUEST_ATTR_INIT(github_user, ret);
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(username), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
@@ -454,9 +457,7 @@ github_get_user(struct github *client, char *username, struct github_user *ret)
 ORCAcode
 github_get_gist(struct github *client, char *id, struct github_gist *ret)
 {
-  struct github_request_attr attr = { ret, sizeof *ret, &github_gist_init_v,
-                                      &github_gist_from_json_v,
-                                      &github_gist_cleanup_v };
+  struct github_request_attr attr = REQUEST_ATTR_INIT(github_gist, ret);
 
   ORCA_EXPECT(client, !IS_EMPTY_STRING(id), ORCA_BAD_PARAMETER);
   ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
@@ -470,9 +471,7 @@ github_create_gist(struct github *client,
                    struct github_gist_create_params *params,
                    struct github_gist *ret)
 {
-  struct github_request_attr attr = { ret, sizeof *ret, &github_gist_init_v,
-                                      &github_gist_from_json_v,
-                                      &github_gist_cleanup_v };
+  struct github_request_attr attr = REQUEST_ATTR_INIT(github_gist, ret);
   struct sized_buffer body;
   char buf[4096];
   char fmt[2048];

@@ -8,6 +8,17 @@
 #include "reddit-internal.h"
 #include "cee-utils.h"
 
+/**
+ * @brief Shortcut for setting request attributes expecting a raw JSON response
+ *
+ * @param ret_json pointer to `struct sized_buffer` to store JSON at
+ */
+#define REQUEST_ATTR_RAW_INIT(ret_json)                                       \
+  {                                                                           \
+    ret_json, 0, NULL,                                                        \
+      (void (*)(char *, size_t, void *)) & cee_sized_buffer_from_json, NULL   \
+  }
+
 static void
 setopt_cb(struct ua_conn *conn, void *p_client)
 {
@@ -152,11 +163,7 @@ reddit_access_token(struct reddit *client,
                     struct reddit_access_token_params *params,
                     struct sized_buffer *ret)
 {
-  struct reddit_request_attr attr = {
-    ret,  0,
-    NULL, (void (*)(char *, size_t, void *)) & cee_sized_buffer_from_json,
-    NULL, REDDIT_BASE_API_URL
-  };
+  struct reddit_request_attr attr = REQUEST_ATTR_RAW_INIT(ret);
   struct sized_buffer body;
   char buf[1024];
   size_t len = 0;
@@ -211,6 +218,8 @@ reddit_access_token(struct reddit *client,
   body.start = buf;
   body.size = len;
 
+  attr.base_url = REDDIT_BASE_API_URL;
+
   code = reddit_adapter_run(&client->adapter, &attr, &body, HTTP_POST,
                             "/api/v1/access_token");
 
@@ -246,9 +255,7 @@ reddit_comment(struct reddit *client,
                struct reddit_comment_params *params,
                struct sized_buffer *ret)
 {
-  struct reddit_request_attr attr = { ret, 0, NULL,
-                                      (void (*)(char *, size_t, void *))
-                                        & cee_sized_buffer_from_json };
+  struct reddit_request_attr attr = REQUEST_ATTR_RAW_INIT(ret);
   struct sized_buffer body;
   char *text_url_encoded;
   char buf[4096];
@@ -306,9 +313,7 @@ reddit_search(struct reddit *client,
               char subreddit[],
               struct sized_buffer *ret)
 {
-  struct reddit_request_attr attr = { ret, 0, NULL,
-                                      (void (*)(char *, size_t, void *))
-                                        & cee_sized_buffer_from_json };
+  struct reddit_request_attr attr = REQUEST_ATTR_RAW_INIT(ret);
   char *q_url_encoded;
   char query[1024];
   size_t len = 0;

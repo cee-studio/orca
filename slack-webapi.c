@@ -7,6 +7,17 @@
 #include "slack.h"
 #include "slack-internal.h"
 
+/**
+ * @brief Shortcut for setting request attributes expecting a raw JSON response
+ *
+ * @param ret_json pointer to `struct sized_buffer` to store JSON at
+ */
+#define REQUEST_ATTR_RAW_INIT(ret_json)                                       \
+  {                                                                           \
+    ret_json, 0, NULL,                                                        \
+      (void (*)(char *, size_t, void *)) & cee_sized_buffer_from_json, NULL   \
+  }
+
 void
 slack_webapi_init(struct slack_webapi *webapi,
                   struct logconf *conf,
@@ -115,14 +126,18 @@ slack_webapi_run(struct slack_webapi *webapi,
                  char endpoint_fmt[],
                  ...)
 {
+  static struct slack_request_attr blank_attr = { 0 };
   char endpoint[2048];
   va_list args;
-  size_t len;
+  size_t ret;
+
+  /* have it point somewhere */
+  if (!attr) attr = &blank_attr;
 
   va_start(args, endpoint_fmt);
 
-  len = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
-  ASSERT_S(len < sizeof(endpoint), "Out of bounds write attempt");
+  ret = vsnprintf(endpoint, sizeof(endpoint), endpoint_fmt, args);
+  ASSERT_S(ret < sizeof(endpoint), "Out of bounds write attempt");
 
   va_end(args);
 

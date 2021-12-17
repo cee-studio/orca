@@ -9,6 +9,8 @@
 /* see specs/slack/ for specs */
 #include "specs-code/slack/one-specs.h"
 
+#define SLACK_BASE_API_URL "https://slack.com/api"
+
 struct slack; /* forward declaration */
 
 /** @todo generate as specs */
@@ -69,6 +71,7 @@ typedef slack_event_scheduler_t (*slack_event_scheduler)(
   struct sized_buffer *event_data,
   enum slack_sm_types type);
 
-void slack_set_event_scheduler(struct slack *client, slack_event_scheduler callback);
+void slack_set_event_scheduler(struct slack *client,
+                               slack_event_scheduler callback);
 
 #endif /* SLACK_H */

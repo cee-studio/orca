@@ -17,6 +17,15 @@
 /** @brief Get client from its nested field */
 #define CLIENT(ptr, path) CONTAINEROF(ptr, struct slack, path)
 
+/**
+ * @brief Shortcut for setting request attributes expecting a raw JSON response
+ *
+ * @param ret_json pointer to `struct sized_buffer` to store JSON at
+ */
+#define REQUEST_ATTR_RAW_INIT(ret_json)                                                   \
+  {                                                                                       \
+    ret_json, 0, NULL, (void (*)(char *, size_t, void *))&cee_sized_buffer_from_json, NULL \
+  }
 
 struct slack_request_attr {
   /** the object itself */
@@ -29,6 +38,13 @@ struct slack_request_attr {
   void (*from_json)(char *json, size_t len, void *obj);
   /** perform a cleanup on `obj` */
   void (*cleanup)(void *obj);
+
+  /** client token-level */
+  enum {
+    SLACK_TOKEN_BOT = 0,
+    SLACK_TOKEN_APP,
+  } token_level;
+
   /** override default content-type */
   char *content_type;
 };
@@ -68,31 +84,34 @@ struct slack_sm {
   /* CALLBACKS STRUCTURE */
   struct {
     /** trigers in every event loop iteration */
-    slack_idle_cb on_idle;
+    slack_on_event on_idle;
     /** triggers when connections first establishes */
-    slack_idle_cb on_hello;
+    slack_on_event on_hello;
+
     /* EVENT API CALLBACKS */
     /** triggers when a message is sent */
-    slack_idle_cb on_message;
+    slack_on_event on_message;
+
     /* INTERACTION CALLBACKS */
     /** triggers when a block_action interaction occurs */
-    slack_idle_cb on_block_actions;
+    slack_on_event on_block_actions;
     /** triggers when a message_action interaction occurs */
-    slack_idle_cb on_message_actions;
+    slack_on_event on_message_actions;
     /** triggers when a view_closed interaction occurs */
-    slack_idle_cb on_view_closed;
+    slack_on_event on_view_closed;
     /** triggers when a view_submission interaction occurs */
-    slack_idle_cb on_view_submission;
-  } cbs;
+    slack_on_event on_view_submission;
 
-  /** Handle context on how each event callback is executed @see
-   * slack_set_event_handler() */
-  slack_event_mode_cb event_handler;
+    /** 
+     * Handle context on how each event callback is executed
+     * @see slack_set_scheduler() */
+    slack_event_scheduler scheduler;
+  } cbs;
 };
 
-/* SOCKET MODE PRIVATE FUNCTIONS */
 void slack_sm_init(struct slack_sm *sm, struct logconf *conf);
 void slack_sm_cleanup(struct slack_sm *sm);
+void slack_sm_run(struct slack_sm *sm);
 
 struct slack {
   struct sized_buffer bot_token;
@@ -111,7 +130,7 @@ struct slack_event {
   struct slack_sm *sm;
   char str_type[64];
   enum slack_sm_types type;
-  void (*on_event)(struct slack_sm *sm, struct sized_buffer *data);
+  slack_on_event on_event;
 };
 
 #endif /* SLACK_INTERNAL_H */

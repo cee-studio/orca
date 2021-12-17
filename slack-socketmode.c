@@ -6,6 +6,7 @@
 #include "slack.h"
 #include "slack-internal.h"
 
+/* TODO: specs-generated */
 static enum slack_sm_types
 sm_eval_type(char type[])
 {
@@ -24,7 +25,7 @@ sm_eval_type(char type[])
 }
 
 static void
-send_acknowledge(struct slack_sm *sm, const char envelope_id[])
+send_ack(struct slack_sm *sm, const char envelope_id[])
 {
   struct ws_info info = { 0 };
   char payload[512];
@@ -34,8 +35,7 @@ send_acknowledge(struct slack_sm *sm, const char envelope_id[])
   ASSERT_S(ret < sizeof(payload), "Out of bounds write attempt");
 
   log_info(
-    ANSICOLOR("SEND",
-              ANSI_FG_BRIGHT_GREEN) " ACKNOWLEDGE (%d bytes) [@@@_%zu_@@@]",
+    ANSICOLOR("SEND", ANSI_FG_BRIGHT_GREEN) " ACK (%d bytes) [@@@_%zu_@@@]",
     ret, info.loginfo.counter);
 
   ws_send_text(sm->ws, &info, payload, ret);
@@ -59,41 +59,6 @@ on_hello(struct slack_sm *sm, const char *text, size_t len)
 }
 
 static void
-on_message(struct slack_sm *sm, struct sized_buffer *data)
-{
-  if (sm->cbs.on_message)
-    sm->cbs.on_message(CLIENT(sm, sm), data->start, data->size);
-}
-
-static void
-on_block_actions(struct slack_sm *sm, struct sized_buffer *data)
-{
-  if (sm->cbs.on_block_actions)
-    sm->cbs.on_block_actions(CLIENT(sm, sm), data->start, data->size);
-}
-
-static void
-on_message_actions(struct slack_sm *sm, struct sized_buffer *data)
-{
-  if (sm->cbs.on_message_actions)
-    sm->cbs.on_message_actions(CLIENT(sm, sm), data->start, data->size);
-}
-
-static void
-on_view_closed(struct slack_sm *sm, struct sized_buffer *data)
-{
-  if (sm->cbs.on_view_closed)
-    sm->cbs.on_view_closed(CLIENT(sm, sm), data->start, data->size);
-}
-
-static void
-on_view_submission(struct slack_sm *sm, struct sized_buffer *data)
-{
-  if (sm->cbs.on_view_submission)
-    sm->cbs.on_view_submission(CLIENT(sm, sm), data->start, data->size);
-}
-
-static void
 context_run(void *p_cxt)
 {
   struct slack_event *cxt = p_cxt;
@@ -101,7 +66,7 @@ context_run(void *p_cxt)
   log_info("Thread " ANSICOLOR("starts", ANSI_FG_RED) " to serve %s",
            cxt->str_type);
 
-  cxt->on_event(cxt->sm, &cxt->data);
+  cxt->on_event(CLIENT(cxt->sm, sm), cxt->data.start, cxt->data.size);
 
   log_info("Thread " ANSICOLOR("exits", ANSI_FG_RED) " from serving %s",
            cxt->str_type);
@@ -113,57 +78,58 @@ context_run(void *p_cxt)
 static void
 on_events(struct slack_sm *sm, struct sized_buffer *data, char str_type[])
 {
-  void (*on_event)(struct slack_sm *, struct sized_buffer *) = NULL;
+  struct slack *client = CLIENT(sm, sm);
+
+  slack_on_event on_event = NULL;
+  enum slack_event_scheduler mode;
   enum slack_sm_types type;
 
   switch (type = sm_eval_type(str_type)) {
   case SLACK_SOCKETMODE_TYPE_MESSAGE:
-    if (sm->cbs.on_message) on_event = &on_message;
+    on_event = sm->cbs.on_message;
     break;
   case SLACK_SOCKETMODE_TYPE_BLOCK_ACTIONS:
-    if (sm->cbs.on_block_actions) on_event = &on_block_actions;
+    on_event = sm->cbs.on_block_actions;
     break;
   case SLACK_SOCKETMODE_TYPE_MESSAGE_ACTIONS:
-    if (sm->cbs.on_message_actions) on_event = &on_message_actions;
+    on_event = sm->cbs.on_message_actions;
     break;
   case SLACK_SOCKETMODE_TYPE_VIEW_CLOSED:
-    if (sm->cbs.on_view_closed) on_event = &on_view_closed;
+    on_event = sm->cbs.on_view_closed;
     break;
   case SLACK_SOCKETMODE_TYPE_VIEW_SUBMISSION:
-    if (sm->cbs.on_view_submission) on_event = &on_view_submission;
+    on_event = sm->cbs.on_view_submission;
     break;
   default:
     log_warn("Expected unimplemented Socketmode type (code: %d)", type);
     break;
   }
 
-  if (on_event) {
-    enum slack_event_handling_mode mode;
+  mode = sm->cbs.scheduler(client, data, type);
+  if (!on_event) return;
 
-    switch (mode = sm->event_handler(CLIENT(sm, sm), data, type)) {
-    case SLACK_EVENT_IGNORE:
-      return;
-    case SLACK_EVENT_MAIN_THREAD:
-      on_event(sm, data);
-      return;
-    case SLACK_EVENT_CHILD_THREAD: {
-      struct slack_event *cxt = malloc(sizeof *cxt);
-      int ret;
+  switch (mode) {
+  case SLACK_EVENT_IGNORE:
+    break;
+  case SLACK_EVENT_MAIN_THREAD:
+    on_event(client, data->start, data->size);
+    break;
+  case SLACK_EVENT_WORKER_THREAD: {
+    struct slack_event *cxt = malloc(sizeof *cxt);
+    int ret;
 
-      cxt->data.size =
-        asprintf(&cxt->data.start, "%.*s", (int)data->size, data->start);
-      cxt->sm = sm;
-      cxt->type = type;
-      cxt->on_event = on_event;
-      snprintf(cxt->str_type, sizeof(cxt->str_type), "%s", str_type);
+    cxt->data.size =
+      asprintf(&cxt->data.start, "%.*s", (int)data->size, data->start);
+    cxt->sm = sm;
+    cxt->type = type;
+    cxt->on_event = on_event;
+    snprintf(cxt->str_type, sizeof(cxt->str_type), "%s", str_type);
 
-      ret = work_run(&context_run, cxt);
-      VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
-    }
-      return;
-    default:
-      ERR("Unknown event handling mode (code: %d)", mode);
-    }
+    ret = work_run(&context_run, cxt);
+    VASSERT_S(0 == ret, "Couldn't create task (code %d)", ret);
+  } break;
+  default:
+    ERR("Unknown event handling mode (code: %d)", mode);
   }
 }
 
@@ -209,7 +175,7 @@ on_text_cb(void *p_sm,
   json_extract((char *)text, len, "(type):s,(envelope_id):s", type,
                envelope_id);
 
-  if (*envelope_id) send_acknowledge(sm, envelope_id);
+  if (*envelope_id) send_ack(sm, envelope_id);
 
   if (STREQ(type, "hello")) {
     on_hello(sm, text, len);
@@ -234,15 +200,15 @@ on_text_cb(void *p_sm,
   log_trace(
     ANSICOLOR("RCV",
               ANSI_FG_BRIGHT_YELLOW) " %s%s%s (%zu bytes) [@@@_%zu_@@@]",
-    type, (*event_type) ? " -> " : "", event_type, len, info->loginfo.counter);
+    type, *event_type ? " -> " : "", event_type, len, info->loginfo.counter);
 
   on_events(sm, &data, event_type);
 }
 
-static enum slack_event_handling_mode
-noop_event_handler(struct slack *a,
-                   struct sized_buffer *b,
-                   enum slack_sm_types d)
+static slack_event_scheduler_t
+default_scheduler_cb(struct slack *a,
+                     struct sized_buffer *b,
+                     enum slack_sm_types d)
 {
   return SLACK_EVENT_MAIN_THREAD;
 }
@@ -285,7 +251,7 @@ slack_sm_init(struct slack_sm *sm, struct logconf *conf)
   sm->ws = ws_init(&cbs, sm->mhandle, &attr);
   logconf_branch(&sm->conf, conf, "SLACK_SOCKETMODE");
 
-  sm->event_handler = &noop_event_handler;
+  sm->cbs.scheduler = &default_scheduler_cb;
 
   refresh_connection(sm);
 }
@@ -299,9 +265,8 @@ slack_sm_cleanup(struct slack_sm *sm)
 
 /* connects to the slack websockets server */
 void
-slack_sm_run(struct slack *client)
+slack_sm_run(struct slack_sm *sm)
 {
-  struct slack_sm *sm = &client->sm;
   uint64_t tstamp;
 
   ASSERT_S(WS_DISCONNECTED == ws_get_status(sm->ws),

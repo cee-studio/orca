@@ -119,7 +119,7 @@ typedef void (*discord_on_guild)(struct discord *client,
 
 /** @brief Guild Delete callback */
 typedef void (*discord_on_guild_delete)(struct discord *client,
-                                        const u64_snowflake_t guild_id);
+                                        u64_snowflake_t guild_id);
 
 /** @brief Guild Role Create/Update callback */
 typedef void (*discord_on_guild_role)(struct discord *client,
@@ -480,7 +480,8 @@ void discord_set_on_thread_delete(struct discord *client,
                                   discord_on_channel callback);
 
 /**
- * @brief Set a callback that triggers when a guild's information becomes available
+ * @brief Set a callback that triggers when a guild's information becomes
+ *        available
  *
  * @param client the client created with discord_init()
  * @param callback the callback that will be executed
@@ -491,7 +492,8 @@ void discord_set_on_guild_create(struct discord *client,
                                  discord_on_guild callback);
 
 /**
- * @brief Set a callback that triggers when a guild's information becomes updated
+ * @brief Set a callback that triggers when a guild's information becomes
+ * updated
  *
  * @param client the client created with discord_init()
  * @param callback the callback that will be executed
@@ -2050,8 +2052,8 @@ ORCAcode discord_list_active_threads(
 ORCAcode discord_list_public_archived_threads(
   struct discord *client,
   u64_snowflake_t channel_id,
-  const u64_unix_ms_t before,
-  const int limit,
+  u64_unix_ms_t before,
+  int limit,
   struct discord_thread_response_body *body);
 /** @} */
 
@@ -2060,8 +2062,8 @@ ORCAcode discord_list_public_archived_threads(
 ORCAcode discord_list_private_archived_threads(
   struct discord *client,
   u64_snowflake_t channel_id,
-  const u64_unix_ms_t before,
-  const int limit,
+  u64_unix_ms_t before,
+  int limit,
   struct discord_thread_response_body *body);
 /** @} */
 
@@ -2070,8 +2072,8 @@ ORCAcode discord_list_private_archived_threads(
 ORCAcode discord_list_joined_private_archived_threads(
   struct discord *client,
   u64_snowflake_t channel_id,
-  const u64_unix_ms_t before,
-  const int limit,
+  u64_unix_ms_t before,
+  int limit,
   struct discord_thread_response_body *body);
 /** @} */
 
@@ -3094,8 +3096,8 @@ void discord_overwrite_append(
   enum discord_bitwise_permission_flags deny);
 ORCAcode discord_get_channel_at_pos(struct discord *client,
                                     u64_snowflake_t guild_id,
-                                    const enum discord_channel_types type,
-                                    const size_t position,
+                                    enum discord_channel_types type,
+                                    size_t position,
                                     struct discord_channel *ret);
 ORCAcode discord_delete_messages_by_author_id(struct discord *client,
                                               u64_snowflake_t channel_id,

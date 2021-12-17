@@ -70,6 +70,17 @@ struct discord_request_attr {
 /** @brief executed on a succesful request */
 typedef void (*discord_on_done)(struct discord *client, const void *obj);
 
+/**
+ * @brief Shortcut for wrapping async versions of request functions
+ *
+ * @param callback the return callback (if any)
+ * @param wrap the original function to be wrapped
+ */
+#define ASYNC_SET(callback, wrap)                                             \
+  struct discord_async_attr attr = { (discord_on_done)done };                 \
+  discord_adapter_set_async(&client->adapter, &attr);                         \
+  return (wrap)
+
 /** @brief The async attributes for next request */
 struct discord_async_attr {
   /** callback to be executed on a succesful request */

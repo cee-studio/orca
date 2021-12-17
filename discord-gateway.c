@@ -11,32 +11,6 @@
 /* shorten event callback for maintainability purposes */
 #define ON(event, ...) gw->cmds.cbs.on_##event(CLIENT(gw, gw), ##__VA_ARGS__)
 
-ORCAcode
-discord_get_gateway(struct discord *client, struct sized_buffer *ret)
-{
-  struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
-                                       (void (*)(char *, size_t, void *))
-                                         & cee_sized_buffer_from_json };
-
-  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
-
-  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
-                             "/gateway");
-}
-
-ORCAcode
-discord_get_gateway_bot(struct discord *client, struct sized_buffer *ret)
-{
-  struct discord_request_attr attr = { ret, sizeof(struct sized_buffer), NULL,
-                                       (void (*)(char *, size_t, void *))
-                                         & cee_sized_buffer_from_json };
-
-  ORCA_EXPECT(client, ret != NULL, ORCA_BAD_PARAMETER);
-
-  return discord_adapter_run(&client->adapter, &attr, NULL, HTTP_GET,
-                             "/gateway/bot");
-}
-
 static const char *
 opcode_print(enum discord_gateway_opcodes opcode)
 {

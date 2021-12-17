@@ -5,6 +5,40 @@
 #include "discord.h"
 #include "discord-internal.h"
 
+/**
+ * @brief Shortcut for setting attributes for a specs-generated struct
+ *
+ * @param type datatype of the struct
+ * @param obj pointer to specs-generated struct
+ */
+#define REQUEST_ATTR_INIT(type, obj)                                          \
+  {                                                                           \
+    obj, sizeof *obj, type##_init_v, type##_from_json_v, type##_cleanup_v     \
+  }
+
+/**
+ * @brief Shortcut for setting attributes for a specs-generated list
+ *
+ * @param type datatype of the list
+ * @param list pointer to specs-generated null terminated list
+ */
+#define REQUEST_ATTR_LIST_INIT(type, list)                                    \
+  {                                                                           \
+    list, sizeof **list, NULL, type##_list_from_json_v,                       \
+      (void (*)(void *))type##_list_free_v                                    \
+  }
+
+/**
+ * @brief Shortcut for wrapping async versions of request functions
+ *
+ * @param callback the return callback (if any)
+ * @param wrap the original function to be wrapped
+ */
+#define ASYNC(callback, wrap)                                                 \
+  struct discord_async_attr attr = { (discord_on_done)done };                 \
+  discord_adapter_set_async(&client->adapter, &attr);                         \
+  return (wrap)
+
 /******************************************************************************
  * Functions specific to Discord Application Commands
  ******************************************************************************/
@@ -568,7 +602,7 @@ discord_create_message_async(struct discord *client,
                              struct discord_create_message_params *params,
                              discord_on_message done)
 {
-  ASYNC_SET(done, discord_create_message(client, channel_id, params, NULL));
+  ASYNC(done, discord_create_message(client, channel_id, params, NULL));
 }
 
 ORCAcode
@@ -2368,14 +2402,6 @@ discord_modify_current_user(struct discord *client,
                              "/users/@me");
 }
 
-/* @todo this is a temporary solution for wrapping with JS */
-static void
-sized_buffer_from_json(char *json, size_t len, void *data)
-{
-  struct sized_buffer *p = data;
-  p->size = asprintf(&p->start, "%.*s", (int)len, json);
-}
-
 ORCAcode
 discord_get_current_user_guilds(struct discord *client,
                                 struct discord_guild ***ret)
@@ -2733,4 +2759,30 @@ discord_delete_webhook_message(struct discord *client,
   return discord_adapter_run(&client->adapter, NULL, NULL, HTTP_DELETE,
                              "/webhooks/%" PRIu64 "/%s/messages/%" PRIu64,
                              webhook_id, webhook_token, message_id);
+}
+
+/******************************************************************************
+ * Miscellaneous
+ ******************************************************************************/
+
+ORCAcode
+discord_disconnect_guild_member(struct discord *client,
+                                const u64_snowflake_t guild_id,
+                                const u64_snowflake_t user_id,
+                                struct discord_guild_member *ret)
+{
+  struct discord_request_attr attr =
+    REQUEST_ATTR_INIT(discord_guild_member, ret);
+  struct sized_buffer body;
+  char buf[128];
+
+  ORCA_EXPECT(client, guild_id != 0, ORCA_BAD_PARAMETER);
+  ORCA_EXPECT(client, user_id != 0, ORCA_BAD_PARAMETER);
+
+  body.size = json_inject(buf, sizeof(buf), "(channel_id):null");
+  body.start = buf;
+
+  return discord_adapter_run(&client->adapter, &attr, &body, HTTP_PATCH,
+                             "/guilds/%" PRIu64 "/members/%" PRIu64, guild_id,
+                             user_id);
 }

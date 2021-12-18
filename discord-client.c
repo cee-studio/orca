@@ -94,18 +94,10 @@ discord_cleanup(struct discord *client)
   free(client);
 }
 
-/* deprecated */
 void
-discord_global_init()
+discord_async_next(struct discord *client, struct discord_async_attr *attr)
 {
-  orca_global_init();
-}
-
-/* deprecated */
-void
-discord_global_cleanup()
-{
-  orca_global_cleanup();
+  discord_adapter_async_next(&client->adapter, attr);
 }
 
 const char *
@@ -592,4 +584,20 @@ struct logconf *
 discord_get_logconf(struct discord *client)
 {
   return &client->conf;
+}
+
+/******************************************************************************
+ * The functions following are deprecated
+ ******************************************************************************/
+
+void
+discord_global_init()
+{
+  orca_global_init();
+}
+
+void
+discord_global_cleanup()
+{
+  orca_global_cleanup();
 }

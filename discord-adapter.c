@@ -160,11 +160,15 @@ discord_adapter_run(struct discord_adapter *adapter,
 }
 
 void
-discord_adapter_set_async(struct discord_adapter *adapter,
-                          struct discord_async_attr *attr)
+discord_adapter_async_next(struct discord_adapter *adapter,
+                           struct discord_async_attr *attr)
 {
   adapter->async_enable = true;
-  memcpy(&adapter->async.attr, attr, sizeof(struct discord_async_attr));
+
+  if (attr)
+    memcpy(&adapter->async.attr, attr, sizeof(struct discord_async_attr));
+  else
+    memset(&adapter->async.attr, 0, sizeof(struct discord_async_attr));
 }
 
 static void

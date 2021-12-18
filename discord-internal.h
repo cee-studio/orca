@@ -44,17 +44,6 @@ struct discord_request_attr {
   struct discord_attachment **attachments;
 };
 
-/** @brief executed on a succesful request */
-typedef void (*discord_on_done)(struct discord *client, const void *obj);
-
-/** @brief The async attributes for next request */
-struct discord_async_attr {
-  /** callback to be executed on a succesful request */
-  discord_on_done done;
-  /** whether the next request is high priority */
-  bool high_p;
-};
-
 /**
  * @brief Context of individual requests that are scheduled to run
  *        asynchronously
@@ -173,8 +162,8 @@ ORCAcode discord_adapter_run(struct discord_adapter *adapter,
  * @param adapter the handle initialized with discord_adapter_init()
  * @param attr async attributes for next request
  */
-void discord_adapter_set_async(struct discord_adapter *adapter,
-                               struct discord_async_attr *attr);
+void discord_adapter_async_next(struct discord_adapter *adapter,
+                                struct discord_async_attr *attr);
 
 /**
  * @brief Check and manage on-going, pending and timed-out requests

@@ -78,6 +78,9 @@ struct discord_voice_cbs;
 /** @defgroup DiscordCallbacksGeneral
  * @brief General-purpose callbacks
  *  @{ */
+/** @brief executed on a succesful async request */
+typedef void (*discord_on_done)(struct discord *client, const void *obj);
+
 /** @brief Idle callback */
 typedef void (*discord_on_idle)(struct discord *client);
 /** @} */
@@ -241,19 +244,6 @@ typedef void (*discord_on_voice_server_update)(struct discord *client,
                                                const char *endpoint);
 /** @} */
 
-/* * * * * * * * * * * * * * * */
-/* * * * CLIENT FUNCTIONS * * * */
-
-/**
- * @brief Initialize resources of globals used by discord.h
- */
-void discord_global_init();
-
-/**
- * @brief Free resources of globals used by discord.h
- */
-void discord_global_cleanup();
-
 /**
  * @brief Return the meaning of ORCAcode
  * @note if the client parameter is provided, the raw JSON error string will be
@@ -298,6 +288,22 @@ struct discord *discord_clone(const struct discord *orig_client);
  * @param client the client created with discord_init()
  */
 void discord_cleanup(struct discord *client);
+
+/** @brief The async attributes for next request */
+struct discord_async_attr {
+  /** callback to be executed on a succesful request */
+  discord_on_done done;
+  /** whether the next request is high priority */
+  bool high_p;
+};
+
+/**
+ * @brief Set next request to run asynchronously
+ *
+ * @param client the client created with discord_init()
+ * @param attr optional async attributes for next request, can be NULL if not needed
+ */
+void discord_async_next(struct discord *client, struct discord_async_attr *attr);
 
 /**
  * @brief Get the user structure corresponding to the client
@@ -1564,12 +1570,6 @@ ORCAcode discord_create_message(struct discord *client,
                                 u64_snowflake_t channel_id,
                                 struct discord_create_message_params *params,
                                 struct discord_message *ret);
-
-ORCAcode discord_create_message_async(
-  struct discord *client,
-  u64_snowflake_t channel_id,
-  struct discord_create_message_params *params,
-  discord_on_message done);
 
 /** @struct discord_create_message_params */
 /** @} */
@@ -3229,5 +3229,19 @@ typedef discord_event_scheduler_t (*discord_event_scheduler)(
 void discord_set_event_scheduler(struct discord *client,
                                  discord_event_scheduler callback);
 /** @} */
+
+/**
+ * @brief Initialize resources of globals used by discord.h
+ *
+ * @deprecated use orca_global_init() instead
+ */
+void discord_global_init();
+
+/**
+ * @brief Free resources of globals used by discord.h
+ *
+ * @deprecated use orca_global_cleanup() instead
+ */
+void discord_global_cleanup();
 
 #endif /* DISCORD_H */

@@ -28,17 +28,6 @@
       (void (*)(void *))type##_list_free_v                                    \
   }
 
-/**
- * @brief Shortcut for wrapping async versions of request functions
- *
- * @param callback the return callback (if any)
- * @param wrap the original function to be wrapped
- */
-#define ASYNC(callback, wrap)                                                 \
-  struct discord_async_attr attr = { (discord_on_done)done };                 \
-  discord_adapter_set_async(&client->adapter, &attr);                         \
-  return (wrap)
-
 /******************************************************************************
  * Functions specific to Discord Application Commands
  ******************************************************************************/
@@ -594,15 +583,6 @@ discord_create_message(struct discord *client,
 
   return discord_adapter_run(&client->adapter, &attr, &body, method,
                              "/channels/%" PRIu64 "/messages", channel_id);
-}
-
-ORCAcode
-discord_create_message_async(struct discord *client,
-                             u64_snowflake_t channel_id,
-                             struct discord_create_message_params *params,
-                             discord_on_message done)
-{
-  ASYNC(done, discord_create_message(client, channel_id, params, NULL));
 }
 
 ORCAcode

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
          "\nTYPE ANY KEY TO START BOT\n");
   fgetc(stdin); // wait for input
 
-  discord_global_init();
+  orca_global_init();
   struct discord *client = discord_init(NULL);
   assert(NULL != client && "Couldn't initialize client");
 
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
   free(webhook_token);
   discord_cleanup(client);
-  discord_global_cleanup();
+  orca_global_cleanup();
 
   return EXIT_SUCCESS;
 }

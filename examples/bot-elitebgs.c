@@ -304,7 +304,7 @@ int main(int argc, char *argv[])
     config_file = "../config.json";
 
   /* Initialize Discord User Agent */
-  discord_global_init();
+  orca_global_init();
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client);
 
@@ -340,7 +340,7 @@ int main(int argc, char *argv[])
   /* Cleanup resources */
   ua_cleanup(g_elitebgs_ua);
   discord_cleanup(client);
-  discord_global_cleanup();
+  orca_global_cleanup();
 
   return EXIT_SUCCESS;
 }

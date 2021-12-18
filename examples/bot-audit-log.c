@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
   setlocale(LC_ALL, "");
 
-  discord_global_init();
+  orca_global_init();
   struct discord *client = discord_config_init(config_file);
   assert(NULL != client && "Couldn't initialize client");
 
@@ -123,5 +123,5 @@ int main(int argc, char *argv[])
   discord_run(client);
 
   discord_cleanup(client);
-  discord_global_cleanup();
+  orca_global_cleanup();
 }

@@ -5,10 +5,6 @@
 #include <assert.h>
 
 #include "discord.h"
-#include "discord-internal.h"
-
-#include "cee-utils.h"
-#include "json-actor.h" /* json_extract() */
 
 struct user_cxt {
   u64_snowflake_t channel_id;
@@ -41,7 +37,7 @@ void on_disconnect(struct discord *client, const struct discord_message *msg)
   struct discord_create_message_params params = { .content =
                                                     "Disconnecting ..." };
 
-  discord_adapter_set_async(&client->adapter, &attr);
+  discord_async_next(client, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
@@ -53,7 +49,7 @@ void on_reconnect(struct discord *client, const struct discord_message *msg)
   struct discord_create_message_params params = { .content =
                                                     "Reconnecting ..." };
 
-  discord_adapter_set_async(&client->adapter, &attr);
+  discord_async_next(client, &attr);
   discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
@@ -62,22 +58,29 @@ void on_single(struct discord *client, const struct discord_message *msg)
   if (msg->author->bot) return;
 
   struct discord_create_message_params params = { .content = "Hello" };
-  discord_create_message_async(client, msg->channel_id, &params, NULL);
+
+  discord_async_next(client, NULL);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void send_batch(struct discord *client, const struct discord_message *msg)
 {
+  struct discord_async_attr attr = { .done = (discord_on_done)&send_batch };
   struct discord_create_message_params params = { 0 };
   char text[32];
 
   params.content = text;
   for (int i = 0; i < 128; ++i) {
     snprintf(text, sizeof(text), "%d", i);
-    discord_create_message_async(client, msg->channel_id, &params, NULL);
+
+    discord_async_next(client, NULL);
+    discord_create_message(client, msg->channel_id, &params, NULL);
   }
 
   params.content = "CHECKPOINT";
-  discord_create_message_async(client, msg->channel_id, &params, &send_batch);
+
+  discord_async_next(client, &attr);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void on_spam(struct discord *client, const struct discord_message *msg)
@@ -89,14 +92,16 @@ void on_spam(struct discord *client, const struct discord_message *msg)
 
 void send_msg(struct discord *client, const struct discord_message *msg)
 {
-  struct discord_create_message_params params = { 0 };
-  struct user_cxt *cxt = discord_get_data(client);
   char text[32];
+
+  struct discord_async_attr attr = { .done = (discord_on_done)&send_msg };
+  struct discord_create_message_params params = { .content = text };
+  struct user_cxt *cxt = discord_get_data(client);
 
   snprintf(text, sizeof(text), "%llu", cxt->counter);
 
-  params.content = text;
-  discord_create_message_async(client, msg->channel_id, &params, &send_msg);
+  discord_async_next(client, &attr);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 
   ++cxt->counter;
 }

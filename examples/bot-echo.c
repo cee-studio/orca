@@ -43,7 +43,8 @@ void on_message_create(struct discord *client,
                      .guild_id = msg->guild_id,
                    } };
 
-  discord_create_message_async(client, msg->channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void on_message_update(struct discord *client,
@@ -53,7 +54,8 @@ void on_message_update(struct discord *client,
     .content = "I see what you did there."
   };
 
-  discord_create_message_async(client, msg->channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void on_message_delete(struct discord *client,
@@ -65,7 +67,8 @@ void on_message_delete(struct discord *client,
     .content = "Did that message just disappear?"
   };
 
-  discord_create_message_async(client, channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, channel_id, &params, NULL);
 }
 
 void on_message_delete_bulk(struct discord *client,
@@ -78,7 +81,8 @@ void on_message_delete_bulk(struct discord *client,
 
   struct discord_create_message_params params = { .content = text };
 
-  discord_create_message_async(client, channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, channel_id, &params, NULL);
 }
 
 int main(int argc, char *argv[])

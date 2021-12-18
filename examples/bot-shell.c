@@ -31,7 +31,8 @@ void on_cd(struct discord *client, const struct discord_message *msg)
     .content = getcwd(path, sizeof(path)),
   };
 
-  discord_create_message_async(client, msg->channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void on_less_like(struct discord *client, const struct discord_message *msg)
@@ -58,7 +59,8 @@ void on_less_like(struct discord *client, const struct discord_message *msg)
     };
   }
 
-  discord_create_message_async(client, msg->channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 }
 
 void on_fallback(struct discord *client, const struct discord_message *msg)
@@ -96,7 +98,8 @@ void on_fallback(struct discord *client, const struct discord_message *msg)
     };
   }
 
-  discord_create_message_async(client, msg->channel_id, &params, NULL);
+  discord_async_next(client, NULL);
+  discord_create_message(client, msg->channel_id, &params, NULL);
 
   pclose(fp);
   free(path);

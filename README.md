@@ -14,14 +14,14 @@
 
 ## About
 
-Orca is implemented in plain C, its symbols are organized to be easily matched to the documentation of the API being covered.
+Concord is implemented in plain C, its symbols are organized to be easily matched to the documentation of the API being covered.
 
 This is done in order to:
-* Minimize the need to thoroughly document every Orca API.
-* Reduce our user's cognitive burden of having to read both Orca API documentation and supported REST API documentation.
+* Minimize the need to thoroughly document every Concord API.
+* Reduce our user's cognitive burden of having to read both Concord API documentation and supported REST API documentation.
 * The codebase becomes easier to navigate.
 
-Orca's implementation has minimum external dependencies to make bot deployment deadly simple.
+Concord's implementation has minimum external dependencies to make bot deployment deadly simple.
 
 ### Design
 
@@ -32,7 +32,7 @@ Orca's implementation has minimum external dependencies to make bot deployment d
   and logging facilities.
 
 - Easy to use for the end users: highly scalable, all transfers made with
-  Orca are thread-safe.
+  Concord are thread-safe.
 
 ### Minimal example
 
@@ -155,7 +155,7 @@ With <kbd>Ctrl</kbd>+<kbd>c</kbd> or by closing the Terminal.
 
 ## Installing orca
 
-Orca can be installed in case developing inside of `my_bot/` doesn't suit your needs:
+Concord can be installed in case developing inside of `my_bot/` doesn't suit your needs:
 ```bash
 $ sudo make install
 ```

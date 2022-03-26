@@ -8,8 +8,9 @@
 
     <title>Datatypes &#8212; Orca  documentation</title>
     
-  <link href="../../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
     <script src="../../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -1262,6 +1256,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -1302,16 +1299,18 @@
               <div>
                 
   <section id="datatypes">
-<h1>Datatypes<a class="headerlink" href="#datatypes" title="Permalink to this headline">¶</a></h1>
-<p><dl class="simple">
-<dt><strong>See</strong></dt><dd><p><a class="reference external" href="https://discord.com/developers/docs/resources/webhook">https://discord.com/developers/docs/resources/webhook</a> </p>
-</dd>
-</dl>
+<h1>Datatypes<a class="headerlink" href="#datatypes" title="Permalink to this headline">#</a></h1>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://discord.com/developers/docs/resources/webhook">https://discord.com/developers/docs/resources/webhook</a> </p>
+</div>
 </p>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.discord_webhook">
-<span class="target" id="structdiscord__webhook"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_webhook</span></span></span><a class="headerlink" href="#c.discord_webhook" title="Permalink to this definition">¶</a><br /></dt>
-<dd><em>#include &lt;webhook.h&gt;</em><p><p><div class="toggle docutils container">
+<span class="target" id="structdiscord__webhook"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_webhook</span></span></span><a class="headerlink" href="#c.discord_webhook" title="Permalink to this definition">#</a><br /></dt>
+<dd><div class="docutils container">
+<em>#include &lt;webhook.h&gt;</em></div>
+<p><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
 </div>
@@ -1342,81 +1341,81 @@
 </ul>
 </div>
 </p>
- <dl class="simple">
-<dt><strong>See</strong></dt><dd><p><a class="reference external" href="https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure">https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure</a></p>
-</dd>
-</dl>
+ <div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure">https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure</a></p>
+</div>
 </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.id">
-<span class="target" id="structdiscord__webhook_1a9bb239b733fcad2cc644b709f22a294a"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><a class="headerlink" href="#c.discord_webhook.id" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1a9bb239b733fcad2cc644b709f22a294a"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><a class="headerlink" href="#c.discord_webhook.id" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the id of the webhook </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.type">
-<span class="target" id="structdiscord__webhook_1abe9b39b4617a2363018632e1f9a488a9"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_webhook_types" title="discord_webhook_types"><span class="n"><span class="pre">discord_webhook_types</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><a class="headerlink" href="#c.discord_webhook.type" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1abe9b39b4617a2363018632e1f9a488a9"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_webhook_types" title="discord_webhook_types"><span class="n"><span class="pre">discord_webhook_types</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><a class="headerlink" href="#c.discord_webhook.type" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the type of the webhook </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.guild_id">
-<span class="target" id="structdiscord__webhook_1ac1668316915b50267f4d576ceffef8e1"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">guild_id</span></span></span><a class="headerlink" href="#c.discord_webhook.guild_id" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1ac1668316915b50267f4d576ceffef8e1"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">guild_id</span></span></span><a class="headerlink" href="#c.discord_webhook.guild_id" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the guild id this webhook is for, if any </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.channel_id">
-<span class="target" id="structdiscord__webhook_1a2677b1785ce3b33d7e9a155f9757e8cf"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">channel_id</span></span></span><a class="headerlink" href="#c.discord_webhook.channel_id" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1a2677b1785ce3b33d7e9a155f9757e8cf"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">channel_id</span></span></span><a class="headerlink" href="#c.discord_webhook.channel_id" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the channel id this webhook is for, if any </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.user">
-<span class="target" id="structdiscord__webhook_1a1271fe941b4dd55efcbc224955f2ccab"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../user/datatypes.html#c.discord_user" title="discord_user"><span class="n"><span class="pre">discord_user</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">user</span></span></span><a class="headerlink" href="#c.discord_webhook.user" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1a1271fe941b4dd55efcbc224955f2ccab"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../user/datatypes.html#c.discord_user" title="discord_user"><span class="n"><span class="pre">discord_user</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">user</span></span></span><a class="headerlink" href="#c.discord_webhook.user" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the user this webhook was created by (not returned when getting a webhook with its token </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.name">
-<span class="target" id="structdiscord__webhook_1ad182fc083d8e1d5eabd9ea3ee5fdd59b"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><a class="headerlink" href="#c.discord_webhook.name" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1ad182fc083d8e1d5eabd9ea3ee5fdd59b"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">name</span></span></span><a class="headerlink" href="#c.discord_webhook.name" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.avatar">
-<span class="target" id="structdiscord__webhook_1adb7cdc928ef637be5aa0c179f96dce06"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">avatar</span></span></span><a class="headerlink" href="#c.discord_webhook.avatar" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1adb7cdc928ef637be5aa0c179f96dce06"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">avatar</span></span></span><a class="headerlink" href="#c.discord_webhook.avatar" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the default user avatar has of the webhook </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.token">
-<span class="target" id="structdiscord__webhook_1adf324efc32012c6816056015de671032"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">token</span></span></span><a class="headerlink" href="#c.discord_webhook.token" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1adf324efc32012c6816056015de671032"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">token</span></span></span><a class="headerlink" href="#c.discord_webhook.token" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the secure token of the webhook (returned for Incoming Webhooks) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.application_id">
-<span class="target" id="structdiscord__webhook_1aa0e365e1deb2cac34fc77771b0bc2a84"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">application_id</span></span></span><a class="headerlink" href="#c.discord_webhook.application_id" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1aa0e365e1deb2cac34fc77771b0bc2a84"></span><a class="reference internal" href="../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">application_id</span></span></span><a class="headerlink" href="#c.discord_webhook.application_id" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the bot/OAuth2 application that created this webhook </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.source_guild">
-<span class="target" id="structdiscord__webhook_1a1bd7215cdc8db4db7eb6acb091e033a4"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../guild/datatypes.html#c.discord_guild" title="discord_guild"><span class="n"><span class="pre">discord_guild</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">source_guild</span></span></span><a class="headerlink" href="#c.discord_webhook.source_guild" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1a1bd7215cdc8db4db7eb6acb091e033a4"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../guild/datatypes.html#c.discord_guild" title="discord_guild"><span class="n"><span class="pre">discord_guild</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">source_guild</span></span></span><a class="headerlink" href="#c.discord_webhook.source_guild" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the guild of the channel that this webhook is following (returned for Channel Follower Webhook) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.source_channel">
-<span class="target" id="structdiscord__webhook_1aa39152bf24ef12cccc8b855fb1e990f1"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../channel/datatypes.html#c.discord_channel" title="discord_channel"><span class="n"><span class="pre">discord_channel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">source_channel</span></span></span><a class="headerlink" href="#c.discord_webhook.source_channel" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1aa39152bf24ef12cccc8b855fb1e990f1"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../channel/datatypes.html#c.discord_channel" title="discord_channel"><span class="n"><span class="pre">discord_channel</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">source_channel</span></span></span><a class="headerlink" href="#c.discord_webhook.source_channel" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the channel that this webhook is following (returned for Channel Follower Webhooks) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_webhook.url">
-<span class="target" id="structdiscord__webhook_1a232b3bd47b4251e301f1437f1a6643c8"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">url</span></span></span><a class="headerlink" href="#c.discord_webhook.url" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__webhook_1a232b3bd47b4251e301f1437f1a6643c8"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">url</span></span></span><a class="headerlink" href="#c.discord_webhook.url" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the url used for executing the webhook (returned by the webhooks OAuth2 flow) </p>
 </dd></dl>
 
@@ -1427,7 +1426,7 @@
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
 <dl class="c enum">
 <dt class="sig sig-object c" id="c.discord_webhook_types">
-<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_webhook_types</span></span></span><a class="headerlink" href="#c.discord_webhook_types" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84b"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_webhook_types</span></span></span><a class="headerlink" href="#c.discord_webhook_types" title="Permalink to this definition">#</a><br /></dt>
 <dd><p><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
@@ -1438,27 +1437,27 @@
 </ul>
 </div>
 </p>
- <dl class="simple">
-<dt><strong>See</strong></dt><dd><p><a class="reference external" href="https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types">https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types</a></p>
-</dd>
-</dl>
+ <div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types">https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-types</a></p>
+</div>
 </p>
 <p><em>Values:</em></p>
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.discord_webhook_types.DISCORD_WEBHOOK_INCOMING">
-<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84ba4e3b5868b56575190f2d01798ff01ecf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISCORD_WEBHOOK_INCOMING</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#c.discord_webhook_types.DISCORD_WEBHOOK_INCOMING" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84ba4e3b5868b56575190f2d01798ff01ecf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISCORD_WEBHOOK_INCOMING</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#c.discord_webhook_types.DISCORD_WEBHOOK_INCOMING" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Incoming Webhooks can post messages to channels with a generated token </p>
 </dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.discord_webhook_types.DISCORD_WEBHOOK_CHANNEL_FOLLOWER">
-<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84ba87706811dceae0bcea491ba795167477"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISCORD_WEBHOOK_CHANNEL_FOLLOWER</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#c.discord_webhook_types.DISCORD_WEBHOOK_CHANNEL_FOLLOWER" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84ba87706811dceae0bcea491ba795167477"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISCORD_WEBHOOK_CHANNEL_FOLLOWER</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#c.discord_webhook_types.DISCORD_WEBHOOK_CHANNEL_FOLLOWER" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Channel Follower Webhooks are internal webhooks used with Channel Following to post new messages int channels </p>
 </dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.discord_webhook_types.DISCORD_WEBHOOK_APPLICATION">
-<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84ba536b62bedafc7ede31741d0afc725bf3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISCORD_WEBHOOK_APPLICATION</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#c.discord_webhook_types.DISCORD_WEBHOOK_APPLICATION" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="webhook_8h_1aacb8c6d69b0de8cbc4e518199cbeb84ba536b62bedafc7ede31741d0afc725bf3"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DISCORD_WEBHOOK_APPLICATION</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><a class="headerlink" href="#c.discord_webhook_types.DISCORD_WEBHOOK_APPLICATION" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Application webhooks are webhooks used with interactions </p>
 </dd></dl>
 
@@ -1472,7 +1471,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="index.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1495,7 +1494,8 @@
       </div>
     </div>
   
-  <script src="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -1516,7 +1516,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

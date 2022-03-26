@@ -8,8 +8,9 @@
 
     <title>Utilities &#8212; Orca  documentation</title>
     
-  <link href="../../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
     <script src="../../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -409,6 +403,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -419,7 +416,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -484,12 +481,12 @@
               <div>
                 
   <section id="utilities">
-<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h1>
+<h1>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">#</a></h1>
 <section id="retrieve-length">
-<h2>Retrieve Length<a class="headerlink" href="#retrieve-length" title="Permalink to this headline">¶</a></h2>
+<h2>Retrieve Length<a class="headerlink" href="#retrieve-length" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_length">
-<span class="target" id="ntl_8h_1aec0569b418723a635c416b73531bcaa1"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_length</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_length" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1aec0569b418723a635c416b73531bcaa1"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_length</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_length" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Return the null-terminated list length. </p>
 <p>Analogous to <code class="docutils literal notranslate"><span class="pre">strlen()</span></code>, will iterate over the NTL until a NULL is found. If <code class="docutils literal notranslate"><span class="pre">p</span></code> is NULL, it will return 0. </p>
 <dl class="field-list simple">
@@ -506,10 +503,10 @@
 
 </section>
 <section id="retrieve-length-with-threshold">
-<h2>Retrieve Length (with threshold)<a class="headerlink" href="#retrieve-length-with-threshold" title="Permalink to this headline">¶</a></h2>
+<h2>Retrieve Length (with threshold)<a class="headerlink" href="#retrieve-length-with-threshold" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_length_max">
-<span class="target" id="ntl_8h_1af5951be7b384ce1a2528ab724e43d79e"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_length_max</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">max</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_length_max" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1af5951be7b384ce1a2528ab724e43d79e"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_length_max</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">max</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_length_max" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Return the null-terminated list length under a threshold. </p>
 <p>Behaves like ntl_length() but will stop at a threshold <code class="docutils literal notranslate"><span class="pre">max</span></code> </p>
 <dl class="field-list simple">
@@ -527,10 +524,10 @@
 
 </section>
 <section id="callback-function-for-each-element">
-<h2>Callback function for each element<a class="headerlink" href="#callback-function-for-each-element" title="Permalink to this headline">¶</a></h2>
+<h2>Callback function for each element<a class="headerlink" href="#callback-function-for-each-element" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_apply">
-<span class="target" id="ntl_8h_1aecf45e90228f180afcd3d3ed44d0c80d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_apply</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span>, <a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">elem_p</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_apply" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1aecf45e90228f180afcd3d3ed44d0c80d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_apply</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span>, <a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">elem_p</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_apply" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Call a user-defined callback for each NTL element. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -545,10 +542,10 @@
 
 </section>
 <section id="append-element">
-<h2>Append Element<a class="headerlink" href="#append-element" title="Permalink to this headline">¶</a></h2>
+<h2>Append Element<a class="headerlink" href="#append-element" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_append2">
-<span class="target" id="ntl_8h_1a881346e7d771cb7a161be8dbdd42d25f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_append2</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">added_elem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_append2" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1a881346e7d771cb7a161be8dbdd42d25f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_append2</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">added_elem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_append2" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Append a element to the null-terminated list. </p>
 <p>Append a element to the NTL, this is not efficient for many appends. </p>
 <div class="admonition note">
@@ -568,16 +565,16 @@
 
 </section>
 <section id="map-elements">
-<h2>Map Elements<a class="headerlink" href="#map-elements" title="Permalink to this headline">¶</a></h2>
+<h2>Map Elements<a class="headerlink" href="#map-elements" title="Permalink to this headline">#</a></h2>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.ntl_elem_map">
-<span class="target" id="ntl_8h_1a38d7810e6f3def4b99272407419aad69"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_elem_map</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">from_elem</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">to_elem</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_elem_map" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1a38d7810e6f3def4b99272407419aad69"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_elem_map</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">from_elem</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">to_elem</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_elem_map" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Callback function for creating and mapping a NTL to another. </p>
 </dd></dl>
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_fmap">
-<span class="target" id="ntl_8h_1ade937240bbdeed4fb915ac1cbcf97fcb"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_fmap</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span>, <a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">in_list</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">out_elem_size</span></span>, <a class="reference internal" href="#c.ntl_elem_map" title="ntl_elem_map"><span class="n"><span class="pre">ntl_elem_map</span></span></a><span class="w"> </span><span class="n"><span class="pre">map</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_fmap" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1ade937240bbdeed4fb915ac1cbcf97fcb"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_fmap</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span>, <a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">in_list</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">out_elem_size</span></span>, <a class="reference internal" href="#c.ntl_elem_map" title="ntl_elem_map"><span class="n"><span class="pre">ntl_elem_map</span></span></a><span class="w"> </span><span class="n"><span class="pre">map</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_fmap" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Behaves similarly to Haskell list’s fmap. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -596,10 +593,10 @@
 
 </section>
 <section id="is-member-bool">
-<h2>Is Member (Bool)<a class="headerlink" href="#is-member-bool" title="Permalink to this headline">¶</a></h2>
+<h2>Is Member (Bool)<a class="headerlink" href="#is-member-bool" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_is_a_member">
-<span class="target" id="ntl_8h_1a7fa0b277ba8f069263ea0ce890e3ca49"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_is_a_member</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">elem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_is_a_member" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1a7fa0b277ba8f069263ea0ce890e3ca49"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_is_a_member</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">elem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_is_a_member" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Check if an element is part of a null-terminated list by its address. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -622,7 +619,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="initializer.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -645,7 +642,8 @@
       </div>
     </div>
   
-  <script src="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -666,7 +664,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

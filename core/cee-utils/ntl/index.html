@@ -8,8 +8,9 @@
 
     <title>Null-Terminated List Reference &#8212; Orca  documentation</title>
     
-  <link href="../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -409,6 +403,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -419,7 +416,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -464,25 +461,25 @@
               <div>
                 
   <section id="null-terminated-list-reference">
-<h1>Null-Terminated List Reference<a class="headerlink" href="#null-terminated-list-reference" title="Permalink to this headline">¶</a></h1>
+<h1>Null-Terminated List Reference<a class="headerlink" href="#null-terminated-list-reference" title="Permalink to this headline">#</a></h1>
 <section id="datatypes">
-<h2>Datatypes<a class="headerlink" href="#datatypes" title="Permalink to this headline">¶</a></h2>
+<h2>Datatypes<a class="headerlink" href="#datatypes" title="Permalink to this headline">#</a></h2>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.sized_buffer">
-<span class="target" id="structsized__buffer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sized_buffer</span></span></span><a class="headerlink" href="#c.sized_buffer" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structsized__buffer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sized_buffer</span></span></span><a class="headerlink" href="#c.sized_buffer" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Sized buffer. </p>
 <p>A very important data structure that is used pervasively in the conversion between JSON strings and C structs, http request/response body </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.sized_buffer.start">
-<span class="target" id="structsized__buffer_1a0b8bd4058288e58d800c1a688a9f1d68"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">start</span></span></span><a class="headerlink" href="#c.sized_buffer.start" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structsized__buffer_1a0b8bd4058288e58d800c1a688a9f1d68"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">start</span></span></span><a class="headerlink" href="#c.sized_buffer.start" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the buffer’s start </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.sized_buffer.size">
-<span class="target" id="structsized__buffer_1a0bf8ee0ebe9fb98a35c6e8f6d23cd769"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><a class="headerlink" href="#c.sized_buffer.size" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structsized__buffer_1a0bf8ee0ebe9fb98a35c6e8f6d23cd769"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><a class="headerlink" href="#c.sized_buffer.size" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the buffer’s size in bytes </p>
 </dd></dl>
 
@@ -491,20 +488,20 @@
 
 <dl class="c type">
 <dt class="sig sig-object c" id="c.ntl_t">
-<span class="target" id="ntl_8h_1a72a2d558dbbf31e384d9bcbcdb327663"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_t</span></span></span><a class="headerlink" href="#c.ntl_t" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1a72a2d558dbbf31e384d9bcbcdb327663"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_t</span></span></span><a class="headerlink" href="#c.ntl_t" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Null-terminated list helper type. </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.NTL_T">
-<span class="target" id="ntl_8h_1a21b9f892112975c5d88c57e575060954"></span><span class="sig-name descname"><span class="n"><span class="pre">NTL_T</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">t</span></span><span class="sig-paren">)</span> <span class="pre">t</span> <span class="pre">**</span><a class="headerlink" href="#c.NTL_T" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1a21b9f892112975c5d88c57e575060954"></span><span class="sig-name descname"><span class="n"><span class="pre">NTL_T</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">t</span></span><span class="sig-paren">)</span> <span class="pre">t</span> <span class="pre">**</span><a class="headerlink" href="#c.NTL_T" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Identification macro for null-terminated lists. </p>
 <p>A macro meant to facillitate the identification of null-terminated lists. </p>
 </dd></dl>
 
 </section>
 <section id="methods">
-<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="methods/initializer.html">Initializer / Cleanup</a></li>
@@ -521,7 +518,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="../logconf/index.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -544,7 +541,8 @@
       </div>
     </div>
   
-  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -565,7 +563,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

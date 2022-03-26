@@ -8,8 +8,9 @@
 
     <title>Edit Channel Permissions &#8212; Orca  documentation</title>
     
-  <link href="../../../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
     <script src="../../../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -1262,6 +1256,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -1302,10 +1299,10 @@
               <div>
                 
   <section id="edit-channel-permissions">
-<h1>Edit Channel Permissions<a class="headerlink" href="#edit-channel-permissions" title="Permalink to this headline">¶</a></h1>
+<h1>Edit Channel Permissions<a class="headerlink" href="#edit-channel-permissions" title="Permalink to this headline">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.discord_edit_channel_permissions">
-<span class="target" id="discord_8h_1a0295566725f48a1a17c852f82c4303f7"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_channel_permissions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">channel_id</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">overwrite_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_edit_channel_permissions_params" title="discord_edit_channel_permissions_params"><span class="n"><span class="pre">discord_edit_channel_permissions_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_edit_channel_permissions" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="discord_8h_1a0295566725f48a1a17c852f82c4303f7"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_channel_permissions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">channel_id</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">overwrite_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_edit_channel_permissions_params" title="discord_edit_channel_permissions_params"><span class="n"><span class="pre">discord_edit_channel_permissions_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_edit_channel_permissions" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Edit the channel permission overwrites for a user or role in a channel. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1324,7 +1321,7 @@
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.discord_edit_channel_permissions_params">
-<span class="target" id="structdiscord__edit__channel__permissions__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_channel_permissions_params</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__channel__permissions__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_channel_permissions_params</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params" title="Permalink to this definition">#</a><br /></dt>
 <dd><p><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
@@ -1361,19 +1358,19 @@
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_channel_permissions_params.allow">
-<span class="target" id="structdiscord__edit__channel__permissions__params_1a5ac5436b00e3a43350aab34ec24d100b"></span><a class="reference internal" href="../../../../../core/common/index.html#c.u64_bitmask_t" title="u64_bitmask_t"><span class="n"><span class="pre">u64_bitmask_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allow</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params.allow" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__channel__permissions__params_1a5ac5436b00e3a43350aab34ec24d100b"></span><a class="reference internal" href="../../../../../core/common/index.html#c.u64_bitmask_t" title="u64_bitmask_t"><span class="n"><span class="pre">u64_bitmask_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allow</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params.allow" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>permission bit set </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_channel_permissions_params.deny">
-<span class="target" id="structdiscord__edit__channel__permissions__params_1a46a5d836a309a957d856963ebf181ed5"></span><a class="reference internal" href="../../../../../core/common/index.html#c.u64_bitmask_t" title="u64_bitmask_t"><span class="n"><span class="pre">u64_bitmask_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deny</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params.deny" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__channel__permissions__params_1a46a5d836a309a957d856963ebf181ed5"></span><a class="reference internal" href="../../../../../core/common/index.html#c.u64_bitmask_t" title="u64_bitmask_t"><span class="n"><span class="pre">u64_bitmask_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deny</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params.deny" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>permission bit set </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_channel_permissions_params.type">
-<span class="target" id="structdiscord__edit__channel__permissions__params_1a95636d1474707a7fcef8a537e1cef1ce"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_channel_types" title="discord_channel_types"><span class="n"><span class="pre">discord_channel_types</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params.type" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__channel__permissions__params_1a95636d1474707a7fcef8a537e1cef1ce"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_channel_types" title="discord_channel_types"><span class="n"><span class="pre">discord_channel_types</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><a class="headerlink" href="#c.discord_edit_channel_permissions_params.type" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -1386,7 +1383,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="delete_user_reaction.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1409,7 +1406,8 @@
       </div>
     </div>
   
-  <script src="../../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -1430,7 +1428,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

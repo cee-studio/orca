@@ -8,8 +8,9 @@
 
     <title>Orca Common Reference &#8212; Orca  documentation</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -409,6 +403,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -419,7 +416,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -474,43 +471,42 @@
               <div>
                 
   <section id="orca-common-reference">
-<h1>Orca Common Reference<a class="headerlink" href="#orca-common-reference" title="Permalink to this headline">¶</a></h1>
+<h1>Orca Common Reference<a class="headerlink" href="#orca-common-reference" title="Permalink to this headline">#</a></h1>
 <section id="primitives">
-<h2>Primitives<a class="headerlink" href="#primitives" title="Permalink to this headline">¶</a></h2>
+<h2>Primitives<a class="headerlink" href="#primitives" title="Permalink to this headline">#</a></h2>
 <dl>
 <dt class="sig sig-object cpp">
 <span class="target" id="group__OrcaTypes"></span><em><span class="pre">group</span></em> <span class="sig-name descname"><span class="pre">OrcaTypes</span></span></dt>
 <dd><p>Commonly used datatypes across various APIs. </p>
-<p><div class="admonition note">
+<div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>these datatypes are typedefs of C primitives, its purpose is to facilitate identification and “intent of use”. </p>
 </div>
-</p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.u64_unix_ms_t">
-<span class="target" id="group__OrcaTypes_1ga8c10c2449cb2148f47b8a032af96dd60"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_unix_ms_t</span></span></span><a class="headerlink" href="#c.u64_unix_ms_t" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaTypes_1ga8c10c2449cb2148f47b8a032af96dd60"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_unix_ms_t</span></span></span><a class="headerlink" href="#c.u64_unix_ms_t" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Unix time in milliseconds. </p>
 </dd></dl>
 
 <dl class="c type">
 <dt class="sig sig-object c" id="c.u64_snowflake_t">
-<span class="target" id="group__OrcaTypes_1ga2aca4957fe0e14f7ab03fdaeb17d8fb9"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_snowflake_t</span></span></span><a class="headerlink" href="#c.u64_snowflake_t" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaTypes_1ga2aca4957fe0e14f7ab03fdaeb17d8fb9"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_snowflake_t</span></span></span><a class="headerlink" href="#c.u64_snowflake_t" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Snowflake datatype. </p>
 <p>Used in APIs such as Twitter and Discord for their unique IDs </p>
 </dd></dl>
 
 <dl class="c type">
 <dt class="sig sig-object c" id="c.u64_bitmask_t">
-<span class="target" id="group__OrcaTypes_1gab622acea7da0af5e191bde38b5c7744e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_bitmask_t</span></span></span><a class="headerlink" href="#c.u64_bitmask_t" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaTypes_1gab622acea7da0af5e191bde38b5c7744e"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">u64_bitmask_t</span></span></span><a class="headerlink" href="#c.u64_bitmask_t" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Bitmask primitive. </p>
 <p>Used for fields that may store values of, or perform bitwise operations </p>
 </dd></dl>
 
 <dl class="c type">
 <dt class="sig sig-object c" id="c.json_char_t">
-<span class="target" id="group__OrcaTypes_1gaaf31a611b5cb25698db0f44636b31311"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">json_char_t</span></span></span><a class="headerlink" href="#c.json_char_t" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaTypes_1gaaf31a611b5cb25698db0f44636b31311"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">json_char_t</span></span></span><a class="headerlink" href="#c.json_char_t" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Raw JSON string. </p>
 <p>Used for fields that have dynamic or unreliable types. A string made out of <code class="docutils literal notranslate"><span class="pre">json_char_t</span></code> should be used to keep a raw JSON, which can then be parsed with the assistance of a JSON library. </p>
 </dd></dl>
@@ -520,10 +516,10 @@
 
 </section>
 <section id="global-resources">
-<h2>Global Resources<a class="headerlink" href="#global-resources" title="Permalink to this headline">¶</a></h2>
+<h2>Global Resources<a class="headerlink" href="#global-resources" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.orca_global_init">
-<span class="target" id="common_8h_1a85e61c8cad6b47b1642b80a08fe7e248"></span><a class="reference internal" href="#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orca_global_init</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.orca_global_init" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="common_8h_1a85e61c8cad6b47b1642b80a08fe7e248"></span><a class="reference internal" href="#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orca_global_init</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.orca_global_init" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Initialize global shared-resources not API-specific. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -534,13 +530,13 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.orca_global_cleanup">
-<span class="target" id="common_8h_1a3fa4e3b0022af547c0ef0d5396e8efb0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orca_global_cleanup</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.orca_global_cleanup" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="common_8h_1a3fa4e3b0022af547c0ef0d5396e8efb0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">orca_global_cleanup</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#c.orca_global_cleanup" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Cleanup global shared-resources. </p>
 </dd></dl>
 
 </section>
 <section id="error-codes">
-<h2>Error Codes<a class="headerlink" href="#error-codes" title="Permalink to this headline">¶</a></h2>
+<h2>Error Codes<a class="headerlink" href="#error-codes" title="Permalink to this headline">#</a></h2>
 <dl>
 <dt class="sig sig-object cpp">
 <span class="target" id="group__OrcaCodes"></span><em><span class="pre">group</span></em> <span class="sig-name descname"><span class="pre">OrcaCodes</span></span></dt>
@@ -549,55 +545,55 @@
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_OK">
-<span class="target" id="group__OrcaCodes_1gab234ec8eeddc7f0abf7324b995fcfcb4"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_OK</span></span></span> <span class="pre">0</span><a class="headerlink" href="#c.ORCA_OK" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1gab234ec8eeddc7f0abf7324b995fcfcb4"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_OK</span></span></span> <span class="pre">0</span><a class="headerlink" href="#c.ORCA_OK" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>request was a success </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_HTTP_CODE">
-<span class="target" id="group__OrcaCodes_1ga0557ec1529f3c96ac1a72ad8ea801409"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_HTTP_CODE</span></span></span> <span class="pre">-1</span><a class="headerlink" href="#c.ORCA_HTTP_CODE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1ga0557ec1529f3c96ac1a72ad8ea801409"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_HTTP_CODE</span></span></span> <span class="pre">-1</span><a class="headerlink" href="#c.ORCA_HTTP_CODE" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>request wasn’t succesful </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_CURL_NO_RESPONSE">
-<span class="target" id="group__OrcaCodes_1gafc703c2b6cd6ce3f33bf23ae17d7582a"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_CURL_NO_RESPONSE</span></span></span> <span class="pre">-2</span><a class="headerlink" href="#c.ORCA_CURL_NO_RESPONSE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1gafc703c2b6cd6ce3f33bf23ae17d7582a"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_CURL_NO_RESPONSE</span></span></span> <span class="pre">-2</span><a class="headerlink" href="#c.ORCA_CURL_NO_RESPONSE" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>no response came through from curl </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_UNUSUAL_HTTP_CODE">
-<span class="target" id="group__OrcaCodes_1ga110d8f5a1faaf13ba1a763b7b260c82b"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_UNUSUAL_HTTP_CODE</span></span></span> <span class="pre">-3</span><a class="headerlink" href="#c.ORCA_UNUSUAL_HTTP_CODE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1ga110d8f5a1faaf13ba1a763b7b260c82b"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_UNUSUAL_HTTP_CODE</span></span></span> <span class="pre">-3</span><a class="headerlink" href="#c.ORCA_UNUSUAL_HTTP_CODE" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>received a non-standard http code </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_BAD_PARAMETER">
-<span class="target" id="group__OrcaCodes_1gaf21cf4909ec6435f4d6ced88922bcea8"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_BAD_PARAMETER</span></span></span> <span class="pre">-4</span><a class="headerlink" href="#c.ORCA_BAD_PARAMETER" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1gaf21cf4909ec6435f4d6ced88922bcea8"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_BAD_PARAMETER</span></span></span> <span class="pre">-4</span><a class="headerlink" href="#c.ORCA_BAD_PARAMETER" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>bad value for parameter </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_BAD_JSON">
-<span class="target" id="group__OrcaCodes_1ga641eec95dca09556c3cbf01121015e28"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_BAD_JSON</span></span></span> <span class="pre">-5</span><a class="headerlink" href="#c.ORCA_BAD_JSON" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1ga641eec95dca09556c3cbf01121015e28"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_BAD_JSON</span></span></span> <span class="pre">-5</span><a class="headerlink" href="#c.ORCA_BAD_JSON" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>internal failure when encoding or decoding JSON </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_CURLE_INTERNAL">
-<span class="target" id="group__OrcaCodes_1gaedabd4aeb6292c862193ef1fcc806c9a"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_CURLE_INTERNAL</span></span></span> <span class="pre">-6</span><a class="headerlink" href="#c.ORCA_CURLE_INTERNAL" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1gaedabd4aeb6292c862193ef1fcc806c9a"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_CURLE_INTERNAL</span></span></span> <span class="pre">-6</span><a class="headerlink" href="#c.ORCA_CURLE_INTERNAL" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>curl’s easy handle internal error </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_CURLM_INTERNAL">
-<span class="target" id="group__OrcaCodes_1gaeb4c8e4104eb23b2b2b662237effe0d1"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_CURLM_INTERNAL</span></span></span> <span class="pre">-7</span><a class="headerlink" href="#c.ORCA_CURLM_INTERNAL" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1gaeb4c8e4104eb23b2b2b662237effe0d1"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_CURLM_INTERNAL</span></span></span> <span class="pre">-7</span><a class="headerlink" href="#c.ORCA_CURLM_INTERNAL" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>curl’s multi handle internal error </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_GLOBAL_INIT">
-<span class="target" id="group__OrcaCodes_1ga971637083043abd7ed1226a79c1054c8"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_GLOBAL_INIT</span></span></span> <span class="pre">-8</span><a class="headerlink" href="#c.ORCA_GLOBAL_INIT" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1ga971637083043abd7ed1226a79c1054c8"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_GLOBAL_INIT</span></span></span> <span class="pre">-8</span><a class="headerlink" href="#c.ORCA_GLOBAL_INIT" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>attempt to initialize globals more than once </p>
 </dd></dl>
 
@@ -606,7 +602,7 @@
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.ORCAcode">
-<span class="target" id="group__OrcaCodes_1ga9cf2c634d026f2b4665d1859fe596b90"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ORCAcode</span></span></span><a class="headerlink" href="#c.ORCAcode" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaCodes_1ga9cf2c634d026f2b4665d1859fe596b90"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ORCAcode</span></span></span><a class="headerlink" href="#c.ORCAcode" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the error code datatype </p>
 </dd></dl>
 
@@ -615,7 +611,7 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.orca_strerror">
-<span class="target" id="common_8h_1a261a2cb67393ae30ad342b48d64af24f"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">orca_strerror</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="n"><span class="pre">code</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.orca_strerror" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="common_8h_1a261a2cb67393ae30ad342b48d64af24f"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">orca_strerror</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="n"><span class="pre">code</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.orca_strerror" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Return a generic meaning for ORCAcode. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -631,7 +627,7 @@
 
 </section>
 <section id="limits">
-<h2>Limits<a class="headerlink" href="#limits" title="Permalink to this headline">¶</a></h2>
+<h2>Limits<a class="headerlink" href="#limits" title="Permalink to this headline">#</a></h2>
 <dl>
 <dt class="sig sig-object cpp">
 <span class="target" id="group__OrcaLimits"></span><em><span class="pre">group</span></em> <span class="sig-name descname"><span class="pre">OrcaLimits</span></span></dt>
@@ -640,22 +636,22 @@
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_LIMITS_SHA256">
-<span class="target" id="group__OrcaLimits_1ga9a53399e4608bf68e17284abd681e7ec"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_SHA256</span></span></span> <span class="pre">1024</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_SHA256" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaLimits_1ga9a53399e4608bf68e17284abd681e7ec"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_SHA256</span></span></span> <span class="pre">1024</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_SHA256" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_LIMITS_LOCALE">
-<span class="target" id="group__OrcaLimits_1ga2e4dbb65d307bbaa9926e24d246b5c57"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_LOCALE</span></span></span> <span class="pre">16</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_LOCALE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaLimits_1ga2e4dbb65d307bbaa9926e24d246b5c57"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_LOCALE</span></span></span> <span class="pre">16</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_LOCALE" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_LIMITS_EMAIL">
-<span class="target" id="group__OrcaLimits_1ga97bc9ad1de9ed51089928ea66d8442d4"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_EMAIL</span></span></span> <span class="pre">254</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_EMAIL" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaLimits_1ga97bc9ad1de9ed51089928ea66d8442d4"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_EMAIL</span></span></span> <span class="pre">254</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_EMAIL" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_LIMITS_REGION">
-<span class="target" id="group__OrcaLimits_1gaef17459f932a9385f06fd6c57a7d4db6"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_REGION</span></span></span> <span class="pre">16</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_REGION" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaLimits_1gaef17459f932a9385f06fd6c57a7d4db6"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_LIMITS_REGION</span></span></span> <span class="pre">16</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_LIMITS_REGION" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -669,7 +665,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="../index.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -692,7 +688,8 @@
       </div>
     </div>
   
-  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -713,7 +710,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

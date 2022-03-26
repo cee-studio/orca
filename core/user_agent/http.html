@@ -8,8 +8,9 @@
 
     <title>HTTP - general &#8212; Orca  documentation</title>
     
-  <link href="../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -409,6 +403,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -419,7 +416,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -469,54 +466,54 @@
               <div>
                 
   <section id="http-general">
-<h1>HTTP - general<a class="headerlink" href="#http-general" title="Permalink to this headline">¶</a></h1>
+<h1>HTTP - general<a class="headerlink" href="#http-general" title="Permalink to this headline">#</a></h1>
 <section id="methods">
-<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">#</a></h2>
 <dl class="c enum">
 <dt class="sig sig-object c" id="c.http_method">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">http_method</span></span></span><a class="headerlink" href="#c.http_method" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">http_method</span></span></span><a class="headerlink" href="#c.http_method" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>HTTP methods. </p>
 <p><em>Values:</em></p>
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_INVALID">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a9efd6051b0ad79b9f6412c3fb2ab0bac"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_INVALID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#c.http_method.HTTP_INVALID" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a9efd6051b0ad79b9f6412c3fb2ab0bac"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_INVALID</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#c.http_method.HTTP_INVALID" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_DELETE">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a427575ab776ed70f0aa76667affc3942"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_DELETE</span></span></span><a class="headerlink" href="#c.http_method.HTTP_DELETE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a427575ab776ed70f0aa76667affc3942"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_DELETE</span></span></span><a class="headerlink" href="#c.http_method.HTTP_DELETE" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_GET">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a4ad23c3d2f21f7502ba058ef89518166"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_GET</span></span></span><a class="headerlink" href="#c.http_method.HTTP_GET" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a4ad23c3d2f21f7502ba058ef89518166"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_GET</span></span></span><a class="headerlink" href="#c.http_method.HTTP_GET" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_POST">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8aa763023b51da2b3618f24cbf994b34bf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_POST</span></span></span><a class="headerlink" href="#c.http_method.HTTP_POST" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8aa763023b51da2b3618f24cbf994b34bf"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_POST</span></span></span><a class="headerlink" href="#c.http_method.HTTP_POST" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_MIMEPOST">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a82445751ca3906c353c4e4a0afaec3b5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_MIMEPOST</span></span></span><a class="headerlink" href="#c.http_method.HTTP_MIMEPOST" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a82445751ca3906c353c4e4a0afaec3b5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_MIMEPOST</span></span></span><a class="headerlink" href="#c.http_method.HTTP_MIMEPOST" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_PATCH">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8ae1345469c9ff83a10676dd96e7acf0dc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_PATCH</span></span></span><a class="headerlink" href="#c.http_method.HTTP_PATCH" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8ae1345469c9ff83a10676dd96e7acf0dc"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_PATCH</span></span></span><a class="headerlink" href="#c.http_method.HTTP_PATCH" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c enumerator">
 <dt class="sig sig-object c" id="c.http_method.HTTP_PUT">
-<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a2415577115dd0cd5d5a5aa62d52e1512"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_PUT</span></span></span><a class="headerlink" href="#c.http_method.HTTP_PUT" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1aacd5f203e33ac338ca5cb8f02a3ff3b8a2415577115dd0cd5d5a5aa62d52e1512"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_PUT</span></span></span><a class="headerlink" href="#c.http_method.HTTP_PUT" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.http_method_print">
-<span class="target" id="user-agent_8h_1a7665366d3f134d8cb35e12e2cf3111f4"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http_method_print</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.http_method" title="http_method"><span class="n"><span class="pre">http_method</span></span></a><span class="w"> </span><span class="n"><span class="pre">method</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_method_print" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1a7665366d3f134d8cb35e12e2cf3111f4"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http_method_print</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.http_method" title="http_method"><span class="n"><span class="pre">http_method</span></span></a><span class="w"> </span><span class="n"><span class="pre">method</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_method_print" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Get the HTTP method name string. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -532,7 +529,7 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.http_method_eval">
-<span class="target" id="user-agent_8h_1a465739c932736ac0fe484f17f170e6e2"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.http_method" title="http_method"><span class="n"><span class="pre">http_method</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">http_method_eval</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_method_eval" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1a465739c932736ac0fe484f17f170e6e2"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="#c.http_method" title="http_method"><span class="n"><span class="pre">http_method</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">http_method_eval</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_method_eval" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Get the HTTP method enumerator from a string. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -548,75 +545,75 @@
 
 </section>
 <section id="status-code">
-<h2>Status Code<a class="headerlink" href="#status-code" title="Permalink to this headline">¶</a></h2>
+<h2>Status Code<a class="headerlink" href="#status-code" title="Permalink to this headline">#</a></h2>
 <dl>
 <dt class="sig sig-object cpp">
 <span class="target" id="group__HttpStatusCode"></span><em><span class="pre">group</span></em> <span class="sig-name descname"><span class="pre">HttpStatusCode</span></span></dt>
-<dd><p><dl class="simple">
-<dt><strong>See</strong></dt><dd><p><a class="reference external" href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">https://en.wikipedia.org/wiki/List_of_HTTP_status_codes</a> </p>
-</dd>
-</dl>
+<dd><p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">https://en.wikipedia.org/wiki/List_of_HTTP_status_codes</a> </p>
+</div>
 </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_OK">
-<span class="target" id="group__HttpStatusCode_1ga02e6d59009dee759528ec81fc9a8eeff"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_OK</span></span></span> <span class="pre">200</span><a class="headerlink" href="#c.HTTP_OK" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1ga02e6d59009dee759528ec81fc9a8eeff"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_OK</span></span></span> <span class="pre">200</span><a class="headerlink" href="#c.HTTP_OK" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_CREATED">
-<span class="target" id="group__HttpStatusCode_1gac19a79fb4cf575d20efd0633c1669ed9"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_CREATED</span></span></span> <span class="pre">201</span><a class="headerlink" href="#c.HTTP_CREATED" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1gac19a79fb4cf575d20efd0633c1669ed9"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_CREATED</span></span></span> <span class="pre">201</span><a class="headerlink" href="#c.HTTP_CREATED" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_NO_CONTENT">
-<span class="target" id="group__HttpStatusCode_1gac5bae07abf22b6f4497500f9daa38bdc"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_NO_CONTENT</span></span></span> <span class="pre">204</span><a class="headerlink" href="#c.HTTP_NO_CONTENT" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1gac5bae07abf22b6f4497500f9daa38bdc"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_NO_CONTENT</span></span></span> <span class="pre">204</span><a class="headerlink" href="#c.HTTP_NO_CONTENT" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_NOT_MODIFIED">
-<span class="target" id="group__HttpStatusCode_1ga4ca0e7d2bc7164156ded3b31e7d51c77"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_NOT_MODIFIED</span></span></span> <span class="pre">304</span><a class="headerlink" href="#c.HTTP_NOT_MODIFIED" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1ga4ca0e7d2bc7164156ded3b31e7d51c77"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_NOT_MODIFIED</span></span></span> <span class="pre">304</span><a class="headerlink" href="#c.HTTP_NOT_MODIFIED" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_BAD_REQUEST">
-<span class="target" id="group__HttpStatusCode_1ga0c1fdbbb10800664989907cbd3a5a023"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_BAD_REQUEST</span></span></span> <span class="pre">400</span><a class="headerlink" href="#c.HTTP_BAD_REQUEST" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1ga0c1fdbbb10800664989907cbd3a5a023"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_BAD_REQUEST</span></span></span> <span class="pre">400</span><a class="headerlink" href="#c.HTTP_BAD_REQUEST" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_UNAUTHORIZED">
-<span class="target" id="group__HttpStatusCode_1gac4cfa4b7a737abff1264ddba3752a2ad"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_UNAUTHORIZED</span></span></span> <span class="pre">401</span><a class="headerlink" href="#c.HTTP_UNAUTHORIZED" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1gac4cfa4b7a737abff1264ddba3752a2ad"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_UNAUTHORIZED</span></span></span> <span class="pre">401</span><a class="headerlink" href="#c.HTTP_UNAUTHORIZED" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_FORBIDDEN">
-<span class="target" id="group__HttpStatusCode_1ga92646f876056a1e5013e0050496dc04d"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_FORBIDDEN</span></span></span> <span class="pre">403</span><a class="headerlink" href="#c.HTTP_FORBIDDEN" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1ga92646f876056a1e5013e0050496dc04d"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_FORBIDDEN</span></span></span> <span class="pre">403</span><a class="headerlink" href="#c.HTTP_FORBIDDEN" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_NOT_FOUND">
-<span class="target" id="group__HttpStatusCode_1gabd505b5244bd18ae61c581484b4bc5a0"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_NOT_FOUND</span></span></span> <span class="pre">404</span><a class="headerlink" href="#c.HTTP_NOT_FOUND" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1gabd505b5244bd18ae61c581484b4bc5a0"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_NOT_FOUND</span></span></span> <span class="pre">404</span><a class="headerlink" href="#c.HTTP_NOT_FOUND" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_METHOD_NOT_ALLOWED">
-<span class="target" id="group__HttpStatusCode_1ga9089f2da2b4b844931500848e2dce01c"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_METHOD_NOT_ALLOWED</span></span></span> <span class="pre">405</span><a class="headerlink" href="#c.HTTP_METHOD_NOT_ALLOWED" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1ga9089f2da2b4b844931500848e2dce01c"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_METHOD_NOT_ALLOWED</span></span></span> <span class="pre">405</span><a class="headerlink" href="#c.HTTP_METHOD_NOT_ALLOWED" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_UNPROCESSABLE_ENTITY">
-<span class="target" id="group__HttpStatusCode_1gac4022ba243c3221e89a00b9942e9b52b"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_UNPROCESSABLE_ENTITY</span></span></span> <span class="pre">422</span><a class="headerlink" href="#c.HTTP_UNPROCESSABLE_ENTITY" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1gac4022ba243c3221e89a00b9942e9b52b"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_UNPROCESSABLE_ENTITY</span></span></span> <span class="pre">422</span><a class="headerlink" href="#c.HTTP_UNPROCESSABLE_ENTITY" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_TOO_MANY_REQUESTS">
-<span class="target" id="group__HttpStatusCode_1ga7ec0ca4de6248d9441c5b227e5deaf04"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_TOO_MANY_REQUESTS</span></span></span> <span class="pre">429</span><a class="headerlink" href="#c.HTTP_TOO_MANY_REQUESTS" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1ga7ec0ca4de6248d9441c5b227e5deaf04"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_TOO_MANY_REQUESTS</span></span></span> <span class="pre">429</span><a class="headerlink" href="#c.HTTP_TOO_MANY_REQUESTS" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.HTTP_GATEWAY_UNAVAILABLE">
-<span class="target" id="group__HttpStatusCode_1gaf2b40aeb0a77a1fadefe7989ebfe289b"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_GATEWAY_UNAVAILABLE</span></span></span> <span class="pre">502</span><a class="headerlink" href="#c.HTTP_GATEWAY_UNAVAILABLE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__HttpStatusCode_1gaf2b40aeb0a77a1fadefe7989ebfe289b"></span><span class="sig-name descname"><span class="n"><span class="pre">HTTP_GATEWAY_UNAVAILABLE</span></span></span> <span class="pre">502</span><a class="headerlink" href="#c.HTTP_GATEWAY_UNAVAILABLE" title="Permalink to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -624,7 +621,7 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.http_code_print">
-<span class="target" id="user-agent_8h_1a597f0a1096c2443423b77c1232e4c613"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http_code_print</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">httpcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_code_print" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1a597f0a1096c2443423b77c1232e4c613"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http_code_print</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">httpcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_code_print" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Get the HTTP status code name string. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -640,7 +637,7 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.http_reason_print">
-<span class="target" id="user-agent_8h_1af90368416d518ac22954d2fd5f0c392c"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http_reason_print</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">httpcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_reason_print" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="user-agent_8h_1af90368416d518ac22954d2fd5f0c392c"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http_reason_print</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">httpcode</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.http_reason_print" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Get the HTTP status code reason string. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -656,7 +653,7 @@
 
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">#</a></h2>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">user_agent</span> <span class="o">*</span><span class="n">ua</span> <span class="o">=</span> <span class="n">ua_init</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
 <span class="n">ua_set_url</span><span class="p">(</span><span class="n">ua</span><span class="p">,</span> <span class="s">&quot;https://www.example.com&quot;</span><span class="p">);</span>
 
@@ -681,7 +678,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="datatypes.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -704,7 +701,8 @@
       </div>
     </div>
   
-  <script src="../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -725,7 +723,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

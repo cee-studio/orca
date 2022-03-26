@@ -8,8 +8,9 @@
 
     <title>discord_strerror() - return string describing ORCAcode value &#8212; Orca  documentation</title>
     
-  <link href="../../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
     <script src="../../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -1262,6 +1256,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -1272,7 +1269,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -1312,38 +1309,38 @@
               <div>
                 
   <section id="discord-strerror-return-string-describing-orcacode-value">
-<h1>discord_strerror() - return string describing <code class="docutils literal notranslate"><span class="pre">ORCAcode</span></code> value<a class="headerlink" href="#discord-strerror-return-string-describing-orcacode-value" title="Permalink to this headline">¶</a></h1>
+<h1>discord_strerror() - return string describing <code class="docutils literal notranslate"><span class="pre">ORCAcode</span></code> value<a class="headerlink" href="#discord-strerror-return-string-describing-orcacode-value" title="Permalink to this headline">#</a></h1>
 <dl>
 <dt class="sig sig-object cpp">
 <span class="target" id="group__OrcaDiscordCodes"></span><em><span class="pre">group</span></em> <span class="sig-name descname"><span class="pre">OrcaDiscordCodes</span></span></dt>
-<dd><p><dl class="simple">
-<dt><strong>See</strong></dt><dd><p><a class="reference internal" href="../../../../core/common/index.html#group__OrcaCodes"><span class="std std-ref">OrcaCodes</span></a> for non-Discord errors </p>
-</dd>
-</dl>
+<dd><p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../../../../core/common/index.html#group__OrcaCodes"><span class="std std-ref">OrcaCodes</span></a> for non-Discord errors </p>
+</div>
 </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_DISCORD_JSON_CODE">
-<span class="target" id="group__OrcaDiscordCodes_1gade1f0d3ab66df93b38665789cc6ceca3"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_JSON_CODE</span></span></span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_DISCORD_JSON_CODE" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaDiscordCodes_1gade1f0d3ab66df93b38665789cc6ceca3"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_JSON_CODE</span></span></span> <span class="pre">1</span><a class="headerlink" href="#c.ORCA_DISCORD_JSON_CODE" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Received a JSON error message </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_DISCORD_BAD_AUTH">
-<span class="target" id="group__OrcaDiscordCodes_1ga68c51b98446cb0d8f71096292ad91dc6"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_BAD_AUTH</span></span></span> <span class="pre">2</span><a class="headerlink" href="#c.ORCA_DISCORD_BAD_AUTH" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaDiscordCodes_1ga68c51b98446cb0d8f71096292ad91dc6"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_BAD_AUTH</span></span></span> <span class="pre">2</span><a class="headerlink" href="#c.ORCA_DISCORD_BAD_AUTH" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Bad authentication token </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_DISCORD_RATELIMIT">
-<span class="target" id="group__OrcaDiscordCodes_1gac7d3dfe69894bacc2662c0d406e5b981"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_RATELIMIT</span></span></span> <span class="pre">3</span><a class="headerlink" href="#c.ORCA_DISCORD_RATELIMIT" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaDiscordCodes_1gac7d3dfe69894bacc2662c0d406e5b981"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_RATELIMIT</span></span></span> <span class="pre">3</span><a class="headerlink" href="#c.ORCA_DISCORD_RATELIMIT" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Being ratelimited </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ORCA_DISCORD_CONNECTION">
-<span class="target" id="group__OrcaDiscordCodes_1ga034e525c054a15b54810a7d31d74dc8e"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_CONNECTION</span></span></span> <span class="pre">4</span><a class="headerlink" href="#c.ORCA_DISCORD_CONNECTION" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="group__OrcaDiscordCodes_1ga034e525c054a15b54810a7d31d74dc8e"></span><span class="sig-name descname"><span class="n"><span class="pre">ORCA_DISCORD_CONNECTION</span></span></span> <span class="pre">4</span><a class="headerlink" href="#c.ORCA_DISCORD_CONNECTION" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Couldn’t establish connection to Discord </p>
 </dd></dl>
 
@@ -1352,7 +1349,7 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.discord_strerror">
-<span class="target" id="discord_8h_1abc4c8859fe92c5284e36c84fe0f70bd5"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">discord_strerror</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="n"><span class="pre">code</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_strerror" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="discord_8h_1abc4c8859fe92c5284e36c84fe0f70bd5"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">discord_strerror</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="n"><span class="pre">code</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_strerror" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Return the meaning of ORCAcode. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1372,7 +1369,7 @@
 </dd></dl>
 
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">#</a></h2>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Attempt to send a message to a invalid channel (id 0) */</span>
 <span class="kt">void</span> <span class="nf">on_force_error</span><span class="p">(</span><span class="k">struct</span> <span class="n">discord</span> <span class="o">*</span><span class="n">client</span><span class="p">,</span>
                     <span class="k">const</span> <span class="k">struct</span> <span class="n">discord_message</span> <span class="o">*</span><span class="n">msg</span><span class="p">)</span>
@@ -1398,7 +1395,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="discord_shutdown.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1421,7 +1418,8 @@
       </div>
     </div>
   
-  <script src="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -1442,7 +1440,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

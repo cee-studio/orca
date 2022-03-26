@@ -8,8 +8,9 @@
 
     <title>Edit Followup Message &#8212; Orca  documentation</title>
     
-  <link href="../../../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
     <script src="../../../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -1262,6 +1256,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -1302,10 +1299,10 @@
               <div>
                 
   <section id="edit-followup-message">
-<h1>Edit Followup Message<a class="headerlink" href="#edit-followup-message" title="Permalink to this headline">¶</a></h1>
+<h1>Edit Followup Message<a class="headerlink" href="#edit-followup-message" title="Permalink to this headline">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message">
-<span class="target" id="discord_8h_1af02d09de5a17b125135a8751866788e7"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_followup_message</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">application_id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">interaction_token</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">message_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_edit_followup_message_params" title="discord_edit_followup_message_params"><span class="n"><span class="pre">discord_edit_followup_message_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_message" title="discord_message"><span class="n"><span class="pre">discord_message</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_edit_followup_message" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="discord_8h_1af02d09de5a17b125135a8751866788e7"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_followup_message</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">application_id</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">interaction_token</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">message_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_edit_followup_message_params" title="discord_edit_followup_message_params"><span class="n"><span class="pre">discord_edit_followup_message_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_message" title="discord_message"><span class="n"><span class="pre">discord_message</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_edit_followup_message" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Edits a followup message for an interaction. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1326,7 +1323,7 @@
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params">
-<span class="target" id="structdiscord__edit__followup__message__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_followup_message_params</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_followup_message_params</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params" title="Permalink to this definition">#</a><br /></dt>
 <dd><p><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
@@ -1363,37 +1360,37 @@
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params.content">
-<span class="target" id="structdiscord__edit__followup__message__params_1a3b5eb12b57b0a42ee684f385802b8b73"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">content</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.content" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params_1a3b5eb12b57b0a42ee684f385802b8b73"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">content</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.content" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>name of the webhook(1-2000) chars </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params.embeds">
-<span class="target" id="structdiscord__edit__followup__message__params_1a9d6b5a3383c0e4bb69d2424416b68280"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_embed" title="discord_embed"><span class="n"><span class="pre">discord_embed</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">embeds</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.embeds" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params_1a9d6b5a3383c0e4bb69d2424416b68280"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_embed" title="discord_embed"><span class="n"><span class="pre">discord_embed</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">embeds</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.embeds" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>array of up to 10 embeds objects </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params.payload_json">
-<span class="target" id="structdiscord__edit__followup__message__params_1a88cbb4be90751d1e29853cbe4a193ac0"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payload_json</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.payload_json" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params_1a88cbb4be90751d1e29853cbe4a193ac0"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">payload_json</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.payload_json" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>JSON encoded body of non-file params (multipart/form-data only) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params.allowed_mentions">
-<span class="target" id="structdiscord__edit__followup__message__params_1aff700f160f12d8e67887dd188711b0a8"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_allowed_mentions" title="discord_allowed_mentions"><span class="n"><span class="pre">discord_allowed_mentions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">allowed_mentions</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.allowed_mentions" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params_1aff700f160f12d8e67887dd188711b0a8"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_allowed_mentions" title="discord_allowed_mentions"><span class="n"><span class="pre">discord_allowed_mentions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">allowed_mentions</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.allowed_mentions" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>allowed mentions for the message </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params.attachments">
-<span class="target" id="structdiscord__edit__followup__message__params_1a55cb1c4a39a09af52cae5ef3fd65ac0d"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_attachment" title="discord_attachment"><span class="n"><span class="pre">discord_attachment</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">attachments</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.attachments" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params_1a55cb1c4a39a09af52cae5ef3fd65ac0d"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../resources/channel/datatypes.html#c.discord_attachment" title="discord_attachment"><span class="n"><span class="pre">discord_attachment</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">attachments</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.attachments" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>attached files to keep </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_followup_message_params.components">
-<span class="target" id="structdiscord__edit__followup__message__params_1a6695f3675251f6afc9a79ae97d74bd39"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../message_components/datatypes.html#c.discord_component" title="discord_component"><span class="n"><span class="pre">discord_component</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">components</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.components" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structdiscord__edit__followup__message__params_1a6695f3675251f6afc9a79ae97d74bd39"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../message_components/datatypes.html#c.discord_component" title="discord_component"><span class="n"><span class="pre">discord_component</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">components</span></span></span><a class="headerlink" href="#c.discord_edit_followup_message_params.components" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the components to include with the message </p>
 </dd></dl>
 
@@ -1407,7 +1404,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="delete_original_interaction_response.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -1430,7 +1427,8 @@
       </div>
     </div>
   
-  <script src="../../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -1451,7 +1449,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

@@ -8,8 +8,9 @@
 
     <title>Serializer &#8212; Orca  documentation</title>
     
-  <link href="../../../../_static/css/theme.css" rel="stylesheet">
-  <link href="../../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -19,15 +20,11 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    
-      
-
-    
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/css/blank.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css" />
     
-  <link rel="preload" as="script" href="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
     <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
     <script src="../../../../_static/jquery.js"></script>
@@ -45,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -101,16 +98,12 @@
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
         <li class="nav-item">
-          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github">
-            <span><i class="fab fa-github"></i></span>
-            <label class="sr-only">Github</label>
-          </a>
+          <a class="nav-link" href="https://github.com/cee-studio/orca" rel="noopener" target="_blank" title="Github"><span><i class="fab fa-github"></i></span>
+            <label class="sr-only">Github</label></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord">
-            <span><i class="fab fa-discord"></i></span>
-            <label class="sr-only">Discord</label>
-          </a>
+          <a class="nav-link" href="https://discord.gg/nBUqrWf" rel="noopener" target="_blank" title="Discord"><span><i class="fab fa-discord"></i></span>
+            <label class="sr-only">Discord</label></a>
         </li>
       </ul>
       </div>
@@ -126,7 +119,8 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../../../../search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -409,6 +403,9 @@
 
   </div>
 </nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
             </div>
             
           
@@ -419,7 +416,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -464,30 +461,30 @@
               <div>
                 
   <section id="serializer">
-<h1>Serializer<a class="headerlink" href="#serializer" title="Permalink to this headline">¶</a></h1>
+<h1>Serializer<a class="headerlink" href="#serializer" title="Permalink to this headline">#</a></h1>
 <section id="configure">
-<h2>Configure<a class="headerlink" href="#configure" title="Permalink to this headline">¶</a></h2>
+<h2>Configure<a class="headerlink" href="#configure" title="Permalink to this headline">#</a></h2>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.ntl_serializer">
-<span class="target" id="structntl__serializer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_serializer</span></span></span><a class="headerlink" href="#c.ntl_serializer" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__serializer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_serializer</span></span></span><a class="headerlink" href="#c.ntl_serializer" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Structure to assisti null-terminated list serialization. </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_serializer.delimiter">
-<span class="target" id="structntl__serializer_1a06c00759e0016c670a65a5d8b840d859"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_str_delimiter" title="ntl_str_delimiter"><span class="n"><span class="pre">ntl_str_delimiter</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">delimiter</span></span></span><a class="headerlink" href="#c.ntl_serializer.delimiter" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__serializer_1a06c00759e0016c670a65a5d8b840d859"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_str_delimiter" title="ntl_str_delimiter"><span class="n"><span class="pre">ntl_str_delimiter</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">delimiter</span></span></span><a class="headerlink" href="#c.ntl_serializer.delimiter" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>optional string delimiters </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_serializer.elem_to_buf">
-<span class="target" id="structntl__serializer_1a32ce540585f6429cfd2cfd26e8758a17"></span><span class="n"><span class="pre">ntl_elem_serializer</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elem_to_buf</span></span></span><a class="headerlink" href="#c.ntl_serializer.elem_to_buf" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__serializer_1a32ce540585f6429cfd2cfd26e8758a17"></span><span class="n"><span class="pre">ntl_elem_serializer</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elem_to_buf</span></span></span><a class="headerlink" href="#c.ntl_serializer.elem_to_buf" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the callback for serializing and appending each NTL element to <code class="docutils literal notranslate"><span class="pre">buf</span></code> <code class="docutils literal notranslate"><span class="pre">elem_to_buf(NULL,0,p)</span></code> calculates the size needed to serializer p <code class="docutils literal notranslate"><span class="pre">elem_to_buf(buf,n,p)</span></code> serialize p to a buffer <code class="docutils literal notranslate"><span class="pre">elem_to_buf</span></code> should return a negative value for any errors </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_serializer.ntl_provider">
-<span class="target" id="structntl__serializer_1a1a511b17d433c1b948d2430a19c368a2"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_provider</span></span></span><a class="headerlink" href="#c.ntl_serializer.ntl_provider" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__serializer_1a1a511b17d433c1b948d2430a19c368a2"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_provider</span></span></span><a class="headerlink" href="#c.ntl_serializer.ntl_provider" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>the NTL to be serialized </p>
 </dd></dl>
 
@@ -496,37 +493,37 @@
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.ntl_str_delimiter">
-<span class="target" id="structntl__str__delimiter"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_str_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__str__delimiter"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_str_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Configure serialized NTL string delimiters. </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_str_delimiter.start_delimiter">
-<span class="target" id="structntl__str__delimiter_1a8d620c6b1074836bfe6b27ae9f9c013f"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">start_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.start_delimiter" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__str__delimiter_1a8d620c6b1074836bfe6b27ae9f9c013f"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">start_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.start_delimiter" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>defaults to ‘[’ </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_str_delimiter.element_delimiter">
-<span class="target" id="structntl__str__delimiter_1a71ed15172565adac018ca61a1b9025b6"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">element_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.element_delimiter" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__str__delimiter_1a71ed15172565adac018ca61a1b9025b6"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">element_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.element_delimiter" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>defaults to ‘,’ </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_str_delimiter.last_element_delimiter">
-<span class="target" id="structntl__str__delimiter_1a63dedce31306291245921bf485ba7402"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">last_element_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.last_element_delimiter" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__str__delimiter_1a63dedce31306291245921bf485ba7402"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">last_element_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.last_element_delimiter" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>defaults to “” (blank) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_str_delimiter.end_delimiter">
-<span class="target" id="structntl__str__delimiter_1aee8786d7dab203f715df0e81ce5aabeb"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.end_delimiter" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__str__delimiter_1aee8786d7dab203f715df0e81ce5aabeb"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end_delimiter</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.end_delimiter" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>defaults to ‘]’ </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_str_delimiter.null_ntl">
-<span class="target" id="structntl__str__delimiter_1ae1b67a2b975f4f9956e94dc1406ff917"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">null_ntl</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.null_ntl" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="structntl__str__delimiter_1ae1b67a2b975f4f9956e94dc1406ff917"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">null_ntl</span></span></span><a class="headerlink" href="#c.ntl_str_delimiter.null_ntl" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>defaults to “null” </p>
 </dd></dl>
 
@@ -535,10 +532,10 @@
 
 </section>
 <section id="serialize-ntl-to-buffer">
-<h2>Serialize NTL to buffer<a class="headerlink" href="#serialize-ntl-to-buffer" title="Permalink to this headline">¶</a></h2>
+<h2>Serialize NTL to buffer<a class="headerlink" href="#serialize-ntl-to-buffer" title="Permalink to this headline">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_to_buf2">
-<span class="target" id="ntl_8h_1ae73b3b7c871f71df683404dcbe8de46a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_to_buf2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_serializer" title="ntl_serializer"><span class="n"><span class="pre">ntl_serializer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">serializer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_to_buf2" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1ae73b3b7c871f71df683404dcbe8de46a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_to_buf2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_serializer" title="ntl_serializer"><span class="n"><span class="pre">ntl_serializer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">serializer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_to_buf2" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Behaves similarly to snprintf(), serialize a NTL <code class="docutils literal notranslate"><span class="pre">p</span></code> to string. </p>
 <p><code class="docutils literal notranslate"><span class="pre">ntl_to_buf(NULL,0,...)</span></code> return the number of bytes (excluding \0) needed to serialize p <code class="docutils literal notranslate"><span class="pre">ntl_to_buf(buf,n,...)</span></code> serialize p to buf and return the number of bytes written excluding \0 </p>
 <dl class="field-list simple">
@@ -557,7 +554,7 @@
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_to_abuf2">
-<span class="target" id="ntl_8h_1a616a0f35a240c150d0c00893d314a5cf"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_to_abuf2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf_p</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_serializer" title="ntl_serializer"><span class="n"><span class="pre">ntl_serializer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">serializer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_to_abuf2" title="Permalink to this definition">¶</a><br /></dt>
+<span class="target" id="ntl_8h_1a616a0f35a240c150d0c00893d314a5cf"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_to_abuf2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf_p</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_serializer" title="ntl_serializer"><span class="n"><span class="pre">ntl_serializer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">serializer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_to_abuf2" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Analogous ntl_to_buf(), but will create a buffer thats large enough to hold the output (including the null byte ‘\0’) </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -584,7 +581,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'> 
+<div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="utils.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -607,7 +604,8 @@
       </div>
     </div>
   
-  <script src="../../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -628,7 +626,7 @@
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
 </p>
     </div>
     

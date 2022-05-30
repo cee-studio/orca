@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>ws_easy_run - check pending WebSockets transfers &#8212; Orca  documentation</title>
     
@@ -466,14 +466,14 @@
 <p>This is an easy, yet highly abstracted way of performing transfers. If a higher control is necessary, users are better of using functions of <code class="docutils literal notranslate"><span class="pre">curl_multi_xxx()</span></code> family. </p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ws</strong> – the WebSockets handle created with <a class="reference internal" href="ws_init.html#websockets_8h_1aa6088ca5a9cbda8616ca3ca0bdd12d5d"><span class="std std-ref">ws_init()</span></a> </p></li>
 <li><p><strong>wait_ms</strong> – limit amount in milliseconds to wait for until activity </p></li>
 <li><p><strong>tstamp</strong> – get current timestamp for this iteration </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if connection is still alive, <code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise </p>
 </dd>
 </dl>

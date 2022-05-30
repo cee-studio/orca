@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>ws_init - initialize a WebSockets handle &#8212; Orca  documentation</title>
     
@@ -462,14 +462,14 @@
 <span class="target" id="websockets_8h_1aa6088ca5a9cbda8616ca3ca0bdd12d5d"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.websockets" title="websockets"><span class="n"><span class="pre">websockets</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ws_init</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ws_callbacks" title="ws_callbacks"><span class="n"><span class="pre">ws_callbacks</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cbs</span></span>, <span class="n"><span class="pre">CURLM</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">mhandle</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ws_attr" title="ws_attr"><span class="n"><span class="pre">ws_attr</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">attr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ws_init" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Create a new (CURL-based) WebSockets handle. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cbs</strong> – set of functions to call back when server report events. </p></li>
 <li><p><strong>mhandle</strong> – user-owned curl_multi handle for performing non-blocking transfers </p></li>
 <li><p><strong>attr</strong> – optional attributes to override defaults </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>newly created WebSockets handle, free with <a class="reference internal" href="ws_cleanup.html#websockets_8h_1ad45b500790fffec540211cda5d1dbd0f"><span class="std std-ref">ws_cleanup()</span></a> </p>
 </dd>
 </dl>

@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Initializer / Cleanup &#8212; Orca  documentation</title>
     
@@ -481,14 +481,14 @@
 <p>if <code class="docutils literal notranslate"><span class="pre">init</span></code> is NULL, it is the same as ntl_calloc </p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nelems</strong> – the amount of elements for the NTL </p></li>
 <li><p><strong>elem_size</strong> – the size of each NTL element </p></li>
 <li><p><strong>init</strong> – the callback function to be called for each element initialized </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the null-terminated list </p>
 </dd>
 </dl>
@@ -500,13 +500,13 @@
 <dd><p>Initialize a null-terminated list. </p>
 <p>Initialize a NTL and fill n <code class="docutils literal notranslate"><span class="pre">nelems</span></code> of size <code class="docutils literal notranslate"><span class="pre">elem_size</span></code> with zeroes </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nelems</strong> – the amount of elements for the NTL </p></li>
 <li><p><strong>elem_size</strong> – the size of each NTL element </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the null-terminated list </p>
 </dd>
 </dl>
@@ -521,13 +521,13 @@
 <p>use ntl_calloc() unless there’s a good reason to use this </p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nelems</strong> – the amount of elements of the NTL </p></li>
 <li><p><strong>elem_size</strong> – the size of each NTL element </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the null-terminated list </p>
 </dd>
 </dl>
@@ -546,14 +546,14 @@
 <p>use ntl_calloc_init() unless there’s a good reason to use this </p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nelems</strong> – the amount of elements of the NTL </p></li>
 <li><p><strong>elem_size</strong> – the size of each NTL element </p></li>
 <li><p><strong>init</strong> – the callback function to be called for each element initialized </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the null-terminated list </p>
 </dd>
 </dl>
@@ -565,7 +565,7 @@
 <dd><p>Changes the size of the null-terminated list. </p>
 <p>Changes the size of the NTL memory block pointed by <code class="docutils literal notranslate"><span class="pre">p</span></code> to <code class="docutils literal notranslate"><span class="pre">nelems</span> <span class="pre">*</span> <span class="pre">elem_size</span></code> bytes, call <code class="docutils literal notranslate"><span class="pre">init</span></code> for each element. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – the NTL to be resized </p></li>
 <li><p><strong>nelems</strong> – the amount of elements of the NTL </p></li>
@@ -573,7 +573,7 @@
 <li><p><strong>init</strong> – the callback function to be called for each element initialized </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the null-terminated list </p>
 </dd>
 </dl>
@@ -584,13 +584,13 @@
 <span class="target" id="ntl_8h_1a6a998f2c5d265ea09eb4fb8871f9f687"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_dup</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_dup" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Duplicate a null-terminated list. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – pointer to the source NTL </p></li>
 <li><p><strong>elem_size</strong> – the size of each NTL element </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the NTL duplicate </p>
 </dd>
 </dl>
@@ -612,7 +612,7 @@
 <dd><p>Cleanup a null-terminated list. </p>
 <p>Call <code class="docutils literal notranslate"><span class="pre">cleanup</span></code> callback for each element of the NTL, and then <code class="docutils literal notranslate"><span class="pre">free()</span></code> the NTL <code class="docutils literal notranslate"><span class="pre">p</span></code> pointer. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – the NTL to be free’d </p></li>
 <li><p><strong>cleanup</strong> – the cleanup callback to be called for each element </p></li>

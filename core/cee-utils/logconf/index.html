@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Modular Logging Reference &#8212; Orca  documentation</title>
     
@@ -603,7 +603,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 </div>
 </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – pointer to the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> structure to be initialized </p></li>
 <li><p><strong>id</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module id </p></li>
@@ -625,13 +625,13 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 </div>
 </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>json_field</strong> – the field to fetch the value of </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a read-only sized buffer containing the field’s value </p>
 </dd>
 </dl>
@@ -647,7 +647,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <dd><p>Branch and link a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module to a existing one. </p>
 <p>Initialize a <code class="docutils literal notranslate"><span class="pre">branch</span></code> logging module thats expected to share common resources with its parent module <code class="docutils literal notranslate"><span class="pre">orig</span></code>. The common resources include: config file directives, logging output and disabled modules list. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>branch</strong> – pointer to the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> structure to be initialized as <code class="docutils literal notranslate"><span class="pre">orig</span></code> branch </p></li>
 <li><p><strong>orig</strong> – pointer to the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> structure that holds the parent module </p></li>
@@ -665,7 +665,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1a0d928c3669ab16a2e80766a2339348b6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_cleanup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_cleanup" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Cleanup a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> structure to be cleaned </p></li>
 </ul>
@@ -681,7 +681,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1a7885b86f871c55598a46db58bc44b9b2"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_trace</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_TRACE,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_trace" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log level trace. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>...</strong> – the printf-like format string and successive arguments </p></li>
@@ -695,7 +695,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1a8b4527afe5967b4ad00bfac726256312"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_debug</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_DEBUG,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_debug" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log level debug. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>...</strong> – the printf-like format string and successive arguments </p></li>
@@ -709,7 +709,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1a7ef138059b1beb2e6fc2872c1f869dbe"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_INFO,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_info" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log level info. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>...</strong> – the printf-like format string and successive arguments </p></li>
@@ -723,7 +723,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1af2d239a2b04333b0182d1999297b8872"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_warn</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_WARN,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_warn" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log level warn. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>...</strong> – the printf-like format string and successive arguments </p></li>
@@ -737,7 +737,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1a401901df360cd18f03d839b265200923"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_error</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_ERROR,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_error" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log level error. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>...</strong> – the printf-like format string and successive arguments </p></li>
@@ -751,7 +751,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1acfd366d373c6be640ffd9928dd80bbff"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_fatal</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_FATAL,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_fatal" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log level fatal. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>...</strong> – the printf-like format string and successive arguments </p></li>
@@ -765,7 +765,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1ac69384b8628620a02b32e5c603e96f8d"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_log</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">level</span></span>, <span class="n"><span class="pre">file</span></span>, <span class="n"><span class="pre">line</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">__logconf_log(conf,</span> <span class="pre">level,</span> <span class="pre">file,</span> <span class="pre">line,</span> <span class="pre">__VA_ARGS__,</span> <span class="pre">&quot;&quot;)</span><a class="headerlink" href="#c.logconf_log" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Run-time configurable log level. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>level</strong> – the log level enumerator from <code class="docutils literal notranslate"><span class="pre">log.c</span></code> </p></li>
@@ -784,7 +784,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <span class="target" id="logconf_8h_1a0d5ff5d40634ce88534bfda4bf257eff"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_http</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.loginfo" title="loginfo"><span class="n"><span class="pre">loginfo</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">info</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="n"><span class="pre">header</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="n"><span class="pre">body</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">label_fmt</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_http" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Log HTTP transfers. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>info</strong> – retrieve information on this logging </p></li>
@@ -829,7 +829,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <dd><p>Toggle quiet mode. </p>
 <p>Quiet-mode can be enabled by settings <code class="docutils literal notranslate"><span class="pre">enable</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code>. While this mode is enabled the library will not output anything to stderr, but will continue to write to files and callbacks if any are set. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>enable</strong> – <code class="docutils literal notranslate"><span class="pre">true</span></code> enables quiet-mode </p></li>
@@ -844,7 +844,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <dd><p>Set the current logging level. </p>
 <p>All logs below the given level will not be written to stderr. By default the level is LOG_TRACE, such that nothing is ignored. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>level</strong> – logging level </p></li>
@@ -859,7 +859,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <dd><p>File where the log will be written. </p>
 <p>One or more file pointers where the log will be written can be provided to the library. Any messages below the given <code class="docutils literal notranslate"><span class="pre">level</span></code> are ignored. If the library failed to add a file pointer a value less-than-zero is returned. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>fp</strong> – the write-to file pointer </p></li>
@@ -875,7 +875,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <dd><p>Callback functions called when logging data. </p>
 <p>One or more callback functions which are called with the log data can be provided to the library. A callback function is passed a log_Event structure containing the line number, filename, fmt string, va printf va_list, level and the given udata. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>fn</strong> – the callback function </p></li>
@@ -892,7 +892,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 <dd><p>If the log will be written to from multiple threads a lock function can be set. </p>
 <p>The function is passed the boolean true if the lock should be acquired or false if the lock should be released and the given udata value. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>conf</strong> – the <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module </p></li>
 <li><p><strong>fn</strong> – lock callback </p></li>

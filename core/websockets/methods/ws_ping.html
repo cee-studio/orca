@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>ws_ping - send PING control-frame &#8212; Orca  documentation</title>
     
@@ -462,7 +462,7 @@
 <span class="target" id="websockets_8h_1a68b39b4037a097677244a42b642e6dd8"></span><span class="kt"><span class="pre">_Bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ws_ping</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.websockets" title="websockets"><span class="n"><span class="pre">websockets</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ws</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ws_info" title="ws_info"><span class="n"><span class="pre">ws_info</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">info</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">len</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ws_ping" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Send a PING (opcode 0x9) frame with <em>reason</em> as payload. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ws</strong> – the WebSockets handle created with <a class="reference internal" href="ws_init.html#websockets_8h_1aa6088ca5a9cbda8616ca3ca0bdd12d5d"><span class="std std-ref">ws_init()</span></a> </p></li>
 <li><p><strong>info</strong> – get information on how this transfer went </p></li>
@@ -470,7 +470,7 @@
 <li><p><strong>len</strong> – the length of <em>reason</em> in bytes. If SIZE_MAX, uses strlen() on <em>reason</em> if it’s not NULL. </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>true if sent, false on errors. </p>
 </dd>
 </dl>

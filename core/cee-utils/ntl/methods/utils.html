@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Utilities &#8212; Orca  documentation</title>
     
@@ -490,12 +490,12 @@
 <dd><p>Return the null-terminated list length. </p>
 <p>Analogous to <code class="docutils literal notranslate"><span class="pre">strlen()</span></code>, will iterate over the NTL until a NULL is found. If <code class="docutils literal notranslate"><span class="pre">p</span></code> is NULL, it will return 0. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – the NTL pointer </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the NTL length </p>
 </dd>
 </dl>
@@ -510,13 +510,13 @@
 <dd><p>Return the null-terminated list length under a threshold. </p>
 <p>Behaves like ntl_length() but will stop at a threshold <code class="docutils literal notranslate"><span class="pre">max</span></code> </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – the NTL pointer </p></li>
 <li><p><strong>max</strong> – the threshold length that the function will stop at </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the NTL length </p>
 </dd>
 </dl>
@@ -530,7 +530,7 @@
 <span class="target" id="ntl_8h_1aecf45e90228f180afcd3d3ed44d0c80d"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_apply</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span>, <a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">f</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">elem_p</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_apply" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Call a user-defined callback for each NTL element. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cxt</strong> – an optional user-arbitrary data to be passed along the callbacks </p></li>
 <li><p><strong>p</strong> – the NTL pointer </p></li>
@@ -553,7 +553,7 @@
 <p>Its the caller’s responsibility to make sure <code class="docutils literal notranslate"><span class="pre">added_elem</span></code> has the same type and size as the NTL. </p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – the NTL pointer </p></li>
 <li><p><strong>elem_size</strong> – the size of each NTL element </p></li>
@@ -577,7 +577,7 @@
 <span class="target" id="ntl_8h_1ade937240bbdeed4fb915ac1cbcf97fcb"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_fmap</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">cxt</span></span>, <a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">in_list</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">out_elem_size</span></span>, <a class="reference internal" href="#c.ntl_elem_map" title="ntl_elem_map"><span class="n"><span class="pre">ntl_elem_map</span></span></a><span class="w"> </span><span class="n"><span class="pre">map</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_fmap" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Behaves similarly to Haskell list’s fmap. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cxt</strong> – an optional user-arbitrary data to be passed along the callbacks </p></li>
 <li><p><strong>in_list</strong> – the input NTL </p></li>
@@ -585,7 +585,7 @@
 <li><p><strong>map</strong> – the callback function to map each <code class="docutils literal notranslate"><span class="pre">in_list</span></code> element to the <code class="docutils literal notranslate"><span class="pre">returned</span></code> NTL element </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the new NTL </p>
 </dd>
 </dl>
@@ -599,13 +599,13 @@
 <span class="target" id="ntl_8h_1a7fa0b277ba8f069263ea0ce890e3ca49"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_is_a_member</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">elem</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_is_a_member" title="Permalink to this definition">#</a><br /></dt>
 <dd><p>Check if an element is part of a null-terminated list by its address. </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>p</strong> – the NTL </p></li>
 <li><p><strong>elem</strong> – the element to be checked against <code class="docutils literal notranslate"><span class="pre">p</span></code> </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">1</span></code> if <code class="docutils literal notranslate"><span class="pre">elem</span></code> is a member of the NTL, <code class="docutils literal notranslate"><span class="pre">0</span></code> otherwise </p>
 </dd>
 </dl>

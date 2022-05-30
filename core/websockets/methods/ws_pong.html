@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>ws_pong - send PONG control-frame &#8212; Orca  documentation</title>
     
@@ -463,7 +463,7 @@
 <dd><p>Send a PONG (opcode 0xA) frame with <em>reason</em> as payload. </p>
 <p>Note that pong is sent automatically if no “on_ping” callback is defined. If one is defined you must send pong manually.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ws</strong> – the WebSockets handle created with <a class="reference internal" href="ws_init.html#websockets_8h_1aa6088ca5a9cbda8616ca3ca0bdd12d5d"><span class="std std-ref">ws_init()</span></a> </p></li>
 <li><p><strong>info</strong> – get information on how this transfer went </p></li>
@@ -471,7 +471,7 @@
 <li><p><strong>len</strong> – the length of <em>reason</em> in bytes. If SIZE_MAX, uses strlen() on <em>reason</em> if it’s not NULL. </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>true if sent, false on errors. </p>
 </dd>
 </dl>

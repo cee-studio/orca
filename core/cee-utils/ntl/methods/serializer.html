@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Serializer &#8212; Orca  documentation</title>
     
@@ -539,14 +539,14 @@
 <dd><p>Behaves similarly to snprintf(), serialize a NTL <code class="docutils literal notranslate"><span class="pre">p</span></code> to string. </p>
 <p><code class="docutils literal notranslate"><span class="pre">ntl_to_buf(NULL,0,...)</span></code> return the number of bytes (excluding \0) needed to serialize p <code class="docutils literal notranslate"><span class="pre">ntl_to_buf(buf,n,...)</span></code> serialize p to buf and return the number of bytes written excluding \0 </p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>buf</strong> – the buffer to store the serialized NTL </p></li>
 <li><p><strong>size</strong> – the buffer size </p></li>
 <li><p><strong>serializer</strong> – the serializer config structure </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the amount written to <code class="docutils literal notranslate"><span class="pre">buf</span></code> in bytes </p>
 </dd>
 </dl>
@@ -561,13 +561,13 @@
 <p><code class="docutils literal notranslate"><span class="pre">buf_p</span></code> should be free’d accordingly after done being used </p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>buf_p</strong> – the buffer to be created (expects a <code class="docutils literal notranslate"><span class="pre">char*</span></code> address) </p></li>
 <li><p><strong>serializer</strong> – the serializer config structure </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the amount written to <code class="docutils literal notranslate"><span class="pre">buf_p</span></code> in bytes </p>
 </dd>
 </dl>

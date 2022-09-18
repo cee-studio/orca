@@ -334,6 +334,9 @@ _discord_adapter_run_sync(struct discord_adapter *adapter,
     ua_conn_add_header(conn, "Content-Type", "multipart/form-data");
     ua_conn_set_mime(conn, &cxt, &_discord_context_to_mime);
   }
+  else if (HTTP_DELETE) {
+    ua_conn_add_header(conn, "Content-Type", "application/octet-stream");
+  }
   else {
     ua_conn_add_header(conn, "Content-Type", "application/json");
   }
@@ -616,6 +619,9 @@ _discord_adapter_send(struct discord_adapter *adapter,
   if (HTTP_MIMEPOST == cxt->method) {
     ua_conn_add_header(cxt->conn, "Content-Type", "multipart/form-data");
     ua_conn_set_mime(cxt->conn, cxt, &_discord_context_to_mime);
+  }
+  else if (HTTP_DELETE == cxt->method) {
+    ua_conn_add_header(cxt->conn, "Content-Type", "application/octet-stream");
   }
   else {
     ua_conn_add_header(cxt->conn, "Content-Type", "application/json");

@@ -334,7 +334,7 @@ _discord_adapter_run_sync(struct discord_adapter *adapter,
     ua_conn_add_header(conn, "Content-Type", "multipart/form-data");
     ua_conn_set_mime(conn, &cxt, &_discord_context_to_mime);
   }
-  else if (HTTP_DELETE) {
+  else if (HTTP_DELETE == method) {
     ua_conn_add_header(conn, "Content-Type", "application/octet-stream");
   }
   else {

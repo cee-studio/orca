@@ -595,27 +595,27 @@
 
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;inttypes.h&gt;</span><span class="c1"> // PRIu64</span><span class="cp"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;inttypes.h&gt;</span><span class="c1"> // PRIu64</span>
 
 <span class="c1">// see https://discord.com/developers/docs/reference#message-formatting-formats</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">on_current_time</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="p">,</span><span class="w"></span>
-<span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_message</span><span class="w"> </span><span class="o">*</span><span class="n">msg</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">now_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_timestamp</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">text</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span><span class="w"></span>
-<span class="w">  </span><span class="n">sprintf</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&lt;t:%&quot;</span><span class="w"> </span><span class="n">PRIu64</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">now_ms</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">);</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">on_current_time</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="p">,</span>
+<span class="w">                     </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_message</span><span class="w"> </span><span class="o">*</span><span class="n">msg</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">uint64_t</span><span class="w"> </span><span class="n">now_ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_timestamp</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="n">text</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+<span class="w">  </span><span class="n">sprintf</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;&lt;t:%&quot;</span><span class="w"> </span><span class="n">PRIu64</span><span class="w"> </span><span class="s">&quot;&gt;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">now_ms</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1000</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_create_message_params</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">.</span><span class="n">content</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_create_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">channel_id</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_create_message_params</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">.</span><span class="n">content</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">text</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="n">discord_create_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">-&gt;</span><span class="n">channel_id</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">params</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;!current_time&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_current_time</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span>
+<span class="w">  </span><span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;!current_time&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_current_time</span><span class="p">);</span>
+<span class="w">  </span><span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="w">  </span><span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>

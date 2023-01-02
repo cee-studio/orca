@@ -637,21 +637,21 @@
 
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Attempt to send a message to a invalid channel (id 0) */</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">on_force_error</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_message</span><span class="w"> </span><span class="o">*</span><span class="n">msg</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">ORCAcode</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_create_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">log_error</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">discord_strerror</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">client</span><span class="p">));</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/* Attempt to send a message to a invalid channel (id 0) */</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">on_force_error</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="p">,</span>
+<span class="w">                    </span><span class="k">const</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_message</span><span class="w"> </span><span class="o">*</span><span class="n">msg</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">ORCAcode</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_create_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">  </span><span class="n">log_error</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">discord_strerror</span><span class="p">(</span><span class="n">code</span><span class="p">,</span><span class="w"> </span><span class="n">client</span><span class="p">));</span>
+<span class="p">}</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;!force_error&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_force_error</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span>
+<span class="w">  </span><span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;!force_error&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_force_error</span><span class="p">);</span>
+<span class="w">  </span><span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="w">  </span><span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>

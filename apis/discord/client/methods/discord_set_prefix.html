@@ -599,16 +599,16 @@ Example: If <em>‘help’</em> is a command and <em>‘!’</em> prefix is set,
 
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span><span class="w"></span>
-<span class="n">discord_set_prefix</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;#!&quot;</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span>
+<span class="n">discord_set_prefix</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;#!&quot;</span><span class="p">);</span>
 <span class="c1">// triggers at &#39;#!foo&#39;</span>
-<span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">callback1</span><span class="p">);</span><span class="w"></span>
+<span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">callback1</span><span class="p">);</span>
 <span class="c1">// triggers at &#39;#!?bar&#39;</span>
-<span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;?bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">callback2</span><span class="p">);</span><span class="w"></span>
+<span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;?bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">callback2</span><span class="p">);</span>
 <span class="c1">// triggers at &#39;#!_.baz&#39;</span>
-<span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;_.baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">callback3</span><span class="p">);</span><span class="w"></span>
-<span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<span class="n">discord_set_on_command</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;_.baz&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">callback3</span><span class="p">);</span>
+<span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

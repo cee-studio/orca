@@ -420,34 +420,34 @@
 
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">to_mime</span><span class="p">(</span><span class="n">curl_mime</span><span class="w"> </span><span class="o">*</span><span class="n">mime</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">data</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">curl_mimepart</span><span class="w"> </span><span class="o">*</span><span class="n">part</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curl_mime_addpart</span><span class="p">(</span><span class="n">mime</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">curl_mime_filedata</span><span class="p">(</span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">curl_mime_type</span><span class="p">(</span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;application/octet-stream&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">curl_mime_name</span><span class="p">(</span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;txt_file&quot;</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">to_mime</span><span class="p">(</span><span class="n">curl_mime</span><span class="w"> </span><span class="o">*</span><span class="n">mime</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">data</span><span class="p">;</span>
+<span class="w">  </span><span class="n">curl_mimepart</span><span class="w"> </span><span class="o">*</span><span class="n">part</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curl_mime_addpart</span><span class="p">(</span><span class="n">mime</span><span class="p">);</span>
+<span class="w">  </span><span class="n">curl_mime_filedata</span><span class="p">(</span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">  </span><span class="n">curl_mime_type</span><span class="p">(</span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;application/octet-stream&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">curl_mime_name</span><span class="p">(</span><span class="n">part</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;txt_file&quot;</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">user_agent</span><span class="w"> </span><span class="o">*</span><span class="n">ua</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ua_init</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">ua_set_url</span><span class="p">(</span><span class="n">ua</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://www.example.com&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">user_agent</span><span class="w"> </span><span class="o">*</span><span class="n">ua</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ua_init</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ua_set_url</span><span class="p">(</span><span class="n">ua</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://www.example.com&quot;</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">ua_conn_attr</span><span class="w"> </span><span class="n">conn_attr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">.</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HTTP_MIMEPOST</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">ua_conn</span><span class="w"> </span><span class="o">*</span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ua_conn_start</span><span class="p">(</span><span class="n">ua</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">ua_conn_setup</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">conn_attr</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">ua_conn_attr</span><span class="w"> </span><span class="n">conn_attr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">.</span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HTTP_MIMEPOST</span><span class="w"> </span><span class="p">};</span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">ua_conn</span><span class="w"> </span><span class="o">*</span><span class="n">conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ua_conn_start</span><span class="p">(</span><span class="n">ua</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ua_conn_setup</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">conn_attr</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">ua_conn_add_header</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Content-Type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;multipart/form-data&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ua_conn_add_header</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Content-Type&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;multipart/form-data&quot;</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;foo.txt&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">ua_conn_set_mime</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">to_mime</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;foo.txt&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ua_conn_set_mime</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">to_mime</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">ua_conn_easy_perform</span><span class="p">(</span><span class="n">conn</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ua_conn_easy_perform</span><span class="p">(</span><span class="n">conn</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">ua_conn_stop</span><span class="p">(</span><span class="n">conn</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">ua_cleanup</span><span class="p">(</span><span class="n">ua</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">ua_conn_stop</span><span class="p">(</span><span class="n">conn</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ua_cleanup</span><span class="p">(</span><span class="n">ua</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>

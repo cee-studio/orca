@@ -600,16 +600,16 @@
 
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span><span class="w"></span>
-<span class="k">struct</span><span class="w"> </span><span class="nc">logconf</span><span class="w"> </span><span class="o">*</span><span class="n">conf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_get_logconf</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">BOT_TOKEN</span><span class="p">);</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">logconf</span><span class="w"> </span><span class="o">*</span><span class="n">conf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_get_logconf</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
 
 <span class="n">logconf_set_quiet</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span><span class="w"> </span><span class="c1">// write logging to console</span>
-<span class="n">logconf_set_level</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span><span class="w"> </span><span class="n">LOG_INFO</span><span class="p">);</span><span class="w"></span>
-<span class="n">logconf_info</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Logging from the DISCORD module&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="n">logconf_set_level</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span><span class="w"> </span><span class="n">LOG_INFO</span><span class="p">);</span>
+<span class="n">logconf_info</span><span class="p">(</span><span class="n">conf</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Logging from the DISCORD module&quot;</span><span class="p">);</span>
 
-<span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
 
-<span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
+<span class="n">discord_cleanup</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
 </pre></div>
 </div>
 </section>

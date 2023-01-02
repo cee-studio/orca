@@ -661,51 +661,51 @@
 </section>
 <section id="example">
 <h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">discord_event_scheduler_t</span><span class="w"> </span><span class="nf">scheduler</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                    </span><span class="k">struct</span><span class="w"> </span><span class="nc">sized_buffer</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                    </span><span class="k">enum</span><span class="w"> </span><span class="n">discord_gateway_events</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_MESSAGE_CREATE</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_WORKER_THREAD</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_IGNORE</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_CHANNEL_CREATE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_channel</span><span class="w"> </span><span class="n">channel</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">discord_channel_from_json</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">channel</span><span class="p">);</span><span class="w"></span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">discord_event_scheduler_t</span><span class="w"> </span><span class="nf">scheduler</span><span class="p">(</span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="p">,</span>
+<span class="w">                                    </span><span class="k">struct</span><span class="w"> </span><span class="nc">sized_buffer</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">,</span>
+<span class="w">                                    </span><span class="k">enum</span><span class="w"> </span><span class="n">discord_gateway_events</span><span class="w"> </span><span class="n">event</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_MESSAGE_CREATE</span><span class="p">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_WORKER_THREAD</span><span class="p">;</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_MESSAGE_DELETE</span><span class="p">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_IGNORE</span><span class="p">;</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_CHANNEL_CREATE</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord_channel</span><span class="w"> </span><span class="n">channel</span><span class="p">;</span>
+<span class="w">    </span><span class="n">discord_channel_from_json</span><span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">channel</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">log_info</span><span class="p">(</span><span class="s">&quot;Channel %s has been created!&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">.</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">log_info</span><span class="p">(</span><span class="s">&quot;Channel %s has been created!&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">discord_channel_cleanup</span><span class="p">(</span><span class="o">&amp;</span><span class="n">channel</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_IGNORE</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_READY</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">default</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_MAIN_THREAD</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">discord_channel_cleanup</span><span class="p">(</span><span class="o">&amp;</span><span class="n">channel</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_IGNORE</span><span class="p">;</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="no">DISCORD_GATEWAY_EVENTS_READY</span><span class="p">:</span>
+<span class="w">  </span><span class="k">default</span><span class="o">:</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">DISCORD_EVENT_MAIN_THREAD</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
 <span class="w">  </span><span class="c1">// increase threadpool to 4 threads</span>
-<span class="w">  </span><span class="n">setenv</span><span class="p">(</span><span class="s">&quot;ORCA_THREADPOOL_SIZE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">setenv</span><span class="p">(</span><span class="s">&quot;ORCA_THREADPOOL_SIZE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;4&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
 <span class="w">  </span><span class="c1">// increase threadpool queue length to 128 slots</span>
-<span class="w">  </span><span class="n">setenv</span><span class="p">(</span><span class="s">&quot;ORCA_THREADPOOL_QUEUE_SIZE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;128&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">TOKEN</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">setenv</span><span class="p">(</span><span class="s">&quot;ORCA_THREADPOOL_QUEUE_SIZE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;128&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">discord</span><span class="w"> </span><span class="o">*</span><span class="n">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discord_init</span><span class="p">(</span><span class="n">TOKEN</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">discord_set_event_scheduler</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">scheduler</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">discord_set_event_scheduler</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">scheduler</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// Assigned to main-thread at scheduler() (single-threaded execution)</span>
-<span class="w">  </span><span class="n">discord_set_on_ready</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_ready</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">discord_set_on_ready</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_ready</span><span class="p">);</span>
 <span class="w">  </span><span class="c1">// Assigned to a worker thread at scheduler() (parallel execution)</span>
-<span class="w">  </span><span class="n">discord_set_on_message_create</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_message_create</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">discord_set_on_message_create</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_message_create</span><span class="p">);</span>
 <span class="w">  </span><span class="c1">// Will ignore the callback at scheduler()</span>
-<span class="w">  </span><span class="n">discord_set_on_message_delete</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_message_delete</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">discord_set_on_message_delete</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_message_delete</span><span class="p">);</span>
 <span class="w">  </span><span class="c1">// Will ignore the callback at scheduler(), and include user logic for</span>
 <span class="w">  </span><span class="c1">// printing the new channel</span>
-<span class="w">  </span><span class="n">discord_set_on_channel_create</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_channel_create</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">discord_set_on_channel_create</span><span class="p">(</span><span class="n">client</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">on_channel_create</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">discord_run</span><span class="p">(</span><span class="n">client</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 </section>

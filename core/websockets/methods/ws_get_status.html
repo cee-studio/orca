@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'core/websockets/methods/ws_get_status';</script>
     <link rel="icon" href="../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -451,10 +451,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="ws-get-status-get-client-s-connection-status">
-<h1>ws_get_status - get client’s connection status<a class="headerlink" href="#ws-get-status-get-client-s-connection-status" title="Permalink to this heading">#</a></h1>
+<h1>ws_get_status - get client’s connection status<a class="headerlink" href="#ws-get-status-get-client-s-connection-status" title="Link to this heading">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ws_get_status">
-<span class="target" id="websockets_8h_1acdd4872611e9c663ffbfd3c67deb0b79"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ws_status" title="ws_status"><span class="n"><span class="pre">ws_status</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ws_get_status</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.websockets" title="websockets"><span class="n"><span class="pre">websockets</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ws</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ws_get_status" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="websockets_8h_1acdd4872611e9c663ffbfd3c67deb0b79"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ws_status" title="ws_status"><span class="n"><span class="pre">ws_status</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ws_get_status</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.websockets" title="websockets"><span class="n"><span class="pre">websockets</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ws</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ws_get_status" title="Link to this definition">#</a><br /></dt>
 <dd><p>Returns the WebSockets handle connection status. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -469,10 +469,10 @@ document.write(`
 </dd></dl>
 
 <section id="wrappers">
-<h2>Wrappers<a class="headerlink" href="#wrappers" title="Permalink to this heading">#</a></h2>
+<h2>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading">#</a></h2>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ws_is_alive">
-<span class="target" id="websockets_8h_1ad051813d376e9b2eae4018af09b36608"></span><span class="sig-name descname"><span class="n"><span class="pre">ws_is_alive</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ws</span></span><span class="sig-paren">)</span> <span class="pre">(</span><a class="reference internal" href="#websockets_8h_1acdd4872611e9c663ffbfd3c67deb0b79"><span class="std std-ref"><span class="pre">ws_get_status</span></span></a><span class="pre">(ws)</span> <span class="pre">!=</span> <a class="reference internal" href="../datatypes.html#websockets_8h_1a2c98aa4435bf623cdba0e8bab4303b26ab3328538fd15fe5c3195a5d56e3e4889"><span class="std std-ref"><span class="pre">WS_DISCONNECTED</span></span></a><span class="pre">)</span><a class="headerlink" href="#c.ws_is_alive" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="websockets_8h_1ad051813d376e9b2eae4018af09b36608"></span><span class="sig-name descname"><span class="n"><span class="pre">ws_is_alive</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ws</span></span><span class="sig-paren">)</span> <span class="pre">(</span><a class="reference internal" href="#websockets_8h_1acdd4872611e9c663ffbfd3c67deb0b79"><span class="std std-ref"><span class="pre">ws_get_status</span></span></a><span class="pre">(ws)</span> <span class="pre">!=</span> <a class="reference internal" href="../datatypes.html#websockets_8h_1a2c98aa4435bf623cdba0e8bab4303b26ab3328538fd15fe5c3195a5d56e3e4889"><span class="std std-ref"><span class="pre">WS_DISCONNECTED</span></span></a><span class="pre">)</span><a class="headerlink" href="#c.ws_is_alive" title="Link to this definition">#</a><br /></dt>
 <dd><p>Check if a WebSockets connection is alive. </p>
 <p>This will only return true if the connection status is different than WS_DISCONNECTED </p>
 <dl class="field-list simple">
@@ -489,7 +489,7 @@ document.write(`
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.ws_is_functional">
-<span class="target" id="websockets_8h_1a684b8995274735a5e21602b065a4aa0e"></span><span class="sig-name descname"><span class="n"><span class="pre">ws_is_functional</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ws</span></span><span class="sig-paren">)</span> <span class="pre">(</span><a class="reference internal" href="#websockets_8h_1acdd4872611e9c663ffbfd3c67deb0b79"><span class="std std-ref"><span class="pre">ws_get_status</span></span></a><span class="pre">(ws)</span> <span class="pre">==</span> <a class="reference internal" href="../datatypes.html#websockets_8h_1a2c98aa4435bf623cdba0e8bab4303b26af9564bb4cc0e631f03b8a7d7c1a204c9"><span class="std std-ref"><span class="pre">WS_CONNECTED</span></span></a><span class="pre">)</span><a class="headerlink" href="#c.ws_is_functional" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="websockets_8h_1a684b8995274735a5e21602b065a4aa0e"></span><span class="sig-name descname"><span class="n"><span class="pre">ws_is_functional</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ws</span></span><span class="sig-paren">)</span> <span class="pre">(</span><a class="reference internal" href="#websockets_8h_1acdd4872611e9c663ffbfd3c67deb0b79"><span class="std std-ref"><span class="pre">ws_get_status</span></span></a><span class="pre">(ws)</span> <span class="pre">==</span> <a class="reference internal" href="../datatypes.html#websockets_8h_1a2c98aa4435bf623cdba0e8bab4303b26af9564bb4cc0e631f03b8a7d7c1a204c9"><span class="std std-ref"><span class="pre">WS_CONNECTED</span></span></a><span class="pre">)</span><a class="headerlink" href="#c.ws_is_functional" title="Link to this definition">#</a><br /></dt>
 <dd><p>Check if WebSockets connection is functional. </p>
 <p>This will only return true if the connection status is WS_CONNECTED </p>
 <dl class="field-list simple">
@@ -506,7 +506,7 @@ document.write(`
 
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">CURLM</span><span class="w"> </span><span class="o">*</span><span class="n">mhandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curl_multi_init</span><span class="p">();</span>
 <span class="k">struct</span><span class="w"> </span><span class="nc">websockets</span><span class="w"> </span><span class="o">*</span><span class="n">ws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ws_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cbs</span><span class="p">,</span><span class="w"> </span><span class="n">mhandle</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
 <span class="n">ws_set_url</span><span class="p">(</span><span class="n">ws</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wss://example.com&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
@@ -649,7 +649,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

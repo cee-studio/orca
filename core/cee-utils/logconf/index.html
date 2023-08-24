@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'core/cee-utils/logconf/index';</script>
     <link rel="icon" href="../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -451,75 +451,75 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="modular-logging-reference">
-<h1>Modular Logging Reference<a class="headerlink" href="#modular-logging-reference" title="Permalink to this heading">#</a></h1>
+<h1>Modular Logging Reference<a class="headerlink" href="#modular-logging-reference" title="Link to this heading">#</a></h1>
 <p>An add-on to the popular <a class="reference external" href="https://github.com/rxi/log.c">log.c</a>
 logging library that adds modularity over the existing functionalities.
 All functions from <code class="docutils literal notranslate"><span class="pre">log.c</span></code> are included and can be expected to behave the same.</p>
 <p>The following outlines the modular logging functionalities.</p>
 <section id="datatypes">
-<h2>Datatypes<a class="headerlink" href="#datatypes" title="Permalink to this heading">#</a></h2>
+<h2>Datatypes<a class="headerlink" href="#datatypes" title="Link to this heading">#</a></h2>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.logconf">
-<span class="target" id="structlogconf"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf</span></span></span><a class="headerlink" href="#c.logconf" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf</span></span></span><a class="headerlink" href="#c.logconf" title="Link to this definition">#</a><br /></dt>
 <dd><p>A stackful and modularized wrapper over the popular ‘log.c’ facilities. </p>
 <p>Provides a way to split logging into individual modules, that can be configured separately from one another, or have their resources shared via branching. </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.id">
-<span class="target" id="structlogconf_1acaa02a5dc660b1118f53a426097ef3ff"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#c.LOGCONF_ID_LEN" title="LOGCONF_ID_LEN"><span class="n"><span class="pre">LOGCONF_ID_LEN</span></span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#c.logconf.id" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1acaa02a5dc660b1118f53a426097ef3ff"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#c.LOGCONF_ID_LEN" title="LOGCONF_ID_LEN"><span class="n"><span class="pre">LOGCONF_ID_LEN</span></span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#c.logconf.id" title="Link to this definition">#</a><br /></dt>
 <dd><p>logging module id </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.L">
-<span class="target" id="structlogconf_1a7bf894e216abf3973b5dd03619737977"></span><span class="n"><span class="pre">log_Logger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L</span></span></span><a class="headerlink" href="#c.logconf.L" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1a7bf894e216abf3973b5dd03619737977"></span><span class="n"><span class="pre">log_Logger</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L</span></span></span><a class="headerlink" href="#c.logconf.L" title="Link to this definition">#</a><br /></dt>
 <dd><p>log.c main structure </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.pid">
-<span class="target" id="structlogconf_1ad794386f9b1b5de5e6c710a2a56575b7"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pid</span></span></span><a class="headerlink" href="#c.logconf.pid" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1ad794386f9b1b5de5e6c710a2a56575b7"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pid</span></span></span><a class="headerlink" href="#c.logconf.pid" title="Link to this definition">#</a><br /></dt>
 <dd><p>the id of the process where this module was created </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.is_branch">
-<span class="target" id="structlogconf_1a91f341621ae7314513a5fdd6d02a93c9"></span><span class="kt"><span class="pre">_Bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_branch</span></span></span><a class="headerlink" href="#c.logconf.is_branch" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1a91f341621ae7314513a5fdd6d02a93c9"></span><span class="kt"><span class="pre">_Bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_branch</span></span></span><a class="headerlink" href="#c.logconf.is_branch" title="Link to this definition">#</a><br /></dt>
 <dd><p>if true then logconf_cleanup() won’t cleanup shared resources </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.file">
-<span class="target" id="structlogconf_1aa7a2756ad4fa7d9ec1fb73c6f8699ba4"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">file</span></span></span><a class="headerlink" href="#c.logconf.file" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1aa7a2756ad4fa7d9ec1fb73c6f8699ba4"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">file</span></span></span><a class="headerlink" href="#c.logconf.file" title="Link to this definition">#</a><br /></dt>
 <dd><p>config file conents </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.fname">
-<span class="target" id="structlogconf_1ab396d507e14401ed0d19c2283856b344"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fname</span></span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#c.LOGCONF_PATH_MAX" title="LOGCONF_PATH_MAX"><span class="n"><span class="pre">LOGCONF_PATH_MAX</span></span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#c.logconf.fname" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1ab396d507e14401ed0d19c2283856b344"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">fname</span></span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#c.LOGCONF_PATH_MAX" title="LOGCONF_PATH_MAX"><span class="n"><span class="pre">LOGCONF_PATH_MAX</span></span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#c.logconf.fname" title="Link to this definition">#</a><br /></dt>
 <dd><p>name of logging output file </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.f">
-<span class="target" id="structlogconf_1a1009f99f2030567ad46d42fb4b108def"></span><span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">f</span></span></span><a class="headerlink" href="#c.logconf.f" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1a1009f99f2030567ad46d42fb4b108def"></span><span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">f</span></span></span><a class="headerlink" href="#c.logconf.f" title="Link to this definition">#</a><br /></dt>
 <dd><p>pointer to logging output file </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.logger">
-<span class="target" id="structlogconf_1a69b4b0c77a47337921646946bc6fde60"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">[anonymous]</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">logger</span></span></span><a class="headerlink" href="#c.logconf.logger" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1a69b4b0c77a47337921646946bc6fde60"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">[anonymous]</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">logger</span></span></span><a class="headerlink" href="#c.logconf.logger" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.http">
-<span class="target" id="structlogconf_1abc56b786061c4192d78dcbc1efb712f7"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">[anonymous]</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http</span></span></span><a class="headerlink" href="#c.logconf.http" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1abc56b786061c4192d78dcbc1efb712f7"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="p"><span class="pre">.</span></span><span class="n"><span class="pre">[anonymous]</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">http</span></span></span><a class="headerlink" href="#c.logconf.http" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.logconf.disable_modules">
-<span class="target" id="structlogconf_1ac5025c3c2f3e0311ad57542ffe1ff52e"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">ja_str</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">disable_modules</span></span></span><a class="headerlink" href="#c.logconf.disable_modules" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structlogconf_1ac5025c3c2f3e0311ad57542ffe1ff52e"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="n"><span class="pre">ja_str</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">disable_modules</span></span></span><a class="headerlink" href="#c.logconf.disable_modules" title="Link to this definition">#</a><br /></dt>
 <dd><p>list of ‘id’ that should be ignored </p>
 </dd></dl>
 
@@ -528,25 +528,25 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 </section>
 <section id="constants">
-<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this heading">#</a></h2>
+<h2>Constants<a class="headerlink" href="#constants" title="Link to this heading">#</a></h2>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.LOGCONF_ID_LEN">
-<span class="target" id="logconf_8h_1a35fac6e0ef75e4bdce496f738a759c35"></span><span class="sig-name descname"><span class="n"><span class="pre">LOGCONF_ID_LEN</span></span></span> <span class="pre">64</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.LOGCONF_ID_LEN" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a35fac6e0ef75e4bdce496f738a759c35"></span><span class="sig-name descname"><span class="n"><span class="pre">LOGCONF_ID_LEN</span></span></span> <span class="pre">64</span> <span class="pre">+</span> <span class="pre">1</span><a class="headerlink" href="#c.LOGCONF_ID_LEN" title="Link to this definition">#</a><br /></dt>
 <dd><p>Maximum length for module id </p>
 </dd></dl>
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.LOGCONF_PATH_MAX">
-<span class="target" id="logconf_8h_1aa997587ca79a21c24849c118f64ef8ca"></span><span class="sig-name descname"><span class="n"><span class="pre">LOGCONF_PATH_MAX</span></span></span> <span class="pre">4096</span><a class="headerlink" href="#c.LOGCONF_PATH_MAX" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1aa997587ca79a21c24849c118f64ef8ca"></span><span class="sig-name descname"><span class="n"><span class="pre">LOGCONF_PATH_MAX</span></span></span> <span class="pre">4096</span><a class="headerlink" href="#c.LOGCONF_PATH_MAX" title="Link to this definition">#</a><br /></dt>
 <dd><p>Maximum length for the output file path </p>
 </dd></dl>
 
 </section>
 <section id="configure-logging-via-a-json-file">
-<h2>Configure logging via a JSON file<a class="headerlink" href="#configure-logging-via-a-json-file" title="Permalink to this heading">#</a></h2>
+<h2>Configure logging via a JSON file<a class="headerlink" href="#configure-logging-via-a-json-file" title="Link to this heading">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_setup">
-<span class="target" id="logconf_8h_1a0feef146d10b65c732aa71ecdcffcd2e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_setup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">fp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_setup" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a0feef146d10b65c732aa71ecdcffcd2e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_setup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">fp</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_setup" title="Link to this definition">#</a><br /></dt>
 <dd><p>Initialize a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module from a config file. </p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -565,10 +565,10 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 </dd></dl>
 
 <section id="get-file-field">
-<h3>Get file field<a class="headerlink" href="#get-file-field" title="Permalink to this heading">#</a></h3>
+<h3>Get file field<a class="headerlink" href="#get-file-field" title="Link to this heading">#</a></h3>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_get_field">
-<span class="target" id="logconf_8h_1a0604a0af233860ef6401b48593b75947"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_get_field</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">json_field</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_get_field" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a0604a0af233860ef6401b48593b75947"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_get_field</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">json_field</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_get_field" title="Link to this definition">#</a><br /></dt>
 <dd><p>Get the value from a given JSON field of the config file. </p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -591,10 +591,10 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 </section>
 </section>
 <section id="branch-a-logging-module">
-<h2>Branch a logging module<a class="headerlink" href="#branch-a-logging-module" title="Permalink to this heading">#</a></h2>
+<h2>Branch a logging module<a class="headerlink" href="#branch-a-logging-module" title="Link to this heading">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_branch">
-<span class="target" id="logconf_8h_1a13950b980d37a19af0aebc87f0c35121"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_branch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">branch</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">orig</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_branch" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a13950b980d37a19af0aebc87f0c35121"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_branch</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">branch</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">orig</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_branch" title="Link to this definition">#</a><br /></dt>
 <dd><p>Branch and link a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module to a existing one. </p>
 <p>Initialize a <code class="docutils literal notranslate"><span class="pre">branch</span></code> logging module thats expected to share common resources with its parent module <code class="docutils literal notranslate"><span class="pre">orig</span></code>. The common resources include: config file directives, logging output and disabled modules list. </p>
 <dl class="field-list simple">
@@ -610,10 +610,10 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 </section>
 <section id="cleanup">
-<h2>Cleanup<a class="headerlink" href="#cleanup" title="Permalink to this heading">#</a></h2>
+<h2>Cleanup<a class="headerlink" href="#cleanup" title="Link to this heading">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_cleanup">
-<span class="target" id="logconf_8h_1a0d928c3669ab16a2e80766a2339348b6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_cleanup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_cleanup" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a0d928c3669ab16a2e80766a2339348b6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_cleanup</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_cleanup" title="Link to this definition">#</a><br /></dt>
 <dd><p>Cleanup a <code class="docutils literal notranslate"><span class="pre">struct</span> <span class="pre">logconf</span></code> module. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -626,10 +626,10 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 </section>
 <section id="logging">
-<h2>Logging<a class="headerlink" href="#logging" title="Permalink to this heading">#</a></h2>
+<h2>Logging<a class="headerlink" href="#logging" title="Link to this heading">#</a></h2>
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_trace">
-<span class="target" id="logconf_8h_1a7885b86f871c55598a46db58bc44b9b2"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_trace</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_TRACE,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_trace" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a7885b86f871c55598a46db58bc44b9b2"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_trace</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_TRACE,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_trace" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log level trace. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -643,7 +643,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_debug">
-<span class="target" id="logconf_8h_1a8b4527afe5967b4ad00bfac726256312"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_debug</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_DEBUG,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_debug" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a8b4527afe5967b4ad00bfac726256312"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_debug</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_DEBUG,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_debug" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log level debug. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -657,7 +657,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_info">
-<span class="target" id="logconf_8h_1a7ef138059b1beb2e6fc2872c1f869dbe"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_INFO,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_info" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a7ef138059b1beb2e6fc2872c1f869dbe"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_info</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_INFO,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_info" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log level info. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -671,7 +671,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_warn">
-<span class="target" id="logconf_8h_1af2d239a2b04333b0182d1999297b8872"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_warn</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_WARN,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_warn" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1af2d239a2b04333b0182d1999297b8872"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_warn</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_WARN,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_warn" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log level warn. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -685,7 +685,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_error">
-<span class="target" id="logconf_8h_1a401901df360cd18f03d839b265200923"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_error</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_ERROR,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_error" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a401901df360cd18f03d839b265200923"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_error</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_ERROR,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_error" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log level error. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -699,7 +699,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_fatal">
-<span class="target" id="logconf_8h_1acfd366d373c6be640ffd9928dd80bbff"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_fatal</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_FATAL,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_fatal" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1acfd366d373c6be640ffd9928dd80bbff"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_fatal</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">logconf_log(conf,</span> <span class="pre">LOG_FATAL,</span> <span class="pre">__FILE__,</span> <span class="pre">__LINE__,</span> <span class="pre">__VA_ARGS__)</span><a class="headerlink" href="#c.logconf_fatal" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log level fatal. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -713,7 +713,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c macro">
 <dt class="sig sig-object c" id="c.logconf_log">
-<span class="target" id="logconf_8h_1ac69384b8628620a02b32e5c603e96f8d"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_log</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">level</span></span>, <span class="n"><span class="pre">file</span></span>, <span class="n"><span class="pre">line</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">__logconf_log(conf,</span> <span class="pre">level,</span> <span class="pre">file,</span> <span class="pre">line,</span> <span class="pre">__VA_ARGS__,</span> <span class="pre">&quot;&quot;)</span><a class="headerlink" href="#c.logconf_log" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1ac69384b8628620a02b32e5c603e96f8d"></span><span class="sig-name descname"><span class="n"><span class="pre">logconf_log</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">level</span></span>, <span class="n"><span class="pre">file</span></span>, <span class="n"><span class="pre">line</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span> &#160; <span class="pre">__logconf_log(conf,</span> <span class="pre">level,</span> <span class="pre">file,</span> <span class="pre">line,</span> <span class="pre">__VA_ARGS__,</span> <span class="pre">&quot;&quot;)</span><a class="headerlink" href="#c.logconf_log" title="Link to this definition">#</a><br /></dt>
 <dd><p>Run-time configurable log level. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -729,10 +729,10 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 </dd></dl>
 
 <section id="http">
-<h3>HTTP<a class="headerlink" href="#http" title="Permalink to this heading">#</a></h3>
+<h3>HTTP<a class="headerlink" href="#http" title="Link to this heading">#</a></h3>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_http">
-<span class="target" id="logconf_8h_1a0d5ff5d40634ce88534bfda4bf257eff"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_http</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.loginfo" title="loginfo"><span class="n"><span class="pre">loginfo</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">info</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="n"><span class="pre">header</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="n"><span class="pre">body</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">label_fmt</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_http" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a0d5ff5d40634ce88534bfda4bf257eff"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_http</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.loginfo" title="loginfo"><span class="n"><span class="pre">loginfo</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">info</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="n"><span class="pre">header</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../ntl/index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="n"><span class="pre">body</span></span>, <span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n"><span class="pre">label_fmt</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span>, <span class="p"><span class="pre">...</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_http" title="Link to this definition">#</a><br /></dt>
 <dd><p>Log HTTP transfers. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -751,19 +751,19 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.loginfo">
-<span class="target" id="structloginfo"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loginfo</span></span></span><a class="headerlink" href="#c.loginfo" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structloginfo"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">loginfo</span></span></span><a class="headerlink" href="#c.loginfo" title="Link to this definition">#</a><br /></dt>
 <dd><p>Store logging information from log_http() </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.loginfo.counter">
-<span class="target" id="structloginfo_1a48ad0bada3fb64286075b064fd0ddfa2"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">counter</span></span></span><a class="headerlink" href="#c.loginfo.counter" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structloginfo_1a48ad0bada3fb64286075b064fd0ddfa2"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">counter</span></span></span><a class="headerlink" href="#c.loginfo.counter" title="Link to this definition">#</a><br /></dt>
 <dd><p>log count </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.loginfo.tstamp_ms">
-<span class="target" id="structloginfo_1aba799485bc8d3d9e35092404f0a0423e"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tstamp_ms</span></span></span><a class="headerlink" href="#c.loginfo.tstamp_ms" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structloginfo_1aba799485bc8d3d9e35092404f0a0423e"></span><span class="n"><span class="pre">uint64_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tstamp_ms</span></span></span><a class="headerlink" href="#c.loginfo.tstamp_ms" title="Link to this definition">#</a><br /></dt>
 <dd><p>log timestamp </p>
 </dd></dl>
 
@@ -773,10 +773,10 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 </section>
 </section>
 <section id="configuring-logging-manually">
-<h2>Configuring logging manually<a class="headerlink" href="#configuring-logging-manually" title="Permalink to this heading">#</a></h2>
+<h2>Configuring logging manually<a class="headerlink" href="#configuring-logging-manually" title="Link to this heading">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_set_quiet">
-<span class="target" id="logconf_8h_1a180ba1db8d03fd5bc68e0deac50b7a74"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_set_quiet</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n"><span class="pre">enable</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_set_quiet" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a180ba1db8d03fd5bc68e0deac50b7a74"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_set_quiet</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n"><span class="pre">enable</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_set_quiet" title="Link to this definition">#</a><br /></dt>
 <dd><p>Toggle quiet mode. </p>
 <p>Quiet-mode can be enabled by settings <code class="docutils literal notranslate"><span class="pre">enable</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code>. While this mode is enabled the library will not output anything to stderr, but will continue to write to files and callbacks if any are set. </p>
 <dl class="field-list simple">
@@ -791,7 +791,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_set_level">
-<span class="target" id="logconf_8h_1a24980d1378aaf18a1075e15f4a590f5e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_set_level</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_set_level" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a24980d1378aaf18a1075e15f4a590f5e"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_set_level</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_set_level" title="Link to this definition">#</a><br /></dt>
 <dd><p>Set the current logging level. </p>
 <p>All logs below the given level will not be written to stderr. By default the level is LOG_TRACE, such that nothing is ignored. </p>
 <dl class="field-list simple">
@@ -806,7 +806,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_add_fp">
-<span class="target" id="logconf_8h_1a129717be93aab4672a43fb38fde7637e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_add_fp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">fp</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_add_fp" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a129717be93aab4672a43fb38fde7637e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_add_fp</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">FILE</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">fp</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_add_fp" title="Link to this definition">#</a><br /></dt>
 <dd><p>File where the log will be written. </p>
 <p>One or more file pointers where the log will be written can be provided to the library. Any messages below the given <code class="docutils literal notranslate"><span class="pre">level</span></code> are ignored. If the library failed to add a file pointer a value less-than-zero is returned. </p>
 <dl class="field-list simple">
@@ -822,7 +822,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_add_callback">
-<span class="target" id="logconf_8h_1a5fe661132a5da0dfbe79df5d7efdbdc4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_add_callback</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">log_LogFn</span></span><span class="w"> </span><span class="n"><span class="pre">fn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">udata</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_add_callback" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1a5fe661132a5da0dfbe79df5d7efdbdc4"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_add_callback</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">log_LogFn</span></span><span class="w"> </span><span class="n"><span class="pre">fn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">udata</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n"><span class="pre">level</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_add_callback" title="Link to this definition">#</a><br /></dt>
 <dd><p>Callback functions called when logging data. </p>
 <p>One or more callback functions which are called with the log data can be provided to the library. A callback function is passed a log_Event structure containing the line number, filename, fmt string, va printf va_list, level and the given udata. </p>
 <dl class="field-list simple">
@@ -839,7 +839,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.logconf_set_lock">
-<span class="target" id="logconf_8h_1ac567d6afcf927ae0400b58b7e1f29d0f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_set_lock</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">log_LockFn</span></span><span class="w"> </span><span class="n"><span class="pre">fn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">udata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_set_lock" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="logconf_8h_1ac567d6afcf927ae0400b58b7e1f29d0f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">logconf_set_lock</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.logconf" title="logconf"><span class="n"><span class="pre">logconf</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">conf</span></span>, <span class="n"><span class="pre">log_LockFn</span></span><span class="w"> </span><span class="n"><span class="pre">fn</span></span>, <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">udata</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.logconf_set_lock" title="Link to this definition">#</a><br /></dt>
 <dd><p>If the log will be written to from multiple threads a lock function can be set. </p>
 <p>The function is passed the boolean true if the lock should be acquired or false if the lock should be released and the given udata value. </p>
 <dl class="field-list simple">
@@ -983,7 +983,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

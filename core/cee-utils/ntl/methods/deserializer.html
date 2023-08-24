@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'core/cee-utils/ntl/methods/deserializer';</script>
     <link rel="icon" href="../../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -455,42 +455,42 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="de-serializer">
-<h1>De-serializer<a class="headerlink" href="#de-serializer" title="Permalink to this heading">#</a></h1>
+<h1>De-serializer<a class="headerlink" href="#de-serializer" title="Link to this heading">#</a></h1>
 <section id="configure">
-<h2>Configure<a class="headerlink" href="#configure" title="Permalink to this heading">#</a></h2>
+<h2>Configure<a class="headerlink" href="#configure" title="Link to this heading">#</a></h2>
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.ntl_deserializer">
-<span class="target" id="structntl__deserializer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_deserializer</span></span></span><a class="headerlink" href="#c.ntl_deserializer" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structntl__deserializer"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_deserializer</span></span></span><a class="headerlink" href="#c.ntl_deserializer" title="Link to this definition">#</a><br /></dt>
 <dd><p>Structure to assist de-serialization into a null-terminated list. </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_deserializer.partition_as_sized_bufs">
-<span class="target" id="structntl__deserializer_1ae7b4304386a97b73f90641fb44b34ad4"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">partition_as_sized_bufs</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">char</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_deserializer.partition_as_sized_bufs" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structntl__deserializer_1ae7b4304386a97b73f90641fb44b34ad4"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">partition_as_sized_bufs</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">char</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../index.html#c.sized_buffer" title="sized_buffer"><span class="n"><span class="pre">sized_buffer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_deserializer.partition_as_sized_bufs" title="Link to this definition">#</a><br /></dt>
 <dd><p>mandatory callback that partition a string to n smaller tokens, each representing a NTL element </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_deserializer.elem_size">
-<span class="target" id="structntl__deserializer_1a08fcca6a5cc61fa9afb678ad01bbb766"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elem_size</span></span></span><a class="headerlink" href="#c.ntl_deserializer.elem_size" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structntl__deserializer_1a08fcca6a5cc61fa9afb678ad01bbb766"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elem_size</span></span></span><a class="headerlink" href="#c.ntl_deserializer.elem_size" title="Link to this definition">#</a><br /></dt>
 <dd><p>the size of each NTL element </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_deserializer.init_elem">
-<span class="target" id="structntl__deserializer_1ac0341d383633da98688b8c5fc00e567f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">init_elem</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_deserializer.init_elem" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structntl__deserializer_1ac0341d383633da98688b8c5fc00e567f"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">init_elem</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_deserializer.init_elem" title="Link to this definition">#</a><br /></dt>
 <dd><p>NTL elements initialization callback (ignored if NULL) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_deserializer.elem_from_buf">
-<span class="target" id="structntl__deserializer_1a1e0cf13d182b85bd3ec0f1a1f4845695"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">elem_from_buf</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">recipient</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_deserializer.elem_from_buf" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structntl__deserializer_1a1e0cf13d182b85bd3ec0f1a1f4845695"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">elem_from_buf</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">recipient</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_deserializer.elem_from_buf" title="Link to this definition">#</a><br /></dt>
 <dd><p>callback that matches each token created at <code class="docutils literal notranslate"><span class="pre">partition_as_sized_bufs</span></code> to a NTL element </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ntl_deserializer.ntl_recipient_p">
-<span class="target" id="structntl__deserializer_1a99fd2764cb1a4c727ff5d36a94900a7c"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_recipient_p</span></span></span><a class="headerlink" href="#c.ntl_deserializer.ntl_recipient_p" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structntl__deserializer_1a99fd2764cb1a4c727ff5d36a94900a7c"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_recipient_p</span></span></span><a class="headerlink" href="#c.ntl_deserializer.ntl_recipient_p" title="Link to this definition">#</a><br /></dt>
 <dd><p>a NTL pointer that should receive the resulting NTL </p>
 </dd></dl>
 
@@ -499,10 +499,10 @@ document.write(`
 
 </section>
 <section id="de-serialize-a-buffer-into-ntl">
-<h2>De-serialize a buffer into NTL<a class="headerlink" href="#de-serialize-a-buffer-into-ntl" title="Permalink to this heading">#</a></h2>
+<h2>De-serialize a buffer into NTL<a class="headerlink" href="#de-serialize-a-buffer-into-ntl" title="Link to this heading">#</a></h2>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_from_buf2">
-<span class="target" id="ntl_8h_1abf023365dc5ef188625d97ca4826ae13"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_from_buf2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_deserializer" title="ntl_deserializer"><span class="n"><span class="pre">ntl_deserializer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">deserializer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_from_buf2" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1abf023365dc5ef188625d97ca4826ae13"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_from_buf2</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">buf</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">size</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ntl_deserializer" title="ntl_deserializer"><span class="n"><span class="pre">ntl_deserializer</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">deserializer</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_from_buf2" title="Link to this definition">#</a><br /></dt>
 <dd><p>De-serialize buffer into a null-terminated list. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -632,7 +632,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'apis/discord/resources/guild/methods/add_guild_member';</script>
     <link rel="icon" href="../../../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -635,10 +635,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="add-guild-member">
-<h1>Add Guild Member<a class="headerlink" href="#add-guild-member" title="Permalink to this heading">#</a></h1>
+<h1>Add Guild Member<a class="headerlink" href="#add-guild-member" title="Link to this heading">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.discord_add_guild_member">
-<span class="target" id="discord_8h_1a086be9d3c15c07369af09ad723d4ff38"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_add_guild_member</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">guild_id</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">user_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_add_guild_member_params" title="discord_add_guild_member_params"><span class="n"><span class="pre">discord_add_guild_member_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_guild_member" title="discord_guild_member"><span class="n"><span class="pre">discord_guild_member</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_add_guild_member" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="discord_8h_1a086be9d3c15c07369af09ad723d4ff38"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_add_guild_member</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">guild_id</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">user_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_add_guild_member_params" title="discord_add_guild_member_params"><span class="n"><span class="pre">discord_add_guild_member_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_guild_member" title="discord_guild_member"><span class="n"><span class="pre">discord_guild_member</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_add_guild_member" title="Link to this definition">#</a><br /></dt>
 <dd><p>Adds a user to the guild. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -670,7 +670,7 @@ document.write(`
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.discord_add_guild_member_params">
-<span class="target" id="structdiscord__add__guild__member__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_add_guild_member_params</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__add__guild__member__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_add_guild_member_params</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params" title="Link to this definition">#</a><br /></dt>
 <dd><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
@@ -706,27 +706,27 @@ document.write(`
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_add_guild_member_params.access_token">
-<span class="target" id="structdiscord__add__guild__member__params_1ac330b8b8c252ff0c12120e1e2abc0233"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">access_token</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.access_token" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__add__guild__member__params_1ac330b8b8c252ff0c12120e1e2abc0233"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">access_token</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.access_token" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_add_guild_member_params.nick">
-<span class="target" id="structdiscord__add__guild__member__params_1abd0aa3293dba616a473ec6e0af700460"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">nick</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.nick" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__add__guild__member__params_1abd0aa3293dba616a473ec6e0af700460"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">nick</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.nick" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_add_guild_member_params.roles">
-<span class="target" id="structdiscord__add__guild__member__params_1a70e6c84847ea62e3df8cc2c6d794a33a"></span><span class="n"><span class="pre">ja_u64</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">roles</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.roles" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__add__guild__member__params_1a70e6c84847ea62e3df8cc2c6d794a33a"></span><span class="n"><span class="pre">ja_u64</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">roles</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.roles" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_add_guild_member_params.mute">
-<span class="target" id="structdiscord__add__guild__member__params_1a417d439c1920a58b6b9b349fc91eacc7"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mute</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.mute" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__add__guild__member__params_1a417d439c1920a58b6b9b349fc91eacc7"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mute</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.mute" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_add_guild_member_params.deaf">
-<span class="target" id="structdiscord__add__guild__member__params_1a5b48d0eb4aacc1143b93dda336ce3ff6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deaf</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.deaf" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__add__guild__member__params_1a5b48d0eb4aacc1143b93dda336ce3ff6"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">deaf</span></span></span><a class="headerlink" href="#c.discord_add_guild_member_params.deaf" title="Link to this definition">#</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -839,7 +839,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'core/cee-utils/ntl/methods/initializer';</script>
     <link rel="icon" href="../../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -456,19 +456,19 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="initializer-cleanup">
-<h1>Initializer / Cleanup<a class="headerlink" href="#initializer-cleanup" title="Permalink to this heading">#</a></h1>
+<h1>Initializer / Cleanup<a class="headerlink" href="#initializer-cleanup" title="Link to this heading">#</a></h1>
 <section id="initialization">
-<h2>Initialization<a class="headerlink" href="#initialization" title="Permalink to this heading">#</a></h2>
+<h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading">#</a></h2>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.ntl_init_cb">
-<span class="target" id="ntl_8h_1a98c56416777c6d0c2029d59341165b2d"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_init_cb</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_init_cb" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1a98c56416777c6d0c2029d59341165b2d"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_init_cb</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_init_cb" title="Link to this definition">#</a><br /></dt>
 <dd><p>Null-terminated list initialization callback. </p>
 <p>Callback function that will be called for each element of the NTL during initialization </p>
 </dd></dl>
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_calloc_init">
-<span class="target" id="ntl_8h_1af7e16a996d351ea4e248d83065ade4a9"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_calloc_init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <a class="reference internal" href="#c.ntl_init_cb" title="ntl_init_cb"><span class="n"><span class="pre">ntl_init_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">init_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_calloc_init" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1af7e16a996d351ea4e248d83065ade4a9"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_calloc_init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <a class="reference internal" href="#c.ntl_init_cb" title="ntl_init_cb"><span class="n"><span class="pre">ntl_init_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">init_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_calloc_init" title="Link to this definition">#</a><br /></dt>
 <dd><p>Initialize a null-terminated list and each of its elements. </p>
 <p>Initialize a NTL and fill n <code class="docutils literal notranslate"><span class="pre">nelems</span></code> of size <code class="docutils literal notranslate"><span class="pre">elem_size</span></code> with zeroes, and call <code class="docutils literal notranslate"><span class="pre">init</span></code> for each element. </p>
 <div class="admonition note">
@@ -491,7 +491,7 @@ document.write(`
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_calloc">
-<span class="target" id="ntl_8h_1a435c541af65d9993cb287dd5c9538e2e"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_calloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_calloc" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1a435c541af65d9993cb287dd5c9538e2e"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_calloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_calloc" title="Link to this definition">#</a><br /></dt>
 <dd><p>Initialize a null-terminated list. </p>
 <p>Initialize a NTL and fill n <code class="docutils literal notranslate"><span class="pre">nelems</span></code> of size <code class="docutils literal notranslate"><span class="pre">elem_size</span></code> with zeroes </p>
 <dl class="field-list simple">
@@ -509,7 +509,7 @@ document.write(`
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_malloc">
-<span class="target" id="ntl_8h_1a82d8fa1ba08a9899d034aaae58820380"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_malloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_malloc" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1a82d8fa1ba08a9899d034aaae58820380"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_malloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_malloc" title="Link to this definition">#</a><br /></dt>
 <dd><p>Initialize a null-terminated list. </p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -530,7 +530,7 @@ document.write(`
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_malloc_init">
-<span class="target" id="ntl_8h_1acc3724fa3bfd50d990fa54d706daf2e6"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_malloc_init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <a class="reference internal" href="#c.ntl_init_cb" title="ntl_init_cb"><span class="n"><span class="pre">ntl_init_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">init_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_malloc_init" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1acc3724fa3bfd50d990fa54d706daf2e6"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_malloc_init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <a class="reference internal" href="#c.ntl_init_cb" title="ntl_init_cb"><span class="n"><span class="pre">ntl_init_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">init_cb</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_malloc_init" title="Link to this definition">#</a><br /></dt>
 <dd><p>Initialize a null-terminated list and each of its elements. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -556,7 +556,7 @@ document.write(`
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_realloc_init">
-<span class="target" id="ntl_8h_1ad04050fd66258cb05ee4b21b4804d8eb"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_realloc_init</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <a class="reference internal" href="#c.ntl_init_cb" title="ntl_init_cb"><span class="n"><span class="pre">ntl_init_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">init</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_realloc_init" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1ad04050fd66258cb05ee4b21b4804d8eb"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_realloc_init</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">nelems</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span>, <a class="reference internal" href="#c.ntl_init_cb" title="ntl_init_cb"><span class="n"><span class="pre">ntl_init_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">init</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_realloc_init" title="Link to this definition">#</a><br /></dt>
 <dd><p>Changes the size of the null-terminated list. </p>
 <p>Changes the size of the NTL memory block pointed by <code class="docutils literal notranslate"><span class="pre">p</span></code> to <code class="docutils literal notranslate"><span class="pre">nelems</span> <span class="pre">*</span> <span class="pre">elem_size</span></code> bytes, call <code class="docutils literal notranslate"><span class="pre">init</span></code> for each element. </p>
 <dl class="field-list simple">
@@ -576,7 +576,7 @@ document.write(`
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_dup">
-<span class="target" id="ntl_8h_1a6a998f2c5d265ea09eb4fb8871f9f687"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_dup</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_dup" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1a6a998f2c5d265ea09eb4fb8871f9f687"></span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_dup</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">elem_size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_dup" title="Link to this definition">#</a><br /></dt>
 <dd><p>Duplicate a null-terminated list. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -593,17 +593,17 @@ document.write(`
 
 </section>
 <section id="cleanup">
-<h2>Cleanup<a class="headerlink" href="#cleanup" title="Permalink to this heading">#</a></h2>
+<h2>Cleanup<a class="headerlink" href="#cleanup" title="Link to this heading">#</a></h2>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.ntl_free_cb">
-<span class="target" id="ntl_8h_1ad134da9018675cb15c84353fe40ea990"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_free_cb</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_free_cb" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1ad134da9018675cb15c84353fe40ea990"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ntl_free_cb</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ntl_free_cb" title="Link to this definition">#</a><br /></dt>
 <dd><p>Null-terminated list cleanup callback. </p>
 <p>Callback function that will be called for each element of the NTL during cleanup </p>
 </dd></dl>
 
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ntl_free">
-<span class="target" id="ntl_8h_1af62a9c9634bdc94f1a032b697e255396"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_free</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <a class="reference internal" href="#c.ntl_free_cb" title="ntl_free_cb"><span class="n"><span class="pre">ntl_free_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">cleanup</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_free" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="ntl_8h_1af62a9c9634bdc94f1a032b697e255396"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ntl_free</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="../index.html#c.ntl_t" title="ntl_t"><span class="n"><span class="pre">ntl_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">p</span></span>, <a class="reference internal" href="#c.ntl_free_cb" title="ntl_free_cb"><span class="n"><span class="pre">ntl_free_cb</span></span></a><span class="w"> </span><span class="n"><span class="pre">cleanup</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ntl_free" title="Link to this definition">#</a><br /></dt>
 <dd><p>Cleanup a null-terminated list. </p>
 <p>Call <code class="docutils literal notranslate"><span class="pre">cleanup</span></code> callback for each element of the NTL, and then <code class="docutils literal notranslate"><span class="pre">free()</span></code> the NTL <code class="docutils literal notranslate"><span class="pre">p</span></code> pointer. </p>
 <dl class="field-list simple">
@@ -735,7 +735,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

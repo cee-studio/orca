@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'apis/discord/resources/channel/methods/edit_message';</script>
     <link rel="icon" href="../../../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -635,10 +635,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="edit-message">
-<h1>Edit Message<a class="headerlink" href="#edit-message" title="Permalink to this heading">#</a></h1>
+<h1>Edit Message<a class="headerlink" href="#edit-message" title="Link to this heading">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.discord_edit_message">
-<span class="target" id="discord_8h_1a28e01f74c325ef0366862695a28079dc"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_message</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">channel_id</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">message_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_edit_message_params" title="discord_edit_message_params"><span class="n"><span class="pre">discord_edit_message_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_message" title="discord_message"><span class="n"><span class="pre">discord_message</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_edit_message" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="discord_8h_1a28e01f74c325ef0366862695a28079dc"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_message</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">channel_id</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">message_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_edit_message_params" title="discord_edit_message_params"><span class="n"><span class="pre">discord_edit_message_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_message" title="discord_message"><span class="n"><span class="pre">discord_message</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_edit_message" title="Link to this definition">#</a><br /></dt>
 <dd><p>Edit a previously sent message. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -658,7 +658,7 @@ document.write(`
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.discord_edit_message_params">
-<span class="target" id="structdiscord__edit__message__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_message_params</span></span></span><a class="headerlink" href="#c.discord_edit_message_params" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_edit_message_params</span></span></span><a class="headerlink" href="#c.discord_edit_message_params" title="Link to this definition">#</a><br /></dt>
 <dd><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
@@ -694,43 +694,43 @@ document.write(`
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.content">
-<span class="target" id="structdiscord__edit__message__params_1a5dc04a3c0fbda827956dba24762b1cdd"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">content</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.content" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1a5dc04a3c0fbda827956dba24762b1cdd"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">content</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.content" title="Link to this definition">#</a><br /></dt>
 <dd><p>the message contents (up to 2000 characters) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.embeds">
-<span class="target" id="structdiscord__edit__message__params_1a29687c2c47b8c4ad751fa7493239b9c0"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_embed" title="discord_embed"><span class="n"><span class="pre">discord_embed</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">embeds</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.embeds" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1a29687c2c47b8c4ad751fa7493239b9c0"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_embed" title="discord_embed"><span class="n"><span class="pre">discord_embed</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">embeds</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.embeds" title="Link to this definition">#</a><br /></dt>
 <dd><p>embedded rich content (up to 6000 characters) </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.embed">
-<span class="target" id="structdiscord__edit__message__params_1a26c41fb6609505a8480c61940ab88cf9"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_embed" title="discord_embed"><span class="n"><span class="pre">discord_embed</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">embed</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.embed" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1a26c41fb6609505a8480c61940ab88cf9"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_embed" title="discord_embed"><span class="n"><span class="pre">discord_embed</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">embed</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.embed" title="Link to this definition">#</a><br /></dt>
 <dd><p>embedded rich content, deprecated in favor of embeds </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.flags">
-<span class="target" id="structdiscord__edit__message__params_1a3afdc913b6ba9a5ff0b3f2059c305fd1"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_message_flags" title="discord_message_flags"><span class="n"><span class="pre">discord_message_flags</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.flags" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1a3afdc913b6ba9a5ff0b3f2059c305fd1"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_message_flags" title="discord_message_flags"><span class="n"><span class="pre">discord_message_flags</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">flags</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.flags" title="Link to this definition">#</a><br /></dt>
 <dd><p>edit the flags of a message </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.allowed_mentions">
-<span class="target" id="structdiscord__edit__message__params_1a33afa8e03914ca897b8678a384561cf6"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_allowed_mentions" title="discord_allowed_mentions"><span class="n"><span class="pre">discord_allowed_mentions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">allowed_mentions</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.allowed_mentions" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1a33afa8e03914ca897b8678a384561cf6"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_allowed_mentions" title="discord_allowed_mentions"><span class="n"><span class="pre">discord_allowed_mentions</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">allowed_mentions</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.allowed_mentions" title="Link to this definition">#</a><br /></dt>
 <dd><p>allowed mentions for the message </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.attachments">
-<span class="target" id="structdiscord__edit__message__params_1ab86d3ff3dc03ddf01bb491f92aa152de"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_attachment" title="discord_attachment"><span class="n"><span class="pre">discord_attachment</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">attachments</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.attachments" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1ab86d3ff3dc03ddf01bb491f92aa152de"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.discord_attachment" title="discord_attachment"><span class="n"><span class="pre">discord_attachment</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">attachments</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.attachments" title="Link to this definition">#</a><br /></dt>
 <dd><p>attached files to keep </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_edit_message_params.components">
-<span class="target" id="structdiscord__edit__message__params_1a5838efe6c94a0f146155e8f447417d63"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../interactions/message_components/datatypes.html#c.discord_component" title="discord_component"><span class="n"><span class="pre">discord_component</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">components</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.components" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__edit__message__params_1a5838efe6c94a0f146155e8f447417d63"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../interactions/message_components/datatypes.html#c.discord_component" title="discord_component"><span class="n"><span class="pre">discord_component</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">components</span></span></span><a class="headerlink" href="#c.discord_edit_message_params.components" title="Link to this definition">#</a><br /></dt>
 <dd><p>the components to include with the message </p>
 </dd></dl>
 
@@ -844,7 +844,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

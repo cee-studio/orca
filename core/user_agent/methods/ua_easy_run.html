@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'core/user_agent/methods/ua_easy_run';</script>
     <link rel="icon" href="../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -451,10 +451,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="ua-easy-run-quickly-perform-a-transfer">
-<h1>ua_easy_run - quickly perform a transfer<a class="headerlink" href="#ua-easy-run-quickly-perform-a-transfer" title="Permalink to this heading">#</a></h1>
+<h1>ua_easy_run - quickly perform a transfer<a class="headerlink" href="#ua-easy-run-quickly-perform-a-transfer" title="Link to this heading">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.ua_easy_run">
-<span class="target" id="user-agent_8h_1a32933994dafc718019a882f99fca76b8"></span><a class="reference internal" href="../../common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ua_easy_run</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.user_agent" title="user_agent"><span class="n"><span class="pre">user_agent</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ua</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ua_info" title="ua_info"><span class="n"><span class="pre">ua_info</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">info</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ua_resp_handle" title="ua_resp_handle"><span class="n"><span class="pre">ua_resp_handle</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ua_conn_attr" title="ua_conn_attr"><span class="n"><span class="pre">ua_conn_attr</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">attr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ua_easy_run" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="user-agent_8h_1a32933994dafc718019a882f99fca76b8"></span><a class="reference internal" href="../../common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ua_easy_run</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.user_agent" title="user_agent"><span class="n"><span class="pre">user_agent</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ua</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ua_info" title="ua_info"><span class="n"><span class="pre">ua_info</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">info</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.ua_resp_handle" title="ua_resp_handle"><span class="n"><span class="pre">ua_resp_handle</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">handle</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../datatypes.html#c.ua_conn_attr" title="ua_conn_attr"><span class="n"><span class="pre">ua_conn_attr</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">attr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.ua_easy_run" title="Link to this definition">#</a><br /></dt>
 <dd><p>Perform a blocking REST transfer. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -479,40 +479,40 @@ document.write(`
 </dd></dl>
 
 <section id="response-handle">
-<h2>Response handle<a class="headerlink" href="#response-handle" title="Permalink to this heading">#</a></h2>
+<h2>Response handle<a class="headerlink" href="#response-handle" title="Link to this heading">#</a></h2>
 <dl class="c type">
 <dt class="sig sig-object c" id="c.ua_load_obj_cb">
-<span class="target" id="user-agent_8h_1aadd080d60d6253ef168af80c5055cb43"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ua_load_obj_cb</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">str</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">len</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p_obj</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ua_load_obj_cb" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="user-agent_8h_1aadd080d60d6253ef168af80c5055cb43"></span><span class="k"><span class="pre">typedef</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ua_load_obj_cb</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">str</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n"><span class="pre">len</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">p_obj</span></span><span class="p"><span class="pre">)</span></span><a class="headerlink" href="#c.ua_load_obj_cb" title="Link to this definition">#</a><br /></dt>
 <dd><p>Callback for object to be loaded by api response. </p>
 </dd></dl>
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.ua_resp_handle">
-<span class="target" id="structua__resp__handle"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ua_resp_handle</span></span></span><a class="headerlink" href="#c.ua_resp_handle" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structua__resp__handle"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ua_resp_handle</span></span></span><a class="headerlink" href="#c.ua_resp_handle" title="Link to this definition">#</a><br /></dt>
 <dd><p>User callback to be called on request completion. </p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ua_resp_handle.ok_cb">
-<span class="target" id="structua__resp__handle_1a59674674f3eeb3f55749462d3245790c"></span><a class="reference internal" href="#c.ua_load_obj_cb" title="ua_load_obj_cb"><span class="n"><span class="pre">ua_load_obj_cb</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ok_cb</span></span></span><a class="headerlink" href="#c.ua_resp_handle.ok_cb" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structua__resp__handle_1a59674674f3eeb3f55749462d3245790c"></span><a class="reference internal" href="#c.ua_load_obj_cb" title="ua_load_obj_cb"><span class="n"><span class="pre">ua_load_obj_cb</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ok_cb</span></span></span><a class="headerlink" href="#c.ua_resp_handle.ok_cb" title="Link to this definition">#</a><br /></dt>
 <dd><p>callback called when a successful transfer occurs </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ua_resp_handle.ok_obj">
-<span class="target" id="structua__resp__handle_1a35956b5179ad538feb66511eb64513e0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ok_obj</span></span></span><a class="headerlink" href="#c.ua_resp_handle.ok_obj" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structua__resp__handle_1a35956b5179ad538feb66511eb64513e0"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">ok_obj</span></span></span><a class="headerlink" href="#c.ua_resp_handle.ok_obj" title="Link to this definition">#</a><br /></dt>
 <dd><p>the pointer to be passed to ok_cb </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ua_resp_handle.err_cb">
-<span class="target" id="structua__resp__handle_1a61aa60943e62cb0cc99e3b54582cb332"></span><a class="reference internal" href="#c.ua_load_obj_cb" title="ua_load_obj_cb"><span class="n"><span class="pre">ua_load_obj_cb</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">err_cb</span></span></span><a class="headerlink" href="#c.ua_resp_handle.err_cb" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structua__resp__handle_1a61aa60943e62cb0cc99e3b54582cb332"></span><a class="reference internal" href="#c.ua_load_obj_cb" title="ua_load_obj_cb"><span class="n"><span class="pre">ua_load_obj_cb</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">err_cb</span></span></span><a class="headerlink" href="#c.ua_resp_handle.err_cb" title="Link to this definition">#</a><br /></dt>
 <dd><p>callback called when a failed transfer occurs </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.ua_resp_handle.err_obj">
-<span class="target" id="structua__resp__handle_1a651cca631390eff6b7292989e521a816"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">err_obj</span></span></span><a class="headerlink" href="#c.ua_resp_handle.err_obj" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structua__resp__handle_1a651cca631390eff6b7292989e521a816"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">err_obj</span></span></span><a class="headerlink" href="#c.ua_resp_handle.err_obj" title="Link to this definition">#</a><br /></dt>
 <dd><p>the pointer to be passed to err_cb </p>
 </dd></dl>
 
@@ -521,7 +521,7 @@ document.write(`
 
 </section>
 <section id="example">
-<h2>Example<a class="headerlink" href="#example" title="Permalink to this heading">#</a></h2>
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">#</a></h2>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">done</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="p">)</span>
 <span class="p">{</span>
 <span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Success! Receive a response body of %zu bytes!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span>
@@ -665,7 +665,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

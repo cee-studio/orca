@@ -35,9 +35,9 @@
   <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js?v=ccbe24c1"></script>
+    <script src="../../../../../_static/documentation_options.js?v=8a448e45"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'apis/discord/resources/guild/methods/modify_guild_role_positions';</script>
     <link rel="icon" href="../../../../../_static/icon.ico"/>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -635,10 +635,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section id="modify-guild-role-positions">
-<h1>Modify Guild Role Positions<a class="headerlink" href="#modify-guild-role-positions" title="Permalink to this heading">#</a></h1>
+<h1>Modify Guild Role Positions<a class="headerlink" href="#modify-guild-role-positions" title="Link to this heading">#</a></h1>
 <dl class="c function">
 <dt class="sig sig-object c" id="c.discord_modify_guild_role_positions">
-<span class="target" id="discord_8h_1a9acd0399880caacdcd2885eebc0cc0e5"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_modify_guild_role_positions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">guild_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_modify_guild_role_positions_params" title="discord_modify_guild_role_positions_params"><span class="n"><span class="pre">discord_modify_guild_role_positions_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../permissions/datatypes.html#c.discord_role" title="discord_role"><span class="n"><span class="pre">discord_role</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_modify_guild_role_positions" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="discord_8h_1a9acd0399880caacdcd2885eebc0cc0e5"></span><a class="reference internal" href="../../../../../core/common/index.html#c.ORCAcode" title="ORCAcode"><span class="n"><span class="pre">ORCAcode</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_modify_guild_role_positions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../../client/datatypes.html#c.discord" title="discord"><span class="n"><span class="pre">discord</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">client</span></span>, <a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="n"><span class="pre">guild_id</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="#c.discord_modify_guild_role_positions_params" title="discord_modify_guild_role_positions_params"><span class="n"><span class="pre">discord_modify_guild_role_positions_params</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">params</span></span>, <span class="k"><span class="pre">struct</span></span><span class="w"> </span><a class="reference internal" href="../../permissions/datatypes.html#c.discord_role" title="discord_role"><span class="n"><span class="pre">discord_role</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">*</span></span><span class="n"><span class="pre">ret</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.discord_modify_guild_role_positions" title="Link to this definition">#</a><br /></dt>
 <dd><p>Modify the positions of a given role list for the guild. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -665,7 +665,7 @@ document.write(`
 
 <dl class="c struct">
 <dt class="sig sig-object c" id="c.discord_modify_guild_role_positions_params">
-<span class="target" id="structdiscord__modify__guild__role__positions__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_modify_guild_role_positions_params</span></span></span><a class="headerlink" href="#c.discord_modify_guild_role_positions_params" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__modify__guild__role__positions__params"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">discord_modify_guild_role_positions_params</span></span></span><a class="headerlink" href="#c.discord_modify_guild_role_positions_params" title="Link to this definition">#</a><br /></dt>
 <dd><p><div class="toggle docutils container">
 <div class="header docutils container">
 <p><strong>Methods</strong></p>
@@ -701,13 +701,13 @@ document.write(`
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_modify_guild_role_positions_params.id">
-<span class="target" id="structdiscord__modify__guild__role__positions__params_1a115053e72a2a47e3e2cf2be4e8f85913"></span><a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><a class="headerlink" href="#c.discord_modify_guild_role_positions_params.id" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__modify__guild__role__positions__params_1a115053e72a2a47e3e2cf2be4e8f85913"></span><a class="reference internal" href="../../../../../core/common/index.html#c.u64_snowflake_t" title="u64_snowflake_t"><span class="n"><span class="pre">u64_snowflake_t</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><a class="headerlink" href="#c.discord_modify_guild_role_positions_params.id" title="Link to this definition">#</a><br /></dt>
 <dd><p>role </p>
 </dd></dl>
 
 <dl class="c var">
 <dt class="sig sig-object c" id="c.discord_modify_guild_role_positions_params.position">
-<span class="target" id="structdiscord__modify__guild__role__positions__params_1a20914a890bad4642cdf9fb2f192e4043"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">position</span></span></span><a class="headerlink" href="#c.discord_modify_guild_role_positions_params.position" title="Permalink to this definition">#</a><br /></dt>
+<span class="target" id="structdiscord__modify__guild__role__positions__params_1a20914a890bad4642cdf9fb2f192e4043"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">position</span></span></span><a class="headerlink" href="#c.discord_modify_guild_role_positions_params.position" title="Link to this definition">#</a><br /></dt>
 <dd><p>sorting position of the role </p>
 </dd></dl>
 
@@ -821,7 +821,7 @@ document.write(`
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.3.
     <br/>
   </p>
 </div>

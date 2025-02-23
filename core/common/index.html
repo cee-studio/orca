@@ -683,10 +683,39 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#primitives">Primitives</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#global-resources">Global Resources</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-codes">Error Codes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limits">Limits</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#primitives">Primitives</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.u64_unix_ms_t"><code class="docutils literal notranslate"><span class="pre">u64_unix_ms_t</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.u64_snowflake_t"><code class="docutils literal notranslate"><span class="pre">u64_snowflake_t</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.u64_bitmask_t"><code class="docutils literal notranslate"><span class="pre">u64_bitmask_t</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.json_char_t"><code class="docutils literal notranslate"><span class="pre">json_char_t</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#global-resources">Global Resources</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.orca_global_init"><code class="docutils literal notranslate"><span class="pre">orca_global_init()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.orca_global_cleanup"><code class="docutils literal notranslate"><span class="pre">orca_global_cleanup()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-codes">Error Codes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_OK"><code class="docutils literal notranslate"><span class="pre">ORCA_OK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_HTTP_CODE"><code class="docutils literal notranslate"><span class="pre">ORCA_HTTP_CODE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_CURL_NO_RESPONSE"><code class="docutils literal notranslate"><span class="pre">ORCA_CURL_NO_RESPONSE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_UNUSUAL_HTTP_CODE"><code class="docutils literal notranslate"><span class="pre">ORCA_UNUSUAL_HTTP_CODE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_BAD_PARAMETER"><code class="docutils literal notranslate"><span class="pre">ORCA_BAD_PARAMETER</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_BAD_JSON"><code class="docutils literal notranslate"><span class="pre">ORCA_BAD_JSON</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_CURLE_INTERNAL"><code class="docutils literal notranslate"><span class="pre">ORCA_CURLE_INTERNAL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_CURLM_INTERNAL"><code class="docutils literal notranslate"><span class="pre">ORCA_CURLM_INTERNAL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_GLOBAL_INIT"><code class="docutils literal notranslate"><span class="pre">ORCA_GLOBAL_INIT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCAcode"><code class="docutils literal notranslate"><span class="pre">ORCAcode</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.orca_strerror"><code class="docutils literal notranslate"><span class="pre">orca_strerror()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limits">Limits</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_LIMITS_SHA256"><code class="docutils literal notranslate"><span class="pre">ORCA_LIMITS_SHA256</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_LIMITS_LOCALE"><code class="docutils literal notranslate"><span class="pre">ORCA_LIMITS_LOCALE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_LIMITS_EMAIL"><code class="docutils literal notranslate"><span class="pre">ORCA_LIMITS_EMAIL</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.ORCA_LIMITS_REGION"><code class="docutils literal notranslate"><span class="pre">ORCA_LIMITS_REGION</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -758,7 +787,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.1.
     <br/>
   </p>
 </div>

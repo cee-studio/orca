@@ -636,37 +636,163 @@
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="datatypes.html">Datatypes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/methods.html">Utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/add_guild_member.html">Add Guild Member</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/add_guild_member_role.html">Add Guild Member Role</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/begin_guild_prune.html">Begin Guild Prune</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/create_guild.html">Create Guild</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/create_guild_ban.html">Create Guild Ban</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/create_guild_channel.html">Create Guild Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/create_guild_role.html">Create Guild Role</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/delete_guild.html">Delete Guild</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/delete_guild_role.html">Delete Guild Role</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild.html">Get Guild</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_ban.html">Get Guild Ban</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_bans.html">Get Guild Bans</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_channels.html">Get Guild Channels</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_invites.html">Get Guild Invites</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_member.html">Get Guild Member</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_preview.html">Get Guild Preview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_roles.html">Get Guild Roles</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/list_guild_members.html">List Guild Members</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_current_member.html">Modify Current Member</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_current_user_nick.html">Modify Current User Nick</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild.html">Modify Guild</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_channel_positions.html">Modify Guild Channel Positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_member.html">Modify Guild Member</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_role.html">Modify Guild Role</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_role_positions.html">Modify Guild Role Positions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/remove_guild_ban.html">Remove Guild Ban</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/remove_guild_member.html">Remove Guild Member</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/remove_guild_member_role.html">Remove Guild Member Role</a></li>
-<li class="toctree-l1"><a class="reference internal" href="methods/search_guild_members.html">Search Guild Members</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datatypes.html">Datatypes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_guild"><code class="docutils literal notranslate"><span class="pre">discord_guild</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_unavailable_guild"><code class="docutils literal notranslate"><span class="pre">discord_unavailable_guild</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_guild_preview"><code class="docutils literal notranslate"><span class="pre">discord_guild_preview</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_guild_widget"><code class="docutils literal notranslate"><span class="pre">discord_guild_widget</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_guild_member</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_integration"><code class="docutils literal notranslate"><span class="pre">discord_integration</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_integration_account"><code class="docutils literal notranslate"><span class="pre">discord_integration_account</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_integration_application"><code class="docutils literal notranslate"><span class="pre">discord_integration_application</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_ban"><code class="docutils literal notranslate"><span class="pre">discord_ban</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_welcome_screen"><code class="docutils literal notranslate"><span class="pre">discord_welcome_screen</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_welcome_screen_channel"><code class="docutils literal notranslate"><span class="pre">discord_welcome_screen_channel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_default_message_notification_level"><code class="docutils literal notranslate"><span class="pre">discord_default_message_notification_level</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_explicit_content_filter_level"><code class="docutils literal notranslate"><span class="pre">discord_explicit_content_filter_level</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_mfa_level"><code class="docutils literal notranslate"><span class="pre">discord_mfa_level</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_verification_level"><code class="docutils literal notranslate"><span class="pre">discord_verification_level</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_premium_tier"><code class="docutils literal notranslate"><span class="pre">discord_premium_tier</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_system_channel_flags"><code class="docutils literal notranslate"><span class="pre">discord_system_channel_flags</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_guild_features"><code class="docutils literal notranslate"><span class="pre">discord_guild_features</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html#c.discord_integration_expire_behaviors"><code class="docutils literal notranslate"><span class="pre">discord_integration_expire_behaviors</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utils/methods.html">Utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="utils/methods.html#c.discord_disconnect_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_disconnect_guild_member()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils/methods.html#c.discord_presence_add_activity"><code class="docutils literal notranslate"><span class="pre">discord_presence_add_activity()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/add_guild_member.html">Add Guild Member</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/add_guild_member.html#c.discord_add_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_add_guild_member()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/add_guild_member.html#c.discord_add_guild_member_params"><code class="docutils literal notranslate"><span class="pre">discord_add_guild_member_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/add_guild_member_role.html">Add Guild Member Role</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/add_guild_member_role.html#c.discord_add_guild_member_role"><code class="docutils literal notranslate"><span class="pre">discord_add_guild_member_role()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/begin_guild_prune.html">Begin Guild Prune</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/begin_guild_prune.html#c.discord_begin_guild_prune"><code class="docutils literal notranslate"><span class="pre">discord_begin_guild_prune()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/begin_guild_prune.html#c.discord_begin_guild_prune_params"><code class="docutils literal notranslate"><span class="pre">discord_begin_guild_prune_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/create_guild.html">Create Guild</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild.html#c.discord_create_guild"><code class="docutils literal notranslate"><span class="pre">discord_create_guild()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild.html#c.discord_create_guild_params"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/create_guild_ban.html">Create Guild Ban</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild_ban.html#c.discord_create_guild_ban"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_ban()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild_ban.html#c.discord_create_guild_ban_params"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_ban_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/create_guild_channel.html">Create Guild Channel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild_channel.html#c.discord_create_guild_channel"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_channel()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild_channel.html#c.discord_create_guild_channel_params"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_channel_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/create_guild_role.html">Create Guild Role</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild_role.html#c.discord_create_guild_role"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_role()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/create_guild_role.html#c.discord_create_guild_role_params"><code class="docutils literal notranslate"><span class="pre">discord_create_guild_role_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/delete_guild.html">Delete Guild</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/delete_guild.html#c.discord_delete_guild"><code class="docutils literal notranslate"><span class="pre">discord_delete_guild()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/delete_guild_role.html">Delete Guild Role</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/delete_guild_role.html#c.discord_delete_guild_role"><code class="docutils literal notranslate"><span class="pre">discord_delete_guild_role()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild.html">Get Guild</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild.html#c.discord_get_guild"><code class="docutils literal notranslate"><span class="pre">discord_get_guild()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_ban.html">Get Guild Ban</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_ban.html#c.discord_get_guild_ban"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_ban()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_bans.html">Get Guild Bans</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_bans.html#c.discord_get_guild_bans"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_bans()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_channels.html">Get Guild Channels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_channels.html#c.discord_get_guild_channels"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_channels()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_invites.html">Get Guild Invites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_invites.html#c.discord_get_guild_invites"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_invites()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_member.html">Get Guild Member</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_member.html#c.discord_get_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_member()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_preview.html">Get Guild Preview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_preview.html#c.discord_get_guild_preview"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_preview()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/get_guild_roles.html">Get Guild Roles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/get_guild_roles.html#c.discord_get_guild_roles"><code class="docutils literal notranslate"><span class="pre">discord_get_guild_roles()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/list_guild_members.html">List Guild Members</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/list_guild_members.html#c.discord_list_guild_members"><code class="docutils literal notranslate"><span class="pre">discord_list_guild_members()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/list_guild_members.html#c.discord_list_guild_members_params"><code class="docutils literal notranslate"><span class="pre">discord_list_guild_members_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_current_member.html">Modify Current Member</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_current_member.html#c.discord_modify_current_member"><code class="docutils literal notranslate"><span class="pre">discord_modify_current_member()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_current_member.html#c.discord_modify_current_member_params"><code class="docutils literal notranslate"><span class="pre">discord_modify_current_member_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_current_user_nick.html">Modify Current User Nick</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_current_user_nick.html#c.discord_modify_current_user_nick"><code class="docutils literal notranslate"><span class="pre">discord_modify_current_user_nick()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild.html">Modify Guild</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild.html#c.discord_modify_guild"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild.html#c.discord_modify_guild_params"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_channel_positions.html">Modify Guild Channel Positions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_channel_positions.html#c.discord_modify_guild_channel_positions"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_channel_positions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_channel_positions.html#c.discord_modify_guild_channel_positions_params"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_channel_positions_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_member.html">Modify Guild Member</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_member.html#c.discord_modify_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_member()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_member.html#c.discord_modify_guild_member_params"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_member_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_role.html">Modify Guild Role</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_role.html#c.discord_modify_guild_role"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_role()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_role.html#c.discord_modify_guild_role_params"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_role_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/modify_guild_role_positions.html">Modify Guild Role Positions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_role_positions.html#c.discord_modify_guild_role_positions"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_role_positions()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/modify_guild_role_positions.html#c.discord_modify_guild_role_positions_params"><code class="docutils literal notranslate"><span class="pre">discord_modify_guild_role_positions_params</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/remove_guild_ban.html">Remove Guild Ban</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/remove_guild_ban.html#c.discord_remove_guild_ban"><code class="docutils literal notranslate"><span class="pre">discord_remove_guild_ban()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/remove_guild_member.html">Remove Guild Member</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/remove_guild_member.html#c.discord_remove_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_remove_guild_member()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/remove_guild_member_role.html">Remove Guild Member Role</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/remove_guild_member_role.html#c.discord_remove_guild_member_role"><code class="docutils literal notranslate"><span class="pre">discord_remove_guild_member_role()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="methods/search_guild_members.html">Search Guild Members</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="methods/search_guild_members.html#c.discord_search_guild_members"><code class="docutils literal notranslate"><span class="pre">discord_search_guild_members()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="methods/search_guild_members.html#c.discord_search_guild_members_params"><code class="docutils literal notranslate"><span class="pre">discord_search_guild_members_params</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -778,7 +904,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.1.
     <br/>
   </p>
 </div>

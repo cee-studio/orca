@@ -902,19 +902,70 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datatypes">Datatypes</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datatypes">Datatypes</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf"><code class="docutils literal notranslate"><span class="pre">logconf</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.id"><code class="docutils literal notranslate"><span class="pre">id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.L"><code class="docutils literal notranslate"><span class="pre">L</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.pid"><code class="docutils literal notranslate"><span class="pre">pid</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.is_branch"><code class="docutils literal notranslate"><span class="pre">is_branch</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.file"><code class="docutils literal notranslate"><span class="pre">file</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.fname"><code class="docutils literal notranslate"><span class="pre">fname</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.f"><code class="docutils literal notranslate"><span class="pre">f</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.logger"><code class="docutils literal notranslate"><span class="pre">logger</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.http"><code class="docutils literal notranslate"><span class="pre">http</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf.disable_modules"><code class="docutils literal notranslate"><span class="pre">disable_modules</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constants">Constants</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.LOGCONF_ID_LEN"><code class="docutils literal notranslate"><span class="pre">LOGCONF_ID_LEN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.LOGCONF_PATH_MAX"><code class="docutils literal notranslate"><span class="pre">LOGCONF_PATH_MAX</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-logging-via-a-json-file">Configure logging via a JSON file</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-file-field">Get file field</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_setup"><code class="docutils literal notranslate"><span class="pre">logconf_setup()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#get-file-field">Get file field</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_get_field"><code class="docutils literal notranslate"><span class="pre">logconf_get_field()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#branch-a-logging-module">Branch a logging module</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cleanup">Cleanup</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#branch-a-logging-module">Branch a logging module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_branch"><code class="docutils literal notranslate"><span class="pre">logconf_branch()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cleanup">Cleanup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_cleanup"><code class="docutils literal notranslate"><span class="pre">logconf_cleanup()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#logging">Logging</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#http">HTTP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_trace"><code class="docutils literal notranslate"><span class="pre">logconf_trace</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_debug"><code class="docutils literal notranslate"><span class="pre">logconf_debug</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_info"><code class="docutils literal notranslate"><span class="pre">logconf_info</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_warn"><code class="docutils literal notranslate"><span class="pre">logconf_warn</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_error"><code class="docutils literal notranslate"><span class="pre">logconf_error</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_fatal"><code class="docutils literal notranslate"><span class="pre">logconf_fatal</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_log"><code class="docutils literal notranslate"><span class="pre">logconf_log</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#http">HTTP</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_http"><code class="docutils literal notranslate"><span class="pre">logconf_http()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.loginfo"><code class="docutils literal notranslate"><span class="pre">loginfo</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#c.loginfo.counter"><code class="docutils literal notranslate"><span class="pre">counter</span></code></a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#c.loginfo.tstamp_ms"><code class="docutils literal notranslate"><span class="pre">tstamp_ms</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-logging-manually">Configuring logging manually</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configuring-logging-manually">Configuring logging manually</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_set_quiet"><code class="docutils literal notranslate"><span class="pre">logconf_set_quiet()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_set_level"><code class="docutils literal notranslate"><span class="pre">logconf_set_level()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_add_fp"><code class="docutils literal notranslate"><span class="pre">logconf_add_fp()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_add_callback"><code class="docutils literal notranslate"><span class="pre">logconf_add_callback()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.logconf_set_lock"><code class="docutils literal notranslate"><span class="pre">logconf_set_lock()</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -986,7 +1037,7 @@ All functions from <code class="docutils literal notranslate"><span class="pre">
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.1.
     <br/>
   </p>
 </div>

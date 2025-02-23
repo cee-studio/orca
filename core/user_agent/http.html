@@ -704,8 +704,38 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#methods">Methods</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status-code">Status Code</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#methods">Methods</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method"><code class="docutils literal notranslate"><span class="pre">http_method</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_INVALID"><code class="docutils literal notranslate"><span class="pre">HTTP_INVALID</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_DELETE"><code class="docutils literal notranslate"><span class="pre">HTTP_DELETE</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_GET"><code class="docutils literal notranslate"><span class="pre">HTTP_GET</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_POST"><code class="docutils literal notranslate"><span class="pre">HTTP_POST</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_MIMEPOST"><code class="docutils literal notranslate"><span class="pre">HTTP_MIMEPOST</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_PATCH"><code class="docutils literal notranslate"><span class="pre">HTTP_PATCH</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method.HTTP_PUT"><code class="docutils literal notranslate"><span class="pre">HTTP_PUT</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method_print"><code class="docutils literal notranslate"><span class="pre">http_method_print()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_method_eval"><code class="docutils literal notranslate"><span class="pre">http_method_eval()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#status-code">Status Code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_OK"><code class="docutils literal notranslate"><span class="pre">HTTP_OK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_CREATED"><code class="docutils literal notranslate"><span class="pre">HTTP_CREATED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_NO_CONTENT"><code class="docutils literal notranslate"><span class="pre">HTTP_NO_CONTENT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_NOT_MODIFIED"><code class="docutils literal notranslate"><span class="pre">HTTP_NOT_MODIFIED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_BAD_REQUEST"><code class="docutils literal notranslate"><span class="pre">HTTP_BAD_REQUEST</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_UNAUTHORIZED"><code class="docutils literal notranslate"><span class="pre">HTTP_UNAUTHORIZED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_FORBIDDEN"><code class="docutils literal notranslate"><span class="pre">HTTP_FORBIDDEN</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_NOT_FOUND"><code class="docutils literal notranslate"><span class="pre">HTTP_NOT_FOUND</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_METHOD_NOT_ALLOWED"><code class="docutils literal notranslate"><span class="pre">HTTP_METHOD_NOT_ALLOWED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_UNPROCESSABLE_ENTITY"><code class="docutils literal notranslate"><span class="pre">HTTP_UNPROCESSABLE_ENTITY</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_TOO_MANY_REQUESTS"><code class="docutils literal notranslate"><span class="pre">HTTP_TOO_MANY_REQUESTS</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.HTTP_GATEWAY_UNAVAILABLE"><code class="docutils literal notranslate"><span class="pre">HTTP_GATEWAY_UNAVAILABLE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_code_print"><code class="docutils literal notranslate"><span class="pre">http_code_print()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.http_reason_print"><code class="docutils literal notranslate"><span class="pre">http_reason_print()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
 </ul>
   </nav></div>
@@ -778,7 +808,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.1.
     <br/>
   </p>
 </div>

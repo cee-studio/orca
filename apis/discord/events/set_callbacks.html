@@ -1069,9 +1069,72 @@
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#on-command">On Command</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#on-discord-events">On Discord Events</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types">Types</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#on-command">On Command</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_command"><code class="docutils literal notranslate"><span class="pre">discord_set_on_command()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_commands"><code class="docutils literal notranslate"><span class="pre">discord_set_on_commands()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#on-discord-events">On Discord Events</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_idle"><code class="docutils literal notranslate"><span class="pre">discord_set_on_idle()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_ready"><code class="docutils literal notranslate"><span class="pre">discord_set_on_ready()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_application_command_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_application_command_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_application_command_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_application_command_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_application_command_delete"><code class="docutils literal notranslate"><span class="pre">discord_set_on_application_command_delete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_channel_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_channel_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_channel_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_channel_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_channel_delete"><code class="docutils literal notranslate"><span class="pre">discord_set_on_channel_delete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_channel_pins_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_channel_pins_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_thread_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_thread_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_thread_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_thread_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_thread_delete"><code class="docutils literal notranslate"><span class="pre">discord_set_on_thread_delete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_delete"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_delete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_role_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_role_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_role_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_role_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_role_delete"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_role_delete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_member_add"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_member_add()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_member_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_member_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_member_remove"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_member_remove()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_ban_add"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_ban_add()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_guild_ban_remove"><code class="docutils literal notranslate"><span class="pre">discord_set_on_guild_ban_remove()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_interaction_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_interaction_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_create"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_create()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_delete"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_delete()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_delete_bulk"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_delete_bulk()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_reaction_add"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_reaction_add()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_reaction_remove"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_reaction_remove()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_reaction_remove_all"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_reaction_remove_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_message_reaction_remove_emoji"><code class="docutils literal notranslate"><span class="pre">discord_set_on_message_reaction_remove_emoji()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_voice_state_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_voice_state_update()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_set_on_voice_server_update"><code class="docutils literal notranslate"><span class="pre">discord_set_on_voice_server_update()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types">Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_idle"><code class="docutils literal notranslate"><span class="pre">discord_on_idle</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_application_command"><code class="docutils literal notranslate"><span class="pre">discord_on_application_command</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_channel"><code class="docutils literal notranslate"><span class="pre">discord_on_channel</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_channel_pins_update"><code class="docutils literal notranslate"><span class="pre">discord_on_channel_pins_update</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild"><code class="docutils literal notranslate"><span class="pre">discord_on_guild</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild_delete"><code class="docutils literal notranslate"><span class="pre">discord_on_guild_delete</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild_role"><code class="docutils literal notranslate"><span class="pre">discord_on_guild_role</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild_role_delete"><code class="docutils literal notranslate"><span class="pre">discord_on_guild_role_delete</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild_member"><code class="docutils literal notranslate"><span class="pre">discord_on_guild_member</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild_member_remove"><code class="docutils literal notranslate"><span class="pre">discord_on_guild_member_remove</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_guild_ban"><code class="docutils literal notranslate"><span class="pre">discord_on_guild_ban</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_interaction"><code class="docutils literal notranslate"><span class="pre">discord_on_interaction</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message"><code class="docutils literal notranslate"><span class="pre">discord_on_message</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message_delete"><code class="docutils literal notranslate"><span class="pre">discord_on_message_delete</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message_delete_bulk"><code class="docutils literal notranslate"><span class="pre">discord_on_message_delete_bulk</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message_reaction_add"><code class="docutils literal notranslate"><span class="pre">discord_on_message_reaction_add</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message_reaction_remove"><code class="docutils literal notranslate"><span class="pre">discord_on_message_reaction_remove</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message_reaction_remove_all"><code class="docutils literal notranslate"><span class="pre">discord_on_message_reaction_remove_all</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_message_reaction_remove_emoji"><code class="docutils literal notranslate"><span class="pre">discord_on_message_reaction_remove_emoji</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_voice_state_update"><code class="docutils literal notranslate"><span class="pre">discord_on_voice_state_update</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c.discord_on_voice_server_update"><code class="docutils literal notranslate"><span class="pre">discord_on_voice_server_update</span></code></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
@@ -1143,7 +1206,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.1.
     <br/>
   </p>
 </div>
